@@ -43,6 +43,38 @@
 }
 
 /* Diegetic layers — inside the tube only. */
+
+/* Live phosphor grain: a tiny desaturated turbulence tile stepped through
+   four offsets (~5 fps, like a broadcast). Faint enough that prose contrast
+   is untouched; the reduced-motion gate leaves it as a static texture. */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.05;
+  animation: grainShift 0.8s steps(1, end) infinite;
+}
+
+@keyframes grainShift {
+  0% {
+    background-position: 0 0;
+  }
+  25% {
+    background-position: 80px 48px;
+  }
+  50% {
+    background-position: 32px 112px;
+  }
+  75% {
+    background-position: 128px 64px;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
 .scanlines {
   position: absolute;
   inset: 0;
@@ -230,8 +262,11 @@
   color: var(--screen-dim);
 }
 
+/* REC blinks while a tape plays — the tube's own heartbeat. Solid under
+   the reduced-motion gate. */
 .recDot {
   color: var(--rec-red);
+  animation: blink 1.2s steps(2, start) infinite;
 }
 
 /* Idle / NO SIGNAL center stage. */

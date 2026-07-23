@@ -263,8 +263,16 @@ nothing thicker than 1px unless it is a physical object's silhouette.
 ### Deck (signature)
 
 - Ink 2 face, slot inset (Screen Black), VFD readout (VT323, VFD Cyan, no
-  glow) showing the focused tape's full title, one functional EJECT button.
-  No decorative dead controls.
+  glow) showing the focused tape's full title, one functional EJECT button
+  plus an icon-only sound toggle. No decorative dead controls.
+- Sound toggle: icon-only chassis button beside EJECT — speaker glyph in
+  silkscreen color, waves when on, × when off. The glyph carries the state
+  (plus `aria-pressed`); no glow, no accent color.
+- VFD clock: 24-hour system time (HH:MM) at the right end of the readout,
+  updated on the minute. Quiet — no blink (user call 2026-07-22). Hidden in
+  the collapsed mobile playing strip.
+- Slot flap tips open (transform only, 120ms mech ease) while a tape is in
+  transit.
 - Attention state (NO SIGNAL): EJECT is the exit and carries a crisp 2px
   VFD-cyan outline pulsing opacity at 1.6s — never a halo; solid under
   reduced motion and while focused.
@@ -274,6 +282,10 @@ nothing thicker than 1px unless it is a physical object's silhouette.
 - Ink 2 bezel (20px), screen inset with vignette + ≤6% opacity scanlines over
   prose; tracking flicker ≤400ms on state change only. All effects clipped to
   the screen plane. Idle = CRT Blue + OSD prompt; playback = Screen Black.
+- Phosphor grain: desaturated turbulence tile at opacity 0.05, stepped
+  through four offsets (~5 fps) — live broadcast, not damage. Static under
+  reduced motion. Screen plane only, like every other effect.
+- REC dot blinks at 1.2s during playback; solid under reduced motion.
 
 ### Buttons
 
@@ -286,6 +298,30 @@ nothing thicker than 1px unless it is a physical object's silhouette.
 
 - Header: nameplate left; silkscreen label-links right (ABOUT). Active/hover:
   Silkscreen Hi + underline seam, no color change.
+
+## Sound
+
+Mechanical and diegetic, never ambient. Every cue is the machine answering a
+user action: insert clunk (shell contact → latch → thump), eject spring, and
+a fingertip tick when browsing tapes. No CRT hum, no transport whirr (built,
+then cut as too much), no music, no loops of any kind.
+
+- **Default-off, every visit.** The deck's sound toggle is the only way in,
+  and the choice lasts for the visit only — never persisted, so a page load
+  can never hold pre-gesture audio state. Enabling answers with a
+  confirmation tick.
+- **Never schedule against a stopped clock.** Cues are scheduled only on a
+  running AudioContext; on a suspended one, only the latest cue is kept and
+  played after resume completes. (Queued cues on a frozen clock all fire at
+  once on resume and sum into one loud pop.)
+- **Synthesized, not sampled.** All cues are Web Audio synthesis
+  (`src/lib/sound.ts`) — zero asset files, slightly stylized rather than
+  photoreal, matching the crisp-vector visual execution.
+- **Quiet.** Master gain 0.5 with per-cue peaks well below it; the browsing
+  tick is barely there. Sound seasons the interaction, it never announces
+  itself.
+- Sound is independent of `prefers-reduced-motion` — cues are
+  user-initiated, not motion. The mute toggle is the control.
 
 ## Do's and Don'ts
 

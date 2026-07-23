@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-22T21:05:00-07:00",
+  "generatedAt": "2026-07-22T22:31:23-04:00",
   "title": "Design System: Daniel Alyoshin — Personal Site",
   "extensions": {
     "colorMeta": {
@@ -49,6 +49,21 @@
           "#c6cbf5"
         ]
       },
+      "phosphor": {
+        "role": "secondary",
+        "displayName": "Phosphor",
+        "canonical": "#b4c4ff",
+        "tonalRamp": [
+          "#1a2040",
+          "#2e3a6b",
+          "#455494",
+          "#5f70b8",
+          "#7d8ed6",
+          "#9aabec",
+          "#b4c4ff",
+          "#dbe2ff"
+        ]
+      },
       "screen-text": {
         "role": "neutral",
         "displayName": "Screen Text",
@@ -78,6 +93,10 @@
         "displayName": "OSD",
         "purpose": "VT323 screen chrome only — PLAY, counters, prompts. Never chassis text."
       },
+      "osd-small": {
+        "displayName": "OSD Small",
+        "purpose": "Secondary OSD: deck VFD readout and clock, meta lines, captions, tags, corner marks."
+      },
       "screen-title": {
         "displayName": "Screen Title",
         "purpose": "CRT project titles; tube-scaled (7.5cqi) and capped at the display step."
@@ -97,6 +116,11 @@
         "name": "edge-lit",
         "value": "inset 0 1px 0 rgba(255,255,255,0.05)",
         "purpose": "Machined lit top edge on raised panels."
+      },
+      {
+        "name": "shadow-object",
+        "value": "0 3px 8px rgba(0,0,0,0.6)",
+        "purpose": "Small physical parts — the seated cassette edge in the slot."
       },
       {
         "name": "shadow-recess",
@@ -123,7 +147,7 @@
       {
         "name": "t-fast",
         "value": "120ms",
-        "purpose": "Control feedback (buttons, links)."
+        "purpose": "Control feedback (buttons, links, slot flap)."
       },
       {
         "name": "t-med",
@@ -143,7 +167,17 @@
       {
         "name": "ease-mech",
         "value": "cubic-bezier(0.6, 0, 0.2, 1)",
-        "purpose": "Mechanical slides (tape travel)."
+        "purpose": "Mechanical slides (tape travel, slot flap)."
+      },
+      {
+        "name": "grain-step",
+        "value": "0.8s steps(1, end) infinite",
+        "purpose": "CRT phosphor grain: four stepped offsets (~5 fps), screen plane only; static under reduced motion."
+      },
+      {
+        "name": "rec-blink",
+        "value": "1.2s steps(2, start) infinite",
+        "purpose": "REC dot heartbeat during playback; solid under reduced motion."
       }
     ],
     "breakpoints": [
@@ -163,6 +197,22 @@
       "css": ".ds-btn-eject { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; padding: 10px 18px; transition: background 120ms, color 120ms, transform 120ms; } .ds-btn-eject:hover { background: #3a3f4a; color: #e9ebf1; } .ds-btn-eject:active { transform: translateY(1px); } .ds-btn-eject:focus-visible { outline: 2px solid #61e8c6; outline-offset: 2px; }"
     },
     {
+      "name": "Eject Button (Attention)",
+      "kind": "button",
+      "refersTo": "button-eject",
+      "description": "NO SIGNAL state: the exit lives on the hardware — crisp VFD-cyan outline pulsing opacity, never a halo; solid under reduced motion.",
+      "html": "<button class=\"ds-btn-eject-attn\">⏏ Eject</button>",
+      "css": ".ds-btn-eject-attn { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; padding: 10px 18px; outline: 2px solid #61e8c6; outline-offset: 3px; animation: ds-eject-pulse 1.6s ease-in-out infinite; transition: background 120ms, color 120ms; } .ds-btn-eject-attn:hover { background: #3a3f4a; color: #e9ebf1; } .ds-btn-eject-attn:focus-visible { animation: none; } @keyframes ds-eject-pulse { 0%, 100% { outline-color: #61e8c6; } 50% { outline-color: rgba(97, 232, 198, 0.3); } }"
+    },
+    {
+      "name": "Sound Toggle",
+      "kind": "button",
+      "refersTo": "button-eject",
+      "description": "Icon-only chassis toggle beside EJECT: the speaker glyph carries the state — waves when on, × when off. aria-pressed, silkscreen color, no accent.",
+      "html": "<div class=\"ds-sound-row\"><button class=\"ds-sound-toggle\" aria-pressed=\"true\" title=\"Sound effects (on)\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path d=\"M8 2.5 4.5 5.5H2v5h2.5L8 13.5z\" fill=\"currentColor\"/><path d=\"M10.2 5.6a3.4 3.4 0 0 1 0 4.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M12.2 3.9a6 6 0 0 1 0 8.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-sound-toggle\" aria-pressed=\"false\" title=\"Sound effects (off)\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path d=\"M8 2.5 4.5 5.5H2v5h2.5L8 13.5z\" fill=\"currentColor\"/><path d=\"m10.4 6.4 3.2 3.2m0-3.2-3.2 3.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg></button></div>",
+      "css": ".ds-sound-row { display: inline-flex; gap: 8px; } .ds-sound-toggle { display: inline-flex; align-items: center; padding: 10px 11px; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; cursor: pointer; transition: background 120ms, color 120ms, transform 120ms; } .ds-sound-toggle svg { display: block; } .ds-sound-toggle:hover { background: #3a3f4a; color: #e9ebf1; } .ds-sound-toggle:active { transform: translateY(1px); } .ds-sound-toggle:focus-visible { outline: 2px solid #61e8c6; outline-offset: 2px; }"
+    },
+    {
       "name": "OSD Link",
       "kind": "custom",
       "refersTo": "link-osd",
@@ -174,9 +224,9 @@
       "name": "VFD Readout",
       "kind": "custom",
       "refersTo": "vfd",
-      "description": "The deck's display window: recessed black well, cyan VT323 text, no glow.",
-      "html": "<div class=\"ds-vfd\">● PLACEHOLDER: ALPHA · 2026</div>",
-      "css": ".ds-vfd { background: #0a0c0e; border-radius: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); padding: 6px 14px; font-family: 'VT323', monospace; font-size: 1.25rem; color: #61e8c6; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
+      "description": "The deck's display window: recessed black well, cyan VT323 text, ellipsizing readout with the 24h clock seated at the right end. No glow.",
+      "html": "<div class=\"ds-vfd\"><span class=\"ds-vfd-text\">● PLACEHOLDER: ALPHA · 2026</span><span class=\"ds-vfd-clock\">22:31</span></div>",
+      "css": ".ds-vfd { background: #0a0c0e; border-radius: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); padding: 6px 14px; font-family: 'VT323', monospace; font-size: 1.25rem; color: #61e8c6; text-transform: uppercase; display: flex; align-items: baseline; gap: 16px; min-width: 0; max-width: 420px; } .ds-vfd-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
     },
     {
       "name": "Silkscreen Label",
@@ -193,11 +243,19 @@
       "description": "Engraved rack nameplate: Archivo expanded black caps, quiet not glowing.",
       "html": "<h1 class=\"ds-nameplate\">Daniel Alyoshin</h1>",
       "css": ".ds-nameplate { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 1.9rem; font-weight: 800; font-stretch: 125%; line-height: 1.05; letter-spacing: 0.02em; text-transform: uppercase; color: #e9ebf1; margin: 0; }"
+    },
+    {
+      "name": "CRT Screen (Idle)",
+      "kind": "custom",
+      "refersTo": "osd-display",
+      "description": "The signature surface: CRT-blue idle screen with OSD prompt, scanlines, stepped phosphor grain, and vignette — every effect clipped to the screen plane, bloom as the page's one light.",
+      "html": "<div class=\"ds-crt-screen\"><span class=\"ds-crt-corner\">SP · STANDBY</span><p class=\"ds-crt-prompt\">INSERT TAPE<span class=\"ds-crt-cursor\">▮</span></p><span class=\"ds-crt-grain\"></span><span class=\"ds-crt-scan\"></span><span class=\"ds-crt-vig\"></span></div>",
+      "css": ".ds-crt-screen { position: relative; width: 280px; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: #1523d6; box-shadow: 0 0 56px 2px rgba(21,35,214,0.45); font-family: 'VT323', monospace; color: #ffffff; display: flex; align-items: center; justify-content: center; } .ds-crt-corner { position: absolute; top: 12px; left: 16px; font-size: 1rem; text-shadow: 0 0 6px rgba(255,255,255,0.5); } .ds-crt-prompt { font-size: 1.75rem; letter-spacing: 0.06em; text-shadow: 0 0 10px rgba(255,255,255,0.45); margin: 0; } .ds-crt-cursor { margin-left: 8px; animation: ds-crt-blink 1.1s steps(2, start) infinite; } @keyframes ds-crt-blink { 50% { opacity: 0; } } .ds-crt-grain { position: absolute; inset: 0; pointer-events: none; background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size: 160px 160px; opacity: 0.05; animation: ds-crt-grain 0.8s steps(1, end) infinite; } @keyframes ds-crt-grain { 0% { background-position: 0 0; } 25% { background-position: 80px 48px; } 50% { background-position: 32px 112px; } 75% { background-position: 128px 64px; } 100% { background-position: 0 0; } } .ds-crt-scan { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.17) 0 1px, transparent 1px 3px); opacity: 0.35; } .ds-crt-vig { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: radial-gradient(115% 115% at 50% 50%, transparent 62%, rgba(0,0,0,0.5) 100%); }"
     }
   ],
   "narrative": {
     "northStar": "Midnight Studio",
-    "overview": "A dim, precise edit suite. The page is a piece of high-end AV equipment — a matte graphite rack holding a shelf of VHS cassettes, a tape deck, and a CRT — rendered as crisp, contemporary flat vectors. The retro lives entirely in the subject matter; the execution is modern, machined, and clean. The single governing physical fact: the room is dark and the CRT is the only thing emitting light.",
+    "overview": "A dim, precise edit suite. The page is a piece of high-end AV equipment — a matte graphite rack holding a shelf of VHS cassettes, a tape deck, and a CRT — rendered as crisp, contemporary flat vectors. The retro lives entirely in the subject matter; the execution is modern, machined, and clean. The single governing physical fact: the room is dark and the CRT is the only thing emitting light. Sound follows the same doctrine: mechanical and diegetic, never ambient — synthesized cues that answer user actions, default-off behind the deck's sound toggle.",
     "keyCharacteristics": [
       "Matte graphite chassis, machined seams, silkscreen labels",
       "The CRT emits; nothing else glows",

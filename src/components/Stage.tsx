@@ -8,6 +8,7 @@ import {
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, shelfTapes } from '../content/projects'
 import type { Project } from '../content/types'
+import { playSound } from '../lib/sound'
 import { useReducedMotion } from '../lib/useReducedMotion'
 import { CassetteFace } from './Cassette'
 import CRT, { type ScreenMode } from './CRT'
@@ -80,6 +81,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     },
     [],
   )
+  /** Browsing tick: once per newly previewed tape (hover and focus overlap). */
+  const lastPreview = useRef<string | null>(null)
+  const previewTape = useCallback((t: Project | null) => {
+    if (t && t.slug !== lastPreview.current) playSound('tick')
+    lastPreview.current = t?.slug ?? null
+    setPreview(t)
+  }, [])
   const onTitleEl = useCallback((el: HTMLHeadingElement | null) => {
     titleEl.current = el
   }, [])
@@ -162,6 +170,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       const fromEl = tapeEls.current.get(slug)
       const slotEl = slotRef.current
       if (reduced || cameFromDead || !fromEl || !slotEl) {
+        playSound('insert')
         pendingTitle.current = true
         setPhase('playing')
         applyDolly(true)
@@ -185,6 +194,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     }
 
     const owner = playing
+    if (owner) playSound('eject')
     const finishEject = () => {
       setFlight(null)
       if (owner) pendingFocus.current = owner.slug
@@ -261,6 +271,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     const done = (skipped: boolean) => {
       setFlight(null)
       if (dir === 'in') {
+        playSound('insert')
         setPhase('playing')
         applyDolly(skipped)
         if (skipped) {
@@ -402,7 +413,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             playingSlug={
               phase !== 'shelf' && !badSlug && playing ? playing.slug : null
             }
-            onPreview={setPreview}
+            onPreview={previewTape}
             registerTapeEl={registerTapeEl}
           />
         </div>
@@ -425,6 +436,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             slotRef={slotRef}
             seatedAccent={isPlaying && playing ? playing.vhs.accent : null}
             attention={badSlug}
+            flapOpen={transiting}
           />
         </div>
 

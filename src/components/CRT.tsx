@@ -127,6 +127,7 @@ export default function CRT({
               </span>
             </div>
           )}
+          <div className={styles.grain} aria-hidden="true" />
           <div className={styles.scanlines} aria-hidden="true" />
           <div className={styles.vignette} aria-hidden="true" />
         </div>

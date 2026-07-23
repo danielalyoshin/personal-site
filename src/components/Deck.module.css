@@ -6,7 +6,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-template-areas:
-    'brand slot eject'
+    'brand slot controls'
     'vfd vfd vfd';
   gap: var(--sp-md) var(--sp-lg);
   align-items: center;
@@ -65,10 +65,24 @@
   border-radius: 2px;
   background: #101116;
   border-top: 1px solid #23262d;
+  transform-origin: 50% 100%;
+  transition: transform var(--t-fast) var(--ease-mech);
 }
 
-.eject {
-  grid-area: eject;
+/* Tape in transit: the flap tips inward to receive/release it. */
+.slotOpen .flap {
+  transform: translateY(3px) scaleY(0.72);
+}
+
+.controls {
+  grid-area: controls;
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-sm);
+}
+
+.eject,
+.sfx {
   font-family: var(--font-chassis);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -85,12 +99,26 @@
     transform var(--t-fast);
 }
 
-.eject:hover:not(:disabled) {
+/* Icon-only sound toggle: the glyph itself carries the state (waves on,
+   × off) — silkscreen color, never a glow (One Light Rule). */
+.sfx {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 11px;
+}
+
+.sfx svg {
+  display: block;
+}
+
+.eject:hover:not(:disabled),
+.sfx:hover {
   background: var(--seam-lit);
   color: var(--silk-hi);
 }
 
-.eject:active:not(:disabled) {
+.eject:active:not(:disabled),
+.sfx:active {
   transform: translateY(1px);
 }
 
@@ -133,10 +161,27 @@
   line-height: 1.35;
   color: var(--vfd);
   text-transform: uppercase;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-md);
+  min-height: 1.6em;
+  /* Grid item: without this the nowrap readout sets the min-content width
+     and shoves the controls off the collapsed mobile strip. */
+  min-width: 0;
+}
+
+.vfdText {
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-height: 1.6em;
+}
+
+/* Deck clock: quiet 24h system time at the readout's end. No blink —
+   this deck was set properly. */
+.clock {
+  color: var(--vfd);
 }
 
 /* Playing on a small screen: the deck collapses to a pinned control strip. */
@@ -148,13 +193,14 @@
     bottom: 8px;
     z-index: 31;
     grid-template-columns: 1fr auto;
-    grid-template-areas: 'vfd eject';
+    grid-template-areas: 'vfd controls';
     padding: var(--sp-sm) var(--sp-md);
     gap: var(--sp-md);
   }
 
   :global(.playing-stage) .brand,
-  :global(.playing-stage) .slot {
+  :global(.playing-stage) .slot,
+  :global(.playing-stage) .clock {
     display: none;
   }
 }

@@ -99,15 +99,36 @@ motion.
   NO SIGNAL screen with distinct copy; exit is the deck's EJECT (enabled,
   pulsing VFD outline) or Esc — no on-screen button.
 
-### Stage 7 — Motion & atmosphere polish
+### Stage 7 — Motion & atmosphere polish ✅ (2026-07-22)
 
-- Micro-interactions and ambient details (e.g., VCR clock blinking 12:00, subtle
-  grain inside the CRT only).
-- Optional sound design (insert clunk, CRT hum) behind a visible mute toggle,
-  default respecting user expectations.
-- Optional WebGL/three.js upgrade of the tape-handling sequence — only if the
-  CSS/SVG version leaves something on the table.
-- Full reduced-motion audit.
+- ✅ Ambient details: deck clock at the right end of the VFD showing 24h
+  system time, updated on the minute (a blinking 12:00 was built first and
+  cut as too distracting — Daniel, 2026-07-22; hidden in the collapsed
+  mobile playing strip); subtle stepped phosphor grain inside the CRT screen
+  only (desaturated feTurbulence tile, opacity 0.05, ~5 fps; static under
+  reduced motion); blinking REC dot in playback OSD; slot flap tips open
+  while a tape is in transit.
+- ✅ Sound (decisions settled at stage start, see below): synthesized in Web
+  Audio (`src/lib/sound.ts`, zero assets) — insert clunk, eject spring,
+  browsing tick per newly previewed tape (a transport whirr was built and
+  removed on Daniel's review). Default-off behind the deck's icon-only
+  sound toggle (speaker glyph: waves on, × off; `aria-pressed`); the choice
+  is per-visit — persistence was removed (Daniel, 2026-07-22) after a bug
+  where a persisted-on refresh queued hover ticks against the suspended
+  AudioContext's frozen clock and released them all at once on first
+  activation (one very loud pop). Fixed structurally (no persistence) and
+  at the root: cues are never scheduled on a non-running context; a
+  suspended context keeps only the latest cue and plays it post-resume.
+  Disabling suspends the context.
+- ✅ WebGL: decided **no** — the CSS/SVG flight holds up; three.js would add
+  weight and complexity for marginal gain (decision 4 closed).
+- ✅ Reduced-motion audit: global CSS gate (0.01ms + single iteration,
+  `!important` — also covers the dolly's inline transitions) collapses all
+  CSS animation; every blink keyframe ends on its visible state; WAAPI
+  flights JS-gated to instant swaps. Verified via Playwright with
+  `reducedMotion: 'reduce'` (desktop + mobile, no overflow, no errors).
+  Sound is deliberately independent of reduced motion: no ambient loops,
+  every cue answers a user action.
 
 ### Stage 8 — Real content pass
 
@@ -137,11 +158,14 @@ motion.
    high-end AV gear in a dim edit suite; the CRT is the page's light source;
    color arrives only through cassette spines/labels and the CRT. Guardrails:
    matte materials, no neon wash, no glow outside the CRT's controlled cast.
-2. **Sound** — include at all, and if so, default-on-with-toggle vs
-   default-off. (Build-session recommendation: default-off behind a visible
-   deck toggle; insert clunk + eject are the high-value moments, CRT hum is
-   polarizing. Settle at Stage 7 start.)
+2. ~~**Sound**~~ — ✅ Settled (2026-07-22, Stage 7 start): **in,
+   default-off** behind the deck's visible sound toggle. Final palette:
+   insert clunk + eject and UI ticks; transport whirr built then cut on
+   review; CRT hum deliberately excluded. Source: synthesized Web Audio,
+   no asset files.
 3. ~~**About treatment**~~ — ✅ Settled (2026-07-22, `/impeccable shape`):
    **special labeled tape on the shelf**, alongside 4–6 project tapes
    (shelf designed around 4–6 projects, one row).
-4. **WebGL upgrade** — decide at Stage 7 based on how the CSS/SVG version feels.
+4. ~~**WebGL upgrade**~~ — ✅ Settled (2026-07-22, Stage 7): **no** — the
+   CSS/SVG flight is crisp and deterministic; three.js would be weight
+   without payoff. Closed, not deferred.
