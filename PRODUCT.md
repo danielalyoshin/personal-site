@@ -47,16 +47,18 @@ accessibility standards.
 
 - Stack: Vite + React + TypeScript, static output. SPA; no server runtime.
   See `PLAN.md` for rationale before changing.
-- Cassettes/deck render as SVG/CSS; WebGL is an optional late enhancement,
-  never a core dependency.
+- Cassettes/deck render as SVG/CSS; WebGL was evaluated and declined
+  (2026-07-22) — the CSS/SVG tape flight is final.
 - Every animation must respect `prefers-reduced-motion` (hard requirement).
+- Sound exists (settled 2026-07-22): synthesized mechanical cues only,
+  default-off on every visit behind the deck's sound toggle, never
+  persisted. Doctrine in `DESIGN.md` § Sound.
 - Deployment is the final stage — no deploy configs, CI, or hosting setup
   before Stage 10 of `PLAN.md`.
 - Terminology is diegetic where it aids the metaphor: tape, deck, insert,
   eject, OSD (on-screen display), tracking, NO SIGNAL (404).
-- Undecided product facts (tracked in `PLAN.md`, not to be invented):
-  whether sound exists at all and its default state. (The About treatment is
-  settled: a special tape on the shelf.)
+- No undecided product facts remain; open work is content (Stage 8),
+  hardening (Stage 9), and deployment (Stage 10) per `PLAN.md`.
 
 ## Brand Commitments
 

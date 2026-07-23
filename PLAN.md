@@ -19,8 +19,8 @@ motion.
   anywhere at the end.
 - **Cassettes and deck as SVG/CSS components** with CSS 3D transforms for depth —
   crisp at every size, fully styleable by the design system, accessible, and far
-  more maintainable than WebGL. Real three.js 3D is deliberately deferred to an
-  optional enhancement stage (Stage 7) so the core site never depends on it.
+  more maintainable than WebGL. Real three.js 3D was deferred to Stage 7 and
+  there decided against (2026-07-22): the CSS/SVG version is final.
 - **CRT effects as layered CSS/canvas inside the screen area only** — scanlines,
   phosphor glow, and a brief "tracking" flicker on tape insert, kept restrained
   and diegetic (confined to the CRT screen, never applied to the page chrome).
