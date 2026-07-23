@@ -1,5 +1,4 @@
 import type { Ref } from 'react'
-import { Link } from 'react-router-dom'
 import type { Project } from '../content/types'
 import styles from './CRT.module.css'
 
@@ -8,12 +7,20 @@ export type ScreenMode = 'idle' | 'playing' | 'nosignal' | 'ejecting'
 interface CRTProps {
   mode: ScreenMode
   tape: Project | null
+  /** NO SIGNAL flavor: a dead tape slug, or an unknown channel (any other path). */
+  noSignalReason?: 'tape' | 'channel'
   /** Receives the playing title element so the stage can move focus into it. */
   onTitleEl: (el: HTMLHeadingElement | null) => void
   crtRef: Ref<HTMLDivElement>
 }
 
-export default function CRT({ mode, tape, onTitleEl, crtRef }: CRTProps) {
+export default function CRT({
+  mode,
+  tape,
+  noSignalReason = 'tape',
+  onTitleEl,
+  crtRef,
+}: CRTProps) {
   return (
     <div className={styles.crtUnit} ref={crtRef}>
       <section aria-label="CRT display" className={styles.bezel}>
@@ -88,10 +95,14 @@ export default function CRT({ mode, tape, onTitleEl, crtRef }: CRTProps) {
           ) : mode === 'nosignal' ? (
             <div className={styles.centerScreen}>
               <p className={styles.bigOsd}>NO SIGNAL</p>
-              <p className={styles.subOsd}>THIS TAPE DOES NOT EXIST</p>
-              <Link className={styles.osdLink} to="/">
-                ⏏ BACK TO SHELF
-              </Link>
+              <p className={styles.subOsd}>
+                {noSignalReason === 'channel'
+                  ? 'CHANNEL NOT FOUND'
+                  : 'THIS TAPE DOES NOT EXIST'}
+              </p>
+              <p className="srOnly">
+                Press the deck's Eject button or Escape to return to the shelf.
+              </p>
             </div>
           ) : (
             <div className={styles.centerScreen}>

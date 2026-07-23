@@ -202,8 +202,7 @@
   margin-bottom: var(--sp-lg);
 }
 
-.links a,
-.osdLink {
+.links a {
   font-family: var(--font-osd);
   font-size: 1.25rem;
   color: var(--osd);
@@ -216,14 +215,12 @@
     color var(--t-fast);
 }
 
-.links a:hover,
-.osdLink:hover {
+.links a:hover {
   background: var(--osd);
   color: var(--screen-black);
 }
 
-.links a:focus-visible,
-.osdLink:focus-visible {
+.links a:focus-visible {
   outline-color: var(--osd);
 }
 

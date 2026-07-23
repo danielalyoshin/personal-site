@@ -44,7 +44,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const navigate = useNavigate()
   const reduced = useReducedMotion()
   const tape = findTape(slug)
-  const badSlug = notFound || (slug !== undefined && !tape)
+  /** A /project/:slug route whose tape doesn't exist — NO SIGNAL, zoomed. */
+  const deadTape = slug !== undefined && !tape
+  const badSlug = notFound || deadTape
 
   const [phase, setPhase] = useState<Phase>(() =>
     slug && findTape(slug) ? 'playing' : 'shelf',
@@ -129,8 +131,17 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   useLayoutEffect(() => {
     if (didInit.current) return
     didInit.current = true
-    if (slug && findTape(slug)) applyDolly(true)
-  }, [slug, applyDolly])
+    if (slug || notFound) applyDolly(true)
+  }, [slug, notFound, applyDolly])
+
+  /* Wildcard NO SIGNAL (notFound) zooms too; only the camera moves. */
+  const prevNotFound = useRef(notFound)
+  useEffect(() => {
+    if (notFound === prevNotFound.current) return
+    prevNotFound.current = notFound
+    if (notFound) applyDolly(false)
+    else if (!slug) clearDolly(false)
+  }, [notFound, slug, applyDolly, clearDolly])
 
   /* Route changes drive the choreography. */
   useEffect(() => {
@@ -141,12 +152,16 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
 
     if (slug) {
       const next = findTape(slug)
-      // Unknown tape: the CRT derives NO SIGNAL from the route; the shelf
-      // stays browsable, so there is no state to change.
-      if (!next) return
+      // Unknown tape: NO SIGNAL plays like a tape — camera in, tube talking.
+      // Zoom is derived from the route (deadTape); only the camera moves.
+      if (!next) {
+        applyDolly(false)
+        return
+      }
+      const cameFromDead = prev !== undefined && !findTape(prev)
       const fromEl = tapeEls.current.get(slug)
       const slotEl = slotRef.current
-      if (reduced || !fromEl || !slotEl) {
+      if (reduced || cameFromDead || !fromEl || !slotEl) {
         pendingTitle.current = true
         setPhase('playing')
         applyDolly(true)
@@ -159,6 +174,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         to: slotEl.getBoundingClientRect(),
         tape: next,
       })
+      return
+    }
+
+    // Leaving a NO SIGNAL route: nothing was seated and phase never left
+    // the shelf, so only the camera pulls back.
+    if (prev !== undefined && !findTape(prev)) {
+      clearDolly(false)
       return
     }
 
@@ -305,23 +327,23 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     }
   }, [phase])
 
-  /* Esc ejects. */
+  /* Esc ejects (also escapes any zoomed NO SIGNAL). */
   useEffect(() => {
-    if (phase !== 'playing' || !tape) return
+    if (!((phase === 'playing' && slug) || badSlug)) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') navigate('/')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase, tape, navigate])
+  }, [phase, slug, badSlug, navigate])
 
   /* Keep the dolly framed on resize. */
   useEffect(() => {
-    if (phase !== 'playing' || !tape) return
+    if (!((phase === 'playing' && slug) || badSlug)) return
     const onResize = () => applyDolly(true)
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [phase, tape, applyDolly])
+  }, [phase, slug, badSlug, applyDolly])
 
   const vfd =
     phase === 'playing' && tape
@@ -346,11 +368,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
 
   const transiting = phase === 'inserting' || phase === 'ejecting'
   const isPlaying = phase === 'playing' && !!tape
+  /** Camera is in on a real tape or any NO SIGNAL route (zoomed 404). */
+  const zoomed = isPlaying || badSlug
   const stageClass = [
     styles.stage,
     transiting ? styles.busy : '',
-    phase !== 'shelf' ? styles.clipped : '',
-    isPlaying ? 'playing-stage' : '',
+    phase !== 'shelf' || badSlug ? styles.clipped : '',
+    zoomed ? 'playing-stage' : '',
   ]
     .filter(Boolean)
     .join(' ')
@@ -360,7 +384,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       <div className={styles.camera} ref={cameraRef}>
         {/* While a tape plays, everything off-screen behind the dolly/overlay
             is inert so keyboard focus can never land somewhere invisible. */}
-        <header className={styles.header} inert={isPlaying || undefined}>
+        <header className={styles.header} inert={zoomed || undefined}>
           <div>
             <h1 className={styles.nameplate}>Daniel Alyoshin</h1>
             <p className="silkLabel">Design Engineer</p>
@@ -372,7 +396,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           </nav>
         </header>
 
-        <div className={styles.shelfSpot} inert={isPlaying || undefined}>
+        <div className={styles.shelfSpot} inert={zoomed || undefined}>
           <Shelf
             tapes={shelfTapes}
             playingSlug={
@@ -387,6 +411,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           <CRT
             mode={mode}
             tape={tape ?? null}
+            noSignalReason={deadTape ? 'tape' : 'channel'}
             onTitleEl={onTitleEl}
             crtRef={crtRef}
           />
@@ -395,21 +420,34 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         <div className={styles.deckWrap}>
           <Deck
             vfdText={vfd}
-            canEject={isPlaying}
+            canEject={isPlaying || badSlug}
             onEject={() => navigate('/')}
             slotRef={slotRef}
             seatedAccent={isPlaying && playing ? playing.vhs.accent : null}
+            attention={badSlug}
           />
         </div>
 
-        <footer className={styles.footer} inert={isPlaying || undefined}>
+        <footer className={styles.footer} inert={zoomed || undefined}>
           <span className="silkLabel">Alyoshin AV-01 · Hi-Fi Stereo</span>
-          <a
-            className={`silkLabel ${styles.navLink} ${styles.email}`}
-            href="mailto:daniel.alyoshin@gmail.com"
-          >
-            daniel.alyoshin@gmail.com
-          </a>
+          <nav className={styles.footerLinks} aria-label="Contact">
+            <a
+              className={`silkLabel ${styles.navLink}`}
+              href="https://github.com/danielalyoshin"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </a>
+            <a
+              className={`silkLabel ${styles.navLink}`}
+              href="https://www.linkedin.com/in/danielalyoshin/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LinkedIn
+            </a>
+          </nav>
         </footer>
       </div>
 

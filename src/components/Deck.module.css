@@ -99,6 +99,29 @@
   cursor: default;
 }
 
+/* NO SIGNAL: the exit lives on the hardware. Crisp VFD outline, pulsing
+   opacity only — never a halo (One Light Rule). Under reduced motion the
+   animation collapses and the solid outline remains. */
+.attention:not(:disabled) {
+  outline: 2px solid var(--vfd);
+  outline-offset: 3px;
+  animation: ejectPulse 1.6s ease-in-out infinite;
+}
+
+.attention:not(:disabled):focus-visible {
+  animation: none;
+}
+
+@keyframes ejectPulse {
+  0%,
+  100% {
+    outline-color: var(--vfd);
+  }
+  50% {
+    outline-color: color-mix(in oklab, var(--vfd) 30%, transparent);
+  }
+}
+
 .vfd {
   grid-area: vfd;
   background: #0a0c0e;

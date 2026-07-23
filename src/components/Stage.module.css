@@ -88,9 +88,11 @@
   padding-top: var(--sp-md);
 }
 
-.email {
-  text-transform: none;
-  letter-spacing: 0.08em;
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-lg);
+  flex-wrap: wrap;
 }
 
 .flightLayer {

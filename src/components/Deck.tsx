@@ -9,6 +9,8 @@ interface DeckProps {
   slotRef: Ref<HTMLDivElement>
   /** Accent of the seated cassette, visible in the slot while playing. */
   seatedAccent: string | null
+  /** NO SIGNAL: pulse the eject outline — the way out is on the hardware. */
+  attention?: boolean
 }
 
 export default function Deck({
@@ -17,6 +19,7 @@ export default function Deck({
   onEject,
   slotRef,
   seatedAccent,
+  attention = false,
 }: DeckProps) {
   return (
     <section className={styles.deck} aria-label="Tape deck">
@@ -40,7 +43,7 @@ export default function Deck({
       </div>
       <button
         type="button"
-        className={styles.eject}
+        className={`${styles.eject} ${attention ? styles.attention : ''}`}
         onClick={onEject}
         disabled={!canEject}
       >
