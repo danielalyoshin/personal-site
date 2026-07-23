@@ -1,0 +1,101 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--ink-0);
+  color: var(--silk);
+  font-family: var(--font-chassis);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+figure {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Focus is a crisp VFD outline — never a halo (One Light Rule). */
+:focus-visible {
+  outline: 2px solid var(--vfd);
+  outline-offset: 2px;
+  border-radius: var(--r-hairline);
+}
+
+::selection {
+  background: var(--vfd);
+  color: var(--ink-0);
+}
+
+/* Silkscreen label — the chassis's printed text register. */
+.silkLabel {
+  font-family: var(--font-chassis);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--silk-dim);
+}
+
+/* Visually hidden, available to assistive tech. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Hard gate: every CSS animation/transition collapses under reduced motion.
+   (WAAPI flights are gated in JS via useReducedMotion.) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

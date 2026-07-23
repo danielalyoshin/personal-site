@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-22T21:05:00-07:00",
+  "title": "Design System: Daniel Alyoshin — Personal Site",
+  "extensions": {
+    "colorMeta": {
+      "ink-0": {
+        "role": "neutral",
+        "displayName": "Ink 0 (Page Ground)",
+        "canonical": "#0e0f12",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#3a3f4a",
+          "#868b99",
+          "#b7bbc6",
+          "#e9ebf1"
+        ]
+      },
+      "vfd-cyan": {
+        "role": "primary",
+        "displayName": "VFD Cyan",
+        "canonical": "#61e8c6",
+        "tonalRamp": [
+          "#0d2b23",
+          "#164e40",
+          "#20705c",
+          "#2d9379",
+          "#3fb797",
+          "#61e8c6",
+          "#98f0d9",
+          "#ccf8ec"
+        ]
+      },
+      "crt-blue": {
+        "role": "secondary",
+        "displayName": "CRT Blue",
+        "canonical": "#1523d6",
+        "tonalRamp": [
+          "#060a40",
+          "#0a1067",
+          "#0e168e",
+          "#121cb5",
+          "#1523d6",
+          "#4a55e2",
+          "#8a92ee",
+          "#c6cbf5"
+        ]
+      },
+      "screen-text": {
+        "role": "neutral",
+        "displayName": "Screen Text",
+        "canonical": "#dfe6ff",
+        "tonalRamp": [
+          "#07080c",
+          "#3a4463",
+          "#5f6c92",
+          "#98a3c9",
+          "#aeb8dd",
+          "#c6cded",
+          "#dfe6ff",
+          "#f2f5ff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Nameplate",
+        "purpose": "Engraved rack nameplate and CRT titles; Archivo at width 125, weight 800, uppercase."
+      },
+      "label": {
+        "displayName": "Silkscreen",
+        "purpose": "All chassis labels; tracked uppercase, never glowing."
+      },
+      "osd": {
+        "displayName": "OSD",
+        "purpose": "VT323 screen chrome only — PLAY, counters, prompts. Never chassis text."
+      },
+      "screen-title": {
+        "displayName": "Screen Title",
+        "purpose": "CRT project titles; tube-scaled (7.5cqi) and capped at the display step."
+      },
+      "screen-body": {
+        "displayName": "Screen Body",
+        "purpose": "CRT prose; tube-scaled (4.6cqi) and capped at the body step."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-unit",
+        "value": "0 12px 32px rgba(0,0,0,0.4)",
+        "purpose": "Ambient drop under major units (shelf, deck, CRT)."
+      },
+      {
+        "name": "edge-lit",
+        "value": "inset 0 1px 0 rgba(255,255,255,0.05)",
+        "purpose": "Machined lit top edge on raised panels."
+      },
+      {
+        "name": "shadow-recess",
+        "value": "inset 0 2px 8px rgba(0,0,0,0.8)",
+        "purpose": "Shallow machined insets (VFD window)."
+      },
+      {
+        "name": "shadow-recess-deep",
+        "value": "inset 0 3px 10px rgba(0,0,0,0.9), inset 0 -1px 0 rgba(255,255,255,0.04)",
+        "purpose": "The tape slot mouth and dark cavities."
+      },
+      {
+        "name": "bloom-idle",
+        "value": "0 0 56px 2px rgba(21,35,214,0.45)",
+        "purpose": "Idle CRT blue bloom — the page's light source (One Light Rule exception)."
+      },
+      {
+        "name": "bloom-play",
+        "value": "0 0 40px 0 rgba(180,196,255,0.16)",
+        "purpose": "Playback phosphor bloom, screen only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "t-fast",
+        "value": "120ms",
+        "purpose": "Control feedback (buttons, links)."
+      },
+      {
+        "name": "t-med",
+        "value": "240ms",
+        "purpose": "Tape slide-out, screen state cross-fades."
+      },
+      {
+        "name": "t-dolly",
+        "value": "560ms",
+        "purpose": "Camera dolly toward the CRT."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default exponential ease-out."
+      },
+      {
+        "name": "ease-mech",
+        "value": "cubic-bezier(0.6, 0, 0.2, 1)",
+        "purpose": "Mechanical slides (tape travel)."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "stage-stack",
+        "value": "720px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Eject Button",
+      "kind": "button",
+      "refersTo": "button-eject",
+      "description": "Chassis control: silkscreen caps on a raised ink panel; hover lifts the surface, never glows.",
+      "html": "<button class=\"ds-btn-eject\">⏏ Eject</button>",
+      "css": ".ds-btn-eject { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; padding: 10px 18px; transition: background 120ms, color 120ms, transform 120ms; } .ds-btn-eject:hover { background: #3a3f4a; color: #e9ebf1; } .ds-btn-eject:active { transform: translateY(1px); } .ds-btn-eject:focus-visible { outline: 2px solid #61e8c6; outline-offset: 2px; }"
+    },
+    {
+      "name": "OSD Link",
+      "kind": "custom",
+      "refersTo": "link-osd",
+      "description": "Screen-interior action: VT323 white on black, hairline border, inverts on hover.",
+      "html": "<a class=\"ds-osd-link\" href=\"#\">⏏ BACK TO SHELF</a>",
+      "css": ".ds-osd-link { font-family: 'VT323', monospace; font-size: 1.25rem; color: #ffffff; text-decoration: none; border: 1px solid #ffffff; border-radius: 2px; padding: 6px 16px; background: #07080c; transition: background 120ms, color 120ms; display: inline-block; } .ds-osd-link:hover { background: #ffffff; color: #07080c; }"
+    },
+    {
+      "name": "VFD Readout",
+      "kind": "custom",
+      "refersTo": "vfd",
+      "description": "The deck's display window: recessed black well, cyan VT323 text, no glow.",
+      "html": "<div class=\"ds-vfd\">● PLACEHOLDER: ALPHA · 2026</div>",
+      "css": ".ds-vfd { background: #0a0c0e; border-radius: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); padding: 6px 14px; font-family: 'VT323', monospace; font-size: 1.25rem; color: #61e8c6; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
+    },
+    {
+      "name": "Silkscreen Label",
+      "kind": "chip",
+      "refersTo": "label",
+      "description": "Printed chassis text: tracked uppercase, dim by default.",
+      "html": "<span class=\"ds-silk\">Alyoshin AV-01 · Hi-Fi Stereo</span>",
+      "css": ".ds-silk { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: #868b99; }"
+    },
+    {
+      "name": "Nameplate",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "Engraved rack nameplate: Archivo expanded black caps, quiet not glowing.",
+      "html": "<h1 class=\"ds-nameplate\">Daniel Alyoshin</h1>",
+      "css": ".ds-nameplate { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 1.9rem; font-weight: 800; font-stretch: 125%; line-height: 1.05; letter-spacing: 0.02em; text-transform: uppercase; color: #e9ebf1; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Midnight Studio",
+    "overview": "A dim, precise edit suite. The page is a piece of high-end AV equipment — a matte graphite rack holding a shelf of VHS cassettes, a tape deck, and a CRT — rendered as crisp, contemporary flat vectors. The retro lives entirely in the subject matter; the execution is modern, machined, and clean. The single governing physical fact: the room is dark and the CRT is the only thing emitting light.",
+    "keyCharacteristics": [
+      "Matte graphite chassis, machined seams, silkscreen labels",
+      "The CRT emits; nothing else glows",
+      "Saturated color arrives only through artifacts (cassette labels, screen output)",
+      "Crisp flat SVG/CSS vectors; no photographic grunge, no wear"
+    ],
+    "rules": [
+      {
+        "name": "The One Light Rule",
+        "body": "The CRT is the page's only light source. Glow exists only inside the screen and as the screen's controlled cast onto the deck below it. Chassis text, buttons, and edges never glow. Focus indicators are crisp 2px VFD-cyan outlines, not halos.",
+        "section": "colors"
+      },
+      {
+        "name": "The Artifact Color Rule",
+        "body": "Saturated hues belong to content objects, driven by per-project data. The chassis never exceeds graphite + VFD cyan, and VFD cyan stays under ~5% of any viewport.",
+        "section": "colors"
+      },
+      {
+        "name": "The Silkscreen Rule",
+        "body": "Chassis hierarchy comes from weight, width, and spacing — never from glow, color, or size inflation.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tube-Scale Rule",
+        "body": "Type inside the CRT scales with the tube, not the viewport: .crtUnit is an inline-size container and every screen-interior size is a cqi clamp capped at its documented step. The title focus cue is a 3px OSD-white underline, never an outline box.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do keep every retro effect (scanlines, flicker, curvature, phosphor, static) clipped inside the CRT screen plane.",
+      "Do drive cassette accent colors from project content data — the shelf's color story is the portfolio's color story.",
+      "Do give every animated sequence a reduced-motion equivalent that swaps states instantly; prefers-reduced-motion support is non-negotiable.",
+      "Do keep prose legibility above the metaphor: Screen Text ≥ 4.5:1 over Screen Black under all effect layers."
+    ],
+    "donts": [
+      "Don't age anything: no grunge, sepia, dust, tape damage, or noise textures on chassis or content.",
+      "Don't glow outside the screen: no neon edges, no glowing chassis text, no colored halos on hover (The One Light Rule).",
+      "Don't use VT323 for chassis text or paragraphs — OSD chrome only.",
+      "Don't let the chassis compete with the artifacts: no saturated fields, gradients, or decorative color on rack surfaces."
+    ]
+  }
+}

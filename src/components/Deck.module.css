@@ -1,0 +1,137 @@
+.deck {
+  background: var(--ink-2);
+  border-radius: var(--r-rack);
+  box-shadow: var(--edge-lit), var(--shadow-unit);
+  padding: var(--sp-md) var(--sp-lg);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'brand slot eject'
+    'vfd vfd vfd';
+  gap: var(--sp-md) var(--sp-lg);
+  align-items: center;
+}
+
+.brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+}
+
+/* Power-on dot: flat VFD cyan, deliberately no glow (One Light Rule). */
+.power {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vfd);
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brandName {
+  color: var(--silk);
+}
+
+/* The seated cassette's top edge, visible in the slot mouth while playing. */
+.seated {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 7px;
+  height: 8px;
+  border-radius: 2px;
+  opacity: 0.9;
+  box-shadow: var(--shadow-object);
+}
+
+.slot {
+  grid-area: slot;
+  height: 36px;
+  background: var(--screen-black);
+  border-radius: var(--r-control);
+  box-shadow: var(--shadow-recess-deep);
+  position: relative;
+  overflow: hidden;
+}
+
+.flap {
+  position: absolute;
+  inset: 4px 6px;
+  border-radius: 2px;
+  background: #101116;
+  border-top: 1px solid #23262d;
+}
+
+.eject {
+  grid-area: eject;
+  font-family: var(--font-chassis);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--silk);
+  background: var(--ink-3);
+  border: 1px solid var(--seam);
+  border-radius: var(--r-control);
+  padding: 10px 18px;
+  transition:
+    background var(--t-fast),
+    color var(--t-fast),
+    transform var(--t-fast);
+}
+
+.eject:hover:not(:disabled) {
+  background: var(--seam-lit);
+  color: var(--silk-hi);
+}
+
+.eject:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.eject:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.vfd {
+  grid-area: vfd;
+  background: #0a0c0e;
+  border-radius: var(--r-control);
+  box-shadow: var(--shadow-recess);
+  padding: 6px 14px;
+  font-family: var(--font-osd);
+  font-size: 1.25rem;
+  line-height: 1.35;
+  color: var(--vfd);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 1.6em;
+}
+
+/* Playing on a small screen: the deck collapses to a pinned control strip. */
+@media (max-width: 719px) {
+  :global(.playing-stage) .deck {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    z-index: 31;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'vfd eject';
+    padding: var(--sp-sm) var(--sp-md);
+    gap: var(--sp-md);
+  }
+
+  :global(.playing-stage) .brand,
+  :global(.playing-stage) .slot {
+    display: none;
+  }
+}

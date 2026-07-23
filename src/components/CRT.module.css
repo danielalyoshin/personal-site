@@ -1,0 +1,358 @@
+.crtUnit {
+  position: relative;
+  container-type: inline-size;
+  /* Sized so the whole rack (header, shelf, tube, deck, footer) shares the
+     first desktop viewport; playback legibility comes from the dolly. */
+  width: clamp(300px, min(400px, calc((100vh - 640px) * 1.3333 + 38px)), 100%);
+  margin-inline: auto;
+}
+
+.bezel {
+  background: var(--ink-2);
+  border: 1px solid var(--seam);
+  border-radius: var(--r-bezel);
+  padding: 18px;
+  box-shadow: var(--edge-lit), var(--shadow-unit);
+}
+
+/*
+ * The screen is the page's only light source (One Light Rule): its bloom is
+ * the single permitted outward glow, and every retro effect below is clipped
+ * to this element.
+ */
+.screen {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--screen-black);
+  transition:
+    box-shadow var(--t-med),
+    background var(--t-med);
+  box-shadow: var(--bloom-rest);
+}
+
+.idle,
+.ejecting {
+  background: var(--crt-blue);
+  box-shadow: var(--bloom-idle);
+}
+
+.playing {
+  box-shadow: var(--bloom-play);
+}
+
+/* Diegetic layers — inside the tube only. */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.17) 0 1px,
+    transparent 1px 3px
+  );
+  opacity: 0.35;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    115% 115% at 50% 50%,
+    transparent 62%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+/* Brief tracking wobble when a tape starts (remounted per slug). */
+.trackIn {
+  position: absolute;
+  inset: 0;
+  animation: track 400ms steps(6, end) 1;
+}
+
+@keyframes track {
+  0% {
+    transform: translateY(-6%);
+    filter: brightness(2.1);
+  }
+  30% {
+    transform: translateY(3%);
+    filter: brightness(1.3);
+  }
+  55% {
+    transform: translateY(-1.5%);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* OSD chrome floats over the picture; its glow is inside the screen. */
+.osdTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-family: var(--font-osd);
+  font-size: clamp(1rem, 6cqi, 1.375rem);
+  color: var(--osd);
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.reader {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 56px 9% 44px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--seam-lit) transparent;
+}
+
+.title {
+  font-weight: 800;
+  font-stretch: 110%;
+  font-size: clamp(1.1rem, 7.5cqi, 1.9rem);
+  overflow-wrap: break-word;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--screen-text);
+  margin-bottom: var(--sp-sm);
+}
+
+/* Focus cue as OSD emphasis: a clear underline, not a box around a
+   screen-filling heading. */
+.title:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: var(--osd);
+  text-underline-offset: 0.28em;
+}
+
+.meta {
+  font-family: var(--font-osd);
+  font-size: clamp(0.95rem, 5.4cqi, 1.25rem);
+  color: var(--screen-dim);
+  margin-bottom: var(--sp-md);
+}
+
+.tagline {
+  font-weight: 600;
+  font-size: clamp(0.85rem, 4.6cqi, 1.0625rem);
+  line-height: 1.5;
+  color: var(--screen-text);
+  max-width: 62ch;
+  margin-bottom: var(--sp-md);
+}
+
+.para {
+  font-size: clamp(0.85rem, 4.6cqi, 1.0625rem);
+  line-height: 1.65;
+  color: var(--screen-text);
+  max-width: 62ch;
+  margin-bottom: var(--sp-md);
+}
+
+.gallery {
+  display: grid;
+  gap: var(--sp-md);
+  margin: var(--sp-lg) 0;
+}
+
+.gallery img,
+.gallery video {
+  border: 1px solid var(--seam);
+  border-radius: var(--r-control);
+  width: 100%;
+}
+
+.gallery figcaption {
+  font-family: var(--font-osd);
+  font-size: 1.25rem;
+  color: var(--screen-dim);
+  margin-top: var(--sp-xs);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm) var(--sp-md);
+  font-family: var(--font-osd);
+  font-size: 1.25rem;
+  color: var(--screen-soft);
+  margin: var(--sp-lg) 0 var(--sp-md);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm) var(--sp-md);
+  margin-bottom: var(--sp-lg);
+}
+
+.links a,
+.osdLink {
+  font-family: var(--font-osd);
+  font-size: 1.25rem;
+  color: var(--osd);
+  text-decoration: none;
+  border: 1px solid var(--osd);
+  border-radius: var(--r-hairline);
+  padding: 6px 14px;
+  transition:
+    background var(--t-fast),
+    color var(--t-fast);
+}
+
+.links a:hover,
+.osdLink:hover {
+  background: var(--osd);
+  color: var(--screen-black);
+}
+
+.links a:focus-visible,
+.osdLink:focus-visible {
+  outline-color: var(--osd);
+}
+
+.osdEnd {
+  font-family: var(--font-osd);
+  font-size: 1.25rem;
+  color: var(--screen-dim);
+}
+
+.recDot {
+  color: var(--rec-red);
+}
+
+/* Idle / NO SIGNAL center stage. */
+.centerScreen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-md);
+  font-family: var(--font-osd);
+  color: var(--osd);
+  text-align: center;
+  padding: var(--sp-lg);
+}
+
+.bigOsd {
+  font-size: clamp(1.2rem, 9cqi, 2.5rem);
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+}
+
+.subOsd {
+  font-size: 1.25rem;
+  color: var(--screen-soft);
+}
+
+.cursor {
+  margin-left: 8px;
+  animation: blink 1.1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.cornerTL,
+.cornerBR {
+  position: absolute;
+  font-size: 1.25rem;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+}
+
+.cornerTL {
+  top: 14px;
+  left: 20px;
+}
+
+.cornerBR {
+  bottom: 14px;
+  right: 20px;
+}
+
+.chin {
+  text-align: center;
+  margin-top: var(--sp-sm);
+  letter-spacing: 0.2em;
+}
+
+/* The screen's light falling on the deck below — the one permitted cast.
+   Anchored at the bezel's lower edge (over the chin label) so the falloff
+   is continuous from where the light physically exits; it must fade out
+   fully before the strip ends. */
+.cast {
+  position: absolute;
+  top: calc(100% - 22px);
+  left: 8%;
+  right: 8%;
+  height: 120px;
+  pointer-events: none;
+  z-index: 2;
+  background: var(--cast-idle);
+  transition: opacity var(--t-med);
+}
+
+.castPlay {
+  background: var(--cast-play);
+}
+
+/* Playing on a small screen: the CRT pins near-fullscreen, still a CRT. */
+@media (max-width: 719px) {
+  .crtUnit {
+    width: 100%;
+  }
+
+  :global(.playing-stage) .crtUnit {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 88px;
+    z-index: 30;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.playing-stage) .bezel {
+    flex: 1;
+    display: flex;
+    padding: 12px;
+  }
+
+  :global(.playing-stage) .screen {
+    aspect-ratio: auto;
+    flex: 1;
+  }
+
+  :global(.playing-stage) .chin,
+  :global(.playing-stage) .cast {
+    display: none;
+  }
+
+  .reader {
+    padding: 52px 6% 40px;
+  }
+}

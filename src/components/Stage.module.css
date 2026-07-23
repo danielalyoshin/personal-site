@@ -1,0 +1,133 @@
+.stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+/* While the camera is transformed (or in transit), the page never scrolls. */
+.clipped {
+  overflow: clip;
+  height: 100vh;
+}
+
+/* Deterministic sequences: no stray pointer input mid-flight. */
+.busy {
+  pointer-events: none;
+}
+
+.camera {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--sp-lg) var(--sp-lg) var(--sp-md);
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-lg);
+}
+
+/* Engraved rack nameplate — quiet, machined, expanded. */
+.nameplate {
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-weight: 800;
+  font-stretch: 125%;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--silk-hi);
+  margin-bottom: var(--sp-xs);
+}
+
+.navLink {
+  color: var(--silk);
+  text-decoration: none;
+  padding: var(--sp-sm) 2px;
+  border-bottom: 1px solid transparent;
+  transition:
+    color var(--t-fast),
+    border-color var(--t-fast);
+}
+
+.navLink:hover {
+  color: var(--silk-hi);
+  border-bottom-color: var(--seam-lit);
+}
+
+.shelfSpot {
+  margin-bottom: var(--sp-lg);
+}
+
+.crtSpot {
+  margin-bottom: var(--sp-md);
+}
+
+.deckWrap {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto var(--sp-md);
+}
+
+.footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--seam);
+  padding-top: var(--sp-md);
+}
+
+.email {
+  text-transform: none;
+  letter-spacing: 0.08em;
+}
+
+.flightLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.flying {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 190px;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.flying svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 719px) {
+  .camera {
+    padding: var(--sp-md);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-lg);
+  }
+
+  .shelfSpot {
+    margin-bottom: var(--sp-lg);
+  }
+}
