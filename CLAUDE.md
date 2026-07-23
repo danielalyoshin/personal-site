@@ -15,8 +15,10 @@ starting work and keep it updated as stages complete or decisions change.
 - Crisp SVG/CSS rendering for cassettes and deck; WebGL is an optional late-stage
   enhancement, never a core dependency.
 - Every animation must respect `prefers-reduced-motion`.
-- Design system tokens come from `/impeccable init` (Stage 1 of the plan); follow
-  them once they exist.
+- The design system is recorded in `DESIGN.md` ("Midnight Studio"; tokens in
+  `src/styles/tokens.css`, sidecar in `.impeccable/design.json`). Follow it —
+  especially The One Light Rule (only the CRT glows) and The Tube-Scale Rule
+  (screen-interior type scales in `cqi` units).
 
 ## Git rules
 

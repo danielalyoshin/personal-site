@@ -45,19 +45,16 @@ motion.
 - ✅ Verified: dev server serves, `npm run build` (tsc + vite) passes,
   lint and format checks clean.
 
-### Stage 1 — Design system
+### Stage 1 — Design system ✅ (2026-07-22)
 
-- ✅ `/impeccable init` run (2026-07-22): product context captured in
-  `PRODUCT.md` (audience: dev/design peers; positioning: design engineer —
-  the site itself is the proof; no real project content yet).
-- The visual world and tokens — color, type scale (likely a clean grotesque
-  for UI + a mono/OSD face for diegetic screen text), spacing, radii, shadows,
-  motion durations/easings, light/dark decision — are settled when the first
-  surface is designed (Impeccable's new-work flow, e.g. via `/impeccable
-shape` or the first build request), and recorded in `DESIGN.md`.
-- Encode the result as CSS custom properties + a theme module.
-- Write down the design principles so every later stage is judged against them
-  (modern chassis / retro objects; effects diegetic; nothing aged).
+- ✅ `/impeccable init` run: product context captured in `PRODUCT.md`
+  (audience: dev/design peers; positioning: design engineer — the site
+  itself is the proof).
+- ✅ Visual world settled and recorded: **"Midnight Studio"** in `DESIGN.md`
+  (+ `.impeccable/design.json` sidecar). Faces: Archivo Variable (chassis,
+  width axis) + VT323 (OSD, inside the tube only). Named rules: One Light,
+  Artifact Color, Silkscreen, Tube-Scale.
+- ✅ Tokens encoded as CSS custom properties in `src/styles/tokens.css`.
 
 ### Stage 2 — Content model ✅ (2026-07-22, as part of core-experience build)
 
@@ -92,11 +89,15 @@ shape` or the first build request), and recorded in `DESIGN.md`.
 - Project details rendered "on screen": description, media gallery, tech tags,
   links, with OSD-style chrome (PLAY ▶, counter, date stamp). Eject to return.
 
-### Stage 6 — Supporting content (partial: About tape, footer contact, and NO SIGNAL unknown-tape screen shipped with the core build; a dedicated 404 route review remains)
+### Stage 6 — Supporting content ✅ (2026-07-22)
 
-- About section (candidate treatment: a special labeled tape, or the deck's
-  "menu channel"), contact links, footer.
-- 404 as a "NO SIGNAL" static screen.
+- ✅ About as a special tape (copy is a generic draft; Daniel rewrites it in
+  Stage 8's content pass).
+- ✅ Contact links: GitHub + LinkedIn in footer and on the About tape; email
+  deliberately removed from the site (2026-07-22).
+- ✅ 404: both cases (dead tape slug / unknown path) zoom into the CRT's
+  NO SIGNAL screen with distinct copy; exit is the deck's EJECT (enabled,
+  pulsing VFD outline) or Esc — no on-screen button.
 
 ### Stage 7 — Motion & atmosphere polish
 
@@ -136,7 +137,10 @@ shape` or the first build request), and recorded in `DESIGN.md`.
    high-end AV gear in a dim edit suite; the CRT is the page's light source;
    color arrives only through cassette spines/labels and the CRT. Guardrails:
    matte materials, no neon wash, no glow outside the CRT's controlled cast.
-2. **Sound** — include at all, and if so, default-on-with-toggle vs default-off.
+2. **Sound** — include at all, and if so, default-on-with-toggle vs
+   default-off. (Build-session recommendation: default-off behind a visible
+   deck toggle; insert clunk + eject are the high-value moments, CRT hum is
+   polarizing. Settle at Stage 7 start.)
 3. ~~**About treatment**~~ — ✅ Settled (2026-07-22, `/impeccable shape`):
    **special labeled tape on the shelf**, alongside 4–6 project tapes
    (shelf designed around 4–6 projects, one row).

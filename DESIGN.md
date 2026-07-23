@@ -265,6 +265,9 @@ nothing thicker than 1px unless it is a physical object's silhouette.
 - Ink 2 face, slot inset (Screen Black), VFD readout (VT323, VFD Cyan, no
   glow) showing the focused tape's full title, one functional EJECT button.
   No decorative dead controls.
+- Attention state (NO SIGNAL): EJECT is the exit and carries a crisp 2px
+  VFD-cyan outline pulsing opacity at 1.6s — never a halo; solid under
+  reduced motion and while focused.
 
 ### CRT (signature)
 

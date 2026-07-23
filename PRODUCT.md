@@ -55,12 +55,15 @@ accessibility standards.
 - Terminology is diegetic where it aids the metaphor: tape, deck, insert,
   eject, OSD (on-screen display), tracking, NO SIGNAL (404).
 - Undecided product facts (tracked in `PLAN.md`, not to be invented):
-  whether sound exists at all and its default state; the About treatment
-  (special tape vs. deck menu channel).
+  whether sound exists at all and its default state. (The About treatment is
+  settled: a special tape on the shelf.)
 
 ## Brand Commitments
 
 - Name: Daniel Alyoshin. No logo or wordmark exists yet.
+- Contact channels on the site: GitHub and LinkedIn (`danielalyoshin`) only.
+  Email is deliberately excluded from the shipped site (user decision,
+  2026-07-22) — do not re-add it.
 - Binding visual constraint (user-set, recorded verbatim in scope): VHS-era
   technology as subject matter with **modern-clean execution** — the site must
   look contemporary and stylized, never aged; no grunge, sepia, dirt, or
