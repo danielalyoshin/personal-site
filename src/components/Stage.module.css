@@ -12,16 +12,21 @@
   border-bottom: 1px solid var(--seam);
 }
 .identity {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
   text-decoration: none;
   color: var(--silk-hi);
 }
+/* The mark hangs in the gutter so the name sits on the column. */
 .identity svg {
-  flex-shrink: 0;
+  position: absolute;
+  top: 50%;
+  right: 100%;
   width: 34px;
   height: 28px;
+  margin-right: 16px;
+  translate: 0 -50%;
 }
 .identity h1 {
   font-size: var(--type-nameplate);
@@ -42,9 +47,19 @@
   font-weight: 500;
 }
 .navigation a,
+.footer a,
+.dragHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.navigation a,
 .footer a {
   text-decoration: none;
   padding-block: 12px;
+}
+.arrow {
+  flex-shrink: 0;
 }
 .navigation a:hover,
 .footer a:hover {
@@ -82,7 +97,7 @@
   color: var(--silk-dim);
 }
 .introAside {
-  padding: 0 16px 4px 0;
+  padding-bottom: 4px;
   max-width: 36ch;
 }
 .introAside p {
@@ -112,18 +127,20 @@
 .sceneCaption {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
-  min-height: 48px;
 }
 .objectCaption {
-  display: flex;
-  gap: 20px;
-  align-items: center;
   font-size: var(--type-functional);
   font-weight: 550;
   color: var(--silk-hi);
+}
+/* The guide's first line shares the reset key's 44px centre line, so the
+   drag hint sits on its baseline; the instruction hangs beneath. */
+.objectCaption > span {
+  display: block;
+  padding-top: calc((44px - 1.5 * var(--type-functional)) / 2);
 }
 .objectCaption small {
   display: block;
@@ -136,12 +153,12 @@
 .sceneTools {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  height: 44px;
 }
 .dragHint {
   color: var(--silk-dim);
   font-size: var(--type-caption);
-  margin-right: 4px;
 }
 .sceneTools button {
   display: flex;
@@ -194,12 +211,14 @@
 .tapeIndex li {
   display: flex;
 }
+/* One text edge per entry: the number sits over the name, as on a spine. */
 .tapeIndex a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: grid;
+  grid-template: auto auto / minmax(0, 1fr) auto;
+  gap: 4px 8px;
+  align-content: center;
   position: relative;
-  padding: 16px 12px;
+  padding: 12px;
   min-height: 80px;
   width: 100%;
   border: 1px solid var(--seam);
@@ -213,8 +232,8 @@
   content: '';
   position: absolute;
   left: -1px;
-  top: 17px;
-  bottom: 17px;
+  top: 13px;
+  bottom: 13px;
   width: 2px;
   background: var(--tape-accent);
 }
@@ -226,9 +245,8 @@
 }
 .tapeNumber {
   font-size: 9px;
+  line-height: 1.2;
   color: var(--silk-dim);
-  align-self: flex-start;
-  padding-top: 3px;
   font-variant-numeric: tabular-nums;
 }
 .tapeLabel {
@@ -250,10 +268,11 @@
   text-transform: none;
 }
 .playArrow {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: center;
   font-size: 10px;
-  flex-shrink: 0;
   color: var(--silk-dim);
-  margin-left: auto;
 }
 .footer {
   display: flex;
@@ -269,7 +288,6 @@
   display: flex;
   gap: 24px;
   margin-left: auto;
-  margin-right: 48px;
   color: var(--silk);
 }
 .footerEdition {
@@ -379,11 +397,12 @@
   }
 }
 @media (max-width: 1200px) {
-  .tapeIndex {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  .identity svg,
   .dragHint {
     display: none;
+  }
+  .tapeIndex {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 @media (max-width: 600px) {
@@ -393,14 +412,8 @@
   .header {
     min-height: 72px;
   }
-  .identity {
-    gap: 10px;
-  }
   .identity h1 {
     font-size: var(--type-navigation);
-  }
-  .identity svg {
-    width: 26px;
   }
   .navigation {
     gap: 18px;
@@ -417,7 +430,6 @@
   }
   .introAside {
     margin-top: 12px;
-    padding-right: 0;
   }
   .desktopBreak {
     display: none;
@@ -426,7 +438,9 @@
     margin-top: 12px;
   }
   .scene {
-    height: clamp(264px, 80vw, 384px);
+    /* Snug to the fitted studio: at phone widths the equipment, not the
+       height, sets the zoom, so 72vw leaves only the fit's own margins. */
+    height: clamp(220px, 72vw, 384px);
     width: calc(100% + 12vw);
     margin-left: -6vw;
   }
@@ -460,9 +474,6 @@
   }
   .footer > span:first-child {
     width: 100%;
-  }
-  .footer nav {
-    margin: 0 auto 0 0;
   }
   .playing .scene {
     margin: 0;

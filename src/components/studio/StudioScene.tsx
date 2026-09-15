@@ -315,7 +315,7 @@ function Monitor() {
 
 function Table() {
   return (
-    <group>
+    <group name="studio-table">
       <Solid
         size={[9.5, 0.16, 5.15]}
         position={[0, 0.08, 0]}

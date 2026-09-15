@@ -309,7 +309,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               select(shelfTapes[shelfTapes.length - 1])
             }}
           >
-            About me <span aria-hidden="true">▶</span>
+            About me
+            <span className={styles.arrow} aria-hidden="true">
+              ▶
+            </span>
           </Link>
         </nav>
       </header>
@@ -362,7 +365,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             </div>
             {!flat && (
               <div className={styles.sceneTools}>
-                <span className={styles.dragHint}>↔ Drag to look around</span>
+                <span className={styles.dragHint}>
+                  <span className={styles.arrow} aria-hidden="true">
+                    ↔
+                  </span>
+                  Drag to look around
+                </span>
                 <button
                   type="button"
                   onClick={() => setReset((value) => value + 1)}
@@ -498,23 +506,29 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         aria-hidden={open || undefined}
       >
         <span>Made with intention. A little nostalgia, too.</span>
+        <span className={styles.footerEdition}>DA / © 2026</span>
         <nav aria-label="Contact">
           <a
             href="https://github.com/danielalyoshin"
             target="_blank"
             rel="noreferrer"
           >
-            GitHub ↗
+            GitHub
+            <span className={styles.arrow} aria-hidden="true">
+              ↗
+            </span>
           </a>
           <a
             href="https://www.linkedin.com/in/danielalyoshin/"
             target="_blank"
             rel="noreferrer"
           >
-            LinkedIn ↗
+            LinkedIn
+            <span className={styles.arrow} aria-hidden="true">
+              ↗
+            </span>
           </a>
         </nav>
-        <span className={styles.footerEdition}>DA / © 2026</span>
       </footer>
 
       {loading && !useNativeReader && (

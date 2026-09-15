@@ -430,6 +430,43 @@ against WebGL; the July entries below remain a record of the original build.
   insertion start and mid-flight, playback, hover, sound on, keyboard focus,
   after-eject, and 390px phone playback.
 
+#### Layout pass — one column, guide row, phone framing (2026-09-15)
+
+- ✅ One column: the header mark hangs 16px into the left gutter above 1200px
+  (hidden below) so the nameplate sits on the column; the introductory
+  aside lost its 16px right padding and the footer nav its 48px right
+  margin, and the footer now reads statement + edition left, contact links
+  flush right. At 1440px every shell edge measures 72px or 1368px.
+- ✅ Guide row: the guide's first line is centred on the reset key's 44px
+  height (padding computed from the functional type size), so the drag hint
+  and the reset circle share its centre line (baselines within 0.5px); the
+  instruction hangs beneath and the 48px minimum height is gone.
+- ✅ Arrows: "About me ▶", "GitHub ↗", "LinkedIn ↗", and "↔ Drag to look
+  around" set their glyph in an `aria-hidden` span spaced by a 0.5em flex
+  gap instead of a typed space; the footer arrows are now hidden from
+  screen readers like the nav's.
+- ✅ Tape index entries: number stacked over the name on one text edge (as
+  on a spine), 12px inset all round, accent strip inset to match, play symbol
+  centred in its own grid column. The card interior went from two text edges
+  (85/103px) to one (85px).
+- ✅ Phone framing: canvases up to 600px fit every piece of equipment
+  horizontally (only the `studio-table` group may run out of frame) with the
+  shell's 6% gutter as the margin, so the speaker and headphones are never
+  cropped and the widest objects land on the text column; the canvas height
+  is `clamp(220px, 72vw, 384px)`, snug to that fit. Cost: the idle screen is
+  about 110px wide at 390px and 90px at 320px (was 134/109).
+- Docs: added The One Column Rule and rewrote the guide, footer, canvas
+  height, phone framing, Studio tools, Navigation arrow, and Tape index
+  passages in DESIGN.md; synced the sidecar samples and the surface brief.
+- Validation: 22 Chrome tests (the framing regression now also proves every
+  object stays 15px inside the canvas at 1366/390/320px throughout the
+  orbit range, with a phone screen-width floor of 100px above 360px and 80px
+  below), production build, ESLint, formatting, and the Impeccable detector
+  (only the five pre-existing 9–42px size advisories owed to typeset).
+  Measured edges, baselines, and projected equipment bounds at 1440, 1240,
+  1024, 430, 390, 360, and 320px; reviewed 2× renders of the header, guide
+  row, cards, footer, and 390px phone.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

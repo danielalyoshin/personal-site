@@ -31,7 +31,7 @@ async function inspectFrames(
         controls.update()
       }
       const point = new Vector3()
-      const bounds = (name: string) => {
+      const bounds = (name: string, except?: string) => {
         const result = {
           left: Infinity,
           top: Infinity,
@@ -40,6 +40,8 @@ async function inspectFrames(
         }
         scene.getObjectByName(name)!.traverse((object) => {
           if (!(object instanceof Mesh)) return
+          for (let parent = object.parent; parent; parent = parent.parent)
+            if (parent.name === except) return
           const positions = object.geometry.attributes.position
           for (let i = 0; i < positions.count; i++) {
             point
@@ -69,10 +71,13 @@ async function inspectFrames(
         )
       }
       const studio = bounds('studio-model')
+      // Every object except the table, which may run out of a phone frame.
+      const equipment = bounds('studio-model', 'studio-table')
       const screen = bounds('crt-screen')
       return {
         monitorMargin,
         studioMargin: Math.min(studio.top, size.height - studio.bottom),
+        equipmentMargin: Math.min(equipment.left, size.width - equipment.right),
         screenWidth: screen.right - screen.left,
       }
     },
@@ -80,7 +85,7 @@ async function inspectFrames(
   )
 }
 
-test('the opening studio is closer and preserves headroom throughout its orbit', async ({
+test('the opening studio keeps every object in frame and preserves headroom throughout its orbit', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -96,15 +101,19 @@ test('the opening studio is closer and preserves headroom throughout its orbit',
       'true',
     )
     const initial = await inspectFrames(page, 2)
+    // Phones fit the speaker and headphones too, so the screen is smaller
+    // there; the floor still keeps the idle message legible.
     expect(initial.screenWidth).toBeGreaterThan(
-      viewport.width > 600 ? 145 : 100,
+      viewport.width > 600 ? 145 : viewport.width > 360 ? 100 : 80,
     )
     expect(initial.studioMargin).toBeGreaterThanOrEqual(15)
+    expect(initial.equipmentMargin).toBeGreaterThanOrEqual(15)
     for (const azimuth of [-0.45, 0.85]) {
       for (const polar of [0.87, 1.42]) {
         const rotated = await inspectFrames(page, 2, { azimuth, polar })
         expect(rotated.monitorMargin).toBeGreaterThanOrEqual(15)
         expect(rotated.studioMargin).toBeGreaterThanOrEqual(15)
+        expect(rotated.equipmentMargin).toBeGreaterThanOrEqual(15)
       }
     }
     await page.getByRole('button', { name: 'Reset studio view' }).click()

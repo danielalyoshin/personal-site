@@ -3,23 +3,19 @@ import type { Object3D, OrthographicCamera } from 'three'
 
 /** Fit the rendered equipment, excluding the shadow-catching ground plane. */
 export function createStudioFraming(studio: Object3D) {
-  const parts: { mesh: Mesh; playback: boolean; subject: boolean }[] = []
+  const parts: { mesh: Mesh; playback: boolean; furniture: boolean }[] = []
   studio.traverse((object) => {
     if (!(object instanceof Mesh)) return
     let monitor = false
     let player = false
-    let subject = false
+    let table = false
     for (let parent: Object3D | null = object; parent; parent = parent.parent) {
       monitor ||= parent.name === 'crt-monitor'
       player ||= parent.name === 'vhs-player'
-      subject ||= parent.name.startsWith('tape-')
+      table ||= parent.name === 'studio-table'
     }
     object.geometry.computeBoundingBox()
-    parts.push({
-      mesh: object,
-      playback: monitor || player,
-      subject: subject || monitor,
-    })
+    parts.push({ mesh: object, playback: monitor || player, furniture: table })
   })
   const view = new Matrix4()
   const point = new Vector3()
@@ -37,7 +33,7 @@ export function createStudioFraming(studio: Object3D) {
     let monitorX = 0
     let monitorY = 0
     const narrow = width <= 600
-    for (const { mesh, playback, subject } of parts) {
+    for (const { mesh, playback, furniture } of parts) {
       // The idle screen plane unmounts when the HTML reader takes its place.
       if (!mesh.parent) continue
       // R3F can replace a geometry when playback changes its props.
@@ -52,9 +48,11 @@ export function createStudioFraming(studio: Object3D) {
             corner & 4 ? bounds.max.z : bounds.min.z,
           )
           .applyMatrix4(view)
-        // Phones prioritize the CRT and rack horizontally; every object still
+        // Phones keep every piece of equipment in frame; only the table may
+        // run out of the sides, as a real tabletop would. Every object still
         // contributes to headroom, including during orbit and cassette flight.
-        if (!narrow || subject) browseX = Math.max(browseX, Math.abs(point.x))
+        if (!narrow || !furniture)
+          browseX = Math.max(browseX, Math.abs(point.x))
         browseY = Math.max(browseY, Math.abs(point.y))
         if (playback) {
           monitorX = Math.max(monitorX, Math.abs(point.x))
@@ -62,7 +60,8 @@ export function createStudioFraming(studio: Object3D) {
         }
       }
     }
-    const padding = narrow ? 16 : 24
+    // Phones land the widest equipment on the shell's 6% text gutter.
+    const padding = narrow ? Math.round(width * 0.06) : 24
     // Blend the framing envelope as the camera turns toward playback. Fitting
     // only the destination lets the tilted CRT cross the top edge mid-flight.
     // Playback includes the complete player so its physical keys stay in view.

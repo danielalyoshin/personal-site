@@ -15,12 +15,19 @@ into a clean, artsy, intentional low-poly 3D experience. This supersedes the
 July SVG-only implementation. Normative direction: `DESIGN.md`.
 
 Composition: compact identity header and editorial introduction, selection
-guide with drag hint and reset above the orthographic 3D exhibit, six-tape
-text index, GitHub/LinkedIn footer. The shell carries no scene metadata,
+guide whose first line carries the drag hint and reset above the orthographic
+3D exhibit, six-tape text index, GitHub/LinkedIn footer with the contact links
+flush right. Every shell edge sits on the one column (the cassette mark hangs
+in the gutter above 1200px); the tape index entries' 12px insets are the only
+inboard edges, and each entry stacks its number over its name so it has one
+text edge. Arrows are spans spaced by flex gap. The shell carries no scene metadata,
 clock, caption number, page-level sound control, or edition marks; the index
 heading holds the page's only tape count, and the header's "The archive" link
 is its single visible index route at every width. Height-aware desktop framing keeps the studio and its
-selection instruction together; phones use a closer, more frontal camera.
+selection instruction together; phones use a closer, more frontal camera
+that fits every piece of equipment inside a full-bleed canvas snug to the
+studio, with the shell's gutter as its margin, so the speaker and headphones
+are never cropped (only the table runs out of frame).
 The larger opening canvas and enlarged idle-screen message support reading
 before selection. Geometry-aware framing preserves top clearance during orbit
 and blends into the complete CRT and player during playback zoom.

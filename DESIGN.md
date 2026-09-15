@@ -341,6 +341,13 @@ increasing to 6% at widths of 600px and below. Fine seams divide the header,
 archive, and footer. The shared spacing primitives use a 4px base; the shell
 also has optical adjustments documented in its component CSS.
 
+**The One Column Rule.** Every shell edge sits on the container's two edges:
+the nameplate, kicker, display line, guide, archive heading, and footer
+statement on the left; the navigation, introductory aside, archive note, and
+contact links on the right. The cassette mark hangs 16px into the left gutter
+above 1200px so the name stays on the column, and is not drawn below that
+width. The only inboard edges are the tape index entries' own 12px insets.
+
 The archive uses six equal columns, three at 1200px and below, and two at 600px
 and below, with an 8px gap. Flex list items and full-width links keep each row's
 entries equally tall when a narrow label wraps. The header has an 80px minimum height, becoming 72px on phones
@@ -348,25 +355,36 @@ and on viewports wider than 600px but no taller than 820px. The introduction
 uses 32px top spacing, reduced to 20px on those short desktop viewports and
 16px on phones. At 600px and below, the introduction stacks and the footer wraps.
 
-The selection guide precedes the canvas. It pairs "Choose a tape to play"
-with a one-line instruction that points at the studio rather than the index;
-the drag hint and the 44px reset control sit beside it. The guide has a 48px
-minimum height and sits 24px below the introduction. There is no scene
-metadata line and no clock above the canvas. The index follows the canvas
-with a seam and 16px top padding. This groups the artifact with its selection
-surfaces.
+The selection guide precedes the canvas, 24px below the introduction. It
+pairs "Choose a tape to play" with a one-line instruction that points at the
+studio rather than the index. The guide's first line is centred on the reset
+key's 44px height, so the drag hint's baseline matches the guide's within
+half a pixel and the reset circle shares the same centre line; the
+instruction hangs 4px beneath, and the canvas follows it directly. There is
+no scene metadata line and no clock above the canvas. The index follows the
+canvas with a seam and 16px top padding. This groups the artifact with its
+selection surfaces.
+
+The footer sets the statement and the edition mark on the left and the
+contact links flush right on the column, mirroring the header. At 600px and
+below the statement takes the first row and the edition and links share the
+second.
 
 The exhibit's default height is
 `clamp(360px, min(48vw, calc(100svh - 350px)), 680px)` so the opening studio
 has room for readable screen text while adapting to short desktop viewports.
-At 600px and below it uses `clamp(264px, 80vw, 384px)` and extends past the shell gutters. The orthographic
+At 600px and below it uses `clamp(220px, 72vw, 384px)` and extends past the
+shell gutters; at phone widths the equipment, not the height, sets the zoom,
+so that height is snug to the fitted studio. The orthographic
 camera provides a three-quarter browse view with constrained rotation and no
 user-controlled pan or zoom. The desktop camera starts at `[5.8, 5.75, 12]`
 looking at `[0, 1.9, 0]`; canvases up to 600px use `[3.8, 5.05, 12]`
 looking at `[0.25, 2, 0]`. Camera zoom fits the equipment's projected geometry
-with 24px margins, or 16px on narrow canvases. Phones prioritize the CRT and
-tapes horizontally while preserving headroom for all objects. The framing
-updates during orbit, insertion, resize, and eject. Playback centers the CRT and player together at y = 2.71 and blends toward
+with 24px margins. Canvases up to 600px use the shell's 6% gutter as the
+margin and fit every piece of equipment horizontally, so no object is cropped
+and the widest pieces land on the text column; only the table may run out of
+the sides, as a real tabletop would. Every object still contributes to
+headroom. The framing updates during orbit, insertion, resize, and eject. Playback centers the CRT and player together at y = 2.71 and blends toward
 their combined bounds as the camera turns, preserving the complete chassis
 and clickable front panel throughout the zoom. Reduced motion applies the same fit immediately.
 On touch devices, vertical swipes scroll the page and pinch gestures zoom the
@@ -476,8 +494,9 @@ key, raised edge, or press movement; the deck's printed model label stays visibl
 ### Studio tools
 
 Reset is an outlined 44px circle at every width; hover strengthens its
-border over 200ms, and a short drag hint precedes it above 1200px. These two
-are the only tools beside the guide. There is no page-level sound control:
+border over 200ms, and a short drag hint precedes it above 1200px, 20px
+apart. These two are the only tools beside the guide, and both are centred on
+the guide's first line. There is no page-level sound control:
 the deck's SOUND key is the single toggle, live on the modeled player during
 playback and in the native reader's hardware panel otherwise. Its speaker SVG
 shows waves when enabled and a cross when disabled; `aria-pressed` carries the
@@ -492,17 +511,22 @@ raises text contrast; keyboard focus retains the cyan outline. The header
 carries "The archive" and About at every width; "The archive" is the page's
 single visible route to the index, and neither link shows a count. Contact
 links stay in the footer. Internal About and tape links use a play symbol; the
-outward arrow is reserved for external links. The introduction has no index
-shortcut. A focus-revealed skip link leads to the accessible archive.
+outward arrow is reserved for external links. Every arrow is its own
+`aria-hidden` span set 0.5em from its label by flex gap, never by a typed
+space; the drag hint's leading arrow follows the same rule. The introduction
+has no index shortcut. A focus-revealed skip link leads to the accessible archive.
 
 ### Tape index
 
 A linked entry with a numbered label, explicit placeholder caption, play symbol,
 and a thin accent strip supplied by its tape data. Each entry uses a seam border
 and small corners; hover, focus, or modeled-tape preview fills it with ink-2 and
-strengthens the border. Minimum height is 80px at every width, with 16px 12px
-padding. Names wrap as needed; 12px secondary copy distinguishes "Placeholder"
-from the About tape's "Meet the maker". The six links remain normal Tab stops,
+strengthens the border. The number sits above the name, as on a cassette
+spine, so each entry has one text edge; the play symbol is centred on the
+entry in its own column. Minimum height is 80px at every width, with a 12px
+inset on every side and the accent strip inset to match. Names wrap as
+needed; 12px secondary copy distinguishes "Placeholder" from the About
+tape's "Meet the maker". The six links remain normal Tab stops,
 with arrows and Home/End for direct movement; About is included in its accessible name.
 The index heading carries the page's only tape count.
 
