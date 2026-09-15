@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Path, Shape } from 'three'
-import { Disc, Print, Solid } from './geometry'
+import { Disc, Solid } from './geometry'
 import { Fasteners, Turned } from './ModelDetails'
 
 const mount: [number, number][] = [
@@ -115,24 +115,9 @@ export default function Speaker() {
         </group>
       ))}
       <Fasteners positions={driverScrews} radius={0.015} color="#75808b" />
-      <Print
-        text="STUDIO / 01"
-        width={0.43}
-        height={0.048}
-        position={[0, -0.602, 0.482]}
-        background="#424d59"
-        color="#c0c7cf"
-      />
       <group position={[0, -0.18, -0.46]} rotation={[0, Math.PI, 0]}>
         <Solid size={[0.56, 0.5, 0.022]} color="#1b2530" bevel={0.016} />
         <Fasteners positions={rearScrews} radius={0.012} color="#606e7d" />
-        <Print
-          text="STUDIO / 01"
-          width={0.32}
-          height={0.045}
-          position={[0, 0.125, 0.012]}
-          background="#1b2530"
-        />
         {[-0.1, 0.1].map((x) => (
           <group
             key={x}

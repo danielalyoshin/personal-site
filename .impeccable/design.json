@@ -517,25 +517,17 @@
       "name": "Reset studio view",
       "kind": "button",
       "refersTo": "button-reset",
-      "description": "44px circular control beside the selection guide above the canvas; stronger border on hover.",
+      "description": "44px circular control beside the selection guide above the canvas, after the drag hint; stronger border on hover. With the browse sound toggle removed it is the only tool there.",
       "html": "<div class=\"ds-sample\"><div class=\"ds-tools\"><button type=\"button\" aria-label=\"Reset studio view\" title=\"Reset view\">↺</button></div></div>",
       "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tools{display:flex;align-items:center;gap:16px;}\n.ds-tools button{display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--seam);color:var(--silk);width:44px;height:44px;flex-shrink:0;border-radius:50%;font-size:18px;transition:border-color 0.2s;}\n.ds-tools button:hover{border-color:var(--silk-dim);}\n@media (max-width: 600px){.ds-tools{gap:4px;}\n}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
-    },
-    {
-      "name": "Browse sound",
-      "kind": "button",
-      "refersTo": "button-sound",
-      "description": "Borderless 44px browse toggle beside the selection guide; 12px text hides at the phone breakpoint.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-tools\"><button type=\"button\" class=\"ds-sound\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"m13 7 5 6m0-6-5 6\"/></svg><span>Sound off</span></button></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tools{display:flex;align-items:center;gap:16px;}\n.ds-tools button{display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--seam);color:var(--silk);width:44px;height:44px;flex-shrink:0;border-radius:50%;font-size:18px;transition:border-color 0.2s;}\n.ds-tools button:hover{border-color:var(--silk-dim);}\n.ds-tools .ds-sound{width:auto;gap:8px;border:none;border-radius:3px;font-size:12px;min-width:44px;}\n@media (max-width: 600px){.ds-tools{gap:4px;}\n.ds-tools .ds-sound span{display:none;}\n}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Site navigation",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "13px Archivo links with an archive count and an internal play symbol; 12px on phones, where the archive shortcut hides.",
-      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive <span class=\"ds-count\">06</span></a><a href=\"/project/about\">About me <span aria-hidden=\"true\">▶</span></a></nav></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.8125rem;font-weight:500;}\n.ds-nav a{text-decoration:none;padding-block:12px;}\n.ds-nav a:hover{color:var(--silk-hi);}\n.ds-count{margin-left:5px;color:var(--silk-dim);font-size:9px;vertical-align:super;}\n@media (max-width: 600px){.ds-nav{gap:18px;}\n.ds-nav > a:first-child{display:none;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+      "description": "13px Archivo links at every width: the archive route (the page's single visible index CTA) and About with an internal play symbol; 12px on phones. No counts.",
+      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive</a><a href=\"/project/about\">About me <span aria-hidden=\"true\">▶</span></a></nav></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.8125rem;font-weight:500;}\n.ds-nav a{text-decoration:none;padding-block:12px;}\n.ds-nav a:hover{color:var(--silk-hi);}\n@media (max-width: 600px){.ds-nav{gap:18px;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Tape index entry",

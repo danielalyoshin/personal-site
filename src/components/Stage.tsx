@@ -11,13 +11,12 @@ import type { CSSProperties, ErrorInfo, ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, shelfTapes } from '../content/projects'
 import type { Project } from '../content/types'
-import { changeSound, playSound, useSoundEnabled } from '../lib/sound'
+import { playSound, useSoundEnabled } from '../lib/sound'
 import { useReducedMotion } from '../lib/useReducedMotion'
-import { useClock } from '../lib/useClock'
 import { useMediaQuery } from '../lib/useMediaQuery'
 import { supportsWebGL } from '../lib/supportsWebGL'
 import CRT from './CRT'
-import DeckControls, { SoundIcon } from './DeckControls'
+import DeckControls from './DeckControls'
 import styles from './Stage.module.css'
 
 const StudioScene = lazy(() => import('./studio/StudioScene'))
@@ -51,7 +50,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     '(max-width: 767px), (max-height: 699px)',
   )
   const soundOn = useSoundEnabled()
-  const clock = useClock()
   const tape = findTape(slug) ?? null
   const invalid = notFound || (!!slug && !tape)
   const open = !!tape || invalid
@@ -226,10 +224,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   )
   const fallback = (
     <div className={styles.fallback}>
-      <div className={styles.fallbackMonitor}>
-        {reader}
-        <span className="silkLabel">ALYOSHIN · COLOR MONITOR</span>
-      </div>
+      <div className={styles.fallbackMonitor}>{reader}</div>
       {!open && (
         <p className={styles.fallbackNote}>
           The archive is ready. Choose a tape below.
@@ -299,9 +294,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           </span>
         </Link>
         <nav className={styles.navigation} aria-label="Site">
-          <a href="#archive">
-            The archive <span className={styles.navCount}>06</span>
-          </a>
+          <a href="#archive">The archive</a>
           <Link
             to="/project/about"
             onClick={(event) => {
@@ -343,9 +336,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               the internet,
               <br className={styles.desktopBreak} /> one tape at a time.
             </p>
-            <a href="#archive">
-              Browse the tape index <span aria-hidden="true">↓</span>
-            </a>
           </div>
         </section>
 
@@ -354,25 +344,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           aria-label={open ? 'Tape playback' : 'Interactive 3D studio'}
         >
           <div
-            className={styles.sceneMeta}
-            inert={open || undefined}
-            aria-hidden={open || undefined}
-          >
-            <span>
-              STUDIO 01 <span className={styles.metaDivider}>/</span> PERSONAL
-              ARCHIVE
-            </span>
-            <span className={styles.liveStatus}>
-              <i /> {clock} · LOCAL TIME
-            </span>
-          </div>
-          <div
             className={styles.sceneCaption}
             inert={open || undefined}
             aria-hidden={open || undefined}
           >
             <div className={styles.objectCaption}>
-              <span className={styles.captionNumber}>01—06</span>
               <span>
                 {preview ? preview.vhs.spineLabel : 'Choose a tape to play'}
                 <small>
@@ -380,35 +356,23 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     ? preview.slug === 'about'
                       ? 'About Daniel · Select to play'
                       : 'Placeholder tape · Select to play'
-                    : 'Select a cassette here or use the index below.'}
+                    : 'Select a cassette in the studio.'}
                 </small>
               </span>
             </div>
-            <div className={styles.sceneTools}>
-              {!flat && (
-                <>
-                  <span className={styles.dragHint}>↔ Drag to look around</span>
-                  <button
-                    type="button"
-                    onClick={() => setReset((value) => value + 1)}
-                    aria-label="Reset studio view"
-                    title="Reset view"
-                  >
-                    ↺
-                  </button>
-                </>
-              )}
-              <button
-                type="button"
-                className={styles.sound}
-                aria-label="Sound effects"
-                aria-pressed={soundOn}
-                onClick={changeSound}
-              >
-                <SoundIcon enabled={soundOn} />
-                <span>Sound {soundOn ? 'on' : 'off'}</span>
-              </button>
-            </div>
+            {!flat && (
+              <div className={styles.sceneTools}>
+                <span className={styles.dragHint}>↔ Drag to look around</span>
+                <button
+                  type="button"
+                  onClick={() => setReset((value) => value + 1)}
+                  aria-label="Reset studio view"
+                  title="Reset view"
+                >
+                  ↺
+                </button>
+              </div>
+            )}
           </div>
           <div
             className={styles.scene}

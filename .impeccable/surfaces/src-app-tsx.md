@@ -15,8 +15,11 @@ into a clean, artsy, intentional low-poly 3D experience. This supersedes the
 July SVG-only implementation. Normative direction: `DESIGN.md`.
 
 Composition: compact identity header and editorial introduction, selection
-guide and studio tools above the orthographic 3D exhibit, six-tape text index,
-GitHub/LinkedIn footer. Height-aware desktop framing keeps the studio and its
+guide with drag hint and reset above the orthographic 3D exhibit, six-tape
+text index, GitHub/LinkedIn footer. The shell carries no scene metadata,
+clock, caption number, page-level sound control, or edition marks; the index
+heading holds the page's only tape count, and the header's "The archive" link
+is its single visible index route at every width. Height-aware desktop framing keeps the studio and its
 selection instruction together; phones use a closer, more frontal camera.
 The larger opening canvas and enlarged idle-screen message support reading
 before selection. Geometry-aware framing preserves top clearance during orbit
@@ -28,11 +31,14 @@ VT323 metadata. Functional captions retain a 0.75rem floor, and scene/transport 
 44px hit areas. The studio contains a
 beveled CRT, VCR, speaker, rack of six cassettes, loose cassette with reels,
 headphones and stand, display table, and plinth. All geometry and printed
-textures are generated locally. Matte graphite, carefully selected small
-details, saturated cassette accents, blue idle screen. Neutral studio fill
+textures are generated locally. Print is limited to the four signature marks
+(status window, AV–01 model line, spine number and name, idle screen) plus one
+label per working key cap; every other object is unlettered. Matte graphite,
+carefully selected small details, saturated cassette accents, blue idle screen. Neutral studio fill
 reveals broad planes; only the CRT emits light.
 
-Browse: "Choose a tape to play" explains the action before the canvas.
+Browse: "Choose a tape to play" explains the action before the canvas, with
+a one-line instruction that points at the studio rather than the index.
 Hover/focus previews and raises a tape; click or Enter selects it. Internal
 playback links use a play symbol; external links retain the outward arrow.
 Drag within constrained camera angles; reset restores the original view.
@@ -66,7 +72,9 @@ Accessibility: all tapes are ordinary links; arrows and Home/End move focus.
 During reading, background regions are inert and aria-hidden; focus remains
 inside the reader and transport. The named scrollable article is a Tab stop,
 allowing return from the transport controls; initial focus announces the title.
-About remains explicit in its archive link's accessible name. Sound is opt-in, synthesized, and per-visit.
+About remains explicit in its archive link's accessible name. Sound is opt-in,
+synthesized, per-visit, and toggled only on the deck (modeled key during
+playback, native reader panel otherwise); browse has no sound control.
 Reader contact links have separate 44px touch targets. No ambient animation or
 sound; the canvas renders on demand. Printed textures redraw after explicit
 Archivo and VT323 loading, with disposed textures excluded.

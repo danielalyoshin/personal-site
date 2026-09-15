@@ -134,9 +134,9 @@ test('cold-cache fonts redraw live labels and the current preview without revivi
         (texture) => `${texture.image.width}×${texture.image.height}`,
       )
     })
-    expect(sizes).toEqual(
-      expect.arrayContaining(['1024×128', '192×768', '1024×768']),
-    )
+    expect(sizes).toEqual(expect.arrayContaining(['192×768', '1024×768']))
+    // Printed labels are aspect-fitted: 1024 wide, with the plane's own height.
+    expect(sizes.some((size) => /^1024×(?!768$)\d+$/.test(size))).toBe(true)
     // Let the reduced-motion preview frame finish before font release, so
     // the next frame must be requested by the font-driven texture update.
     await page.waitForTimeout(150)

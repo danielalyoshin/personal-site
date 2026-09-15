@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Path, Shape } from 'three'
-import { Disc, Print, Solid } from './geometry'
+import { Disc, Solid } from './geometry'
 
 function oval(width: number, height: number) {
   const shape = new Shape()
@@ -133,16 +133,6 @@ export default function Headphones() {
           metalness={0.3}
         />
       </mesh>
-      <Print
-        text="STUDIO / HP–01"
-        width={0.4}
-        height={0.048}
-        position={[0, 0.119, 0.22]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        background="#424d5a"
-        color="#b4bdc8"
-      />
-
       <group position={[0, 1.36, 0.065]}>
         <mesh geometry={geometry.cradle} castShadow receiveShadow>
           <meshStandardMaterial color="#3f4a56" roughness={0.82} />

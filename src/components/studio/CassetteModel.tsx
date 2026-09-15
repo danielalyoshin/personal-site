@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Path, Shape } from 'three'
-import { Disc, Print, Solid } from './geometry'
+import { Disc, Solid } from './geometry'
 import { DetailBoxes, Fasteners, Turned } from './ModelDetails'
 import { makeTexture, useTextureDisposal } from './textures'
 
@@ -213,15 +213,6 @@ export default function CassetteModel({
         ))}
         <DetailBoxes boxes={ribs} color="#202c37" />
         <Fasteners positions={screws} radius={0.014} color="#697783" />
-        <Print
-          fitted
-          text="VHS / HI-FI"
-          width={0.38}
-          height={0.044}
-          position={[0, 0.351, 0.188]}
-          background="#2d3945"
-          color="#97a4ae"
-        />
       </group>
     </group>
   )

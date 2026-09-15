@@ -72,13 +72,13 @@ export function Disc({
   )
 }
 
+/** Printed text whose texture matches the plane's proportions, so glyphs never stretch. */
 export function Print({
   text,
   width = 1,
   height = 0.12,
   color = '#b7bbc6',
   background = '#343840',
-  fitted = false,
   ...props
 }: Omit<ThreeElements['mesh'], 'args'> & {
   text: string
@@ -86,20 +86,19 @@ export function Print({
   height?: number
   color?: string
   background?: string
-  fitted?: boolean
 }) {
   const texture = useMemo(() => {
-    const textureHeight = fitted ? Math.round((1024 * height) / width) : 128
+    const textureHeight = Math.round((1024 * height) / width)
     return makeTexture(1024, textureHeight, (ctx) => {
       ctx.fillStyle = background
       ctx.fillRect(0, 0, 1024, textureHeight)
       ctx.fillStyle = color
-      ctx.font = `500 ${fitted ? textureHeight * 0.65 : 54}px "Archivo Variable", sans-serif`
+      ctx.font = `500 ${textureHeight * 0.65}px "Archivo Variable", sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.fillText(text, 512, fitted ? textureHeight / 2 : 66, 980)
+      ctx.fillText(text, 512, textureHeight / 2, 980)
     })
-  }, [text, color, background, fitted, height, width])
+  }, [text, color, background, height, width])
   useTextureDisposal(texture)
   return (
     <mesh {...props}>

@@ -50,12 +50,6 @@
 .footer a:hover {
   color: var(--silk-hi);
 }
-.navCount {
-  margin-left: 5px;
-  color: var(--silk-dim);
-  font-size: 9px;
-  vertical-align: super;
-}
 .intro {
   display: flex;
   justify-content: space-between;
@@ -98,17 +92,6 @@
   text-wrap: pretty;
   color: var(--silk);
 }
-.introAside a {
-  display: inline-block;
-  margin-top: 12px;
-  font-size: var(--type-navigation);
-  font-weight: 550;
-  text-decoration: none;
-  color: var(--silk-hi);
-}
-.introAside a span {
-  margin-left: 18px;
-}
 .exhibit {
   position: relative;
   margin-top: 24px;
@@ -126,38 +109,12 @@
   inset: 0;
   pointer-events: none;
 }
-.sceneMeta {
-  display: flex;
-  justify-content: space-between;
-  color: var(--silk-dim);
-  font-size: 9px;
-  font-weight: 550;
-  letter-spacing: 0.12em;
-  pointer-events: none;
-}
-.metaDivider {
-  color: var(--seam-lit);
-  margin: 0 12px;
-}
-.liveStatus {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font-variant-numeric: tabular-nums;
-}
-.liveStatus i {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--vfd);
-}
 .sceneCaption {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin: 12px 0 0;
   min-height: 48px;
 }
 .objectCaption {
@@ -167,13 +124,6 @@
   font-size: var(--type-functional);
   font-weight: 550;
   color: var(--silk-hi);
-}
-.captionNumber {
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  color: var(--silk-dim);
-  border-right: 1px solid var(--seam-lit);
-  padding: 8px 20px 8px 0;
 }
 .objectCaption small {
   display: block;
@@ -209,14 +159,6 @@
 }
 .sceneTools button:hover {
   border-color: var(--silk-dim);
-}
-.sceneTools .sound {
-  width: auto;
-  gap: 8px;
-  border: none;
-  border-radius: 3px;
-  font-size: var(--type-caption);
-  min-width: 44px;
 }
 .archive {
   border-top: 1px solid var(--seam);
@@ -399,17 +341,11 @@
 }
 .fallbackMonitor {
   background: var(--ink-2);
-  padding: 20px 20px 14px;
+  padding: 20px;
   border: 1px solid var(--seam-lit);
   border-radius: 24px;
   width: min(560px, 95%);
   box-shadow: var(--shadow-unit);
-}
-.fallbackMonitor > span {
-  display: block;
-  margin-top: 16px;
-  text-align: center;
-  font-size: 8px;
 }
 .fallbackNote {
   font-size: var(--type-caption);
@@ -469,9 +405,6 @@
   .navigation {
     gap: 18px;
   }
-  .navigation > a:first-child {
-    display: none;
-  }
   .intro {
     display: block;
     padding-top: 16px;
@@ -486,12 +419,6 @@
     margin-top: 12px;
     padding-right: 0;
   }
-  .introAside a {
-    margin-top: 8px;
-  }
-  .introAside a span {
-    margin-left: 12px;
-  }
   .desktopBreak {
     display: none;
   }
@@ -503,26 +430,14 @@
     width: calc(100% + 12vw);
     margin-left: -6vw;
   }
-  .sceneMeta {
-    font-size: 8px;
-  }
-  .metaDivider {
-    margin: 0 6px;
-  }
   .sceneCaption {
     gap: 8px;
-  }
-  .captionNumber {
-    display: none;
   }
   .objectCaption small {
     line-height: 1.5;
   }
   .sceneTools {
     gap: 4px;
-  }
-  .sceneTools .sound span {
-    display: none;
   }
   .archiveHeading {
     align-items: flex-start;

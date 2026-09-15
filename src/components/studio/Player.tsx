@@ -114,14 +114,6 @@ export default function Player({
           color="#252d37"
           bevel={0.008}
         />
-        <Print
-          text="VHS  /  VIDEO CASSETTE"
-          width={1.14}
-          height={0.075}
-          position={[0, -0.22, 0.015]}
-          background="#252d37"
-          color="#a2aab6"
-        />
         <Solid
           size={[1.67, 0.012, 0.005]}
           position={[0, -0.39, 0.015]}
@@ -151,7 +143,6 @@ export default function Player({
         position={[1.25, 0.23, 1.266]}
         background="#111920"
         color="#c4ccd2"
-        fitted
       />
       <Print
         text="AV–01  /  4 HEAD · HI-FI STEREO"
@@ -159,7 +150,6 @@ export default function Player({
         height={0.09}
         position={[-0.3, -0.29, 1.243]}
         background="#444d58"
-        fitted
       />
       <PlayerButton
         name="player-sound"
@@ -175,14 +165,6 @@ export default function Player({
         <SoundIcon enabled={soundOn} />
         <span>{soundOn ? 'On' : 'Off'}</span>
       </PlayerButton>
-      <Print
-        text="SOUND"
-        width={0.33}
-        height={0.07}
-        position={[-1.555, -0.26, 1.243]}
-        background="#444d58"
-        fitted
-      />
       <PlayerButton
         name="player-eject"
         position={[1.25, -0.09, 1.253]}
@@ -195,14 +177,6 @@ export default function Player({
       >
         <EjectIcon /> Eject
       </PlayerButton>
-      <Print
-        text="EJECT / ESC"
-        width={0.75}
-        height={0.07}
-        position={[1.25, -0.35, 1.243]}
-        background="#444d58"
-        fitted
-      />
       {[-1.45, 1.45].map((x) => (
         <Solid
           key={x}

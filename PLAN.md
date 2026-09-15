@@ -363,6 +363,32 @@ against WebGL; the July entries below remain a record of the original build.
   and loading. Regressions cover sound-recess clearance, skip outside the
   hardware, touch activation, and focus return.
 
+#### Distill pass (2026-09-15)
+
+- ✅ Cut the model print from 29 planes to the four signature prints (status
+  window, AV–01 model line, spine number and name, idle screen) plus one label
+  per working key cap. Removed the fascia SOUND and EJECT / ESC prints, the
+  flap legend, both plinth lines, the monitor chin, both speaker badges, the
+  six holder numbers and two cheek marks, the headphone-stand mark, and the
+  seven cassette undersides. `Print` now always matches its plane's aspect;
+  the stretched 1024×128 path is gone.
+- ✅ Shell: removed the scene metadata line, the local clock (`useClock`
+  deleted), the "01—06" caption number, the page-level Sound control, the
+  navigation count, the introduction's index shortcut, and the fallback
+  monitor's chin label. The index heading keeps the one tape count; the
+  header's "The archive" link is the single index route and now shows on
+  phones too. The guide's idle instruction points at the studio, not the index.
+- Sound is toggled only on the deck (modeled key in playback, native reader
+  panel otherwise), so hover ticks are silent until a visitor enables sound in
+  playback. Deck key label mechanics, print material matching, canvas sizing
+  before insertion, and the 9–10px shell sizes wait for polish and typeset.
+- Docs: rewrote the DESIGN.md Label bullet, Layout guide paragraph, Studio
+  tools, Navigation, and Tape index sections; added The Signature Print Rule
+  and a matching Don't; removed the `button-sound` component. Sidecar and
+  surface brief updated to match.
+- Validation: 21 Chrome tests, production build, ESLint, and formatting
+  passed; the fonts regression now asserts an aspect-fitted print texture.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

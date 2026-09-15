@@ -195,12 +195,6 @@ components:
     rounded: '{rounded.round}'
     width: '44px'
     height: '44px'
-  button-sound:
-    backgroundColor: 'transparent'
-    textColor: '{colors.silkscreen}'
-    rounded: '{rounded.archive}'
-    typography: '{typography.functional-secondary}'
-    height: '44px'
   nav-link:
     textColor: '{colors.silkscreen}'
     typography: '{typography.navigation}'
@@ -273,7 +267,7 @@ Existing token names are retained; CSS uses `--silk-hi`, `--silk`, `--silk-dim`,
 
 ### Primary
 
-- **VFD Cyan** (`vfd-cyan`): crisp keyboard focus, text selection, local-time status dot, and playback-state text. It is an interface accent, not an emitting display on the deck.
+- **VFD Cyan** (`vfd-cyan`): crisp keyboard focus, text selection, and playback-state text. It is an interface accent, not an emitting display on the deck.
 
 ### Secondary
 
@@ -325,16 +319,18 @@ text preferences.
 - **Body / introduction** (`body`, `intro-body`): inherited page baseline is 1.0625rem. Introductory prose is 1rem at every width, with 1.6 leading and 0.005em tracking. Its short aside is capped at 36ch.
 - **Functional text** (`functional-body`, `functional-title`, `functional-secondary`): 0.875rem selection guidance and tape names at weight 550; the archive section heading uses weight 650 and 1.5 leading. Tape names use 1.35 leading, captions 1.5. Instructions, placeholder disclosures, footer, and loading copy use 0.75rem.
 - **Navigation / control** (`navigation`, `control`): 0.8125rem navigation at weight 500 across all widths. Hardware controls use uppercase Archivo at weight 600 and 0.1em tracking; native-reader labels use 0.75rem, and modeled keys scale with the camera between 0.75rem and 0.875rem. Skip animation uses a quiet 0.75rem sentence-case text action at weight 500.
-- **Label** (`label`): tracked uppercase silkscreen. The introductory kicker uses 0.6875rem at weight 600 with 0.12em tracking. Decorative scene metadata, equipment print, edition marks, and index numbers retain smaller local sizes: 8–10px supports adjacent readable labels. The 42px AV–01 loading mark remains a graphic identifier. These physical-print exceptions are intentional, not body-copy sizes.
+- **Label** (`label`): tracked uppercase silkscreen. The introductory kicker uses 0.6875rem at weight 600 with 0.12em tracking. Printed hardware text is confined to the signature prints (The Signature Print Rule below); the shell has no decorative metadata tier, no scene caption number, no clock, and no edition marks. The 9px index numbers, archive count, and footer edition, and the 10px play symbol, are inherited sizes below the intended 11px floor and are owed to the typeset pass, not a sanctioned tier. The 42px AV–01 loading mark remains a graphic identifier.
 - **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking. Balanced wrapping and a 1.5rem floor keep titles distinct from prose; both modes cap at 2rem. Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes. Available tube width shortens that measure on phones. Prose uses weight 440, 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline uses weight 600 and 1.5 leading. The modeled screen uses 1–1.0625rem; full-height reading uses 1–1.125rem. Long text can wrap without horizontal scrolling.
-- **OSD** (`osd`, `osd-meta`, `osd-small`, `osd-display`): all screen-interior sizes now use cqi clamps. PLAY/runtime uses 1.125–1.375rem with 1.2 leading; metadata, captions, tags, and links share 1.0625–1.25rem with 1.35 leading. Year, runtime, recorded metadata, tape numbers, and the local clock use tabular numerals. NO SIGNAL and idle messages use 1.5–2.5rem at VT323's real weight 400.
+- **OSD** (`osd`, `osd-meta`, `osd-small`, `osd-display`): all screen-interior sizes now use cqi clamps. PLAY/runtime uses 1.125–1.375rem with 1.2 leading; metadata, captions, tags, and links share 1.0625–1.25rem with 1.35 leading. Year, runtime, recorded metadata, and tape numbers use tabular numerals. NO SIGNAL and idle messages use 1.5–2.5rem at VT323's real weight 400.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform. Canvas print
 sizes are texture coordinates, not recommended HTML font sizes.
 
 **The Silkscreen Rule.** Printed hardware text never glows. Its hierarchy comes from size appropriate to the object, weight, spacing, and contrast against the material.
+
+**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, so glyphs never stretch.
 
 **The Tube-Scale Rule.** Screen-interior type scales with the tube using cqi units. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.
 
@@ -352,11 +348,13 @@ and on viewports wider than 600px but no taller than 820px. The introduction
 uses 32px top spacing, reduced to 20px on those short desktop viewports and
 16px on phones. At 600px and below, the introduction stacks and the footer wraps.
 
-The scene metadata and selection guide precede the canvas. The guide pairs
-"Choose a tape to play" with a plain-language instruction; reset and sound sit
-beside it in a group of 44px controls. The guide has a 48px minimum height and
-12px top separation. The index follows the canvas with a seam and 16px top
-padding. This groups the artifact with its selection surfaces.
+The selection guide precedes the canvas. It pairs "Choose a tape to play"
+with a one-line instruction that points at the studio rather than the index;
+the drag hint and the 44px reset control sit beside it. The guide has a 48px
+minimum height and sits 24px below the introduction. There is no scene
+metadata line and no clock above the canvas. The index follows the canvas
+with a seam and 16px top padding. This groups the artifact with its selection
+surfaces.
 
 The exhibit's default height is
 `clamp(360px, min(48vw, calc(100svh - 350px)), 680px)` so the opening studio
@@ -426,7 +424,7 @@ and isolating feet. Cassettes share one shell with cut-out reel windows,
 24-sided winding rings, toothed hubs, a hinged-edge guard, underside sockets,
 molded ribs, and a fine housing seam. Their labels remain matte printed surfaces.
 The archive holder has symmetric sloped side cheeks, fitted fasteners, individual
-guide channels, numbered bays, a rear stop, and a low retaining lip. Small repeated
+guide channels, a rear stop, and a low retaining lip. Small repeated
 details are merged into shared draws within each assembly. Recessed windows,
 vents, the hollow deck bay, and a hinged slot flap supply selective detail.
 Headphones use a padded elliptical band, oval earcups, compact tapered mounts,
@@ -454,8 +452,9 @@ to its projected position. Hit areas track the cap's size with a 44px floor;
 labels use uppercase Archivo at weight 600, 0.1em tracking, and camera-relative
 0.75–0.875rem sizing. Hover/focus lightens the matte material, pointer
 press depresses the cap, and keyboard focus retains the crisp cyan outline.
-Sound exposes its pressed state and on/off label; eject includes printed Escape
-hinting. Nothing emits light. The article precedes the keys in native tab order.
+Sound exposes its pressed state and on/off label; the Escape shortcut is
+carried by the eject button's title and the native reader's key, not by fascia
+print. Nothing emits light. The article precedes the keys in native tab order.
 
 Phones, short viewports, direct links, and graphics fallback put the same actions
 inside the native reader's lower hardware panel. These controls have 44px
@@ -470,20 +469,24 @@ key, raised edge, or press movement; the deck's printed model label stays visibl
 ### Studio tools
 
 Reset is an outlined 44px circle at every width; hover strengthens its
-border over 200ms. Browse sound is a borderless icon-and-text control with a
-44px minimum hit area, with text
-hidden on phones. Its speaker SVG shows waves when enabled and a cross when
-disabled; `aria-pressed` carries the state. Sound is synthesized, default-off
-on every visit, never persisted, and user-triggered: tick, insert, and eject.
+border over 200ms, and a short drag hint precedes it above 1200px. These two
+are the only tools beside the guide. There is no page-level sound control:
+the deck's SOUND key is the single toggle, live on the modeled player during
+playback and in the native reader's hardware panel otherwise. Its speaker SVG
+shows waves when enabled and a cross when disabled; `aria-pressed` carries the
+state. Sound is synthesized, default-off on every visit, never persisted, and
+user-triggered: tick, insert, and eject. Because the toggle lives on the deck,
+hover ticks stay silent until a visitor has switched sound on during playback.
 
 ### Navigation
 
 Plain Archivo links with generous vertical padding and no underline. Hover
-raises text contrast; keyboard focus retains the cyan outline. The header's
-archive shortcut hides on phones while About remains. Contact links stay in
-the footer. Internal About and tape links use a play symbol; the outward arrow
-is reserved for external links. The introduction's "Browse the tape index"
-shortcut uses a downward arrow. A focus-revealed skip link leads to the accessible archive.
+raises text contrast; keyboard focus retains the cyan outline. The header
+carries "The archive" and About at every width; "The archive" is the page's
+single visible route to the index, and neither link shows a count. Contact
+links stay in the footer. Internal About and tape links use a play symbol; the
+outward arrow is reserved for external links. The introduction has no index
+shortcut. A focus-revealed skip link leads to the accessible archive.
 
 ### Tape index
 
@@ -494,6 +497,7 @@ strengthens the border. Minimum height is 80px at every width, with 16px 12px
 padding. Names wrap as needed; 12px secondary copy distinguishes "Placeholder"
 from the About tape's "Meet the maker". The six links remain normal Tab stops,
 with arrows and Home/End for direct movement; About is included in its accessible name.
+The index heading carries the page's only tape count.
 
 ### Cassettes and insertion
 
@@ -562,4 +566,5 @@ small/medium gaps. They are informational labels, not filled chips or filters.
 - Don't pixelate the rendered canvas or use realism as the low-poly reference.
 - Don't use VT323 for page chrome, printed hardware labels, or prose.
 - Don't introduce glowing controls, neon outlines with blur, or saturated chassis surfaces.
+- Don't letter the models beyond the signature prints, and don't add metadata, clocks, counts, or edition marks to the shell.
 - Don't substitute the old CSS dolly, deck VFD clock, or pulsing eject sample for the current 3D behavior.

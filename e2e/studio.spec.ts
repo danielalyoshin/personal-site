@@ -211,15 +211,21 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await noOverflow(page)
 })
 
-test('sound is opt-in and resets on a fresh visit', async ({ page }) => {
+test('sound is opt-in, lives on the deck, and resets on a fresh visit', async ({
+  page,
+}) => {
   await page.goto('/')
   await ready(page)
+  // Browse has no sound control of its own: the deck key is the only toggle.
+  await expect(page.getByRole('button', { name: 'Sound effects' })).toHaveCount(
+    0,
+  )
+  await page.goto('/project/placeholder-alpha')
   const sound = page.getByRole('button', { name: 'Sound effects', exact: true })
   await expect(sound).toHaveAttribute('aria-pressed', 'false')
   await sound.click()
   await expect(sound).toHaveAttribute('aria-pressed', 'true')
   await page.reload()
-  await ready(page)
   await expect(sound).toHaveAttribute('aria-pressed', 'false')
 })
 

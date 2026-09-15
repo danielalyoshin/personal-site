@@ -11,7 +11,7 @@ import { MathUtils, OrthographicCamera, Vector3 } from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import type { Project } from '../../content/types'
 import { shelfTapes } from '../../content/projects'
-import { Solid, Disc, Print } from './geometry'
+import { Solid, Disc } from './geometry'
 import {
   makeTexture,
   subscribeTextureUpdates,
@@ -266,22 +266,6 @@ function Monitor() {
         color="#151a23"
         bevel={0.055}
       />
-      <Print
-        text="ALYOSHIN"
-        width={0.69}
-        height={0.07}
-        position={[-0.96, -1.17, 1.003]}
-        background="#363c46"
-        color="#c9cbd0"
-      />
-      <Print
-        text="CR–14 / COLOR MONITOR"
-        width={0.87}
-        height={0.06}
-        position={[0.22, -1.17, 1.003]}
-        background="#363c46"
-        color="#9da4b1"
-      />
       <Disc
         position={[1.29, -1.16, 1.04]}
         rotation={[Math.PI / 2, 0, 0]}
@@ -359,22 +343,6 @@ function Table() {
           />
         </group>
       ))}
-      <Print
-        text="DANIEL ALYOSHIN  /  PERSONAL ARCHIVE"
-        width={2.65}
-        height={0.09}
-        position={[-2.72, 0.095, 2.581]}
-        background="#242a33"
-        color="#959da9"
-      />
-      <Print
-        text="EST. 2026     —     VOL. 01"
-        width={1.35}
-        height={0.09}
-        position={[3.42, 0.095, 2.581]}
-        background="#242a33"
-        color="#959da9"
-      />
     </group>
   )
 }

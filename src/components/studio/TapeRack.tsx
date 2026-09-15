@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Shape } from 'three'
 import { shelfTapes } from '../../content/projects'
-import { Print, Solid } from './geometry'
+import { Solid } from './geometry'
 import { Fasteners } from './ModelDetails'
 
 const sideScrews: [number, number, number][] = [
@@ -66,15 +66,6 @@ export default function TapeRack() {
             color="#293640"
             bevel={0.003}
           />
-          <Print
-            fitted
-            text={String(index + 1).padStart(2, '0')}
-            width={0.12}
-            height={0.045}
-            position={[0, 0.083, 0.73]}
-            background="#414d59"
-            color="#b8c2cb"
-          />
           {index < shelfTapes.length - 1 && (
             <Solid
               name={`rack-divider-${index}`}
@@ -121,15 +112,6 @@ export default function TapeRack() {
           </mesh>
           <group rotation={[0, side < 0 ? 0 : Math.PI, 0]}>
             <Fasteners positions={sideScrews} radius={0.021} />
-            <Print
-              fitted
-              text="ARCHIVE / 06"
-              width={0.44}
-              height={0.046}
-              position={[0, 0.13, 0.046]}
-              background="#4a5866"
-              color="#c0c8d0"
-            />
           </group>
         </group>
       ))}

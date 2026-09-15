@@ -95,7 +95,6 @@ export default function PlayerButton({
           height={0.085}
           position={[0, 0, 0.068]}
           background="#4d5865"
-          fitted
         />
       )}
     </group>
