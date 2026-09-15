@@ -467,6 +467,70 @@ against WebGL; the July entries below remain a record of the original build.
   1024, 430, 390, 360, and 320px; reviewed 2× renders of the header, guide
   row, cards, footer, and 390px phone.
 
+#### Typeset pass — four weights, six sizes, drawn marks (2026-09-15)
+
+- ✅ Weights: eight rendered Archivo weights (400/440/500/550/560/600/650/
+  800, plus 700/750 in canvas prints) reduced to 400, 600, and 800, with
+  VT323 at 400. Display and loading mark 600; nameplate, guide, archive
+  heading, and tape names 600; navigation, Skip animation, and reader prose
+  400; spine number and name prints 800; status window, AV–01 line, and key
+  caps 600.
+- ✅ Sizes: the shell ramp is six tokens on an 11px floor — display,
+  2.625rem mark, 1rem body, 0.875rem functional, 0.75rem caption, 0.6875rem
+  label. The 9px index numbers, archive count, and footer edition and the
+  10px play symbol moved to the label tier or became icons; 1.0625rem body,
+  0.9375rem nameplate, and 0.8125rem navigation folded into their neighbours.
+  Screen-interior sizes are unchanged (tube-scaled).
+- ✅ Drawn marks: `src/components/Icons.tsx` replaces every typed glyph —
+  the shell's ▶ ↔ ↺ ▶ ↗ rendered in SF Pro and Arial, and the tube's ▶ PLAY,
+  link ↗, and REC ● rendered in Menlo and Courier New (verified with Chrome's
+  platform-font inspection). Icons are 1.5-unit strokes on a 16-unit box,
+  `currentColor`, `aria-hidden`; the REC dot and idle cursor are CSS boxes.
+  OSD link names are now "GITHUB" and "LINKEDIN" (tests updated).
+- ✅ Escape hint: silkscreen at weight 400 instead of dim silkscreen, 7.5:1
+  on the key and 6.7:1 on hover (was 4.2:1 / 3.8:1).
+- ✅ Removed `tabular-nums` everywhere: VT323 is monospaced and no Archivo
+  numerals align in columns.
+- Docs: DESIGN.md typography frontmatter now lists the roles that render
+  (display, mark, body, functional-title, functional, caption, control, label,
+  the screen roles, osd, osd-meta, osd-display); the Typography section is
+  rewritten as a shell ramp, a tube ramp, and The Drawn Mark Rule; sidecar
+  samples, the surface brief, and the Don'ts are synced.
+- Validation: 22 Chrome tests, production build, ESLint, formatting, and a
+  clean Impeccable detector pass. Computed-style dumps at 1440 and 390px show
+  only 400/600 on the shell and Archivo/VT323 as the only platform fonts on
+  the home and reader routes; the guide row's baselines still match within
+  0.5px; the header fits at 390/360/320px without overflow.
+
+#### Deep-link handoff — one decision (2026-09-15)
+
+- ✅ Desktop deep links no longer hide the studio for the visit. The instant
+  native reader stays pinned only until the scene is ready; then the modeled
+  studio takes over in one dissolve: the seated tape, closed flap, PLAY
+  status, live keys, and the modeled reader compose under the still-opaque
+  reader until the reader is placed on the tube (plus one drawn frame), then
+  the native frame fades over 560ms (`--t-dolly`, `--ease-out`) while the
+  tube's tracking entrance plays through it. Reduced motion swaps
+  at that moment. Invalid slugs hand off the same way to the modeled
+  NO SIGNAL screen.
+- ✅ Continuity: the modeled article inherits the native reader's scroll
+  depth; focus stays in the article if that is where it was, otherwise on
+  the title. The outgoing frame is `aria-hidden` and `inert` during the
+  dissolve, then unmounts (transitionend, 900ms fallback); a 1.5s guard
+  advances the handoff if the modeled reader never reports in. The dissolve
+  stops early on eject, a resize below the reading breakpoints, or lost
+  graphics. Narrow or short viewports release the pin silently and follow
+  the viewport rule on later resizes, as selections already did.
+- ✅ Failed graphics keep the previous behavior: the same native article,
+  focus and scroll untouched.
+- Docs: DESIGN.md gains The Handoff Rule (CRT reader) and a rewritten
+  deep-link paragraph (Layout); sidecar `reader-handoff` motion entry and
+  full-height reader description; surface brief; README; AUDIT addendum.
+- Validation: 23 Chrome tests (new: the dissolve itself — hidden and inert
+  outgoing frame, seated tape and closed flap behind it, focus, eject return;
+  the held-module case now asserts the takeover with carried scroll depth and
+  article focus), production build, ESLint, formatting, and the detector.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

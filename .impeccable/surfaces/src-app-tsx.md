@@ -20,7 +20,7 @@ guide whose first line carries the drag hint and reset above the orthographic
 flush right. Every shell edge sits on the one column (the cassette mark hangs
 in the gutter above 1200px); the tape index entries' 12px insets are the only
 inboard edges, and each entry stacks its number over its name so it has one
-text edge. Arrows are spans spaced by flex gap. The shell carries no scene metadata,
+text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
 clock, caption number, page-level sound control, or edition marks; the index
 heading holds the page's only tape count, and the header's "The archive" link
 is its single visible index route at every width. Height-aware desktop framing keeps the studio and its
@@ -31,11 +31,16 @@ are never cropped (only the table runs out of frame).
 The larger opening canvas and enlarged idle-screen message support reading
 before selection. Geometry-aware framing preserves top clearance during orbit
 and blends into the complete CRT and player during playback zoom.
-Archivo display type uses balanced wrapping and relaxed tracking; introductory
-prose stays at 1rem on every viewport. The reader aligns all content to a
-centered 62ch column, with weight-440 prose, semibold taglines, and tube-scaled
-VT323 metadata. Functional captions retain a 0.75rem floor, and scene/transport controls provide
-44px hit areas. The studio contains a
+Type is one system: Archivo at 400, 600, and 800 (page and prints alike)
+and VT323 at 400. The shell renders six sizes on an 11px floor (display,
+2.625rem mark, 1rem body, 0.875rem functional, 0.75rem caption, 0.6875rem
+label); screen-interior type is tube-scaled. Archivo display type uses
+balanced wrapping and relaxed tracking; introductory prose stays at 1rem on
+every viewport. The reader aligns all content to a centered 62ch column, with
+weight-400 prose, semibold taglines, and tube-scaled VT323 metadata. Every
+arrow, play mark, and dot is drawn (SVG or a CSS box), never typed from a
+fallback font; the Escape hint reads at 7.5:1. Scene/transport controls
+provide 44px hit areas. The studio contains a
 beveled CRT, VCR, speaker, rack of six cassettes, loose cassette with reels,
 headphones and stand, display table, and plinth. All geometry and printed
 textures are generated locally. Print is limited to the four signature marks
@@ -47,7 +52,8 @@ reveals broad planes; only the CRT emits light.
 Browse: "Choose a tape to play" explains the action before the canvas, with
 a one-line instruction that points at the studio rather than the index.
 Hover/focus previews and raises a tape; click or Enter selects it. Internal
-playback links use a play symbol; external links retain the outward arrow.
+playback links use the drawn play mark; links that leave the site carry the
+drawn outward arrow.
 Drag within constrained camera angles; reset restores the original view.
 Vertical touch swipes scroll the page; horizontal drags orbit, and pinch zoom
 remains a browser gesture. Modified clicks retain native link navigation.
@@ -58,9 +64,14 @@ Read: accessible HTML inside the modeled CRT when the viewport is wider than
 767px and taller than 699px. At widths up to 767px or heights up to 699px, use
 a full-height native CRT reader with a 16px prose floor, scaling to 18px.
 Direct project links and tape selections before graphics are ready use this
-reader immediately at every viewport size. It stays mounted through graphics
-loading or failure, preserving focus and scroll for the playback visit. Ejecting
-returns to the studio; a subsequent selection uses the normal viewport rule.
+reader immediately at every viewport size. It stays pinned only until the
+scene is ready: on a desktop viewport the modeled studio then takes over in
+one 560ms dissolve, with the tape already seated and the deck live, the
+article continuing at the same scroll depth and focus (The Handoff Rule in
+`DESIGN.md`); on narrow or short viewports the same reader continues under
+the viewport rule. If graphics fail, it stays for the visit with focus and
+scroll untouched. Ejecting returns to the studio; a subsequent selection uses
+the normal viewport rule.
 The explicit fullHeight prop/class sizes this reader independently of viewport
 CSS. Playback controls are physical keys on the modeled player: sound at the
 left with clearance inside its fascia, and eject at the right. Each cap carries

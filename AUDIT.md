@@ -322,9 +322,12 @@ Re-run `$impeccable audit` after fixes to see your score improve.
   and modified-click support for header About. Scene controls were already
   enlarged in the critique follow-up.
 - Direct links and early selections keep the same native article through scene
-  loading or failure. Its focus and scroll position stay in place. Ejecting
-  returns to the studio; selecting from a ready desktop scene uses the CRT.
-  Returning through browser history also restores content before graphics load.
+  loading or failure. On failure its focus and scroll position stay in place;
+  once a desktop scene is ready, the modeled screen takes over in one dissolve
+  and the article continues at the same scroll depth and focus (2026-09-15
+  deep-link handoff). Ejecting returns to the studio; selecting from a ready
+  desktop scene uses the CRT. Returning through browser history also restores
+  content before graphics load.
 - Finding **10** (shared HTML/WebGL color sources) remains open. Stage 9's
   broader performance, accessibility, and SEO review also remains open.
 

@@ -53,13 +53,13 @@ export default function Tape({
         ctx.fillRect(0, 0, 192, 966)
         ctx.fillStyle = studio ? accent : '#192026'
         ctx.fillRect(20, 24, 152, 3)
-        ctx.font = '700 42px "Archivo Variable", sans-serif'
+        ctx.font = '800 42px "Archivo Variable", sans-serif'
         ctx.fillText(String(index + 1).padStart(2, '0'), 24, 84)
         ctx.save()
         ctx.translate(113, 139)
         ctx.rotate(Math.PI / 2)
         const name = tape.vhs.spineLabel.split(' · ')[0]
-        fitType(ctx, name, 43, 630, 750)
+        fitType(ctx, name, 43, 630, 800)
         ctx.fillText(name, 0, 0)
         ctx.restore()
         ctx.fillStyle = accent

@@ -1,6 +1,7 @@
 import type { Ref } from 'react'
 import type { Project } from '../content/types'
 import styles from './CRT.module.css'
+import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
 
 export type ScreenMode = 'idle' | 'playing' | 'nosignal' | 'ejecting'
 
@@ -36,7 +37,10 @@ export default function CRT({
           {mode === 'playing' && tape ? (
             <div className={styles.trackIn} key={tape.slug}>
               <div className={styles.osdTop} aria-hidden="true">
-                <span>▶ PLAY</span>
+                <span className={styles.osdPlay}>
+                  <PlayIcon className={styles.osdIcon} />
+                  PLAY
+                </span>
                 <span>{tape.vhs.runtime}</span>
               </div>
               <article
@@ -105,15 +109,16 @@ export default function CRT({
                               }
                             >
                               {l.label.toUpperCase()}
-                              {l.url.startsWith('http') ? ' ↗' : ''}
+                              {l.url.startsWith('http') && (
+                                <ExternalIcon className={styles.linkIcon} />
+                              )}
                             </a>
                           </li>
                         ))}
                     </ul>
                   )}
                   <p className={styles.osdEnd} aria-hidden="true">
-                    REC <span className={styles.recDot}>●</span>{' '}
-                    {tape.vhs.recorded}
+                    REC <span className={styles.recDot} /> {tape.vhs.recorded}
                   </p>
                 </div>
               </article>
@@ -139,11 +144,14 @@ export default function CRT({
               </span>
               <p className={styles.bigOsd} aria-hidden="true">
                 {mode === 'ejecting' ? (
-                  'EJECT ▲'
+                  <span className={styles.osdPlay}>
+                    EJECT
+                    <EjectIcon />
+                  </span>
                 ) : (
                   <>
                     INSERT TAPE
-                    <span className={styles.cursor}>▮</span>
+                    <span className={styles.cursor} />
                   </>
                 )}
               </p>

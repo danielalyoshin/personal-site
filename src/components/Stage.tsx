@@ -17,9 +17,22 @@ import { useMediaQuery } from '../lib/useMediaQuery'
 import { supportsWebGL } from '../lib/supportsWebGL'
 import CRT from './CRT'
 import DeckControls from './DeckControls'
+import { DragIcon, ExternalIcon, PlayIcon, ResetIcon } from './Icons'
 import styles from './Stage.module.css'
 
 const StudioScene = lazy(() => import('./studio/StudioScene'))
+
+/**
+ * A desktop deep link's native reader hands over to the modeled screen:
+ * 'pending' while the modeled reader mounts under the still-opaque native
+ * frame, 'settled' once it is placed on the tube and has taken over reading,
+ * 'fading' while the native frame dissolves.
+ */
+type Handoff = 'pending' | 'settled' | 'fading' | null
+/** Advance anyway if the modeled reader never reports in. */
+const HANDOFF_SETTLE_GUARD_MS = 1500
+/** Unmount the faded native reader even if transitionend never arrives. */
+const HANDOFF_FALLBACK_MS = 900
 
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode; onUnavailable: () => void },
@@ -57,13 +70,26 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const [reset, setReset] = useState(0)
   const [ready, setReady] = useState(false)
   const [flat, setFlat] = useState(() => !supportsWebGL())
-  // A direct link is readable before graphics load. Keep that reader mounted
-  // for this playback visit so late graphics cannot move focus or scroll.
+  // A direct link is readable before graphics load: the native reader opens
+  // at once and stays pinned until the scene is ready.
   const [nativePlayback, setNativePlayback] = useState(open)
+  // Once ready on a desktop viewport, the modeled studio takes over from that
+  // reader in one dissolve; see Handoff for the phases.
+  const [handoff, setHandoff] = useState<Handoff>(null)
   // History can reopen playback after eject while the scene is still pending.
   // Pin before committing that route, just as an early tape selection does.
   if (open && !ready && !nativePlayback) setNativePlayback(true)
+  // The pin only bridges the wait for graphics. Once the scene is ready the
+  // viewport rule decides: a desktop deep link crosses onto the modeled
+  // screen; narrow or short viewports keep the native reader, unchanged.
+  if (ready && nativePlayback) {
+    setNativePlayback(false)
+    if (open && !expandedReader && !flat) setHandoff('pending')
+  }
   const useNativeReader = expandedReader || nativePlayback || flat
+  // The dissolve stops early if playback closes or the native reader is
+  // needed again (a resize below the reading breakpoints, or lost graphics).
+  if (handoff && (!open || useNativeReader)) setHandoff(null)
   const [insertingSlug, setInsertingSlug] = useState<string | null>(null)
   const loading = !!tape && insertingSlug === tape.slug && !flat
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
@@ -71,6 +97,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const titleEl = useRef<HTMLHeadingElement | null>(null)
   const stageEl = useRef<HTMLDivElement>(null)
   const deckPortal = useRef<HTMLDivElement>(null)
+  const nativeScreen = useRef<HTMLDivElement>(null)
   const wasOpen = useRef(open)
   const previewSlug = useRef<string | null>(null)
   const mode = invalid ? 'nosignal' : tape ? 'playing' : 'idle'
@@ -78,14 +105,52 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const onTitleEl = useCallback((el: HTMLHeadingElement | null) => {
     titleEl.current = el
     if (!el) return
+    let frame = 0
+    let waited = 0
+    // Drei's transform container receives its matrix on a drawn frame.
+    const placed = () => {
+      for (let node = el.parentElement; node; node = node.parentElement)
+        if (node.style.transform) return true
+      return false
+    }
     // Drei mounts screen HTML through a separate React root. Focus after that
     // node is connected, including when reduced motion skips every timeout.
-    const frame = window.requestAnimationFrame(() => {
-      if (el.isConnected) el.focus({ preventScroll: true })
-    })
+    const settle = () => {
+      if (!el.isConnected) return
+      // The modeled screen is taking over from a native reader still on
+      // stage: wait until this reader is placed on the tube, then continue
+      // reading where it was, at the same scroll depth and with focus still
+      // in the article if that is where it was.
+      const native = nativeScreen.current
+      const takingOver = !!native && !native.contains(el)
+      if (takingOver && !placed() && waited++ < 12) {
+        frame = window.requestAnimationFrame(settle)
+        return
+      }
+      const source = takingOver ? native.querySelector('article') : null
+      const target = el.closest('article')
+      let focused = false
+      if (source && target) {
+        const range = source.scrollHeight - source.clientHeight
+        if (range > 0)
+          target.scrollTop =
+            (source.scrollTop / range) *
+            (target.scrollHeight - target.clientHeight)
+        if (document.activeElement === source) {
+          target.focus({ preventScroll: true })
+          focused = true
+        }
+      }
+      if (!focused) el.focus({ preventScroll: true })
+      if (takingOver)
+        setHandoff((phase) => (phase === 'pending' ? 'settled' : phase))
+    }
+    frame = window.requestAnimationFrame(settle)
     return () => {
       window.cancelAnimationFrame(frame)
-      titleEl.current = null
+      // Both readers share the stage during the handoff; the outgoing title
+      // must not clear the incoming one.
+      if (titleEl.current === el) titleEl.current = null
     }
   }, [])
   const onReady = useCallback(() => setReady(true), [])
@@ -124,6 +189,33 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     [flat, navigate, previewTape, ready, reduced],
   )
 
+  // The modeled reader advances 'pending' itself once it is placed and has
+  // taken over reading (see onTitleEl); this guard covers a reader that never
+  // reports in, so the hidden native frame cannot stay on top indefinitely.
+  useEffect(() => {
+    if (handoff !== 'pending') return
+    const timer = window.setTimeout(
+      () => setHandoff((phase) => (phase === 'pending' ? 'settled' : phase)),
+      HANDOFF_SETTLE_GUARD_MS,
+    )
+    return () => window.clearTimeout(timer)
+  }, [handoff])
+  // One more drawn frame with everything in place, then the native frame
+  // dissolves. Reduced motion swaps at that same moment instead of fading.
+  useEffect(() => {
+    if (handoff !== 'settled') return
+    const frame = window.requestAnimationFrame(() =>
+      setHandoff((phase) =>
+        phase === 'settled' ? (reduced ? null : 'fading') : phase,
+      ),
+    )
+    return () => window.cancelAnimationFrame(frame)
+  }, [handoff, reduced])
+  useEffect(() => {
+    if (handoff !== 'fading') return
+    const timer = window.setTimeout(() => setHandoff(null), HANDOFF_FALLBACK_MS)
+    return () => window.clearTimeout(timer)
+  }, [handoff])
   useEffect(() => {
     if (tape) lastTape.current = tape.slug
     if (open) {
@@ -202,7 +294,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     }
   }
 
-  const reader = (
+  // The native frame keeps its full-height layout for as long as it is on
+  // stage, including while it hands over; the modeled screen never uses it.
+  const readerFor = (native: boolean) => (
     <CRT
       mode={mode}
       tape={tape}
@@ -210,7 +304,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       onTitleEl={onTitleEl}
       crtRef={null}
       embedded
-      fullHeight={open && useNativeReader}
+      fullHeight={native}
     />
   )
   const skipControl = (
@@ -224,7 +318,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   )
   const fallback = (
     <div className={styles.fallback}>
-      <div className={styles.fallbackMonitor}>{reader}</div>
+      <div className={styles.fallbackMonitor}>{readerFor(false)}</div>
       {!open && (
         <p className={styles.fallbackNote}>
           The archive is ready. Choose a tape below.
@@ -310,9 +404,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             }}
           >
             About me
-            <span className={styles.arrow} aria-hidden="true">
-              ▶
-            </span>
+            <PlayIcon className={styles.arrow} />
           </Link>
         </nav>
       </header>
@@ -366,9 +458,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             {!flat && (
               <div className={styles.sceneTools}>
                 <span className={styles.dragHint}>
-                  <span className={styles.arrow} aria-hidden="true">
-                    ↔
-                  </span>
+                  <DragIcon className={styles.arrow} />
                   Drag to look around
                 </span>
                 <button
@@ -377,7 +467,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                   aria-label="Reset studio view"
                   title="Reset view"
                 >
-                  ↺
+                  <ResetIcon size={20} />
                 </button>
               </div>
             )}
@@ -424,7 +514,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     onReady={onReady}
                     onUnavailable={onUnavailable}
                   >
-                    {useNativeReader ? null : reader}
+                    {useNativeReader ? null : readerFor(false)}
                   </StudioScene>
                 </Suspense>
               </SceneBoundary>
@@ -490,9 +580,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                       {item.slug === 'about' ? 'Meet the maker' : 'Placeholder'}
                     </small>
                   </span>
-                  <span className={styles.playArrow} aria-hidden="true">
-                    ▶
-                  </span>
+                  <PlayIcon className={styles.playArrow} />
                 </Link>
               </li>
             ))}
@@ -514,9 +602,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             rel="noreferrer"
           >
             GitHub
-            <span className={styles.arrow} aria-hidden="true">
-              ↗
-            </span>
+            <ExternalIcon className={styles.arrow} />
           </a>
           <a
             href="https://www.linkedin.com/in/danielalyoshin/"
@@ -524,9 +610,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             rel="noreferrer"
           >
             LinkedIn
-            <span className={styles.arrow} aria-hidden="true">
-              ↗
-            </span>
+            <ExternalIcon className={styles.arrow} />
           </a>
         </nav>
       </footer>
@@ -534,9 +618,22 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       {loading && !useNativeReader && (
         <div className={styles.transitionTools}>{skipControl}</div>
       )}
-      {open && useNativeReader && (
-        <div className={styles.expandedReader}>
-          <div className={styles.nativeScreen}>
+      {open && (useNativeReader || handoff) && (
+        <div
+          className={`${styles.expandedReader} ${handoff === 'fading' ? styles.handoff : ''}`}
+          data-testid="native-reader"
+          data-handoff={handoff ?? undefined}
+          inert={handoff === 'fading' || undefined}
+          aria-hidden={handoff ? true : undefined}
+          onTransitionEnd={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              event.propertyName === 'opacity'
+            )
+              setHandoff(null)
+          }}
+        >
+          <div className={styles.nativeScreen} ref={nativeScreen}>
             {loading ? (
               <div className={styles.readerLoading}>
                 <span>Loading tape</span>
@@ -544,7 +641,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                 {skipControl}
               </div>
             ) : (
-              reader
+              readerFor(true)
             )}
           </div>
           <div className={styles.readerDeck}>

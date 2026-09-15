@@ -66,18 +66,42 @@ for (const fail of [false, true]) {
       await page.keyboard.press('PageDown')
       const scrollTop = await scrolling
       expect(scrollTop).toBeGreaterThan(0)
+      const depth = await reader.evaluate(
+        (el) => el.scrollTop / (el.scrollHeight - el.clientHeight),
+      )
 
       held.release()
       await ready(page)
-      await expect(page.getByRole('article')).toHaveCount(1)
-      expect(
-        await originalReader.evaluate(
-          (el) => el.isConnected && el === document.querySelector('article'),
-        ),
-      ).toBe(true)
-      await expect(reader).toBeFocused()
-      expect(await reader.evaluate((el) => el.scrollTop)).toBe(scrollTop)
-      await expect(page.getByTestId('project-reader')).toHaveCount(0)
+      if (fail) {
+        // Without graphics the same native article stays, focus and scroll
+        // untouched.
+        await expect(page.getByRole('article')).toHaveCount(1)
+        expect(
+          await originalReader.evaluate(
+            (el) => el.isConnected && el === document.querySelector('article'),
+          ),
+        ).toBe(true)
+        await expect(reader).toBeFocused()
+        expect(await reader.evaluate((el) => el.scrollTop)).toBe(scrollTop)
+        await expect(page.getByTestId('project-reader')).toHaveCount(0)
+      } else {
+        // A ready desktop scene takes over: reading continues on the modeled
+        // screen at the same depth, with focus still in the article.
+        const modeled = page
+          .getByTestId('project-reader')
+          .getByRole('article', { name: 'Placeholder: Alpha details' })
+        await expect(modeled).toBeVisible()
+        await expect(page.getByTestId('native-reader')).toHaveCount(0)
+        expect(await originalReader.evaluate((el) => el.isConnected)).toBe(
+          false,
+        )
+        await expect(modeled).toBeFocused()
+        expect(
+          await modeled.evaluate(
+            (el) => el.scrollTop / (el.scrollHeight - el.clientHeight),
+          ),
+        ).toBeCloseTo(depth, 1)
+      }
 
       await page.keyboard.press('Escape')
       await expect(page).toHaveURL('/')
@@ -101,6 +125,89 @@ for (const fail of [false, true]) {
     }
   })
 }
+
+test('a desktop deep link dissolves onto the modeled screen once the scene is ready', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  const held = await holdStudioModule(page)
+  try {
+    await page.goto('/project/placeholder-alpha', {
+      waitUntil: 'domcontentloaded',
+    })
+    await held.requested
+    const native = page.getByTestId('native-reader')
+    await expect(
+      native.getByRole('article', { name: 'Placeholder: Alpha details' }),
+    ).toBeVisible()
+    await expect(native.locator('h2').first()).toBeFocused()
+
+    held.release()
+    await ready(page)
+    // The outgoing frame stays on stage for one dissolve, hidden from
+    // assistive tech; the modeled screen behind it already holds focus.
+    await expect(native).toHaveAttribute(
+      'data-handoff',
+      /pending|settled|fading/,
+    )
+    await expect(native).toHaveAttribute('aria-hidden', 'true')
+    const modeled = page.getByTestId('project-reader')
+    await expect(modeled).toBeVisible()
+    await expect(modeled.locator('h2')).toBeFocused()
+    await expect(native).toHaveAttribute('data-handoff', 'fading')
+    expect(
+      await native.evaluate((el) => ({
+        inert: (el as HTMLElement).inert,
+        transition: getComputedStyle(el).transitionDuration,
+        dissolving: el
+          .getAnimations()
+          .some(
+            (animation) =>
+              animation instanceof CSSTransition &&
+              animation.transitionProperty === 'opacity',
+          ),
+      })),
+    ).toEqual({ inert: true, transition: '0.56s', dissolving: true })
+    // The tape was seated and the flap closed before the reveal: no mechanism
+    // plays for a link that arrives already inserted.
+    expect(
+      await page.evaluate(async () => {
+        const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+        const threeModule = '/node_modules/.vite/deps/three.js'
+        const { _roots } = (await import(
+          fiberModule
+        )) as typeof import('@react-three/fiber')
+        const { Box3 } = (await import(threeModule)) as typeof import('three')
+        const { scene } = _roots
+          .get(document.querySelector('canvas')!)!
+          .store.getState()
+        const tape = scene.getObjectByName('tape-placeholder-alpha')!
+        const player = scene.getObjectByName('vhs-player')!
+        const flap = scene.getObjectByName('player-flap')!
+        return {
+          seatedInside: new Box3()
+            .setFromObject(player, true)
+            .containsBox(new Box3().setFromObject(tape, true)),
+          flapClosed: flap.rotation.x === 0,
+        }
+      }),
+    ).toEqual({ seatedInside: true, flapClosed: true })
+    await expect(native).toHaveCount(0)
+    await expect(
+      page.getByRole('button', { name: 'Eject tape', exact: true }),
+    ).toHaveCount(1)
+    await page.keyboard.press('Escape')
+    await expect(page).toHaveURL('/')
+    await expect(
+      page.getByRole('link', {
+        name: 'Play tape: Placeholder: Alpha (2026)',
+        exact: true,
+      }),
+    ).toBeFocused()
+  } finally {
+    held.release()
+  }
+})
 
 test('the HTML archive opens a reader before the graphics module is available', async ({
   page,
@@ -136,12 +243,12 @@ test('the HTML archive opens a reader before the graphics module is available', 
     const originalReader = (await reader.elementHandle())!
     held.release()
     await ready(page)
-    expect(
-      await originalReader.evaluate(
-        (el) => el.isConnected && el === document.querySelector('article'),
-      ),
-    ).toBe(true)
-    await expect(page.getByTestId('project-reader')).toHaveCount(0)
+    // An early selection is pinned like a deep link: once the desktop scene
+    // is ready, the modeled screen takes over and the native frame leaves.
+    await expect(page.getByTestId('project-reader')).toBeVisible()
+    await expect(page.getByTestId('native-reader')).toHaveCount(0)
+    expect(await originalReader.evaluate((el) => el.isConnected)).toBe(false)
+    await expect(page.locator('article h2')).toBeFocused()
   } finally {
     held.release()
   }
@@ -180,16 +287,24 @@ test('CRT contact links have separate touch targets at phone and desktop sizes',
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/project/about')
+  await ready(page)
   const reader = page.getByRole('article', { name: 'Daniel Alyoshin details' })
-  await expect(reader).toBeVisible()
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 1440, height: 1000 },
   ]) {
     await page.setViewportSize(viewport)
-    const github = reader.getByRole('link', { name: 'GITHUB ↗', exact: true })
+    // The reader follows the viewport rule: native on the phone, modeled on
+    // the desktop. Measure once the right one is on stage.
+    await expect(
+      page.getByTestId(
+        viewport.width < 768 ? 'native-reader' : 'project-reader',
+      ),
+    ).toBeVisible()
+    await expect(reader).toBeVisible()
+    const github = reader.getByRole('link', { name: 'GITHUB', exact: true })
     const linkedin = reader.getByRole('link', {
-      name: 'LINKEDIN ↗',
+      name: 'LINKEDIN',
       exact: true,
     })
     await linkedin.scrollIntoViewIfNeeded()

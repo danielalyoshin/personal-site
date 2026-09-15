@@ -70,7 +70,7 @@ button {
   font-size: var(--type-label);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--silk-dim);
 }

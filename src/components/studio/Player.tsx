@@ -29,7 +29,7 @@ function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
     () =>
       makeTexture(1024, 125, (ctx) => {
         const middle = 63
-        const size = fitType(ctx, STATUS[mode], 74, 560, 500, 0.06)
+        const size = fitType(ctx, STATUS[mode], 74, 560, 600, 0.06)
         ctx.textBaseline = 'alphabetic'
         ctx.fillStyle = '#c4ccd2'
         let x = 32
@@ -51,7 +51,7 @@ function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
           middle + capitalsOffset(ctx, STATUS[mode]),
         )
         const sound = soundOn ? 'SOUND ON' : 'SOUND OFF'
-        fitType(ctx, sound, 74, 400, 500, 0.06)
+        fitType(ctx, sound, 74, 400, 600, 0.06)
         ctx.textAlign = 'right'
         ctx.fillStyle = soundOn ? '#c4ccd2' : '#7f8994'
         // Trailing tracking sits after the last glyph; keep the right edge true.

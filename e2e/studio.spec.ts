@@ -75,6 +75,8 @@ test('deep links, browser history and both missing-route states', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/project/about')
   await ready(page)
+  // A ready desktop scene takes over from the instant native reader.
+  await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect(
     page.getByRole('heading', {
       name: 'Daniel Alyoshin',
@@ -133,7 +135,7 @@ test('reduced motion skips the tape flight and confines keyboard focus', async (
   ).toBeFocused()
   await page.keyboard.press('Tab')
   await expect(
-    page.getByRole('link', { name: 'GITHUB ↗', exact: true }),
+    page.getByRole('link', { name: 'GITHUB', exact: true }),
   ).toBeFocused()
 })
 
@@ -174,7 +176,7 @@ test('native reading covers narrow and short viewports and survives resize', asy
     el.scrollTop = el.scrollHeight
   })
   await expect(
-    page.getByRole('link', { name: 'LINKEDIN ↗', exact: true }),
+    page.getByRole('link', { name: 'LINKEDIN', exact: true }),
   ).toBeVisible()
   await noOverflow(page)
   await page.setViewportSize({ width: 1280, height: 900 })

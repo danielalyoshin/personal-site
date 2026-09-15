@@ -25,49 +25,49 @@ typography:
   display:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: 'clamp(2.5rem, 1.25rem + 2.8vw, 4rem)'
-    fontWeight: 560
+    fontWeight: 600
     lineHeight: 1.06
     letterSpacing: '-0.035em'
   display-mobile:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: 'clamp(2rem, 1rem + 5.4vw, 3.375rem)'
-    fontWeight: 560
+    fontWeight: 600
     lineHeight: 1.06
     letterSpacing: '-0.035em'
   display-short:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: 'clamp(2.5rem, 1.5rem + 1.5vw, 3rem)'
-    fontWeight: 560
+    fontWeight: 600
     lineHeight: 1.06
     letterSpacing: '-0.035em'
-  nameplate:
+  mark:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.9375rem'
-    fontWeight: 650
-    lineHeight: 1.5
+    fontSize: '2.625rem'
+    fontWeight: 600
+    lineHeight: 1
     letterSpacing: '-0.02em'
   body:
-    fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '1.0625rem'
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 'normal'
-  intro-body:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: '1rem'
     fontWeight: 400
     lineHeight: 1.6
     letterSpacing: '0.005em'
-  label:
+  functional-title:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.6875rem'
+    fontSize: '0.875rem'
     fontWeight: 600
-    lineHeight: 1.2
-    letterSpacing: '0.14em'
-  navigation:
+    lineHeight: 1.35
+    letterSpacing: 'normal'
+  functional:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.8125rem'
-    fontWeight: 500
+    fontSize: '0.875rem'
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: 'normal'
+  caption:
+    fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
+    fontSize: '0.75rem'
+    fontWeight: 400
     lineHeight: 1.5
     letterSpacing: 'normal'
   control:
@@ -76,30 +76,12 @@ typography:
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: '0.1em'
-  animation-skip:
+  label:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.75rem'
-    fontWeight: 500
-    lineHeight: 1.5
-    letterSpacing: 'normal'
-  functional-body:
-    fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.875rem'
-    fontWeight: 550
-    lineHeight: 1.5
-    letterSpacing: 'normal'
-  functional-title:
-    fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.875rem'
-    fontWeight: 550
-    lineHeight: 1.35
-    letterSpacing: 'normal'
-  functional-secondary:
-    fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: '0.75rem'
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 'normal'
+    fontSize: '0.6875rem'
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: '0.12em'
   screen-title:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: 'clamp(1.5rem, 5.6cqi, 2rem)'
@@ -109,7 +91,7 @@ typography:
   screen-body:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: 'clamp(1rem, 3.1cqi, 1.0625rem)'
-    fontWeight: 440
+    fontWeight: 400
     lineHeight: 1.65
     letterSpacing: '0.005em'
   screen-tagline:
@@ -127,7 +109,7 @@ typography:
   full-height-body:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: 'clamp(1rem, 2.4cqi, 1.125rem)'
-    fontWeight: 440
+    fontWeight: 400
     lineHeight: 1.65
     letterSpacing: '0.005em'
   full-height-tagline:
@@ -143,12 +125,6 @@ typography:
     lineHeight: 1.2
     letterSpacing: 'normal'
   osd-meta:
-    fontFamily: "'VT323', ui-monospace, 'Courier New', monospace"
-    fontSize: 'clamp(1.0625rem, 4cqi, 1.25rem)'
-    fontWeight: 400
-    lineHeight: 1.35
-    letterSpacing: '0.005em'
-  osd-small:
     fontFamily: "'VT323', ui-monospace, 'Courier New', monospace"
     fontSize: 'clamp(1.0625rem, 4cqi, 1.25rem)'
     fontWeight: 400
@@ -185,7 +161,7 @@ components:
   button-animation-skip:
     backgroundColor: 'transparent'
     textColor: '{colors.silkscreen}'
-    typography: '{typography.animation-skip}'
+    typography: '{typography.caption}'
     padding: '8px'
     minWidth: '44px'
     minHeight: '44px'
@@ -197,7 +173,7 @@ components:
     height: '44px'
   nav-link:
     textColor: '{colors.silkscreen}'
-    typography: '{typography.navigation}'
+    typography: '{typography.functional}'
     padding: '12px 0'
   nav-link-hover:
     textColor: '{colors.silkscreen-hi}'
@@ -212,7 +188,7 @@ components:
   link-osd:
     backgroundColor: 'transparent'
     textColor: '{colors.osd-white}'
-    typography: '{typography.osd-small}'
+    typography: '{typography.osd-meta}'
     rounded: '{rounded.hairline}'
     padding: '6px 14px'
     minWidth: '44px'
@@ -222,7 +198,7 @@ components:
     textColor: '{colors.screen-black}'
   tag-osd:
     textColor: '{colors.screen-soft}'
-    typography: '{typography.osd-small}'
+    typography: '{typography.osd-meta}'
   crt-reader:
     backgroundColor: '{colors.screen-black}'
     textColor: '{colors.screen-text}'
@@ -255,7 +231,8 @@ The CRT carries the light and screen typography. Quiet Archivo text and thin sea
 
 This refresh records the implementation in `src/styles/tokens.css`,
 `src/styles/global.css`, `src/components/Stage.module.css`,
-`src/components/CRT.module.css`, and `src/components/studio/`.
+`src/components/CRT.module.css`, `src/components/Icons.tsx`, and
+`src/components/studio/`.
 Tokens above are normative; the sections below explain their use. The
 composition and surface mode remain in `.impeccable/surfaces/src-app-tsx.md`.
 
@@ -306,23 +283,33 @@ Canvas textures paint immediately, then redraw after explicit Archivo and VT323
 loading settles. Live maps request a render; disposed maps remain released.
 
 **Character:** a compact, wide Archivo display leads into quiet functional
-text. The display retains weight 560 and 110% stretch, with relaxed -0.035em
-tracking and 1.06 leading. Heavier uppercase project titles contrast with
-comfortable prose and VT323 status labels. Shared role sizes live in
-`src/styles/tokens.css`; all functional HTML sizes use rem floors to respect
-text preferences.
+text. Three Archivo weights carry the whole site, page and models alike: 400
+for reading and quiet actions, 600 for the display, titles, labels, and
+controls, and 800 for the screen title and the cassette spines. VT323 renders
+at its one weight, 400. The display keeps 110% stretch, -0.035em tracking, and
+1.06 leading. Shared role sizes live in `src/styles/tokens.css`; every
+functional HTML size is set in rem so text preferences scale it.
 
-### Hierarchy
+### Shell ramp
 
-- **Display** (`display`, `display-mobile`, `display-short`): balanced editorial introduction, capped at 4rem normally, 3.375rem on phones, and 3rem on short desktop viewports. The mobile floor is 2rem. The secondary line uses dim silkscreen.
-- **Nameplate** (`nameplate`): compact identity at 0.9375rem, with a 0.8125rem mobile override. The role underneath stays at 0.75rem.
-- **Body / introduction** (`body`, `intro-body`): inherited page baseline is 1.0625rem. Introductory prose is 1rem at every width, with 1.6 leading and 0.005em tracking. Its short aside is capped at 36ch.
-- **Functional text** (`functional-body`, `functional-title`, `functional-secondary`): 0.875rem selection guidance and tape names at weight 550; the archive section heading uses weight 650 and 1.5 leading. Tape names use 1.35 leading, captions 1.5. Instructions, placeholder disclosures, footer, and loading copy use 0.75rem.
-- **Navigation / control** (`navigation`, `control`): 0.8125rem navigation at weight 500 across all widths. Hardware controls use uppercase Archivo at weight 600 and 0.1em tracking; native-reader labels use 0.75rem, and each modeled key cap carries one printed label set at 0.0715 world units, about 16px at the desktop playback zoom, in every state. Skip animation uses a quiet 0.75rem sentence-case text action at weight 500.
-- **Label** (`label`): tracked uppercase silkscreen. The introductory kicker uses 0.6875rem at weight 600 with 0.12em tracking. Printed hardware text is confined to the signature prints (The Signature Print Rule below); the shell has no decorative metadata tier, no scene caption number, no clock, and no edition marks. The 9px index numbers, archive count, and footer edition, and the 10px play symbol, are inherited sizes below the intended 11px floor and are owed to the typeset pass, not a sanctioned tier. The 42px AV–01 loading mark remains a graphic identifier.
-- **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking. Balanced wrapping and a 1.5rem floor keep titles distinct from prose; both modes cap at 2rem. Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
-- **Screen body / tagline** (`screen-body`, `screen-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes. Available tube width shortens that measure on phones. Prose uses weight 440, 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline uses weight 600 and 1.5 leading. The modeled screen uses 1–1.0625rem; full-height reading uses 1–1.125rem. Long text can wrap without horizontal scrolling.
-- **OSD** (`osd`, `osd-meta`, `osd-small`, `osd-display`): all screen-interior sizes now use cqi clamps. PLAY/runtime uses 1.125–1.375rem with 1.2 leading; metadata, captions, tags, and links share 1.0625–1.25rem with 1.35 leading. Year, runtime, recorded metadata, and tape numbers use tabular numerals. NO SIGNAL and idle messages use 1.5–2.5rem at VT323's real weight 400.
+The shell renders six sizes and nothing between them; 11px is the floor.
+
+- **Display** (`display`, `display-mobile`, `display-short`): the introductory line at weight 600, capped at 4rem normally, 3.375rem on phones, and 3rem on short desktop viewports; the mobile floor is 2rem. The secondary line uses dim silkscreen.
+- **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
+- **Body** (`body`): 1rem at weight 400. Introductory prose uses 1.6 leading and 0.005em tracking, capped at 36ch; the page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
+- **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
+- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, drag hint, archive note, tape captions, footer statement, loading and fallback notes, Skip animation, and the Escape hint are weight 400 with 1.5 leading. The native deck keys are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
+- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the tape index numbers, the archive count, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
+
+### Tube ramp
+
+Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
+
+- **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
+- **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
+- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY and the runtime use 1.125–1.375rem (4.5cqi) with 1.2 leading; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
+
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), horizontal drag, reset, sound, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, 12px on tape entries, and 20px in the reset key; they take `currentColor` and are `aria-hidden`, so the label alone carries the accessible name. The REC dot and the idle cursor are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform. Canvas print
@@ -330,7 +317,7 @@ sizes are texture coordinates, not recommended HTML font sizes.
 
 **The Silkscreen Rule.** Printed hardware text never glows. Its hierarchy comes from size appropriate to the object, weight, spacing, and contrast against the material.
 
-**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.
+**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints share the page's weights: 600 for the status window, the AV–01 line, and the key caps; 800 for each spine's number and name. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.
 
 **The Tube-Scale Rule.** Screen-interior type scales with the tube using cqi units. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.
 
@@ -402,9 +389,12 @@ breakpoint is separate from this reading decision.
 
 Direct project links and selections made before graphics are ready immediately
 open the full-height native reader at every viewport size. That reader stays
-mounted for the playback visit, preserving focus and scroll when graphics finish
-loading or fail. After ejecting, a selection from the ready studio uses the
-modeled CRT at desktop sizes.
+pinned only until the scene is ready. On a desktop viewport the modeled studio
+then takes over in one dissolve (The Handoff Rule, under CRT reader); on narrow
+or short viewports the same reader simply continues under the viewport rule,
+and a later resize follows that rule. If graphics fail, the reader stays for
+the visit with focus and scroll untouched. After ejecting, a selection from the
+ready studio uses the modeled CRT at desktop sizes.
 
 Without WebGL, browse mode uses a framed HTML monitor with a maximum width of
 560px; selecting a tape opens the full-height reader. A context failure during
@@ -483,8 +473,9 @@ emits light. The article precedes the keys in native tab order.
 
 Phones, short viewports, direct links, and graphics fallback put the same actions
 inside the native reader's lower hardware panel. These controls have 44px
-minimum targets, 0.75rem uppercase labels, small corners, a darker bottom edge, and a pressed
-state. The fixed page-wide playback popup is removed in every reading mode.
+minimum targets, 0.75rem uppercase labels at weight 600, small corners, a darker bottom edge, and a pressed
+state. The Escape hint inside Eject is the same size in silkscreen at weight
+400, reading 7.5:1 on the key and 6.7:1 on hover. The fixed page-wide playback popup is removed in every reading mode.
 
 Skip animation is a plain underlined interface action, available only during
 insertion. It sits at the viewport's lower right for modeled playback and
@@ -493,8 +484,8 @@ key, raised edge, or press movement; the deck's printed model label stays visibl
 
 ### Studio tools
 
-Reset is an outlined 44px circle at every width; hover strengthens its
-border over 200ms, and a short drag hint precedes it above 1200px, 20px
+Reset is an outlined 44px circle at every width holding a 20px drawn reset
+arrow; hover strengthens its border over 200ms, and a short drag hint precedes it above 1200px, 20px
 apart. These two are the only tools beside the guide, and both are centred on
 the guide's first line. There is no page-level sound control:
 the deck's SOUND key is the single toggle, live on the modeled player during
@@ -510,10 +501,10 @@ Plain Archivo links with generous vertical padding and no underline. Hover
 raises text contrast; keyboard focus retains the cyan outline. The header
 carries "The archive" and About at every width; "The archive" is the page's
 single visible route to the index, and neither link shows a count. Contact
-links stay in the footer. Internal About and tape links use a play symbol; the
-outward arrow is reserved for external links. Every arrow is its own
-`aria-hidden` span set 0.5em from its label by flex gap, never by a typed
-space; the drag hint's leading arrow follows the same rule. The introduction
+links stay in the footer. Internal About and tape links use the drawn play mark; the
+outward arrow is reserved for links that leave the site. Every mark is an
+`aria-hidden` SVG (The Drawn Mark Rule) set 0.5em from its label by flex
+gap, never by a typed space; the drag hint's leading arrow follows the same rule. The introduction
 has no index shortcut. A focus-revealed skip link leads to the accessible archive.
 
 ### Tape index
@@ -521,8 +512,8 @@ has no index shortcut. A focus-revealed skip link leads to the accessible archiv
 A linked entry with a numbered label, explicit placeholder caption, play symbol,
 and a thin accent strip supplied by its tape data. Each entry uses a seam border
 and small corners; hover, focus, or modeled-tape preview fills it with ink-2 and
-strengthens the border. The number sits above the name, as on a cassette
-spine, so each entry has one text edge; the play symbol is centred on the
+strengthens the border. The number sits above the name in the 11px label tier, as on a cassette
+spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
 needed; 12px secondary copy distinguishes "Placeholder" from the About
@@ -549,8 +540,8 @@ the cassette is moving. One render-driven timeline coordinates the mechanism
 with frame deltas capped at 0.05 seconds, so slow rendering can lengthen it).
 Camera interpolation follows afterward and is not a fixed 560ms CSS dolly.
 Skip finishes immediately; reduced motion snaps tape and camera state and
-disables orbit damping. Deep links begin seated; eject returns focus to the
-corresponding archive link. There is no ambient geometry animation. The scene
+disables orbit damping. Deep links begin seated (The Handoff Rule); eject
+returns focus to the corresponding archive link. There is no ambient geometry animation. The scene
 loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
 modeled playback, and disposes generated
 textures and geometries.
@@ -560,12 +551,26 @@ textures and geometries.
 Selectable, scrollable HTML inside the modeled screen, with a complete native
 reader when WebGL is missing, fails, or loses context. Prose uses screen-text;
 metadata uses dim screen text. Playback OSD sits above the reader with a dark
-fade behind it. Project media spans the reading column, with a seam border and
+fade behind it; its play mark is drawn at 0.7em with the OSD's own light, and
+the REC dot closing the article is a blinking 0.5em circle. Project media spans the reading column, with a seam border and
 small control corners. The article is a named Tab stop within the playback
 focus loop, so keyboard users can return from transport controls and resume
 scrolling. Initial focus still announces the title. Missing-tape and unknown-route
 screens use distinct NO SIGNAL messages and matching transport labels, with
 the same eject/Escape exit.
+
+**The Handoff Rule.** A desktop deep link's native reader hands over to the
+modeled screen once, when the scene is ready. The studio composes underneath
+the still-opaque reader with the tape already seated, the flap closed, the deck
+reading PLAY, and the keys live, until the modeled reader is mounted and placed
+on the tube plus one drawn frame; then the native frame dissolves over 560ms
+(`--t-dolly`, `--ease-out`) while the tube's tracking entrance plays through
+it. The modeled article inherits the native reader's scroll depth and keeps
+focus in the article if that is where it was, otherwise on the title. During
+the dissolve the outgoing frame is aria-hidden and inert, then unmounts. An
+invalid slug hands off the same way to the modeled NO SIGNAL screen. Reduced
+motion swaps at the same moment. The dissolve stops early if playback closes,
+the viewport drops below the reading breakpoints, or graphics are lost.
 
 The modeled idle image is a local 1024 × 768 canvas texture with static scanlines.
 Its main message uses 128px texture type; the two-line selection instruction
@@ -580,7 +585,8 @@ carry their own equivalent gate because shadow DOM does not inherit it.
 ### OSD links and tags
 
 Screen links use VT323, a white 1px border, small corners, and the
-`link-osd` padding. Inline flex alignment and 44px minimum width and height
+`link-osd` padding; links that leave the site end in the drawn outward arrow
+at 0.7em, spaced 0.4em. Inline flex alignment and 44px minimum width and height
 provide separate touch targets. Hover inverts to white with dark text; focus
 stays white. Playback links preserve native modified-click behavior.
 Tags are bracketed uppercase text in screen-soft, wrapping with the existing
@@ -593,6 +599,7 @@ small/medium gaps. They are informational labels, not filled chips or filters.
 - Do model broad planes, single bevels, recessed openings, and deliberately faceted circular parts.
 - Do keep every retro effect inside the CRT screen area; its controlled light cast is the only outward glow.
 - Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.
+- Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do keep placeholder projects explicitly labeled until Daniel supplies real content.
 
@@ -601,6 +608,8 @@ small/medium gaps. They are informational labels, not filled chips or filters.
 - Don't add grunge, sepia, dirt, wear, photographic textures, or degraded page chrome.
 - Don't pixelate the rendered canvas or use realism as the low-poly reference.
 - Don't use VT323 for page chrome, printed hardware labels, or prose.
+- Don't type an arrow, play mark, or dot; draw it (The Drawn Mark Rule).
+- Don't add a weight beyond 400, 600, and 800, a seventh shell size, or any size below 11px.
 - Don't introduce glowing controls, neon outlines with blur, or saturated chassis surfaces.
 - Don't letter the models beyond the signature prints, and don't add metadata, clocks, counts, or edition marks to the shell.
 - Don't substitute the old CSS dolly, deck VFD clock, or pulsing eject sample for the current 3D behavior.

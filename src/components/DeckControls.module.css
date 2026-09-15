@@ -22,7 +22,7 @@
   font-size: var(--type-caption);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-control);
   text-transform: uppercase;
 }
 
@@ -36,10 +36,12 @@
   transform: translateY(1px);
 }
 
+/* The Escape hint is a quieter register through weight alone; silk on the
+   key's graphite reads at 7.5:1 at rest and 6.7:1 on hover. */
 .controls kbd {
-  color: var(--silk-dim);
+  color: var(--silk);
   font: inherit;
-  font-size: var(--type-caption);
+  font-weight: 400;
 }
 
 @media (max-width: 600px) {

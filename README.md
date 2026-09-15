@@ -29,8 +29,10 @@ labels, and sound are local; no external model or texture service is required.
 
 Desktop tape selection shows selectable HTML on the 3D screen. Phones and short
 viewports use a full-height reader. Direct links and selections made before
-graphics load open that reader immediately and keep it stable through loading.
-Reduced motion skips flights and camera interpolation.
+graphics load open that reader immediately; once the scene is ready, a desktop
+viewport dissolves to the modeled studio with the tape already seated, keeping
+the article's scroll depth and focus. Reduced motion swaps instead of fading
+and skips flights and camera interpolation.
 WebGL unavailability or context loss falls back to the full HTML archive reader.
 
 ## Structure
@@ -64,7 +66,8 @@ real canvas rendering, modeled cassette selection, drag behavior, keyboard
 navigation, reading, focus return and containment, deep links, browser history,
 404s, reduced motion, 320px/390px mobile layouts, resize, sound reset, missing
 WebGL, and graphics context loss. Hardening cases cover delayed or failed scene
-loading, stable reader focus/scroll, modified clicks, contact targets, native
+loading, the deep-link handoff to the modeled screen with carried focus and
+scroll, modified clicks, contact targets, native
 touch gestures, and delayed-font texture redraws. It starts a local server when
 needed.
 

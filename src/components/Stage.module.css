@@ -29,9 +29,9 @@
   translate: 0 -50%;
 }
 .identity h1 {
-  font-size: var(--type-nameplate);
-  font-weight: 650;
-  letter-spacing: -0.02em;
+  font-size: var(--type-functional);
+  font-weight: 600;
+  line-height: var(--leading-title);
 }
 .role {
   display: block;
@@ -43,8 +43,7 @@
   display: flex;
   align-items: center;
   gap: 40px;
-  font-size: var(--type-navigation);
-  font-weight: 500;
+  font-size: var(--type-functional);
 }
 .navigation a,
 .footer a,
@@ -60,6 +59,8 @@
 }
 .arrow {
   flex-shrink: 0;
+  width: 1em;
+  height: 1em;
 }
 .navigation a:hover,
 .footer a:hover {
@@ -79,16 +80,17 @@
   color: var(--silk-dim);
   font-size: var(--type-label);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   margin-bottom: 12px;
 }
 .intro h2 {
   font-size: var(--type-display);
-  font-weight: 560;
+  font-weight: 600;
   font-stretch: 110%;
   line-height: 1.06;
-  letter-spacing: -0.035em;
+  letter-spacing: var(--tracking-display);
   text-wrap: balance;
   overflow-wrap: anywhere;
   color: var(--silk-hi);
@@ -101,7 +103,7 @@
   max-width: 36ch;
 }
 .introAside p {
-  font-size: var(--type-intro);
+  font-size: var(--type-body);
   line-height: 1.6;
   letter-spacing: var(--tracking-body);
   text-wrap: pretty;
@@ -133,14 +135,15 @@
 }
 .objectCaption {
   font-size: var(--type-functional);
-  font-weight: 550;
+  font-weight: 600;
+  line-height: var(--leading-title);
   color: var(--silk-hi);
 }
 /* The guide's first line shares the reset key's 44px centre line, so the
    drag hint sits on its baseline; the instruction hangs beneath. */
 .objectCaption > span {
   display: block;
-  padding-top: calc((44px - 1.5 * var(--type-functional)) / 2);
+  padding-top: calc((44px - var(--leading-title) * var(--type-functional)) / 2);
 }
 .objectCaption small {
   display: block;
@@ -171,7 +174,6 @@
   height: 44px;
   flex-shrink: 0;
   border-radius: 50%;
-  font-size: 18px;
   transition: border-color 0.2s;
 }
 .sceneTools button:hover {
@@ -191,12 +193,14 @@
 }
 .archiveHeading h2 {
   font-size: var(--type-functional);
-  font-weight: 650;
+  font-weight: 600;
+  line-height: var(--leading-title);
   color: var(--silk-hi);
 }
 .archiveHeading h2 span {
   color: var(--silk-dim);
-  font-size: 9px;
+  font-size: var(--type-label);
+  letter-spacing: var(--tracking-label);
   margin-left: 8px;
 }
 .archiveHeading p {
@@ -244,19 +248,20 @@
   border-color: var(--seam-lit);
 }
 .tapeNumber {
-  font-size: 9px;
+  font-size: var(--type-label);
+  font-weight: 600;
   line-height: 1.2;
+  letter-spacing: var(--tracking-label);
   color: var(--silk-dim);
-  font-variant-numeric: tabular-nums;
 }
 .tapeLabel {
   min-width: 0;
   overflow-wrap: anywhere;
   font-size: var(--type-functional);
-  line-height: 1.35;
+  line-height: var(--leading-title);
   color: var(--silk-hi);
   text-transform: capitalize;
-  font-weight: 550;
+  font-weight: 600;
 }
 .tapeLabel small {
   display: block;
@@ -271,7 +276,8 @@
   grid-column: 2;
   grid-row: 1 / -1;
   align-self: center;
-  font-size: 10px;
+  width: var(--type-caption);
+  height: var(--type-caption);
   color: var(--silk-dim);
 }
 .footer {
@@ -291,8 +297,10 @@
   color: var(--silk);
 }
 .footerEdition {
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: var(--type-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 }
 .skipLink {
   position: fixed;
@@ -319,10 +327,11 @@
   color: var(--silk-dim);
 }
 .loadingMark {
-  font-size: 42px;
+  font-size: var(--type-mark);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
   color: var(--silk);
-  letter-spacing: -0.035em;
-  font-weight: 700;
 }
 .transitionTools {
   position: fixed;
@@ -339,7 +348,6 @@
   color: var(--silk);
   font-family: var(--font-chassis);
   font-size: var(--type-caption);
-  font-weight: 500;
   line-height: var(--leading-caption);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -411,9 +419,6 @@
   }
   .header {
     min-height: 72px;
-  }
-  .identity h1 {
-    font-size: var(--type-navigation);
   }
   .navigation {
     gap: 18px;
@@ -493,6 +498,14 @@
   background: var(--ink-2);
   box-shadow: 0 0 0 20px var(--ink-0);
 }
+/* A desktop deep link's native reader hands over to the modeled screen in
+   one dissolve, once the studio has composed underneath; the tube's own
+   tracking entrance plays through it. Reduced motion swaps instead. */
+.handoff {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-dolly) var(--ease-out);
+}
 .nativeScreen {
   flex: 1;
   min-height: 0;
@@ -526,8 +539,11 @@
 }
 .readerDeckLabel {
   color: var(--silk);
-  font-size: var(--type-caption);
+  font-size: var(--type-label);
   font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 }
 .readerDeckLabel span {
   color: var(--silk-dim);

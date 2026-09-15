@@ -13,7 +13,7 @@ function loadStudioFonts() {
   // Canvas text does not reliably trigger a font download. Load both faces
   // once, including VT323 when the idle screen is the only place using it.
   void Promise.allSettled([
-    document.fonts.load('500 16px "Archivo Variable"'),
+    document.fonts.load('600 16px "Archivo Variable"'),
     document.fonts.load('16px "VT323"'),
   ]).then(() => {
     fontsSettled = true
@@ -60,7 +60,7 @@ export function fitType(
   text: string,
   size: number,
   maxWidth: number,
-  weight = 500,
+  weight = 600,
   tracking = 0,
 ) {
   const apply = (px: number) => {

@@ -118,7 +118,7 @@ export function Print({
   width = 1,
   height = 0.12,
   color = '#b7bbc6',
-  weight = 500,
+  weight = 600,
   tracking = 0,
   ...props
 }: Omit<ThreeElements['mesh'], 'args'> & {
