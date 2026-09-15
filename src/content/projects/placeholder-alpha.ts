@@ -4,9 +4,10 @@ import testPattern from './media/test-pattern.svg'
 export const placeholderAlpha: Project = {
   slug: 'placeholder-alpha',
   title: 'Placeholder: Alpha',
-  tagline: 'Stand-in tape until real projects are selected (PLAN.md Stage 8).',
+  tagline:
+    'A placeholder in the archive. The real project selection is on its way.',
   description: [
-    'This is placeholder copy. A real project writeup will land here in Stage 8 — what the project is, why it exists, and what was interesting about building it.',
+    'This is placeholder copy. A real project writeup will land here — what the project is, why it exists, and what was interesting about building it.',
     'It runs a few paragraphs long on purpose, so the CRT reading experience is judged against realistic prose: line length, rhythm, scroll behavior, and how the on-screen display chrome frames a real read.',
   ],
   year: 2026,

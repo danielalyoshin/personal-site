@@ -2,3 +2,7 @@ dist
 node_modules
 package-lock.json
 .impeccable/hook.cache.json
+.impeccable/hook.pending.json
+
+# Vendored Impeccable skill; preserve upstream formatting
+.agents/skills/impeccable/

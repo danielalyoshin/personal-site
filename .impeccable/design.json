@@ -1,21 +1,141 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-22T22:31:23-04:00",
+  "generatedAt": "2026-09-15T20:20:22.202Z",
   "title": "Design System: Daniel Alyoshin — Personal Site",
   "extensions": {
     "colorMeta": {
       "ink-0": {
         "role": "neutral",
-        "displayName": "Ink 0 (Page Ground)",
+        "displayName": "Graphite ground",
         "canonical": "#0e0f12",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
           "#1d2026",
           "#262a32",
+          "#2e323b",
           "#3a3f4a",
           "#868b99",
-          "#b7bbc6",
+          "#e9ebf1"
+        ]
+      },
+      "ink-1": {
+        "role": "neutral",
+        "displayName": "Transport graphite",
+        "canonical": "#16181d",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Surface graphite",
+        "canonical": "#1d2026",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Hover graphite",
+        "canonical": "#262a32",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "seam": {
+        "role": "neutral",
+        "displayName": "Machined seam",
+        "canonical": "#2e323b",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "seam-lit": {
+        "role": "neutral",
+        "displayName": "Lit seam",
+        "canonical": "#3a3f4a",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "silkscreen-hi": {
+        "role": "neutral",
+        "displayName": "High silkscreen",
+        "canonical": "#e9ebf1",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "silkscreen": {
+        "role": "neutral",
+        "displayName": "Silkscreen",
+        "canonical": "#b7bbc6",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
+          "#e9ebf1"
+        ]
+      },
+      "silkscreen-dim": {
+        "role": "neutral",
+        "displayName": "Dim silkscreen",
+        "canonical": "#868b99",
+        "tonalRamp": [
+          "#0e0f12",
+          "#16181d",
+          "#1d2026",
+          "#262a32",
+          "#2e323b",
+          "#3a3f4a",
+          "#868b99",
           "#e9ebf1"
         ]
       },
@@ -24,14 +144,14 @@
         "displayName": "VFD Cyan",
         "canonical": "#61e8c6",
         "tonalRamp": [
-          "#0d2b23",
-          "#164e40",
-          "#20705c",
-          "#2d9379",
-          "#3fb797",
-          "#61e8c6",
-          "#98f0d9",
-          "#ccf8ec"
+          "oklch(15.000% 0.12830 173.748)",
+          "oklch(26.429% 0.12830 173.748)",
+          "oklch(37.857% 0.12830 173.748)",
+          "oklch(49.286% 0.12830 173.748)",
+          "oklch(60.714% 0.12830 173.748)",
+          "oklch(72.143% 0.12830 173.748)",
+          "oklch(83.571% 0.12830 173.748)",
+          "oklch(95.000% 0.12830 173.748)"
         ]
       },
       "crt-blue": {
@@ -39,14 +159,104 @@
         "displayName": "CRT Blue",
         "canonical": "#1523d6",
         "tonalRamp": [
-          "#060a40",
-          "#0a1067",
-          "#0e168e",
-          "#121cb5",
-          "#1523d6",
-          "#4a55e2",
-          "#8a92ee",
-          "#c6cbf5"
+          "oklch(15.000% 0.25662 266.268)",
+          "oklch(26.429% 0.25662 266.268)",
+          "oklch(37.857% 0.25662 266.268)",
+          "oklch(49.286% 0.25662 266.268)",
+          "oklch(60.714% 0.25662 266.268)",
+          "oklch(72.143% 0.25662 266.268)",
+          "oklch(83.571% 0.25662 266.268)",
+          "oklch(95.000% 0.25662 266.268)"
+        ]
+      },
+      "screen-black": {
+        "role": "neutral",
+        "displayName": "Screen black",
+        "canonical": "#07080c",
+        "tonalRamp": [
+          "oklch(15.000% 0.00936 272.537)",
+          "oklch(26.429% 0.00936 272.537)",
+          "oklch(37.857% 0.00936 272.537)",
+          "oklch(49.286% 0.00936 272.537)",
+          "oklch(60.714% 0.00936 272.537)",
+          "oklch(72.143% 0.00936 272.537)",
+          "oklch(83.571% 0.00936 272.537)",
+          "oklch(95.000% 0.00936 272.537)"
+        ]
+      },
+      "screen-text": {
+        "role": "neutral",
+        "displayName": "Screen text",
+        "canonical": "#dfe6ff",
+        "tonalRamp": [
+          "oklch(15.000% 0.03478 273.262)",
+          "oklch(26.429% 0.03478 273.262)",
+          "oklch(37.857% 0.03478 273.262)",
+          "oklch(49.286% 0.03478 273.262)",
+          "oklch(60.714% 0.03478 273.262)",
+          "oklch(72.143% 0.03478 273.262)",
+          "oklch(83.571% 0.03478 273.262)",
+          "oklch(95.000% 0.03478 273.262)"
+        ]
+      },
+      "screen-dim": {
+        "role": "neutral",
+        "displayName": "Dim screen text",
+        "canonical": "#98a3c9",
+        "tonalRamp": [
+          "oklch(15.000% 0.05678 272.289)",
+          "oklch(26.429% 0.05678 272.289)",
+          "oklch(37.857% 0.05678 272.289)",
+          "oklch(49.286% 0.05678 272.289)",
+          "oklch(60.714% 0.05678 272.289)",
+          "oklch(72.143% 0.05678 272.289)",
+          "oklch(83.571% 0.05678 272.289)",
+          "oklch(95.000% 0.05678 272.289)"
+        ]
+      },
+      "screen-soft": {
+        "role": "neutral",
+        "displayName": "Soft screen text",
+        "canonical": "#aeb8dd",
+        "tonalRamp": [
+          "oklch(15.000% 0.05381 273.239)",
+          "oklch(26.429% 0.05381 273.239)",
+          "oklch(37.857% 0.05381 273.239)",
+          "oklch(49.286% 0.05381 273.239)",
+          "oklch(60.714% 0.05381 273.239)",
+          "oklch(72.143% 0.05381 273.239)",
+          "oklch(83.571% 0.05381 273.239)",
+          "oklch(95.000% 0.05381 273.239)"
+        ]
+      },
+      "osd-white": {
+        "role": "neutral",
+        "displayName": "OSD white",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15.000% 0.00000 89.876)",
+          "oklch(26.429% 0.00000 89.876)",
+          "oklch(37.857% 0.00000 89.876)",
+          "oklch(49.286% 0.00000 89.876)",
+          "oklch(60.714% 0.00000 89.876)",
+          "oklch(72.143% 0.00000 89.876)",
+          "oklch(83.571% 0.00000 89.876)",
+          "oklch(95.000% 0.00000 89.876)"
+        ]
+      },
+      "rec-red": {
+        "role": "secondary",
+        "displayName": "REC Red",
+        "canonical": "#ff3b30",
+        "tonalRamp": [
+          "oklch(15.000% 0.23214 28.659)",
+          "oklch(26.429% 0.23214 28.659)",
+          "oklch(37.857% 0.23214 28.659)",
+          "oklch(49.286% 0.23214 28.659)",
+          "oklch(60.714% 0.23214 28.659)",
+          "oklch(72.143% 0.23214 28.659)",
+          "oklch(83.571% 0.23214 28.659)",
+          "oklch(95.000% 0.23214 28.659)"
         ]
       },
       "phosphor": {
@@ -54,247 +264,356 @@
         "displayName": "Phosphor",
         "canonical": "#b4c4ff",
         "tonalRamp": [
-          "#1a2040",
-          "#2e3a6b",
-          "#455494",
-          "#5f70b8",
-          "#7d8ed6",
-          "#9aabec",
-          "#b4c4ff",
-          "#dbe2ff"
+          "oklch(15.000% 0.08500 272.669)",
+          "oklch(26.429% 0.08500 272.669)",
+          "oklch(37.857% 0.08500 272.669)",
+          "oklch(49.286% 0.08500 272.669)",
+          "oklch(60.714% 0.08500 272.669)",
+          "oklch(72.143% 0.08500 272.669)",
+          "oklch(83.571% 0.08500 272.669)",
+          "oklch(95.000% 0.08500 272.669)"
         ]
       },
-      "screen-text": {
-        "role": "neutral",
-        "displayName": "Screen Text",
-        "canonical": "#dfe6ff",
+      "studio-blue": {
+        "role": "secondary",
+        "displayName": "Studio Blue",
+        "canonical": "#242bd9",
         "tonalRamp": [
-          "#07080c",
-          "#3a4463",
-          "#5f6c92",
-          "#98a3c9",
-          "#aeb8dd",
-          "#c6cded",
-          "#dfe6ff",
-          "#f2f5ff"
+          "oklch(15.000% 0.25100 268.533)",
+          "oklch(26.429% 0.25100 268.533)",
+          "oklch(37.857% 0.25100 268.533)",
+          "oklch(49.286% 0.25100 268.533)",
+          "oklch(60.714% 0.25100 268.533)",
+          "oklch(72.143% 0.25100 268.533)",
+          "oklch(83.571% 0.25100 268.533)",
+          "oklch(95.000% 0.25100 268.533)"
         ]
       }
     },
     "typographyMeta": {
       "display": {
+        "displayName": "Introduction",
+        "purpose": "Compact Archivo introduction, capped at 64px; 110% font stretch and a dim secondary line."
+      },
+      "display-mobile": {
+        "displayName": "Mobile introduction",
+        "purpose": "2–3.375rem balanced introduction at widths of 600px and below."
+      },
+      "nameplate": {
         "displayName": "Nameplate",
-        "purpose": "Engraved rack nameplate and CRT titles; Archivo at width 125, weight 800, uppercase."
+        "purpose": "Compact header identity; 13px at widths of 600px and below."
+      },
+      "body": {
+        "displayName": "Page baseline",
+        "purpose": "Inherited Archivo baseline; components use their documented local sizes."
       },
       "label": {
         "displayName": "Silkscreen",
-        "purpose": "All chassis labels; tracked uppercase, never glowing."
+        "purpose": "Tracked uppercase printed labels; never glowing."
       },
-      "osd": {
-        "displayName": "OSD",
-        "purpose": "VT323 screen chrome only — PLAY, counters, prompts. Never chassis text."
+      "navigation": {
+        "displayName": "Navigation",
+        "purpose": "0.8125rem Archivo navigation at weight 500 at every width."
       },
-      "osd-small": {
-        "displayName": "OSD Small",
-        "purpose": "Secondary OSD: deck VFD readout and clock, meta lines, captions, tags, corner marks."
+      "control": {
+        "displayName": "Playback control",
+        "purpose": "Uppercase Archivo hardware labels at weight 600, 0.1em tracking, with 44px minimum hit areas. Native labels use 0.75rem; modeled labels scale from 0.75rem to 0.875rem."
       },
       "screen-title": {
-        "displayName": "Screen Title",
-        "purpose": "CRT project titles; tube-scaled (7.5cqi) and capped at the display step."
+        "displayName": "Screen title",
+        "purpose": "Tube-scaled uppercase Archivo, 110% stretch; underline on keyboard focus."
       },
       "screen-body": {
-        "displayName": "Screen Body",
-        "purpose": "CRT prose; tube-scaled (4.6cqi) and capped at the body step."
+        "displayName": "Screen prose",
+        "purpose": "Weight-440 tube-scaled prose; one centered 62ch column aligns all reader content."
+      },
+      "screen-tagline": {
+        "displayName": "Screen tagline",
+        "purpose": "Semibold tube-scaled introduction with a 62ch measure on the modeled screen."
+      },
+      "osd": {
+        "displayName": "Playback OSD",
+        "purpose": "Tube-scaled VT323 for PLAY and runtime."
+      },
+      "osd-meta": {
+        "displayName": "Screen metadata",
+        "purpose": "Tube-scaled VT323 for year and role."
+      },
+      "osd-small": {
+        "displayName": "Secondary OSD",
+        "purpose": "Tube-scaled VT323 captions, tags, links, and recorded metadata, with a 1.0625rem floor and 1.35 leading."
+      },
+      "osd-display": {
+        "displayName": "Screen message",
+        "purpose": "Large VT323 NO SIGNAL and fallback idle prompts."
+      },
+      "display-short": {
+        "displayName": "Short desktop introduction",
+        "purpose": "40–48px introduction above 600px width when viewport height is 820px or less."
+      },
+      "functional-body": {
+        "displayName": "Functional body",
+        "purpose": "0.875rem selection guidance at weight 550; introductory prose has its own 1rem role."
+      },
+      "functional-title": {
+        "displayName": "Functional title",
+        "purpose": "0.875rem tape names with 1.35 leading; archive heading uses weight 650 and 1.5 leading."
+      },
+      "functional-secondary": {
+        "displayName": "Functional secondary text",
+        "purpose": "0.75rem instructions, placeholder captions, footer, and loading text."
+      },
+      "full-height-title": {
+        "displayName": "Full-height reader title",
+        "purpose": "1.5–2rem title in the explicit full-height reader mode."
+      },
+      "full-height-body": {
+        "displayName": "Full-height reader prose",
+        "purpose": "16–18px prose in full-height mode, selected at widths up to 767px or heights up to 699px."
+      },
+      "full-height-tagline": {
+        "displayName": "Full-height reader tagline",
+        "purpose": "Semibold 16–18px introduction in the full-height reader."
+      },
+      "intro-body": {
+        "displayName": "Introductory prose",
+        "purpose": "1rem Archivo across all widths, 1.6 leading, 0.005em tracking, and a 36ch maximum aside."
+      },
+      "animation-skip": {
+        "displayName": "Skip animation",
+        "purpose": "Sentence-case 0.75rem text action at weight 500, underlined with a 44px target, separate from the physical deck."
       }
     },
     "shadows": [
       {
         "name": "shadow-unit",
-        "value": "0 12px 32px rgba(0,0,0,0.4)",
-        "purpose": "Ambient drop under major units (shelf, deck, CRT)."
+        "value": "0 12px 32px rgba(0, 0, 0, 0.4)",
+        "purpose": "Ambient drop under the HTML fallback monitor."
       },
       {
-        "name": "edge-lit",
-        "value": "inset 0 1px 0 rgba(255,255,255,0.05)",
-        "purpose": "Machined lit top edge on raised panels."
-      },
-      {
-        "name": "shadow-object",
-        "value": "0 3px 8px rgba(0,0,0,0.6)",
-        "purpose": "Small physical parts — the seated cassette edge in the slot."
-      },
-      {
-        "name": "shadow-recess",
-        "value": "inset 0 2px 8px rgba(0,0,0,0.8)",
-        "purpose": "Shallow machined insets (VFD window)."
-      },
-      {
-        "name": "shadow-recess-deep",
-        "value": "inset 0 3px 10px rgba(0,0,0,0.9), inset 0 -1px 0 rgba(255,255,255,0.04)",
-        "purpose": "The tape slot mouth and dark cavities."
-      },
-      {
-        "name": "bloom-idle",
-        "value": "0 0 56px 2px rgba(21,35,214,0.45)",
-        "purpose": "Idle CRT blue bloom — the page's light source (One Light Rule exception)."
+        "name": "bloom-rest",
+        "value": "0 0 40px 0 rgba(180, 196, 255, 0.1)",
+        "purpose": "Screen-only CSS bloom; preserve the current state-specific value."
       },
       {
         "name": "bloom-play",
-        "value": "0 0 40px 0 rgba(180,196,255,0.16)",
-        "purpose": "Playback phosphor bloom, screen only."
+        "value": "0 0 40px 0 rgba(180, 196, 255, 0.16)",
+        "purpose": "Screen-only CSS bloom; preserve the current state-specific value."
+      },
+      {
+        "name": "bloom-idle",
+        "value": "0 0 56px 2px rgba(21, 35, 214, 0.45)",
+        "purpose": "Screen-only CSS bloom; preserve the current state-specific value."
+      },
+      {
+        "name": "expanded-reader-surround",
+        "value": "0 0 0 20px var(--ink-0)",
+        "purpose": "Opaque page-ground surround for the native reader on narrow or short viewports; not a glow."
       }
     ],
     "motion": [
       {
         "name": "t-fast",
         "value": "120ms",
-        "purpose": "Control feedback (buttons, links, slot flap)."
+        "purpose": "OSD link background and color feedback."
       },
       {
         "name": "t-med",
         "value": "240ms",
-        "purpose": "Tape slide-out, screen state cross-fades."
+        "purpose": "HTML CRT background and bloom transitions."
       },
       {
-        "name": "t-dolly",
-        "value": "560ms",
-        "purpose": "Camera dolly toward the CRT."
+        "name": "shell-feedback",
+        "value": "200ms",
+        "purpose": "Archive background/border and reset border transitions."
       },
       {
-        "name": "ease-out",
-        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Default exponential ease-out."
+        "name": "tape-insert",
+        "value": "2.4s",
+        "purpose": "Nominal render-driven cassette/flap timeline; capped frame deltas can extend elapsed time. Skippable; reduced motion completes immediately."
       },
       {
-        "name": "ease-mech",
-        "value": "cubic-bezier(0.6, 0, 0.2, 1)",
-        "purpose": "Mechanical slides (tape travel, slot flap)."
+        "name": "camera-interpolation",
+        "value": "1 - exp(-min(delta, 0.05) * 7)",
+        "purpose": "Camera position, target, and zoom interpolate per frame after insertion; immediate for reduced motion or skip."
       },
       {
         "name": "grain-step",
         "value": "0.8s steps(1, end) infinite",
-        "purpose": "CRT phosphor grain: four stepped offsets (~5 fps), screen plane only; static under reduced motion."
+        "purpose": "Faint grain inside the HTML CRT; static under reduced motion."
+      },
+      {
+        "name": "tracking-entrance",
+        "value": "400ms steps(6, end) 1",
+        "purpose": "One tracking entrance inside the HTML CRT; collapsed under reduced motion."
       },
       {
         "name": "rec-blink",
         "value": "1.2s steps(2, start) infinite",
-        "purpose": "REC dot heartbeat during playback; solid under reduced motion."
+        "purpose": "Recorded dot inside playback; visible under reduced motion."
+      },
+      {
+        "name": "fallback-cursor",
+        "value": "1.1s steps(2, start) infinite",
+        "purpose": "HTML fallback idle cursor; the modeled idle texture has no cursor animation."
       }
     ],
     "breakpoints": [
       {
-        "name": "stage-stack",
-        "value": "720px"
+        "name": "archive-three-columns-max",
+        "value": "1200px"
+      },
+      {
+        "name": "short-desktop-height-max",
+        "value": "820px",
+        "purpose": "Compact header and introduction when viewport width is at least 601px."
+      },
+      {
+        "name": "native-reader-width-max",
+        "value": "767px",
+        "purpose": "Full-height reading when either this width or the 699px height threshold is met."
+      },
+      {
+        "name": "compact-reader-padding-max",
+        "value": "719px"
+      },
+      {
+        "name": "native-reader-height-max",
+        "value": "699px",
+        "purpose": "Full-height reading when either this height or the 767px width threshold is met."
+      },
+      {
+        "name": "mobile-shell-max",
+        "value": "600px"
       }
     ]
   },
   "components": [
     {
-      "name": "Eject Button",
+      "name": "Eject tape",
       "kind": "button",
-      "refersTo": "button-eject",
-      "description": "Chassis control: silkscreen caps on a raised ink panel; hover lifts the surface, never glows.",
-      "html": "<button class=\"ds-btn-eject\">⏏ Eject</button>",
-      "css": ".ds-btn-eject { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; padding: 10px 18px; transition: background 120ms, color 120ms, transform 120ms; } .ds-btn-eject:hover { background: #3a3f4a; color: #e9ebf1; } .ds-btn-eject:active { transform: translateY(1px); } .ds-btn-eject:focus-visible { outline: 2px solid #61e8c6; outline-offset: 2px; }"
+      "refersTo": "button-transport",
+      "description": "Native-reader hardware exit with uppercase Archivo and the desktop Escape hint.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><button type=\"button\"><span aria-hidden=\"true\">⏏</span> Eject tape <kbd>ESC</kbd></button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: 0.1em;\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk-dim);\n  font: inherit;\n  font-size: var(--type-caption);\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n"
     },
     {
-      "name": "Eject Button (Attention)",
+      "name": "Skip animation",
       "kind": "button",
-      "refersTo": "button-eject",
-      "description": "NO SIGNAL state: the exit lives on the hardware — crisp VFD-cyan outline pulsing opacity, never a halo; solid under reduced motion.",
-      "html": "<button class=\"ds-btn-eject-attn\">⏏ Eject</button>",
-      "css": ".ds-btn-eject-attn { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; padding: 10px 18px; outline: 2px solid #61e8c6; outline-offset: 3px; animation: ds-eject-pulse 1.6s ease-in-out infinite; transition: background 120ms, color 120ms; } .ds-btn-eject-attn:hover { background: #3a3f4a; color: #e9ebf1; } .ds-btn-eject-attn:focus-visible { animation: none; } @keyframes ds-eject-pulse { 0%, 100% { outline-color: #61e8c6; } 50% { outline-color: rgba(97, 232, 198, 0.3); } }"
+      "refersTo": "button-animation-skip",
+      "description": "Plain underlined interface action during insertion; outside the modeled hardware or inside the native loading screen.",
+      "html": "<div class=\"ds-sample\"><button class=\"ds-skipAnimation\" type=\"button\">Skip animation</button></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-skipAnimation {\n  min-width: 44px;\n  min-height: 44px;\n  padding: 8px;\n  border: 0;\n  background: transparent;\n  color: var(--silk);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 500;\n  line-height: var(--leading-caption);\n  text-decoration: underline;\n  text-decoration-thickness: 1px;\n  text-underline-offset: 0.3em;\n}\n.ds-skipAnimation:hover,\n.ds-skipAnimation:active {\n  color: var(--silk-hi);\n}\n"
     },
     {
-      "name": "Sound Toggle",
+      "name": "Playback sound",
       "kind": "button",
-      "refersTo": "button-eject",
-      "description": "Icon-only chassis toggle beside EJECT: the speaker glyph carries the state — waves when on, × when off. aria-pressed, silkscreen color, no accent.",
-      "html": "<div class=\"ds-sound-row\"><button class=\"ds-sound-toggle\" aria-pressed=\"true\" title=\"Sound effects (on)\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path d=\"M8 2.5 4.5 5.5H2v5h2.5L8 13.5z\" fill=\"currentColor\"/><path d=\"M10.2 5.6a3.4 3.4 0 0 1 0 4.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M12.2 3.9a6 6 0 0 1 0 8.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-sound-toggle\" aria-pressed=\"false\" title=\"Sound effects (off)\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path d=\"M8 2.5 4.5 5.5H2v5h2.5L8 13.5z\" fill=\"currentColor\"/><path d=\"m10.4 6.4 3.2 3.2m0-3.2-3.2 3.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg></button></div>",
-      "css": ".ds-sound-row { display: inline-flex; gap: 8px; } .ds-sound-toggle { display: inline-flex; align-items: center; padding: 10px 11px; color: #b7bbc6; background: #262a32; border: 1px solid #2e323b; border-radius: 4px; cursor: pointer; transition: background 120ms, color 120ms, transform 120ms; } .ds-sound-toggle svg { display: block; } .ds-sound-toggle:hover { background: #3a3f4a; color: #e9ebf1; } .ds-sound-toggle:active { transform: translateY(1px); } .ds-sound-toggle:focus-visible { outline: 2px solid #61e8c6; outline-offset: 2px; }"
+      "refersTo": "button-transport",
+      "description": "Native-reader sound toggle; off and on states expose aria-pressed.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><div class=\"ds-sound-states\"><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"m13 7 5 6m0-6-5 6\"/></svg></button><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"true\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"M12 6a6 6 0 0 1 0 8M15 3a10 10 0 0 1 0 14\"/></svg></button></div></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: 0.1em;\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk-dim);\n  font: inherit;\n  font-size: var(--type-caption);\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n\n.ds-sound-states{display:flex;gap:8px;}"
     },
     {
-      "name": "OSD Link",
-      "kind": "custom",
+      "name": "Reset studio view",
+      "kind": "button",
+      "refersTo": "button-reset",
+      "description": "44px circular control beside the selection guide above the canvas; stronger border on hover.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-tools\"><button type=\"button\" aria-label=\"Reset studio view\" title=\"Reset view\">↺</button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tools{display:flex;align-items:center;gap:16px;}\n.ds-tools button{display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--seam);color:var(--silk);width:44px;height:44px;flex-shrink:0;border-radius:50%;font-size:18px;transition:border-color 0.2s;}\n.ds-tools button:hover{border-color:var(--silk-dim);}\n@media (max-width: 600px){.ds-tools{gap:4px;}\n}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "Browse sound",
+      "kind": "button",
+      "refersTo": "button-sound",
+      "description": "Borderless 44px browse toggle beside the selection guide; 12px text hides at the phone breakpoint.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-tools\"><button type=\"button\" class=\"ds-sound\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"m13 7 5 6m0-6-5 6\"/></svg><span>Sound off</span></button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tools{display:flex;align-items:center;gap:16px;}\n.ds-tools button{display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--seam);color:var(--silk);width:44px;height:44px;flex-shrink:0;border-radius:50%;font-size:18px;transition:border-color 0.2s;}\n.ds-tools button:hover{border-color:var(--silk-dim);}\n.ds-tools .ds-sound{width:auto;gap:8px;border:none;border-radius:3px;font-size:12px;min-width:44px;}\n@media (max-width: 600px){.ds-tools{gap:4px;}\n.ds-tools .ds-sound span{display:none;}\n}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "Site navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "13px Archivo links with an archive count and an internal play symbol; 12px on phones, where the archive shortcut hides.",
+      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive <span class=\"ds-count\">06</span></a><a href=\"/project/about\">About me <span aria-hidden=\"true\">▶</span></a></nav></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.8125rem;font-weight:500;}\n.ds-nav a{text-decoration:none;padding-block:12px;}\n.ds-nav a:hover{color:var(--silk-hi);}\n.ds-count{margin-left:5px;color:var(--silk-dim);font-size:9px;vertical-align:super;}\n@media (max-width: 600px){.ds-nav{gap:18px;}\n.ds-nav > a:first-child{display:none;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "Tape index entry",
+      "kind": "card",
+      "refersTo": "tape-link",
+      "description": "Full-width archive link with 80px minimum height, a wrapping 14px name, 12px placeholder caption, and internal play symbol; flex list items equalize full-grid row heights.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-index\"><a href=\"/project/placeholder-alpha\" aria-label=\"Play tape: Placeholder: Alpha (2026)\" style=\"--tape-accent:#ff4554\"><span class=\"ds-number\">01</span><span class=\"ds-label\">Alpha<small>Placeholder</small></span><span class=\"ds-arrow\" aria-hidden=\"true\">▶</span></a></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-index a{display:flex;width:100%;align-items:center;gap:8px;position:relative;padding:16px 12px;min-height:80px;border:1px solid var(--seam);border-radius:3px;text-decoration:none;transition:background 0.2s,\n    border-color 0.2s;}\n.ds-index a::before{content:'';position:absolute;left:-1px;top:17px;bottom:17px;width:2px;background:var(--tape-accent);}\n.ds-index a:hover,.ds-index a:focus-visible,.ds-index a.ds-previewed{background:var(--ink-2);border-color:var(--seam-lit);}\n.ds-number{font-size:9px;color:var(--silk-dim);align-self:flex-start;padding-top:3px;font-variant-numeric:tabular-nums;}\n.ds-label{min-width:0;overflow-wrap:anywhere;font-size:0.875rem;line-height:1.35;color:var(--silk-hi);text-transform:capitalize;font-weight:550;}\n.ds-label small{display:block;font-size:0.75rem;line-height:1.5;color:var(--silk-dim);margin-top:4px;font-weight:400;text-transform:none;}\n.ds-arrow{font-size:10px;flex-shrink:0;color:var(--silk-dim);margin-left:auto;}\n.ds-index a{box-sizing:border-box;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "OSD project link",
+      "kind": "button",
       "refersTo": "link-osd",
-      "description": "Screen-interior action: VT323 white on black, hairline border, inverts on hover.",
-      "html": "<a class=\"ds-osd-link\" href=\"#\">⏏ BACK TO SHELF</a>",
-      "css": ".ds-osd-link { font-family: 'VT323', monospace; font-size: 1.25rem; color: #ffffff; text-decoration: none; border: 1px solid #ffffff; border-radius: 2px; padding: 6px 16px; background: #07080c; transition: background 120ms, color 120ms; display: inline-block; } .ds-osd-link:hover { background: #ffffff; color: #07080c; }"
+      "description": "Screen-interior link with a minimum 44px touch target, white inversion on hover, and a white focus ring.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-links\"><a href=\"https://github.com/danielalyoshin\" target=\"_blank\" rel=\"noreferrer\">GITHUB ↗</a></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-links{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);margin-bottom:var(--sp-lg);}\n.ds-links a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;box-sizing:border-box;font-family:var(--font-osd);font-size:clamp(1.0625rem,4cqi,1.25rem);font-weight:400;line-height:1.35;letter-spacing:0.005em;color:var(--osd);text-decoration:none;border:1px solid var(--osd);border-radius:var(--r-hairline);padding:6px 14px;transition:background var(--t-fast),\n    color var(--t-fast);}\n.ds-links a:hover{background:var(--osd);color:var(--screen-black);}\n.ds-links a:focus-visible{outline-color:var(--osd);}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}\n.ds-sample{container-type:inline-size;}"
     },
     {
-      "name": "VFD Readout",
-      "kind": "custom",
-      "refersTo": "vfd",
-      "description": "The deck's display window: recessed black well, cyan VT323 text, ellipsizing readout with the 24h clock seated at the right end. No glow.",
-      "html": "<div class=\"ds-vfd\"><span class=\"ds-vfd-text\">● PLACEHOLDER: ALPHA · 2026</span><span class=\"ds-vfd-clock\">22:31</span></div>",
-      "css": ".ds-vfd { background: #0a0c0e; border-radius: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); padding: 6px 14px; font-family: 'VT323', monospace; font-size: 1.25rem; color: #61e8c6; text-transform: uppercase; display: flex; align-items: baseline; gap: 16px; min-width: 0; max-width: 420px; } .ds-vfd-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
-    },
-    {
-      "name": "Silkscreen Label",
+      "name": "OSD tags",
       "kind": "chip",
-      "refersTo": "label",
-      "description": "Printed chassis text: tracked uppercase, dim by default.",
-      "html": "<span class=\"ds-silk\">Alyoshin AV-01 · Hi-Fi Stereo</span>",
-      "css": ".ds-silk { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 0.6875rem; font-weight: 600; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: #868b99; }"
+      "refersTo": "tag-osd",
+      "description": "Informational bracketed text; these are not interactive filters.",
+      "html": "<div class=\"ds-sample\"><ul class=\"ds-tags\" aria-label=\"Tags\"><li>[PLACEHOLDER]</li><li>[VHS]</li></ul></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tags{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);font-family:var(--font-osd);font-size:clamp(1.0625rem,4cqi,1.25rem);font-weight:400;line-height:1.35;letter-spacing:0.005em;color:var(--screen-soft);margin:var(--sp-lg) 0 var(--sp-md);}.ds-tags{padding:0;list-style:none;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}\n.ds-sample{container-type:inline-size;}"
     },
     {
-      "name": "Nameplate",
+      "name": "CRT full-height reader",
       "kind": "custom",
-      "refersTo": "display",
-      "description": "Engraved rack nameplate: Archivo expanded black caps, quiet not glowing.",
-      "html": "<h1 class=\"ds-nameplate\">Daniel Alyoshin</h1>",
-      "css": ".ds-nameplate { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 1.9rem; font-weight: 800; font-stretch: 125%; line-height: 1.05; letter-spacing: 0.02em; text-transform: uppercase; color: #e9ebf1; margin: 0; }"
-    },
-    {
-      "name": "CRT Screen (Idle)",
-      "kind": "custom",
-      "refersTo": "osd-display",
-      "description": "The signature surface: CRT-blue idle screen with OSD prompt, scanlines, stepped phosphor grain, and vignette — every effect clipped to the screen plane, bloom as the page's one light.",
-      "html": "<div class=\"ds-crt-screen\"><span class=\"ds-crt-corner\">SP · STANDBY</span><p class=\"ds-crt-prompt\">INSERT TAPE<span class=\"ds-crt-cursor\">▮</span></p><span class=\"ds-crt-grain\"></span><span class=\"ds-crt-scan\"></span><span class=\"ds-crt-vig\"></span></div>",
-      "css": ".ds-crt-screen { position: relative; width: 280px; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: #1523d6; box-shadow: 0 0 56px 2px rgba(21,35,214,0.45); font-family: 'VT323', monospace; color: #ffffff; display: flex; align-items: center; justify-content: center; } .ds-crt-corner { position: absolute; top: 12px; left: 16px; font-size: 1rem; text-shadow: 0 0 6px rgba(255,255,255,0.5); } .ds-crt-prompt { font-size: 1.75rem; letter-spacing: 0.06em; text-shadow: 0 0 10px rgba(255,255,255,0.45); margin: 0; } .ds-crt-cursor { margin-left: 8px; animation: ds-crt-blink 1.1s steps(2, start) infinite; } @keyframes ds-crt-blink { 50% { opacity: 0; } } .ds-crt-grain { position: absolute; inset: 0; pointer-events: none; background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\"); background-size: 160px 160px; opacity: 0.05; animation: ds-crt-grain 0.8s steps(1, end) infinite; } @keyframes ds-crt-grain { 0% { background-position: 0 0; } 25% { background-position: 80px 48px; } 50% { background-position: 32px 112px; } 75% { background-position: 128px 64px; } 100% { background-position: 0 0; } } .ds-crt-scan { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.17) 0 1px, transparent 1px 3px); opacity: 0.35; } .ds-crt-vig { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: radial-gradient(115% 115% at 50% 50%, transparent 62%, rgba(0,0,0,0.5) 100%); }"
+      "refersTo": "crt-reader-full-height",
+      "description": "Explicit full-height mode with 16–18px prose, a 32px title cap, and a focusable article. This 420px-tall preview shares the modeled screen content; the real native frame fills the space above transport. Direct project links and selections before graphics load use this reader immediately and keep it mounted for the playback visit.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-crt ds-embedded ds-fullHeight\"><section class=\"ds-bezel\" aria-label=\"CRT display\"><div class=\"ds-screen ds-playing\"><div class=\"ds-track\"><div class=\"ds-osd\" aria-hidden=\"true\"><span>▶ PLAY</span><span>SP 0:42</span></div><article class=\"ds-reader\" tabindex=\"0\" aria-label=\"Placeholder: Alpha details\"><div class=\"ds-reader-content\"><h2 tabindex=\"-1\" class=\"ds-title\">Placeholder: Alpha</h2><p class=\"ds-meta\">2026 · PLACEHOLDER</p><p class=\"ds-tagline\">A placeholder tape for the studio.</p><p class=\"ds-para\">Real project content will replace this sample.</p><p class=\"ds-end\" aria-hidden=\"true\">REC <span class=\"ds-rec\">●</span> 2026</p></div></article></div><div class=\"ds-grain\" aria-hidden=\"true\"></div><div class=\"ds-scan\" aria-hidden=\"true\"></div><div class=\"ds-vignette\" aria-hidden=\"true\"></div></div></section></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1.0625rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-crt {\n  position: relative;\n  container-type: inline-size;\n  /* Sized so the whole rack (header, shelf, tube, deck, footer) shares the\n     first desktop viewport; playback legibility comes from the dolly. */\n  width: clamp(300px, min(400px, calc((100vh - 640px) * 1.3333 + 38px)), 100%);\n  margin-inline: auto;\n}\n\n.ds-bezel {\n  background: var(--ink-2);\n  border: 1px solid var(--seam);\n  border-radius: var(--r-bezel);\n  padding: 18px;\n  box-shadow: var(--edge-lit), var(--shadow-unit);\n}\n\n/*\n * The screen is the page's only light source (One Light Rule): its bloom is\n * the single permitted outward glow, and every retro effect below is clipped\n * to this element.\n */\n.ds-screen {\n  position: relative;\n  aspect-ratio: 4 / 3;\n  border-radius: 12px;\n  overflow: hidden;\n  background: var(--screen-black);\n  transition:\n    box-shadow var(--t-med),\n    background var(--t-med);\n  box-shadow: var(--bloom-rest);\n}\n\n.ds-idle,\n.ds-ejecting {\n  background: var(--crt-blue);\n  box-shadow: var(--bloom-idle);\n}\n\n.ds-playing {\n  box-shadow: var(--bloom-play);\n}\n\n/* Diegetic layers — inside the tube only. */\n\n/* Live phosphor grain: a tiny desaturated turbulence tile stepped through\n   four offsets (~5 fps, like a broadcast). Faint enough that prose contrast\n   is untouched; the reduced-motion gate leaves it as a static texture. */\n.ds-grain {\n  position: absolute;\n  inset: 0;\n  pointer-events: none;\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.ds-w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\");\n  background-size: 160px 160px;\n  opacity: 0.05;\n  animation: ds-grainShift 0.8s steps(1, end) infinite;\n}\n\n@keyframes ds-grainShift {\n  0% {\n    background-position: 0 0;\n  }\n  25% {\n    background-position: 80px 48px;\n  }\n  50% {\n    background-position: 32px 112px;\n  }\n  75% {\n    background-position: 128px 64px;\n  }\n  100% {\n    background-position: 0 0;\n  }\n}\n\n.ds-scan {\n  position: absolute;\n  inset: 0;\n  pointer-events: none;\n  background: repeating-linear-gradient(\n    0deg,\n    rgba(0, 0, 0, 0.17) 0 1px,\n    transparent 1px 3px\n  );\n  opacity: 0.35;\n}\n\n.ds-vignette {\n  position: absolute;\n  inset: 0;\n  pointer-events: none;\n  border-radius: inherit;\n  background: radial-gradient(\n    115% 115% at 50% 50%,\n    transparent 62%,\n    rgba(0, 0, 0, 0.5) 100%\n  );\n}\n\n/* Brief tracking wobble when a tape starts (remounted per slug). */\n.ds-track {\n  position: absolute;\n  inset: 0;\n  animation: ds-track 400ms steps(6, end) 1;\n}\n\n@keyframes ds-track {\n  0% {\n    transform: translateY(-6%);\n    filter: brightness(2.1);\n  }\n  30% {\n    transform: translateY(3%);\n    filter: brightness(1.3);\n  }\n  55% {\n    transform: translateY(-1.5%);\n  }\n  100% {\n    transform: none;\n    filter: none;\n  }\n}\n\n/* OSD chrome floats over the picture; its glow is inside the screen. */\n.ds-osd {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  justify-content: space-between;\n  padding: 0.875rem 5cqi;\n  font-family: var(--font-osd);\n  font-size: clamp(1.125rem, 4.5cqi, 1.375rem);\n  line-height: 1.2;\n  font-variant-numeric: tabular-nums;\n  color: var(--osd);\n  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);\n  z-index: 2;\n  pointer-events: none;\n}\n\n.ds-reader {\n  position: absolute;\n  inset: 0;\n  overflow-y: auto;\n  padding: 4rem 9% 2.75rem;\n  font-size: clamp(1rem, 3.1cqi, 1.0625rem);\n  font-weight: 440;\n  letter-spacing: 0.005em;\n  overflow-wrap: anywhere;\n  scrollbar-width: thin;\n  scrollbar-color: var(--seam-lit) transparent;\n}\n\n.ds-reader-content {\n  max-width: 62ch;\n  margin-inline: auto;\n}\n\n.ds-reader:focus-visible {\n  outline: 2px solid var(--osd);\n  outline-offset: -4px;\n  border-radius: inherit;\n}\n\n.ds-title {\n  font-weight: 800;\n  font-stretch: 110%;\n  font-size: clamp(1.5rem, 5.6cqi, 2rem);\n  line-height: 1.12;\n  letter-spacing: -0.015em;\n  text-transform: uppercase;\n  text-wrap: balance;\n  color: var(--screen-text);\n  margin-bottom: 0.5em;\n}\n\n/* Focus cue as OSD emphasis: a clear underline, not a box around a\n   screen-filling heading. */\n.ds-title:focus-visible,\n.ds-bigOsd:focus-visible {\n  outline: none;\n  text-decoration: underline;\n  text-decoration-thickness: 3px;\n  text-decoration-color: var(--osd);\n  text-underline-offset: 0.28em;\n}\n\n.ds-meta {\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  font-variant-numeric: tabular-nums;\n  color: var(--screen-dim);\n  margin-bottom: 1.2em;\n}\n\n.ds-tagline {\n  font-weight: 600;\n  font-size: inherit;\n  line-height: 1.5;\n  color: var(--screen-text);\n  text-wrap: pretty;\n  margin-bottom: 1em;\n}\n\n.ds-para {\n  font-size: inherit;\n  line-height: 1.65;\n  color: var(--screen-text);\n  text-wrap: pretty;\n  margin-bottom: 1em;\n}\n\n.ds-gallery {\n  display: grid;\n  gap: var(--sp-md);\n  margin: var(--sp-lg) 0;\n}\n\n.ds-gallery img,\n.ds-gallery video {\n  border: 1px solid var(--seam);\n  border-radius: var(--r-control);\n  width: 100%;\n}\n\n.ds-gallery figcaption {\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--screen-dim);\n  margin-top: var(--sp-xs);\n}\n\n.ds-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--sp-sm) var(--sp-md);\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--screen-soft);\n  margin: var(--sp-lg) 0 var(--sp-md);\n}\n\n.ds-links {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--sp-sm) var(--sp-md);\n  margin-bottom: var(--sp-lg);\n}\n\n.ds-links a {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  min-width: 44px;\n  min-height: 44px;\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--osd);\n  text-decoration: none;\n  border: 1px solid var(--osd);\n  border-radius: var(--r-hairline);\n  padding: 6px 14px;\n  transition:\n    background var(--t-fast),\n    color var(--t-fast);\n}\n\n.ds-links a:hover {\n  background: var(--osd);\n  color: var(--screen-black);\n}\n\n.ds-links a:focus-visible {\n  outline-color: var(--osd);\n}\n\n.ds-end {\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  font-variant-numeric: tabular-nums;\n  color: var(--screen-dim);\n}\n\n/* REC blinks while a tape plays — the tube's own heartbeat. Solid under\n   the reduced-motion gate. */\n.ds-rec {\n  color: var(--rec-red);\n  animation: ds-blink 1.2s steps(2, start) infinite;\n}\n\n/* Idle / NO SIGNAL center stage. */\n.ds-centerScreen {\n  position: absolute;\n  inset: 0;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: var(--sp-md);\n  font-family: var(--font-osd);\n  color: var(--osd);\n  text-align: center;\n  padding: var(--sp-lg);\n  overflow-wrap: anywhere;\n}\n\n.ds-bigOsd {\n  font-size: clamp(1.5rem, 9cqi, 2.5rem);\n  font-weight: 400;\n  line-height: 1.2;\n  letter-spacing: 0.06em;\n  text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);\n}\n\n.ds-subOsd {\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  line-height: 1.35;\n  color: var(--screen-soft);\n}\n\n.ds-cursor {\n  margin-left: 8px;\n  animation: ds-blink 1.1s steps(2, start) infinite;\n}\n\n@keyframes ds-blink {\n  50% {\n    opacity: 0;\n  }\n}\n\n.ds-cornerTL,\n.ds-cornerBR {\n  position: absolute;\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);\n}\n\n.ds-cornerTL {\n  top: 14px;\n  left: 20px;\n}\n\n.ds-cornerBR {\n  bottom: 14px;\n  right: 20px;\n}\n\n.ds-chin {\n  text-align: center;\n  margin-top: var(--sp-sm);\n  letter-spacing: 0.2em;\n}\n\n/* The screen's light falling on the deck below — the one permitted cast.\n   Anchored at the bezel's lower edge (over the chin label) so the falloff\n   is continuous from where the light physically exits; it must fade out\n   fully before the strip ends. */\n.ds-cast {\n  position: absolute;\n  top: calc(100% - 22px);\n  left: 8%;\n  right: 8%;\n  height: 120px;\n  pointer-events: none;\n  z-index: 2;\n  background: var(--cast-idle);\n  transition: opacity var(--t-med);\n}\n\n.ds-castPlay {\n  background: var(--cast-play);\n}\n\n/* Playing on a small screen: the CRT pins near-fullscreen, still a CRT. */\n@media (max-width: 719px) {\n  .ds-crt {\n    width: 100%;\n  }\n\n  :global(.ds-playing-stage) .ds-crt {\n    position: fixed;\n    top: 8px;\n    left: 8px;\n    right: 8px;\n    bottom: 88px;\n    z-index: 30;\n    width: auto;\n    display: flex;\n    flex-direction: column;\n  }\n\n  :global(.ds-playing-stage) .ds-bezel {\n    flex: 1;\n    display: flex;\n    padding: 12px;\n  }\n\n  :global(.ds-playing-stage) .ds-screen {\n    aspect-ratio: auto;\n    flex: 1;\n  }\n\n  :global(.ds-playing-stage) .ds-chin,\n  :global(.ds-playing-stage) .ds-cast {\n    display: none;\n  }\n\n  .ds-reader {\n    padding: 4rem 6% 2.5rem;\n  }\n}\n\n/* Native HTML stays crisp and selectable on the actual 3D screen plane. */\n.ds-embedded {\n  width: 100%;\n}\n.ds-embedded .ds-bezel {\n  padding: 0;\n  border: 0;\n  border-radius: 14px;\n  background: transparent;\n  box-shadow: none;\n}\n.ds-embedded .ds-screen {\n  aspect-ratio: 4 / 3;\n  border-radius: 14px;\n}\n.ds-embedded .ds-chin,\n.ds-embedded .ds-cast {\n  display: none;\n}\n.ds-embedded .ds-osd {\n  background: linear-gradient(var(--screen-black) 70%, transparent);\n  padding-bottom: 1.375rem;\n}\n.ds-embedded .ds-reader {\n  overscroll-behavior: contain;\n}\n.ds-embedded .ds-bigOsd {\n  font-weight: 400;\n}\n\n.ds-fullHeight,\n.ds-fullHeight .ds-bezel,\n.ds-fullHeight .ds-screen {\n  height: 100%;\n}\n.ds-fullHeight .ds-screen {\n  aspect-ratio: auto;\n}\n.ds-fullHeight .ds-reader {\n  padding: 4rem 7% 2.5rem;\n  font-size: clamp(1rem, 2.4cqi, 1.125rem);\n}\n.ds-fullHeight .ds-title {\n  font-size: clamp(1.5rem, 7.5cqi, 2rem);\n}\n\n.ds-crt{container-type:inline-size;width:min(560px,100%);aspect-ratio:4/3;margin-inline:auto;}.ds-embedded .ds-bezel,.ds-embedded .ds-screen{height:100%;width:100%;}.ds-reader h2,.ds-reader p{margin-top:0;}.ds-end{margin-bottom:0;}.ds-crt.ds-fullHeight{height:420px;aspect-ratio:auto;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     }
   ],
   "narrative": {
-    "northStar": "Midnight Studio",
-    "overview": "A dim, precise edit suite. The page is a piece of high-end AV equipment — a matte graphite rack holding a shelf of VHS cassettes, a tape deck, and a CRT — rendered as crisp, contemporary flat vectors. The retro lives entirely in the subject matter; the execution is modern, machined, and clean. The single governing physical fact: the room is dark and the CRT is the only thing emitting light. Sound follows the same doctrine: mechanical and diegetic, never ambient — synthesized cues that answer user actions, default-off behind the deck's sound toggle.",
+    "northStar": "Midnight Studio — in three dimensions",
+    "overview": "A small, carefully arranged listening and viewing studio, built from real low-poly objects. Broad planes, single bevels, matte graphite, and restrained printed details make the equipment feel intentional and tactile. The execution is contemporary and crisp; VHS-era technology supplies the subject matter.\n\nThe CRT carries the light and screen typography. Quiet Archivo text and thin seams organize the surrounding interface. Neutral studio fill reveals the geometry without making the equipment glow. Daniel established this 3D direction on 2026-09-15, superseding the earlier SVG/CSS execution.",
     "keyCharacteristics": [
-      "Matte graphite chassis, machined seams, silkscreen labels",
-      "The CRT emits; nothing else glows",
-      "Saturated color arrives only through artifacts (cassette labels, screen output)",
-      "Crisp flat SVG/CSS vectors; no photographic grunge, no wear"
+      "Matte graphite equipment, precise silhouettes, and small silkscreen labels.",
+      "Saturated cassette accents and blue screen output against a quiet page.",
+      "Real modeled depth with clean full-resolution rendering.",
+      "Accessible HTML reading and immediate alternatives to motion."
     ],
     "rules": [
       {
-        "name": "The One Light Rule",
-        "body": "The CRT is the page's only light source. Glow exists only inside the screen and as the screen's controlled cast onto the deck below it. Chassis text, buttons, and edges never glow. Focus indicators are crisp 2px VFD-cyan outlines, not halos.",
-        "section": "colors"
-      },
-      {
         "name": "The Artifact Color Rule",
-        "body": "Saturated hues belong to content objects, driven by per-project data. The chassis never exceeds graphite + VFD cyan, and VFD cyan stays under ~5% of any viewport.",
+        "body": "Saturated color belongs to cassette labels and screen output. Cassette accents come from project data; small VFD-cyan focus and status marks support interaction without coloring the page chrome.",
         "section": "colors"
       },
       {
         "name": "The Silkscreen Rule",
-        "body": "Chassis hierarchy comes from weight, width, and spacing — never from glow, color, or size inflation.",
+        "body": "Printed hardware text never glows. Its hierarchy comes from size appropriate to the object, weight, spacing, and contrast against the material.",
         "section": "typography"
       },
       {
         "name": "The Tube-Scale Rule",
-        "body": "Type inside the CRT scales with the tube, not the viewport: .crtUnit is an inline-size container and every screen-interior size is a cqi clamp capped at its documented step. The title focus cue is a 3px OSD-white underline, never an outline box.",
+        "body": "Screen-interior type scales with the tube using cqi units. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.",
         "section": "typography"
+      },
+      {
+        "name": "The One Light Rule",
+        "body": "The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck. Equipment labels, controls, and page chrome never glow.",
+        "section": "elevation"
       }
     ],
     "dos": [
-      "Do keep every retro effect (scanlines, flicker, curvature, phosphor, static) clipped inside the CRT screen plane.",
-      "Do drive cassette accent colors from project content data — the shelf's color story is the portfolio's color story.",
-      "Do give every animated sequence a reduced-motion equivalent that swaps states instantly; prefers-reduced-motion support is non-negotiable.",
-      "Do keep prose legibility above the metaphor: Screen Text ≥ 4.5:1 over Screen Black under all effect layers."
+      "Do model broad planes, single bevels, recessed openings, and deliberately faceted circular parts.",
+      "Do keep every retro effect inside the CRT screen area; its controlled light cast is the only outward glow.",
+      "Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.",
+      "Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.",
+      "Do keep placeholder projects explicitly labeled until Daniel supplies real content."
     ],
     "donts": [
-      "Don't age anything: no grunge, sepia, dust, tape damage, or noise textures on chassis or content.",
-      "Don't glow outside the screen: no neon edges, no glowing chassis text, no colored halos on hover (The One Light Rule).",
-      "Don't use VT323 for chassis text or paragraphs — OSD chrome only.",
-      "Don't let the chassis compete with the artifacts: no saturated fields, gradients, or decorative color on rack surfaces."
+      "Don't add grunge, sepia, dirt, wear, photographic textures, or degraded page chrome.",
+      "Don't pixelate the rendered canvas or use realism as the low-poly reference.",
+      "Don't use VT323 for page chrome, printed hardware labels, or prose.",
+      "Don't introduce glowing controls, neon outlines with blur, or saturated chassis surfaces.",
+      "Don't substitute the old CSS dolly, deck VFD clock, or pulsing eject sample for the current 3D behavior."
     ]
   }
 }

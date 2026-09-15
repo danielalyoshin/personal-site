@@ -1,0 +1,375 @@
+import { expect, test, type Page } from '@playwright/test'
+
+// Inspect the live Three scene, so these checks catch geometry and animation
+// regressions that successful HTML navigation alone cannot reveal.
+async function advanceScene(page: Page, frames: number) {
+  await page.evaluate(async (count) => {
+    const module = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const { _roots } = (await import(
+      module
+    )) as typeof import('@react-three/fiber')
+    const state = _roots
+      .get(document.querySelector('canvas')!)!
+      .store.getState()
+    state.setFrameloop('never')
+    for (let i = 0; i < count; i++)
+      state.advance(state.clock.elapsedTime + 1 / 60)
+  }, frames)
+}
+
+test('all six cassettes clear the studio and enter the open player before playback', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  await advanceScene(page, 80)
+  const tapes = await page
+    .getByRole('link', { name: /^Play tape:/ })
+    .evaluateAll((links) =>
+      links.map((link) => ({
+        href: link.getAttribute('href')!,
+        label: link.getAttribute('aria-label')!,
+      })),
+    )
+
+  for (const { href, label } of tapes) {
+    const link = page.getByRole('link', { name: label, exact: true })
+    await link.focus()
+    await advanceScene(page, 40)
+    await link.click()
+    await expect(
+      page.getByRole('button', { name: 'Skip animation' }),
+    ).toBeVisible()
+    await expect(page.locator('article')).toHaveCount(0)
+    const result = await page.evaluate(async (slug) => {
+      const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const threeModule = '/node_modules/.vite/deps/three.js'
+      const { _roots } = (await import(
+        fiberModule
+      )) as typeof import('@react-three/fiber')
+      const { Box3, Mesh, Raycaster, Vector3 } = (await import(
+        threeModule
+      )) as typeof import('three')
+      const state = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      state.setFrameloop('never')
+      const { scene } = state
+      const tape = scene.getObjectByName(`tape-${slug}`)!
+      const player = scene.getObjectByName('vhs-player')!
+      const flap = scene.getObjectByName('player-flap')!
+      const bounds = (name: string) =>
+        new Box3().setFromObject(scene.getObjectByName(name)!, true)
+      const opening = {
+        left: bounds('slot-left').max.x,
+        right: bounds('slot-right').min.x,
+        bottom: bounds('slot-bottom').max.y,
+        top: bounds('slot-top').min.y,
+        front: bounds('player-fascia').max.z,
+      }
+      const obstacles = [
+        scene.getObjectByName('crt-monitor')!,
+        scene.getObjectByName('decorative-tape')!,
+        scene.getObjectByName('studio-tabletop')!,
+        scene.getObjectByName('headphones-and-stand')!,
+        ...scene
+          .getObjectByName('studio-model')!
+          .children.filter(
+            (child) => child.name.startsWith('tape-') && child !== tape,
+          ),
+      ]
+      // A cassette begins inside the holder's overall bounds. Check its actual
+      // guides and walls individually, including the new channels and lip.
+      scene.getObjectByName('archive-holder')!.traverse((part) => {
+        if (part instanceof Mesh && part.geometry.type !== 'PlaneGeometry')
+          obstacles.push(part)
+      })
+      const collisionFrames: string[] = []
+      let crossingFrames = 0
+      let misalignedFrames = 0
+      let hiddenFrames = 0
+      let closedFlapFrames = 0
+      let prematurePlayback = false
+      let previousZ = tape.position.z
+      for (let frame = 0; frame < 150; frame++) {
+        state.advance(state.clock.elapsedTime + 1 / 60)
+        const movingIntoPlayer = tape.position.z < previousZ
+        previousZ = tape.position.z
+        const tapeBounds = new Box3().setFromObject(tape, true)
+        for (const obstacle of obstacles) {
+          if (
+            tapeBounds.intersectsBox(new Box3().setFromObject(obstacle, true))
+          )
+            collisionFrames.push(`${frame}: ${obstacle.name}`)
+        }
+        player.traverse((part) => {
+          if (
+            part instanceof Mesh &&
+            part.geometry.type !== 'PlaneGeometry' &&
+            tapeBounds.intersectsBox(new Box3().setFromObject(part, true))
+          )
+            collisionFrames.push(
+              `${frame}: player ${part.name || part.parent?.name}`,
+            )
+        })
+        if (!tape.visible || tape.scale.x < 0.99) hiddenFrames++
+        if (
+          movingIntoPlayer &&
+          tapeBounds.min.z < opening.front &&
+          tapeBounds.max.z > opening.front
+        ) {
+          crossingFrames++
+          if (
+            tapeBounds.min.x < opening.left ||
+            tapeBounds.max.x > opening.right ||
+            tapeBounds.min.y < opening.bottom ||
+            tapeBounds.max.y > opening.top
+          )
+            misalignedFrames++
+          if (flap.rotation.x < 1.5) closedFlapFrames++
+        }
+        if (
+          tapeBounds.max.z > opening.front &&
+          document.querySelector('article')
+        )
+          prematurePlayback = true
+      }
+      const seated = new Box3().setFromObject(tape, true)
+      const ray = new Raycaster(
+        new Vector3(tape.position.x, tape.position.y, 10),
+        new Vector3(0, 0, -1),
+      )
+      const firstHit = ray.intersectObjects([player, tape], true)[0]?.object
+      let occludedByPlayer = false
+      for (let object = firstHit; object; object = object.parent ?? undefined) {
+        if (object === player) occludedByPlayer = true
+      }
+      return {
+        collisionFrames,
+        crossingFrames,
+        misalignedFrames,
+        hiddenFrames,
+        closedFlapFrames,
+        prematurePlayback,
+        occludedByPlayer,
+        seatedInside: new Box3()
+          .setFromObject(player, true)
+          .containsBox(seated),
+        flapClosed: flap.rotation.x === 0,
+      }
+    }, href.split('/').at(-1)!)
+    expect(result.collisionFrames, label).toEqual([])
+    expect(result.crossingFrames, label).toBeGreaterThan(4)
+    expect(result.misalignedFrames, label).toBe(0)
+    expect(result.hiddenFrames, label).toBe(0)
+    expect(result.closedFlapFrames, label).toBe(0)
+    expect(result.prematurePlayback, label).toBe(false)
+    expect(result.seatedInside, label).toBe(true)
+    expect(result.occludedByPlayer, label).toBe(true)
+    expect(result.flapClosed, label).toBe(true)
+    await expect(
+      page.getByRole('button', { name: 'Skip animation' }),
+    ).toHaveCount(0)
+    await expect(page.locator('article h2')).toBeFocused()
+    await page.keyboard.press('Escape')
+    await advanceScene(page, 80)
+    await expect(link).toBeFocused()
+  }
+})
+
+test('skip, eject during loading, and reduced motion leave the player usable', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  const about = page.getByRole('link', { name: 'About me' })
+  await about.click()
+  const skip = page.getByRole('button', { name: 'Skip animation' })
+  await expect(skip).toBeVisible()
+  expect(
+    await skip.evaluate((el) => !!el.closest('[data-testid="studio-scene"]')),
+  ).toBe(false)
+  await skip.click()
+  await expect(page.locator('article h2')).toBeFocused()
+  await page.keyboard.press('Escape')
+  await about.click()
+  await expect(
+    page.getByRole('button', { name: 'Skip animation' }),
+  ).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  await about.click()
+  await expect(
+    page.getByRole('button', { name: 'Skip animation' }),
+  ).toBeVisible()
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(
+    page.getByRole('button', { name: 'Skip animation' }),
+  ).toHaveCount(0)
+  await expect(page.locator('article h2')).toBeFocused()
+})
+
+test('physical playback keys follow the player, remain clickable after resize, and return focus on eject', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  const alpha = page.getByRole('link', {
+    name: 'Play tape: Placeholder: Alpha (2026)',
+    exact: true,
+  })
+  await alpha.click()
+  await expect(page.locator('article h2')).toBeFocused()
+  for (const viewport of [
+    { width: 1440, height: 1000 },
+    { width: 1024, height: 720 },
+    { width: 800, height: 720 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await advanceScene(page, 2)
+    for (const [name, object] of [
+      ['Sound effects', 'player-sound'],
+      ['Eject tape', 'player-eject'],
+    ]) {
+      const button = page.getByRole('button', { name, exact: true })
+      await expect(button).toBeInViewport({ ratio: 1 })
+      expect(
+        await button.evaluate(
+          (el) => !!el.closest('[data-testid="studio-scene"]'),
+        ),
+      ).toBe(true)
+      const cap = await page.evaluate(async (object) => {
+        const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+        const threeModule = '/node_modules/.vite/deps/three.js'
+        const { _roots } = (await import(
+          fiberModule
+        )) as typeof import('@react-three/fiber')
+        const { Box3, Vector3 } = (await import(
+          threeModule
+        )) as typeof import('three')
+        const state = _roots
+          .get(document.querySelector('canvas')!)!
+          .store.getState()
+        const center = state.scene
+          .getObjectByName(object)!
+          .localToWorld(new Vector3(0, 0, 0.072))
+          .project(state.camera)
+        const sound = new Box3().setFromObject(
+          state.scene.getObjectByName('player-sound')!,
+        )
+        const fascia = new Box3().setFromObject(
+          state.scene.getObjectByName('slot-left')!,
+        )
+        return {
+          x: ((center.x + 1) * state.size.width) / 2,
+          y: ((1 - center.y) * state.size.height) / 2,
+          soundClearance: Math.min(
+            sound.min.x - fascia.min.x,
+            fascia.max.x - sound.max.x,
+            sound.min.y - fascia.min.y,
+            fascia.max.y - sound.max.y,
+          ),
+          physicalSkip: !!state.scene.getObjectByName('player-skip'),
+        }
+      }, object)
+      // Include the key's recess, so it cannot straddle a fascia ridge again.
+      expect(cap.soundClearance).toBeGreaterThan(0.04)
+      expect(cap.physicalSkip).toBe(false)
+      await expect
+        .poll(async () => {
+          const rect = (await button.boundingBox())!
+          return Math.hypot(
+            rect.x + rect.width / 2 - cap.x,
+            rect.y + rect.height / 2 - cap.y,
+          )
+        })
+        .toBeLessThan(2)
+      const rect = (await button.boundingBox())!
+      expect(rect.width).toBeGreaterThanOrEqual(44)
+      expect(rect.height).toBeGreaterThanOrEqual(44)
+    }
+    // Hit testing catches a canvas or reader overlay intercepting these keys.
+    const sound = page.getByRole('button', {
+      name: 'Sound effects',
+      exact: true,
+    })
+    await sound.click()
+    await expect(sound).toHaveAttribute('aria-pressed', 'true')
+    await sound.click()
+    await expect(sound).toHaveAttribute('aria-pressed', 'false')
+    const reader = page.getByRole('article')
+    expect(
+      await reader.evaluate((el) => {
+        const box = el.getBoundingClientRect()
+        return el.contains(
+          document.elementFromPoint(
+            box.x + box.width / 2,
+            box.y + box.height / 2,
+          ),
+        )
+      }),
+    ).toBe(true)
+  }
+  await page.getByRole('button', { name: 'Eject tape', exact: true }).click()
+  await expect(page).toHaveURL('/')
+  await expect(alpha).toBeFocused()
+})
+
+test('the compact player supports skip, sound, and eject on a narrow touch screen', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 320, height: 740 },
+    isMobile: true,
+    hasTouch: true,
+  })
+  const page = await context.newPage()
+  try {
+    await page.goto('/')
+    await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+      'data-ready',
+      'true',
+    )
+    await advanceScene(page, 80)
+    await page.getByRole('link', { name: 'About me' }).tap()
+    const skip = page.getByRole('button', { name: 'Skip animation' })
+    await expect(skip).toBeInViewport({ ratio: 1 })
+    expect(await skip.evaluate((el) => !!el.closest('[role="group"]'))).toBe(
+      false,
+    )
+    await skip.tap()
+    await expect(page.locator('article h2')).toBeFocused()
+    const controls = page.getByRole('group', { name: 'VHS player controls' })
+    await expect(controls).toBeInViewport({ ratio: 1 })
+    for (const button of await controls.getByRole('button').all()) {
+      const rect = (await button.boundingBox())!
+      expect(rect.width).toBeGreaterThanOrEqual(44)
+      expect(rect.height).toBeGreaterThanOrEqual(44)
+    }
+    const sound = controls.getByRole('button', { name: 'Sound effects' })
+    await sound.tap()
+    await expect(sound).toHaveAttribute('aria-pressed', 'true')
+    await controls.getByRole('button', { name: 'Eject tape' }).tap()
+    await expect(page).toHaveURL('/')
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true)
+  } finally {
+    await context.close()
+  }
+})

@@ -46,8 +46,27 @@
   );
 
   /* Type */
-  --font-chassis: 'Archivo Variable', Archivo, system-ui, sans-serif;
+  --font-chassis: 'Archivo Variable', Archivo, Arial, system-ui, sans-serif;
   --font-osd: 'VT323', ui-monospace, 'Courier New', monospace;
+  --type-body: 1.0625rem;
+  --type-intro: 1rem;
+  --type-functional: 0.875rem;
+  --type-navigation: 0.8125rem;
+  --type-caption: 0.75rem;
+  --type-label: 0.6875rem;
+  --type-display: clamp(2.5rem, 1.25rem + 2.8vw, 4rem);
+  --type-nameplate: 0.9375rem;
+  --leading-body: 1.65;
+  --leading-caption: 1.5;
+  --tracking-body: 0.005em;
+  --measure-reader: 62ch;
+
+  /* These resolve on screen descendants, inside the CRT's query container. */
+  --type-screen-title: clamp(1.5rem, 5.6cqi, 2rem);
+  --type-screen-body: clamp(1rem, 3.1cqi, 1.0625rem);
+  --type-screen-osd: clamp(1.125rem, 4.5cqi, 1.375rem);
+  --type-screen-meta: clamp(1.0625rem, 4cqi, 1.25rem);
+  --type-screen-display: clamp(1.5rem, 9cqi, 2.5rem);
 
   /* Shape */
   --r-hairline: 2px;

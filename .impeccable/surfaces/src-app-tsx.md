@@ -2,54 +2,74 @@
 version: 1
 slug: 'src-app-tsx'
 primary_target: 'src/App.tsx'
-related_targets: ['src/components/Stage.tsx']
+related_targets:
+  ['src/components/Stage.tsx', 'src/components/studio/StudioScene.tsx']
 ---
 
-# Surface: Core experience — continuous stage (/, /project/:slug, 404)
+# Surface: Midnight Studio in three dimensions
 
-Mode: Experience. The stage (shelf · deck · CRT) is the work; chrome recedes.
+Mode: Experience. The modeled studio leads; navigation supports exploring and reading the tapes.
 
-Audience & job: dev/design peers from shared links, lit room, desktop or
-mobile. Get the concept in seconds, play a tape, want to share it.
+Direction revised by Daniel on 2026-09-15: convert the existing personal site
+into a clean, artsy, intentional low-poly 3D experience. This supersedes the
+July SVG-only implementation. Normative direction: `DESIGN.md`.
 
-Direction: "Midnight Studio" (user-chosen 2026-07-22 over the light-chassis
-recommendation; now the committed world in DESIGN.md). Matte graphite AV
-rack; CRT is the only light source; color only via cassette labels + screen
-output. Guardrails: matte, no neon wash, no glow outside the screen's cast.
+Composition: compact identity header and editorial introduction, selection
+guide and studio tools above the orthographic 3D exhibit, six-tape text index,
+GitHub/LinkedIn footer. Height-aware desktop framing keeps the studio and its
+selection instruction together; phones use a closer, more frontal camera.
+The larger opening canvas and enlarged idle-screen message support reading
+before selection. Geometry-aware framing preserves top clearance during orbit
+and blends into the complete CRT and player during playback zoom.
+Archivo display type uses balanced wrapping and relaxed tracking; introductory
+prose stays at 1rem on every viewport. The reader aligns all content to a
+centered 62ch column, with weight-440 prose, semibold taglines, and tube-scaled
+VT323 metadata. Functional captions retain a 0.75rem floor, and scene/transport controls provide
+44px hit areas. The studio contains a
+beveled CRT, VCR, speaker, rack of six cassettes, loose cassette with reels,
+headphones and stand, display table, and plinth. All geometry and printed
+textures are generated locally. Matte graphite, carefully selected small
+details, saturated cassette accents, blue idle screen. Neutral studio fill
+reveals broad planes; only the CRT emits light.
 
-Composition (as built): 880px centered column — nameplate header, shelf of
-5 placeholder tapes + About tape (single row, board hugs the rack, no side
-cheeks — user removed them), viewport-height-aware CRT, deck (VFD readout
-with 24h system-time clock, icon-only sound toggle, EJECT), spec-line
-footer with GitHub + LinkedIn (email deliberately off the site). Whole
-stage in the first desktop viewport. Mobile: vertical stack, scroll-snap
-rack; playing CRT pins near-fullscreen with a deck strip (VFD ellipsizes,
-sound toggle + EJECT, clock hidden).
+Browse: "Choose a tape to play" explains the action before the canvas.
+Hover/focus previews and raises a tape; click or Enter selects it. Internal
+playback links use a play symbol; external links retain the outward arrow.
+Drag within constrained camera angles; reset restores the original view.
+Vertical touch swipes scroll the page; horizontal drags orbit, and pinch zoom
+remains a browser gesture. Modified clicks retain native link navigation.
+Insertion moves the actual cassette into the deck, then the camera faces the
+screen. A skip control completes the transition. Reduced motion is immediate.
 
-Focal moment: insert flight → seated tape edge in slot → tracking flicker →
-camera dolly (~2.1×, 560ms). Deterministic, any input skips, instant under
-reduced motion. Eject reverses (EJECT, Esc, browser back). Slot flap tips
-open during transit.
+Read: accessible HTML inside the modeled CRT when the viewport is wider than
+767px and taller than 699px. At widths up to 767px or heights up to 699px, use
+a full-height native CRT reader with a 16px prose floor, scaling to 18px.
+Direct project links and tape selections before graphics are ready use this
+reader immediately at every viewport size. It stays mounted through graphics
+loading or failure, preserving focus and scroll for the playback visit. Ejecting
+returns to the studio; a subsequent selection uses the normal viewport rule.
+The explicit fullHeight prop/class sizes this reader independently of viewport
+CSS. Playback controls are physical keys on the modeled player: sound at the
+left with clearance inside its fascia, and eject at the right. Their labels use
+compact uppercase Archivo. Skip animation is a plain underlined interface action
+at the viewport's lower right during insertion, or inside the native loading
+screen. Native
+button targets follow the caps with a 44px floor; the playback camera keeps
+both CRT and deck in view. The native reader integrates these actions into
+its lower hardware panel, respecting the bottom safe area. There is no
+page-wide playback footer.
+Missing WebGL and lost graphics
+contexts retain the entire archive and reader. Deep links, About, both 404
+states, Escape/eject, and focus return remain supported.
 
-Atmosphere (Stage 7): phosphor grain (0.05, stepped ~5 fps) + blinking REC
-dot inside the screen only; quiet 24h system-time clock on the VFD (user
-cut the blinking-12:00 version as too distracting). Sound: synthesized Web
-Audio (insert clunk, eject spring, browsing tick — transport whirr built
-then cut), default-off behind the icon-only speaker toggle (waves on, ×
-off), per-visit only (persistence removed after the frozen-clock pop bug);
-no CRT hum. WebGL: decided against (2026-07-22) — CSS/SVG flight is final.
+Accessibility: all tapes are ordinary links; arrows and Home/End move focus.
+During reading, background regions are inert and aria-hidden; focus remains
+inside the reader and transport. The named scrollable article is a Tab stop,
+allowing return from the transport controls; initial focus announces the title.
+About remains explicit in its archive link's accessible name. Sound is opt-in, synthesized, and per-visit.
+Reader contact links have separate 44px touch targets. No ambient animation or
+sound; the canvas renders on demand. Printed textures redraw after explicit
+Archivo and VT323 loading, with disposed textures excluded.
 
-States: idle = CRT-blue INSERT TAPE; playing = OSD chrome + tube-scaled
-(cqi) content scrolling in-screen; deep link = pre-seated, flicker only;
-404 (both dead tape slugs and unknown paths) = ZOOMED NO SIGNAL — copy
-splits "THIS TAPE DOES NOT EXIST" vs "CHANNEL NOT FOUND", no on-screen
-button; the exit is the deck's EJECT (enabled, pulsing VFD-cyan outline)
-or Esc. Off-stage regions are inert whenever the camera is in.
-
-A11y: roving-tabindex shelf; focus into CRT title on insert (preventScroll)
-and back to the tape on eject via post-commit pending-focus refs; SR hint on
-NO SIGNAL; content parity throughout. Reduced-motion: global CSS gate +
-JS-gated WAAPI; all blinks end on their visible state. SFX toggle carries
-aria-pressed.
-
-Unresolved: real content + About rewrite by Daniel (Stage 8).
+Unresolved: real project content and Daniel's About rewrite (Stage 8), full
+Stage 9 hardening, and final-stage deployment. No fabricated project claims.

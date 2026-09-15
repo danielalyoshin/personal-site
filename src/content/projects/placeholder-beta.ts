@@ -4,10 +4,11 @@ import type { Project } from '../types'
 export const placeholderBeta: Project = {
   slug: 'placeholder-beta',
   title: 'Placeholder: Beta, a Project With a Much Longer Working Title',
-  tagline: 'Stand-in tape until real projects are selected (PLAN.md Stage 8).',
+  tagline:
+    'A placeholder in the archive. The real project selection is on its way.',
   description: [
     'This is placeholder copy testing the long end of every range: the title above is deliberately unwieldy, the tag list below is at maximum, and this paragraph runs on longer than the others to check how the screen handles a dense read.',
-    'Nothing described here is a real project. When Stage 8 lands, this tape is replaced or removed.',
+    'Nothing described here is a real project. This tape will be replaced or removed as the archive takes shape.',
     'A third paragraph pads the scroll so the on-screen display is tested with content that genuinely overflows the tube.',
   ],
   year: 2024,

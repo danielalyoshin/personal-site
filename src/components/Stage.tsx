@@ -1,475 +1,589 @@
 import {
+  Component,
+  lazy,
+  Suspense,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
 } from 'react'
+import type { CSSProperties, ErrorInfo, ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, shelfTapes } from '../content/projects'
 import type { Project } from '../content/types'
-import { playSound } from '../lib/sound'
+import { changeSound, playSound, useSoundEnabled } from '../lib/sound'
 import { useReducedMotion } from '../lib/useReducedMotion'
-import { CassetteFace } from './Cassette'
-import CRT, { type ScreenMode } from './CRT'
-import Deck from './Deck'
-import Shelf from './Shelf'
+import { useClock } from '../lib/useClock'
+import { useMediaQuery } from '../lib/useMediaQuery'
+import { supportsWebGL } from '../lib/supportsWebGL'
+import CRT from './CRT'
+import DeckControls, { SoundIcon } from './DeckControls'
 import styles from './Stage.module.css'
 
-type Phase = 'shelf' | 'inserting' | 'playing' | 'ejecting'
+const StudioScene = lazy(() => import('./studio/StudioScene'))
 
-const INSERT_MS = 760
-const EJECT_BACK_MS = 460
-const EJECT_FLY_MS = 520
-const DOLLY_MS = 560
-const FLY_W = 190
-const FLY_H = 108
-
-interface FlightSpec {
-  dir: 'in' | 'out'
-  from: DOMRect
-  to: DOMRect
-  tape: Project
+class SceneBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode; onUnavailable: () => void },
+  { failed: boolean }
+> {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.warn(
+      'Studio renderer unavailable:',
+      error.message,
+      info.componentStack,
+    )
+    this.props.onUnavailable()
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children
+  }
 }
-
-const centerOf = (r: DOMRect) => ({
-  x: r.left + r.width / 2,
-  y: r.top + r.height / 2,
-})
-const flyAt = (c: { x: number; y: number }, s: number) =>
-  `translate(${c.x - FLY_W / 2}px, ${c.y - FLY_H / 2}px) scale(${s})`
-const isDesktop = () => window.matchMedia('(min-width: 720px)').matches
 
 export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const { slug } = useParams()
   const navigate = useNavigate()
   const reduced = useReducedMotion()
-  const tape = findTape(slug)
-  /** A /project/:slug route whose tape doesn't exist — NO SIGNAL, zoomed. */
-  const deadTape = slug !== undefined && !tape
-  const badSlug = notFound || deadTape
-
-  const [phase, setPhase] = useState<Phase>(() =>
-    slug && findTape(slug) ? 'playing' : 'shelf',
+  const expandedReader = useMediaQuery(
+    '(max-width: 767px), (max-height: 699px)',
   )
+  const soundOn = useSoundEnabled()
+  const clock = useClock()
+  const tape = findTape(slug) ?? null
+  const invalid = notFound || (!!slug && !tape)
+  const open = !!tape || invalid
   const [preview, setPreview] = useState<Project | null>(null)
-  const [flight, setFlight] = useState<FlightSpec | null>(null)
-  /** The tape currently seated in the deck (drives the shelf gap). */
-  const [playing, setPlaying] = useState<Project | null>(tape ?? null)
-  // Route → seated-tape sync, done during render (React's adjust-state
-  // pattern); on eject (no slug) the last tape stays for the return flight.
-  if (tape && playing !== tape) setPlaying(tape)
-
-  const cameraRef = useRef<HTMLDivElement>(null)
-  const crtRef = useRef<HTMLDivElement>(null)
-  const slotRef = useRef<HTMLDivElement>(null)
-  const flyRef = useRef<HTMLDivElement>(null)
+  const [reset, setReset] = useState(0)
+  const [ready, setReady] = useState(false)
+  const [flat, setFlat] = useState(() => !supportsWebGL())
+  // A direct link is readable before graphics load. Keep that reader mounted
+  // for this playback visit so late graphics cannot move focus or scroll.
+  const [nativePlayback, setNativePlayback] = useState(open)
+  // History can reopen playback after eject while the scene is still pending.
+  // Pin before committing that route, just as an early tape selection does.
+  if (open && !ready && !nativePlayback) setNativePlayback(true)
+  const useNativeReader = expandedReader || nativePlayback || flat
+  const [insertingSlug, setInsertingSlug] = useState<string | null>(null)
+  const loading = !!tape && insertingSlug === tape.slug && !flat
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
+  const lastTape = useRef<string | null>(null)
   const titleEl = useRef<HTMLHeadingElement | null>(null)
-  const prevSlug = useRef(slug)
-  /** Finishes any running choreography instantly (skip / interruption). */
-  const settle = useRef<(() => void) | null>(null)
-  /** Tape to focus once the shelf phase has committed (post-eject). */
-  const pendingFocus = useRef<string | null>(null)
-  /** Focus the CRT title once the playing phase has committed. */
-  const pendingTitle = useRef(false)
+  const stageEl = useRef<HTMLDivElement>(null)
+  const deckPortal = useRef<HTMLDivElement>(null)
+  const wasOpen = useRef(open)
+  const previewSlug = useRef<string | null>(null)
+  const mode = invalid ? 'nosignal' : tape ? 'playing' : 'idle'
 
-  const registerTapeEl = useCallback(
-    (s: string, el: HTMLAnchorElement | null) => {
-      if (el) tapeEls.current.set(s, el)
-      else tapeEls.current.delete(s)
-    },
-    [],
-  )
-  /** Browsing tick: once per newly previewed tape (hover and focus overlap). */
-  const lastPreview = useRef<string | null>(null)
-  const previewTape = useCallback((t: Project | null) => {
-    if (t && t.slug !== lastPreview.current) playSound('tick')
-    lastPreview.current = t?.slug ?? null
-    setPreview(t)
-  }, [])
   const onTitleEl = useCallback((el: HTMLHeadingElement | null) => {
     titleEl.current = el
-  }, [])
-
-  /**
-   * Camera dolly: scale the whole rack so the CRT center lands on the
-   * viewport center. Measured with the transform stripped, applied as one
-   * translate+scale (origin 0 0) so the math is exact.
-   */
-  const applyDolly = useCallback((instant: boolean) => {
-    const cam = cameraRef.current
-    const crt = crtRef.current
-    if (!cam || !crt) return
-    if (!isDesktop()) {
-      cam.style.transform = ''
-      return
-    }
-    cam.style.transition = 'none'
-    cam.style.transform = 'none'
-    const camRect = cam.getBoundingClientRect()
-    const crtRect = crt.getBoundingClientRect()
-    const cx = crtRect.left - camRect.left + crtRect.width / 2
-    const cy = crtRect.top - camRect.top + crtRect.height / 2
-    const s = Math.min(
-      (window.innerWidth * 0.92) / crtRect.width,
-      (window.innerHeight * 0.9) / crtRect.height,
-      2.1,
-    )
-    const tx = window.innerWidth / 2 - camRect.left - s * cx
-    const ty = window.innerHeight / 2 - camRect.top - s * cy
-    void cam.offsetWidth
-    cam.style.transition = instant
-      ? 'none'
-      : `transform ${DOLLY_MS}ms var(--ease-out)`
-    cam.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`
-  }, [])
-
-  const clearDolly = useCallback((instant: boolean) => {
-    const cam = cameraRef.current
-    if (!cam) return
-    cam.style.transition = instant
-      ? 'none'
-      : `transform ${DOLLY_MS}ms var(--ease-out)`
-    cam.style.transform = ''
-  }, [])
-
-  /* Deep link: arrive with the tape already seated, camera already in. */
-  const didInit = useRef(false)
-  useLayoutEffect(() => {
-    if (didInit.current) return
-    didInit.current = true
-    if (slug || notFound) applyDolly(true)
-  }, [slug, notFound, applyDolly])
-
-  /* Wildcard NO SIGNAL (notFound) zooms too; only the camera moves. */
-  const prevNotFound = useRef(notFound)
-  useEffect(() => {
-    if (notFound === prevNotFound.current) return
-    prevNotFound.current = notFound
-    if (notFound) applyDolly(false)
-    else if (!slug) clearDolly(false)
-  }, [notFound, slug, applyDolly, clearDolly])
-
-  /* Route changes drive the choreography. */
-  useEffect(() => {
-    const prev = prevSlug.current
-    prevSlug.current = slug
-    if (slug === prev) return
-    settle.current?.()
-
-    if (slug) {
-      const next = findTape(slug)
-      // Unknown tape: NO SIGNAL plays like a tape — camera in, tube talking.
-      // Zoom is derived from the route (deadTape); only the camera moves.
-      if (!next) {
-        applyDolly(false)
-        return
-      }
-      const cameFromDead = prev !== undefined && !findTape(prev)
-      const fromEl = tapeEls.current.get(slug)
-      const slotEl = slotRef.current
-      if (reduced || cameFromDead || !fromEl || !slotEl) {
-        playSound('insert')
-        pendingTitle.current = true
-        setPhase('playing')
-        applyDolly(true)
-        return
-      }
-      setPhase('inserting')
-      setFlight({
-        dir: 'in',
-        from: fromEl.getBoundingClientRect(),
-        to: slotEl.getBoundingClientRect(),
-        tape: next,
-      })
-      return
-    }
-
-    // Leaving a NO SIGNAL route: nothing was seated and phase never left
-    // the shelf, so only the camera pulls back.
-    if (prev !== undefined && !findTape(prev)) {
-      clearDolly(false)
-      return
-    }
-
-    const owner = playing
-    if (owner) playSound('eject')
-    const finishEject = () => {
-      setFlight(null)
-      if (owner) pendingFocus.current = owner.slug
-      setPhase('shelf')
-      clearDolly(true)
-      settle.current = null
-    }
-    if (reduced || !owner || !isDesktop()) {
-      finishEject()
-      return
-    }
-    setPhase('ejecting')
-    clearDolly(false)
-    const t = window.setTimeout(() => {
-      const slotEl = slotRef.current
-      const toEl = tapeEls.current.get(owner.slug)
-      if (!slotEl || !toEl) {
-        finishEject()
-        return
-      }
-      setFlight({
-        dir: 'out',
-        from: slotEl.getBoundingClientRect(),
-        to: toEl.getBoundingClientRect(),
-        tape: owner,
-      })
-    }, EJECT_BACK_MS)
-    settle.current = () => {
-      clearTimeout(t)
-      finishEject()
-    }
-  }, [slug, reduced, playing, applyDolly, clearDolly])
-
-  /* The flying cassette (WAAPI, deterministic, finishable). */
-  useLayoutEffect(() => {
-    if (!flight) return
-    const el = flyRef.current
     if (!el) return
-    const { dir, tape: owner } = flight
-    const a = centerOf(flight.from)
-    const b = centerOf(flight.to)
+    // Drei mounts screen HTML through a separate React root. Focus after that
+    // node is connected, including when reduced motion skips every timeout.
+    const frame = window.requestAnimationFrame(() => {
+      if (el.isConnected) el.focus({ preventScroll: true })
+    })
+    return () => {
+      window.cancelAnimationFrame(frame)
+      titleEl.current = null
+    }
+  }, [])
+  const onReady = useCallback(() => setReady(true), [])
+  const onUnavailable = useCallback(() => {
+    setFlat(true)
+    setInsertingSlug(null)
+  }, [])
+  const onInserted = useCallback(() => {
+    setInsertingSlug(null)
+    playSound('insert')
+  }, [])
+  const skipInsertion = useCallback(() => {
+    onInserted()
+    setReset((value) => value + 1)
+  }, [onInserted])
+  const previewTape = useCallback((next: Project | null) => {
+    if (next && next.slug !== previewSlug.current) playSound('tick')
+    previewSlug.current = next?.slug ?? null
+    setPreview(next)
+  }, [])
+  const eject = useCallback(() => {
+    setInsertingSlug(null)
+    setNativePlayback(false)
+    playSound('eject')
+    navigate('/')
+  }, [navigate])
+  const select = useCallback(
+    (next: Project) => {
+      lastTape.current = next.slug
+      previewTape(null)
+      setNativePlayback(!ready)
+      setInsertingSlug(!reduced && !flat && ready ? next.slug : null)
+      if (reduced || flat || !ready) playSound('insert')
+      navigate(`/project/${next.slug}`)
+    },
+    [flat, navigate, previewTape, ready, reduced],
+  )
 
-    const frames =
-      dir === 'in'
-        ? [
-            { transform: flyAt(a, 0.35), opacity: 0 },
-            {
-              transform: flyAt({ x: a.x, y: a.y - 46 }, 1),
-              opacity: 1,
-              offset: 0.32,
-            },
-            {
-              transform: flyAt({ x: b.x, y: b.y - 34 }, 0.82),
-              opacity: 1,
-              offset: 0.72,
-            },
-            { transform: flyAt(b, 0.5), opacity: 0 },
-          ]
-        : [
-            { transform: flyAt(a, 0.5), opacity: 0 },
-            {
-              transform: flyAt({ x: a.x, y: a.y - 44 }, 0.95),
-              opacity: 1,
-              offset: 0.3,
-            },
-            {
-              transform: flyAt({ x: b.x, y: b.y - 44 }, 0.9),
-              opacity: 1,
-              offset: 0.75,
-            },
-            { transform: flyAt(b, 0.4), opacity: 0 },
-          ]
-
-    const done = (skipped: boolean) => {
-      setFlight(null)
-      if (dir === 'in') {
-        playSound('insert')
-        setPhase('playing')
-        applyDolly(skipped)
-        if (skipped) {
-          pendingTitle.current = true
-          settle.current = null
-        } else {
-          const t = window.setTimeout(() => {
-            titleEl.current?.focus({ preventScroll: true })
-            settle.current = null
-          }, DOLLY_MS + 40)
-          settle.current = () => {
-            clearTimeout(t)
-            titleEl.current?.focus({ preventScroll: true })
-            settle.current = null
-          }
-        }
-      } else {
-        pendingFocus.current = owner.slug
-        setPhase('shelf')
-        settle.current = null
+  useEffect(() => {
+    if (tape) lastTape.current = tape.slug
+    if (open) {
+      const previous = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = previous
       }
     }
-
-    const anim = el.animate(frames, {
-      duration: dir === 'in' ? INSERT_MS : EJECT_FLY_MS,
-      easing: 'cubic-bezier(0.45, 0.05, 0.35, 1)',
-      fill: 'forwards',
-    })
-    anim.onfinish = () => done(false)
-    settle.current = () => {
-      anim.onfinish = null
-      anim.cancel()
-      done(true)
-    }
-    return () => {
-      anim.onfinish = null
-      anim.cancel()
-    }
-  }, [flight, applyDolly])
-
-  /* Focus hand-off runs post-commit, never from animation callbacks: the
-     eject target is visible (and the CRT title mounted) only after React
-     commits the phase change. */
+  }, [open, tape])
   useEffect(() => {
-    if (phase === 'shelf' && pendingFocus.current) {
-      const s = pendingFocus.current
-      pendingFocus.current = null
-      tapeEls.current.get(s)?.focus()
-    } else if (phase === 'playing' && pendingTitle.current) {
-      pendingTitle.current = false
-      titleEl.current?.focus({ preventScroll: true })
+    if (!open && wasOpen.current && lastTape.current) {
+      tapeEls.current.get(lastTape.current)?.focus({ preventScroll: true })
     }
-  }, [phase, slug])
-
-  /* Any input skips a running sequence — the timeline is yours, not ours. */
+    wasOpen.current = open
+  }, [open])
   useEffect(() => {
-    if (phase !== 'inserting' && phase !== 'ejecting') return
-    const skip = () => settle.current?.()
-    window.addEventListener('pointerdown', skip, true)
-    window.addEventListener('keydown', skip, true)
-    return () => {
-      window.removeEventListener('pointerdown', skip, true)
-      window.removeEventListener('keydown', skip, true)
-    }
-  }, [phase])
-
-  /* Esc ejects (also escapes any zoomed NO SIGNAL). */
-  useEffect(() => {
-    if (!((phase === 'playing' && slug) || badSlug)) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') navigate('/')
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        eject()
+        return
+      }
+      // Keep focus inside the visible reader and its transport controls.
+      if (event.key === 'Tab') {
+        const focusable = Array.from(
+          stageEl.current?.querySelectorAll<HTMLElement>(
+            'a[href], button:not(:disabled), video[controls], article[tabindex="0"]',
+          ) ?? [],
+        ).filter(
+          (el) => !el.closest('[inert]') && el.getClientRects().length > 0,
+        )
+        const first = focusable[0]
+        const last = focusable.at(-1)
+        if (
+          event.shiftKey &&
+          (document.activeElement === first ||
+            document.activeElement === titleEl.current)
+        ) {
+          event.preventDefault()
+          last?.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first?.focus()
+        }
+      }
+      if (loading && event.key !== 'Tab') {
+        onInserted()
+        setReset((value) => value + 1)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase, slug, badSlug, navigate])
+  }, [open, eject, loading, onInserted])
 
-  /* Keep the dolly framed on resize. */
-  useEffect(() => {
-    if (!((phase === 'playing' && slug) || badSlug)) return
-    const onResize = () => applyDolly(true)
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [phase, slug, badSlug, applyDolly])
+  function moveTape(
+    event: React.KeyboardEvent<HTMLAnchorElement>,
+    index: number,
+  ) {
+    const offset =
+      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+        ? 1
+        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+          ? -1
+          : 0
+    const next =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? shelfTapes.length - 1
+          : (index + offset + shelfTapes.length) % shelfTapes.length
+    if (offset || event.key === 'Home' || event.key === 'End') {
+      event.preventDefault()
+      tapeEls.current.get(shelfTapes[next].slug)?.focus()
+    }
+  }
 
-  const vfd =
-    phase === 'playing' && tape
-      ? `▶ Play · ${tape.title}`
-      : phase === 'inserting'
-        ? 'Loading ▶'
-        : phase === 'ejecting'
-          ? 'Eject ▲'
-          : badSlug
-            ? 'No signal'
-            : preview
-              ? `● ${preview.title} · ${preview.year}`
-              : 'Standby'
-
-  const mode: ScreenMode = badSlug
-    ? 'nosignal'
-    : phase === 'playing' && tape
-      ? 'playing'
-      : phase === 'ejecting'
-        ? 'ejecting'
-        : 'idle'
-
-  const transiting = phase === 'inserting' || phase === 'ejecting'
-  const isPlaying = phase === 'playing' && !!tape
-  /** Camera is in on a real tape or any NO SIGNAL route (zoomed 404). */
-  const zoomed = isPlaying || badSlug
-  const stageClass = [
-    styles.stage,
-    transiting ? styles.busy : '',
-    phase !== 'shelf' || badSlug ? styles.clipped : '',
-    zoomed ? 'playing-stage' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const reader = (
+    <CRT
+      mode={mode}
+      tape={tape}
+      noSignalReason={notFound ? 'channel' : 'tape'}
+      onTitleEl={onTitleEl}
+      crtRef={null}
+      embedded
+      fullHeight={open && useNativeReader}
+    />
+  )
+  const skipControl = (
+    <button
+      type="button"
+      className={styles.skipAnimation}
+      onClick={skipInsertion}
+    >
+      Skip animation
+    </button>
+  )
+  const fallback = (
+    <div className={styles.fallback}>
+      <div className={styles.fallbackMonitor}>
+        {reader}
+        <span className="silkLabel">ALYOSHIN · COLOR MONITOR</span>
+      </div>
+      {!open && (
+        <p className={styles.fallbackNote}>
+          The archive is ready. Choose a tape below.
+        </p>
+      )}
+    </div>
+  )
 
   return (
-    <div className={stageClass}>
-      <div className={styles.camera} ref={cameraRef}>
-        {/* While a tape plays, everything off-screen behind the dolly/overlay
-            is inert so keyboard focus can never land somewhere invisible. */}
-        <header className={styles.header} inert={zoomed || undefined}>
+    <div
+      className={`${styles.stage} ${open ? styles.playing : ''}`}
+      ref={stageEl}
+      role={open ? 'dialog' : undefined}
+      aria-modal={open || undefined}
+      aria-label={open ? 'Tape playback' : undefined}
+    >
+      <a
+        href="#archive"
+        className={styles.skipLink}
+        inert={open || undefined}
+        aria-hidden={open || undefined}
+      >
+        Skip to tape archive
+      </a>
+      <header
+        className={styles.header}
+        inert={open || undefined}
+        aria-hidden={open || undefined}
+      >
+        <Link
+          to="/"
+          className={styles.identity}
+          aria-label="Daniel Alyoshin home"
+        >
+          <svg viewBox="0 0 32 24" width="32" height="24" aria-hidden="true">
+            <rect
+              x="1"
+              y="1"
+              width="30"
+              height="22"
+              rx="3"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="10"
+              cy="12"
+              r="4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="22"
+              cy="12"
+              r="4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path d="M10 8h12M10 16h12" stroke="currentColor" />
+          </svg>
+          <span>
+            <h1>Daniel Alyoshin</h1>
+            <span className={styles.role}>Design engineer</span>
+          </span>
+        </Link>
+        <nav className={styles.navigation} aria-label="Site">
+          <a href="#archive">
+            The archive <span className={styles.navCount}>06</span>
+          </a>
+          <Link
+            to="/project/about"
+            onClick={(event) => {
+              if (
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return
+              event.preventDefault()
+              select(shelfTapes[shelfTapes.length - 1])
+            }}
+          >
+            About me <span aria-hidden="true">▶</span>
+          </Link>
+        </nav>
+      </header>
+
+      <main>
+        <section
+          className={styles.intro}
+          inert={open || undefined}
+          aria-hidden={open || undefined}
+          aria-labelledby="intro-title"
+        >
           <div>
-            <h1 className={styles.nameplate}>Daniel Alyoshin</h1>
-            <p className="silkLabel">Design Engineer</p>
+            <p className={styles.eyebrow}>Independent mind. Hands-on maker.</p>
+            <h2 id="intro-title">
+              Digital work.
+              <br />
+              <span>Physical feeling.</span>
+            </h2>
           </div>
-          <nav aria-label="Site">
-            <Link className={`silkLabel ${styles.navLink}`} to="/project/about">
-              About
-            </Link>
-          </nav>
-        </header>
-
-        <div className={styles.shelfSpot} inert={zoomed || undefined}>
-          <Shelf
-            tapes={shelfTapes}
-            playingSlug={
-              phase !== 'shelf' && !badSlug && playing ? playing.slug : null
-            }
-            onPreview={previewTape}
-            registerTapeEl={registerTapeEl}
-          />
-        </div>
-
-        <div className={styles.crtSpot}>
-          <CRT
-            mode={mode}
-            tape={tape ?? null}
-            noSignalReason={deadTape ? 'tape' : 'channel'}
-            onTitleEl={onTitleEl}
-            crtRef={crtRef}
-          />
-        </div>
-
-        <div className={styles.deckWrap}>
-          <Deck
-            vfdText={vfd}
-            canEject={isPlaying || badSlug}
-            onEject={() => navigate('/')}
-            slotRef={slotRef}
-            seatedAccent={isPlaying && playing ? playing.vhs.accent : null}
-            attention={badSlug}
-            flapOpen={transiting}
-          />
-        </div>
-
-        <footer className={styles.footer} inert={zoomed || undefined}>
-          <span className="silkLabel">Alyoshin AV-01 · Hi-Fi Stereo</span>
-          <nav className={styles.footerLinks} aria-label="Contact">
-            <a
-              className={`silkLabel ${styles.navLink}`}
-              href="https://github.com/danielalyoshin"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
+          <div className={styles.introAside}>
+            <p>
+              I design interfaces and build them.
+              <br className={styles.desktopBreak} /> This is my little corner of
+              the internet,
+              <br className={styles.desktopBreak} /> one tape at a time.
+            </p>
+            <a href="#archive">
+              Browse the tape index <span aria-hidden="true">↓</span>
             </a>
-            <a
-              className={`silkLabel ${styles.navLink}`}
-              href="https://www.linkedin.com/in/danielalyoshin/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              LinkedIn
-            </a>
-          </nav>
-        </footer>
-      </div>
+          </div>
+        </section>
 
-      {flight && (
-        <div className={styles.flightLayer} aria-hidden="true">
-          <div ref={flyRef} className={styles.flying}>
-            <CassetteFace tape={flight.tape} />
+        <section
+          className={styles.exhibit}
+          aria-label={open ? 'Tape playback' : 'Interactive 3D studio'}
+        >
+          <div
+            className={styles.sceneMeta}
+            inert={open || undefined}
+            aria-hidden={open || undefined}
+          >
+            <span>
+              STUDIO 01 <span className={styles.metaDivider}>/</span> PERSONAL
+              ARCHIVE
+            </span>
+            <span className={styles.liveStatus}>
+              <i /> {clock} · LOCAL TIME
+            </span>
+          </div>
+          <div
+            className={styles.sceneCaption}
+            inert={open || undefined}
+            aria-hidden={open || undefined}
+          >
+            <div className={styles.objectCaption}>
+              <span className={styles.captionNumber}>01—06</span>
+              <span>
+                {preview ? preview.vhs.spineLabel : 'Choose a tape to play'}
+                <small>
+                  {preview
+                    ? preview.slug === 'about'
+                      ? 'About Daniel · Select to play'
+                      : 'Placeholder tape · Select to play'
+                    : 'Select a cassette here or use the index below.'}
+                </small>
+              </span>
+            </div>
+            <div className={styles.sceneTools}>
+              {!flat && (
+                <>
+                  <span className={styles.dragHint}>↔ Drag to look around</span>
+                  <button
+                    type="button"
+                    onClick={() => setReset((value) => value + 1)}
+                    aria-label="Reset studio view"
+                    title="Reset view"
+                  >
+                    ↺
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                className={styles.sound}
+                aria-label="Sound effects"
+                aria-pressed={soundOn}
+                onClick={changeSound}
+              >
+                <SoundIcon enabled={soundOn} />
+                <span>Sound {soundOn ? 'on' : 'off'}</span>
+              </button>
+            </div>
+          </div>
+          <div
+            className={styles.scene}
+            data-testid="studio-scene"
+            data-ready={ready || flat}
+            inert={(open && useNativeReader) || undefined}
+            aria-hidden={(open && useNativeReader) || undefined}
+          >
+            {flat ? (
+              open && useNativeReader ? null : (
+                fallback
+              )
+            ) : (
+              <SceneBoundary
+                fallback={open && useNativeReader ? null : fallback}
+                onUnavailable={onUnavailable}
+              >
+                <Suspense
+                  fallback={
+                    <div className={styles.loading}>
+                      <span className={styles.loadingMark}>AV–01</span>
+                      <span>Setting the scene…</span>
+                    </div>
+                  }
+                >
+                  <StudioScene
+                    tape={tape}
+                    preview={preview}
+                    open={open}
+                    invalid={invalid}
+                    reduced={reduced}
+                    reset={reset}
+                    inserting={loading}
+                    deckInteractive={open && !useNativeReader}
+                    deckPortal={deckPortal}
+                    soundOn={soundOn}
+                    onEject={eject}
+                    onSelect={select}
+                    onPreview={previewTape}
+                    onInserted={onInserted}
+                    onReady={onReady}
+                    onUnavailable={onUnavailable}
+                  >
+                    {useNativeReader ? null : reader}
+                  </StudioScene>
+                </Suspense>
+              </SceneBoundary>
+            )}
+            {/* Deck keys follow the screen in native tab order, even when the
+                screen HTML mounts later at the end of the insertion. */}
+            <div ref={deckPortal} className={styles.deckOverlay} />
+          </div>
+        </section>
+
+        <section
+          className={styles.archive}
+          id="archive"
+          aria-labelledby="archive-title"
+          inert={open || undefined}
+          aria-hidden={open || undefined}
+        >
+          <div className={styles.archiveHeading}>
+            <h2 id="archive-title">
+              The tape index <span>06</span>
+            </h2>
+            <p>Projects are being curated. Explore the placeholders.</p>
+          </div>
+          <ul className={styles.tapeIndex}>
+            {shelfTapes.map((item, index) => (
+              <li key={item.slug}>
+                <Link
+                  to={`/project/${item.slug}`}
+                  style={{ '--tape-accent': item.vhs.accent } as CSSProperties}
+                  className={
+                    preview?.slug === item.slug ? styles.previewed : ''
+                  }
+                  aria-label={`Play tape: ${item.slug === 'about' ? 'About Daniel' : item.title} (${item.year})`}
+                  ref={(el) => {
+                    if (el) tapeEls.current.set(item.slug, el)
+                    else tapeEls.current.delete(item.slug)
+                  }}
+                  onClick={(event) => {
+                    if (
+                      event.metaKey ||
+                      event.ctrlKey ||
+                      event.shiftKey ||
+                      event.altKey
+                    )
+                      return
+                    event.preventDefault()
+                    select(item)
+                  }}
+                  onFocus={() => previewTape(item)}
+                  onBlur={() => previewTape(null)}
+                  onPointerEnter={() => previewTape(item)}
+                  onPointerLeave={() => previewTape(null)}
+                  onKeyDown={(event) => moveTape(event, index)}
+                >
+                  <span className={styles.tapeNumber}>
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className={styles.tapeLabel}>
+                    {item.slug === 'about'
+                      ? 'About Daniel'
+                      : item.vhs.spineLabel.split(' · ')[0]}
+                    <small>
+                      {item.slug === 'about' ? 'Meet the maker' : 'Placeholder'}
+                    </small>
+                  </span>
+                  <span className={styles.playArrow} aria-hidden="true">
+                    ▶
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </main>
+
+      <footer
+        className={styles.footer}
+        inert={open || undefined}
+        aria-hidden={open || undefined}
+      >
+        <span>Made with intention. A little nostalgia, too.</span>
+        <nav aria-label="Contact">
+          <a
+            href="https://github.com/danielalyoshin"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub ↗
+          </a>
+          <a
+            href="https://www.linkedin.com/in/danielalyoshin/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LinkedIn ↗
+          </a>
+        </nav>
+        <span className={styles.footerEdition}>DA / © 2026</span>
+      </footer>
+
+      {loading && !useNativeReader && (
+        <div className={styles.transitionTools}>{skipControl}</div>
+      )}
+      {open && useNativeReader && (
+        <div className={styles.expandedReader}>
+          <div className={styles.nativeScreen}>
+            {loading ? (
+              <div className={styles.readerLoading}>
+                <span>Loading tape</span>
+                <span>{tape?.vhs.spineLabel}</span>
+                {skipControl}
+              </div>
+            ) : (
+              reader
+            )}
+          </div>
+          <div className={styles.readerDeck}>
+            <span className={styles.readerDeckLabel}>
+              AV–01 <span>/ VHS</span>
+            </span>
+            <DeckControls soundOn={soundOn} onEject={eject} />
           </div>
         </div>
       )}
+      <p className="srOnly" role="status" aria-live="polite">
+        {open
+          ? invalid
+            ? 'No signal. Eject or press Escape to return to the archive.'
+            : `${loading ? 'Loading' : 'Playing'} ${tape?.title}`
+          : 'Studio ready. Choose a tape from the archive.'}
+      </p>
     </div>
   )
 }

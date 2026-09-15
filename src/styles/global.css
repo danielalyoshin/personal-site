@@ -14,7 +14,7 @@ body {
   background: var(--ink-0);
   color: var(--silk);
   font-family: var(--font-chassis);
-  font-size: 1.0625rem;
+  font-size: var(--type-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -67,7 +67,7 @@ button {
 /* Silkscreen label — the chassis's printed text register. */
 .silkLabel {
   font-family: var(--font-chassis);
-  font-size: 0.6875rem;
+  font-size: var(--type-label);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.14em;

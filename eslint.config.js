@@ -7,7 +7,15 @@ import prettier from 'eslint-config-prettier/flat'
 import { globalIgnores } from 'eslint/config'
 
 export default tseslint.config([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', '.agents/skills/impeccable/**']),
+  {
+    files: ['scripts/**/*.mjs'],
+    extends: [js.configs.recommended, prettier],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

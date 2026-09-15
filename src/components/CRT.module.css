@@ -132,9 +132,11 @@
   right: 0;
   display: flex;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 0.875rem 5cqi;
   font-family: var(--font-osd);
-  font-size: clamp(1rem, 6cqi, 1.375rem);
+  font-size: var(--type-screen-osd);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
   color: var(--osd);
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
   z-index: 2;
@@ -145,27 +147,42 @@
   position: absolute;
   inset: 0;
   overflow-y: auto;
-  padding: 56px 9% 44px;
+  padding: 4rem 9% 2.75rem;
+  font-size: var(--type-screen-body);
+  font-weight: 440;
+  letter-spacing: var(--tracking-body);
+  overflow-wrap: anywhere;
   scrollbar-width: thin;
   scrollbar-color: var(--seam-lit) transparent;
+}
+
+.readerContent {
+  max-width: var(--measure-reader);
+  margin-inline: auto;
+}
+
+.reader:focus-visible {
+  outline: 2px solid var(--osd);
+  outline-offset: -4px;
+  border-radius: inherit;
 }
 
 .title {
   font-weight: 800;
   font-stretch: 110%;
-  font-size: clamp(1.1rem, 7.5cqi, 1.9rem);
-  overflow-wrap: break-word;
-  line-height: 1.1;
-  letter-spacing: 0.02em;
+  font-size: var(--type-screen-title);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   text-transform: uppercase;
   text-wrap: balance;
   color: var(--screen-text);
-  margin-bottom: var(--sp-sm);
+  margin-bottom: 0.5em;
 }
 
 /* Focus cue as OSD emphasis: a clear underline, not a box around a
    screen-filling heading. */
-.title:focus-visible {
+.title:focus-visible,
+.bigOsd:focus-visible {
   outline: none;
   text-decoration: underline;
   text-decoration-thickness: 3px;
@@ -175,26 +192,29 @@
 
 .meta {
   font-family: var(--font-osd);
-  font-size: clamp(0.95rem, 5.4cqi, 1.25rem);
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
   color: var(--screen-dim);
-  margin-bottom: var(--sp-md);
+  margin-bottom: 1.2em;
 }
 
 .tagline {
   font-weight: 600;
-  font-size: clamp(0.85rem, 4.6cqi, 1.0625rem);
+  font-size: inherit;
   line-height: 1.5;
   color: var(--screen-text);
-  max-width: 62ch;
-  margin-bottom: var(--sp-md);
+  text-wrap: pretty;
+  margin-bottom: 1em;
 }
 
 .para {
-  font-size: clamp(0.85rem, 4.6cqi, 1.0625rem);
-  line-height: 1.65;
+  font-size: inherit;
+  line-height: var(--leading-body);
   color: var(--screen-text);
-  max-width: 62ch;
-  margin-bottom: var(--sp-md);
+  text-wrap: pretty;
+  margin-bottom: 1em;
 }
 
 .gallery {
@@ -212,7 +232,9 @@
 
 .gallery figcaption {
   font-family: var(--font-osd);
-  font-size: 1.25rem;
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
   color: var(--screen-dim);
   margin-top: var(--sp-xs);
 }
@@ -222,7 +244,9 @@
   flex-wrap: wrap;
   gap: var(--sp-sm) var(--sp-md);
   font-family: var(--font-osd);
-  font-size: 1.25rem;
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
   color: var(--screen-soft);
   margin: var(--sp-lg) 0 var(--sp-md);
 }
@@ -235,8 +259,15 @@
 }
 
 .links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   font-family: var(--font-osd);
-  font-size: 1.25rem;
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
   color: var(--osd);
   text-decoration: none;
   border: 1px solid var(--osd);
@@ -258,7 +289,10 @@
 
 .osdEnd {
   font-family: var(--font-osd);
-  font-size: 1.25rem;
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
   color: var(--screen-dim);
 }
 
@@ -282,17 +316,20 @@
   color: var(--osd);
   text-align: center;
   padding: var(--sp-lg);
+  overflow-wrap: anywhere;
 }
 
 .bigOsd {
-  font-size: clamp(1.2rem, 9cqi, 2.5rem);
+  font-size: var(--type-screen-display);
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: 0.06em;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
 }
 
 .subOsd {
-  font-size: 1.25rem;
+  font-size: var(--type-screen-meta);
+  line-height: 1.35;
   color: var(--screen-soft);
 }
 
@@ -310,7 +347,7 @@
 .cornerTL,
 .cornerBR {
   position: absolute;
-  font-size: 1.25rem;
+  font-size: var(--type-screen-meta);
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
 }
 
@@ -385,6 +422,52 @@
   }
 
   .reader {
-    padding: 52px 6% 40px;
+    padding: 4rem 6% 2.5rem;
   }
+}
+
+/* Native HTML stays crisp and selectable on the actual 3D screen plane. */
+.embedded {
+  width: 100%;
+}
+.embedded .bezel {
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+}
+.embedded .screen {
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+}
+.embedded .chin,
+.embedded .cast {
+  display: none;
+}
+.embedded .osdTop {
+  background: linear-gradient(var(--screen-black) 70%, transparent);
+  padding-bottom: 1.375rem;
+}
+.embedded .reader {
+  overscroll-behavior: contain;
+}
+.embedded .bigOsd {
+  font-weight: 400;
+}
+
+.fullHeight,
+.fullHeight .bezel,
+.fullHeight .screen {
+  height: 100%;
+}
+.fullHeight .screen {
+  aspect-ratio: auto;
+}
+.fullHeight .reader {
+  padding: 4rem 7% 2.5rem;
+  font-size: clamp(1rem, 2.4cqi, 1.125rem);
+}
+.fullHeight .title {
+  font-size: clamp(1.5rem, 7.5cqi, 2rem);
 }

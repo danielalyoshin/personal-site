@@ -4,9 +4,10 @@ import testPattern from './media/test-pattern.svg'
 export const placeholderDelta: Project = {
   slug: 'placeholder-delta',
   title: 'Placeholder: Delta',
-  tagline: 'Stand-in tape until real projects are selected (PLAN.md Stage 8).',
+  tagline:
+    'A placeholder in the archive. The real project selection is on its way.',
   description: [
-    'Placeholder copy for a mid-weight writeup: two paragraphs and a couple of stills. Real project prose replaces this in Stage 8.',
+    'Placeholder copy for a mid-weight writeup: two paragraphs and a couple of stills. A real project story will take its place.',
     'Its job on the shelf is variety — a different accent, a different label style, a different year — so the rack never reads as five copies of one tape.',
   ],
   year: 2023,

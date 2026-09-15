@@ -1,0 +1,50 @@
+.canvas {
+  /* OrbitControls sets an inline `none` on its event wrapper when connecting.
+     Vertical swipes and pinch zoom belong to the browser; horizontal drags orbit. */
+  touch-action: pan-y pinch-zoom !important;
+}
+
+.screenContent {
+  width: 560px;
+  height: 420px;
+  backface-visibility: hidden;
+}
+
+.playerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--silk-hi);
+  white-space: nowrap;
+  font-family: var(--font-chassis);
+  font-size: var(--type-caption);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.playerButton svg {
+  flex-shrink: 0;
+  width: 1.125em;
+  height: 1.125em;
+}
+
+.playerButton[aria-pressed] {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.playerButton:active {
+  transform: translateY(1px);
+}

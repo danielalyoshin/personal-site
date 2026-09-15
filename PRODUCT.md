@@ -47,8 +47,9 @@ accessibility standards.
 
 - Stack: Vite + React + TypeScript, static output. SPA; no server runtime.
   See `PLAN.md` for rationale before changing.
-- Cassettes/deck render as SVG/CSS; WebGL was evaluated and declined
-  (2026-07-22) — the CSS/SVG tape flight is final.
+- A real low-poly studio renders with Three.js / React Three Fiber. Daniel
+  requested this revision on 2026-09-15, superseding the July SVG-only decision.
+  Accessible HTML navigation and reading remain usable without WebGL.
 - Every animation must respect `prefers-reduced-motion` (hard requirement).
 - Sound exists (settled 2026-07-22): synthesized mechanical cues only,
   default-off on every visit behind the deck's sound toggle, never

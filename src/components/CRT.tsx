@@ -5,6 +5,9 @@ import styles from './CRT.module.css'
 export type ScreenMode = 'idle' | 'playing' | 'nosignal' | 'ejecting'
 
 interface CRTProps {
+  /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
+  embedded?: boolean
+  fullHeight?: boolean
   mode: ScreenMode
   tape: Project | null
   /** NO SIGNAL flavor: a dead tape slug, or an unknown channel (any other path). */
@@ -20,9 +23,14 @@ export default function CRT({
   noSignalReason = 'tape',
   onTitleEl,
   crtRef,
+  embedded = false,
+  fullHeight = false,
 }: CRTProps) {
   return (
-    <div className={styles.crtUnit} ref={crtRef}>
+    <div
+      className={`${styles.crtUnit} ${embedded ? styles.embedded : ''} ${fullHeight ? styles.fullHeight : ''}`}
+      ref={crtRef}
+    >
       <section aria-label="CRT display" className={styles.bezel}>
         <div className={`${styles.screen} ${styles[mode]}`}>
           {mode === 'playing' && tape ? (
@@ -31,70 +39,90 @@ export default function CRT({
                 <span>▶ PLAY</span>
                 <span>{tape.vhs.runtime}</span>
               </div>
-              <article className={styles.reader}>
-                <h2 tabIndex={-1} ref={onTitleEl} className={styles.title}>
-                  {tape.title}
-                </h2>
-                <p className={styles.meta}>
-                  {tape.year}
-                  {tape.role ? ` · ${tape.role.toUpperCase()}` : ''}
-                </p>
-                <p className={styles.tagline}>{tape.tagline}</p>
-                {tape.description.map((para) => (
-                  <p key={para.slice(0, 24)} className={styles.para}>
-                    {para}
+              <article
+                className={styles.reader}
+                tabIndex={0}
+                aria-label={`${tape.title} details`}
+              >
+                <div className={styles.readerContent}>
+                  <h2 tabIndex={-1} ref={onTitleEl} className={styles.title}>
+                    {tape.title}
+                  </h2>
+                  <p className={styles.meta}>
+                    {tape.year}
+                    {tape.role ? ` · ${tape.role.toUpperCase()}` : ''}
                   </p>
-                ))}
-                {tape.media.length > 0 && (
-                  <div className={styles.gallery}>
-                    {tape.media.map((m, i) => (
-                      <figure key={`${m.src}-${i}`}>
-                        {m.type === 'image' ? (
-                          <img src={m.src} alt={m.alt} loading="lazy" />
-                        ) : (
-                          <video src={m.src} controls aria-label={m.alt} />
-                        )}
-                        {m.caption && <figcaption>{m.caption}</figcaption>}
-                      </figure>
-                    ))}
-                  </div>
-                )}
-                {tape.tags.length > 0 && (
-                  <ul className={styles.tags} aria-label="Tags">
-                    {tape.tags.map((t) => (
-                      <li key={t}>[{t.toUpperCase()}]</li>
-                    ))}
-                  </ul>
-                )}
-                {tape.links.length > 0 && (
-                  <ul className={styles.links} aria-label="Project links">
-                    {tape.links.map((l) => (
-                      <li key={l.url}>
-                        <a
-                          href={l.url}
-                          target={
-                            l.url.startsWith('http') ? '_blank' : undefined
-                          }
-                          rel={
-                            l.url.startsWith('http') ? 'noreferrer' : undefined
-                          }
-                        >
-                          {l.label.toUpperCase()}
-                          {l.url.startsWith('http') ? ' ↗' : ''}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <p className={styles.osdEnd} aria-hidden="true">
-                  REC <span className={styles.recDot}>●</span>{' '}
-                  {tape.vhs.recorded}
-                </p>
+                  <p className={styles.tagline}>{tape.tagline}</p>
+                  {tape.description.map((para) => (
+                    <p key={para.slice(0, 24)} className={styles.para}>
+                      {para}
+                    </p>
+                  ))}
+                  {tape.media.length > 0 && (
+                    <div className={styles.gallery}>
+                      {tape.media.map((m, i) => (
+                        <figure key={`${m.src}-${i}`}>
+                          {m.type === 'image' ? (
+                            <img src={m.src} alt={m.alt} loading="lazy" />
+                          ) : (
+                            <video src={m.src} controls aria-label={m.alt} />
+                          )}
+                          {m.caption && <figcaption>{m.caption}</figcaption>}
+                        </figure>
+                      ))}
+                    </div>
+                  )}
+                  {tape.tags.length > 0 && (
+                    <ul className={styles.tags} aria-label="Tags">
+                      {tape.tags.map((t) => (
+                        <li key={t}>[{t.toUpperCase()}]</li>
+                      ))}
+                    </ul>
+                  )}
+                  {tape.links.some(
+                    (link) =>
+                      new URL(link.url, window.location.origin).hostname !==
+                      'example.com',
+                  ) && (
+                    <ul className={styles.links} aria-label="Project links">
+                      {tape.links
+                        .filter(
+                          (link) =>
+                            new URL(link.url, window.location.origin)
+                              .hostname !== 'example.com',
+                        )
+                        .map((l) => (
+                          <li key={l.url}>
+                            <a
+                              href={l.url}
+                              target={
+                                l.url.startsWith('http') ? '_blank' : undefined
+                              }
+                              rel={
+                                l.url.startsWith('http')
+                                  ? 'noreferrer'
+                                  : undefined
+                              }
+                            >
+                              {l.label.toUpperCase()}
+                              {l.url.startsWith('http') ? ' ↗' : ''}
+                            </a>
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                  <p className={styles.osdEnd} aria-hidden="true">
+                    REC <span className={styles.recDot}>●</span>{' '}
+                    {tape.vhs.recorded}
+                  </p>
+                </div>
               </article>
             </div>
           ) : mode === 'nosignal' ? (
             <div className={styles.centerScreen}>
-              <p className={styles.bigOsd}>NO SIGNAL</p>
+              <h2 tabIndex={-1} ref={onTitleEl} className={styles.bigOsd}>
+                NO SIGNAL
+              </h2>
               <p className={styles.subOsd}>
                 {noSignalReason === 'channel'
                   ? 'CHANNEL NOT FOUND'

@@ -180,6 +180,11 @@ export function toggleSound(): boolean {
   return enabled
 }
 
+/** All deck controls use the same opt-in confirmation cue. */
+export function changeSound() {
+  if (toggleSound()) playSound('tick')
+}
+
 function subscribe(cb: () => void) {
   listeners.add(cb)
   return () => {
