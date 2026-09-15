@@ -36,7 +36,8 @@ interface StudioProps extends DeckControlsProps {
   reduced: boolean
   reset: number
   inserting: boolean
-  deckInteractive: boolean
+  /** Modeled playback: the reader and keys live on the equipment. */
+  playback: boolean
   deckPortal: RefObject<HTMLDivElement | null>
   onSelect: (tape: Project) => void
   onPreview: (tape: Project | null) => void
@@ -58,6 +59,7 @@ function CameraRig({
   const initialized = useRef(false)
   const previousReset = useRef(reset)
   const skip = useRef(false)
+  const settle = useRef(false)
   const look = useRef(new Vector3(0, 1.9, 0))
   const focusAmount = useRef(0)
   const fit = useRef<ReturnType<typeof createStudioFraming> | null>(null)
@@ -69,6 +71,9 @@ function CameraRig({
   useEffect(() => {
     skip.current = open && previousReset.current !== reset
     previousReset.current = reset
+    // The canvas takes its playback box while the tape waits: fit it at once
+    // rather than easing, so the studio lands before the mechanism starts.
+    settle.current = inserting
     moving.current = true
     invalidate()
   }, [open, reduced, reset, inserting, size, invalidate])
@@ -108,7 +113,10 @@ function CameraRig({
     )
     // Shrink immediately when an edge needs space; ease back into a closer fit.
     // This also protects the very first frame after a canvas resize or eject.
-    camera.zoom = Math.min(zoom, MathUtils.lerp(camera.zoom, zoom, factor))
+    camera.zoom = settle.current
+      ? zoom
+      : Math.min(zoom, MathUtils.lerp(camera.zoom, zoom, factor))
+    settle.current = false
     camera.updateProjectionMatrix()
     initialized.current = true
     if (
@@ -367,18 +375,37 @@ function SceneContents(props: StudioProps) {
   const progress = useRef(1)
   const previousTape = useRef<string | null>(null)
   const completed = useRef(false)
+  const hold = useRef<{
+    width: number
+    height: number
+    elapsed: number
+  } | null>(null)
   useEffect(() => subscribeTextureUpdates(invalidate), [invalidate])
   // One timeline drives the tape and flap. Playback begins after the mechanism
   // finishes, even when a slow device takes longer to render the sequence.
-  useFrame((_, delta) => {
+  useFrame(({ size }, delta) => {
     const slug = props.tape?.slug ?? null
     if (previousTape.current !== slug) {
       previousTape.current = slug
       progress.current = 0
       completed.current = false
+      // Selection also moves the canvas to its full-viewport box. Keep the
+      // tape at rest until that box has been reported and drawn once.
+      hold.current = { width: size.width, height: size.height, elapsed: 0 }
     }
-    if (props.reduced || !props.inserting || !props.tape) progress.current = 1
-    else
+    if (props.reduced || !props.inserting || !props.tape) {
+      progress.current = 1
+      hold.current = null
+    } else if (hold.current) {
+      const waiting = hold.current
+      waiting.elapsed += delta
+      const resized =
+        size.width !== waiting.width || size.height !== waiting.height
+      const fills =
+        Math.abs(size.width - window.innerWidth) < 2 &&
+        Math.abs(size.height - window.innerHeight) < 2
+      if (resized || fills || waiting.elapsed > 0.3) hold.current = null
+    } else
       progress.current = Math.min(
         1,
         progress.current + Math.min(delta, 0.05) / INSERT_SECONDS,
@@ -443,7 +470,7 @@ function SceneContents(props: StudioProps) {
           tape={props.tape}
           inserting={props.inserting}
           progress={progress}
-          interactive={props.deckInteractive}
+          interactive={props.playback && !props.inserting}
           portal={props.deckPortal}
           invalid={props.invalid}
           soundOn={props.soundOn}
@@ -480,7 +507,7 @@ export default function StudioScene(props: StudioProps) {
       shadows="percentage"
       orthographic
       camera={{ position: [8.2, 6.65, 12], zoom: 75, near: 0.1, far: 100 }}
-      dpr={[1, 1.75]}
+      dpr={props.playback ? [1, 2] : [1, 1.75]}
       frameloop="demand"
       gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
       fallback={<p>The tape archive is available below.</p>}

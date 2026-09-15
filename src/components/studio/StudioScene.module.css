@@ -10,41 +10,19 @@
   backface-visibility: hidden;
 }
 
-.playerButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+/* The native control over a modeled key: a silent hit area sized to the cap.
+   The cap itself shows hover and press; only keyboard focus draws here. */
+.playerKey {
+  display: block;
   min-width: 44px;
   min-height: 44px;
-  padding: 4px;
+  padding: 0;
   border: 0;
   border-radius: 3px;
   background: transparent;
-  color: var(--silk-hi);
-  white-space: nowrap;
-  font-family: var(--font-chassis);
-  font-size: var(--type-caption);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  color: transparent;
   cursor: pointer;
   pointer-events: auto;
   touch-action: manipulation;
-}
-
-.playerButton svg {
-  flex-shrink: 0;
-  width: 1.125em;
-  height: 1.125em;
-}
-
-.playerButton[aria-pressed] {
-  flex-direction: column;
-  gap: 2px;
-}
-
-.playerButton:active {
-  transform: translateY(1px);
+  -webkit-tap-highlight-color: transparent;
 }

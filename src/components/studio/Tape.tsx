@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Group, Quaternion, Vector3 } from 'three'
 import type { Project } from '../../content/types'
 import CassetteModel from './CassetteModel'
-import { makeTexture, useTextureDisposal } from './textures'
+import { fitType, makeTexture, useTextureDisposal } from './textures'
 import { insertionPose } from './transport'
 
 export interface TapeProps {
@@ -42,14 +42,15 @@ export default function Tape({
     start: home.clone(),
     startRotation: new Quaternion(),
   })
+  // 192 × 966 matches the 0.306 × 1.54 spine plane, so the print never stretches.
   const label = useMemo(
     () =>
-      makeTexture(192, 768, (ctx) => {
+      makeTexture(192, 966, (ctx) => {
         const accent = tape.vhs.accent
         const studio = tape.vhs.labelVariant === 'studio'
         const classic = tape.vhs.labelVariant === 'classic'
         ctx.fillStyle = studio ? '#232931' : classic ? '#deded5' : accent
-        ctx.fillRect(0, 0, 192, 768)
+        ctx.fillRect(0, 0, 192, 966)
         ctx.fillStyle = studio ? accent : '#192026'
         ctx.fillRect(20, 24, 152, 3)
         ctx.font = '700 42px "Archivo Variable", sans-serif'
@@ -57,24 +58,25 @@ export default function Tape({
         ctx.save()
         ctx.translate(113, 139)
         ctx.rotate(Math.PI / 2)
-        ctx.font = '750 43px "Archivo Variable", sans-serif'
-        ctx.fillText(tape.vhs.spineLabel.split(' · ')[0], 0, 0, 436)
+        const name = tape.vhs.spineLabel.split(' · ')[0]
+        fitType(ctx, name, 43, 630, 750)
+        ctx.fillText(name, 0, 0)
         ctx.restore()
         ctx.fillStyle = accent
-        ctx.fillRect(0, 598, 192, 82)
+        ctx.fillRect(0, 796, 192, 82)
         if (studio) {
           ctx.fillStyle = '#232931'
-          ctx.fillRect(24, 620, 144, 3)
-          ctx.fillRect(24, 636, 100, 3)
+          ctx.fillRect(24, 818, 144, 3)
+          ctx.fillRect(24, 834, 100, 3)
         } else {
           ctx.fillStyle = '#192026'
-          for (let i = 0; i < 5; i++) ctx.fillRect(0, 604 + i * 14, 192, 4)
+          for (let i = 0; i < 5; i++) ctx.fillRect(0, 802 + i * 14, 192, 4)
         }
         ctx.fillStyle = studio ? '#dfe6e1' : '#192026'
         ctx.font = '600 22px "Archivo Variable", sans-serif'
-        ctx.fillText('VHS', 24, 729)
+        ctx.fillText('VHS', 24, 927)
         ctx.font = '400 14px "Archivo Variable", sans-serif'
-        ctx.fillText('HI-FI', 108, 727)
+        ctx.fillText('HI-FI', 108, 925)
       }),
     [tape, index],
   )

@@ -389,6 +389,47 @@ against WebGL; the July entries below remain a record of the original build.
 - Validation: 21 Chrome tests, production build, ESLint, and formatting
   passed; the fonts regression now asserts an aspect-fitted print texture.
 
+#### Polish pass — deck keys and print rendering (2026-09-15)
+
+- ✅ Each key cap carries one printed label (SOUND, EJECT) in every state; the
+  label is inside the cap group, so it travels with the press. The native
+  button is an invisible hit area sized to the cap (44px floor) that carries
+  only the accessible name, `aria-pressed`, the Escape title, and keyboard
+  focus. The icon-and-text HTML label and the browse/playback label swap are
+  gone.
+- ✅ Sound state moved into the status window, now a two-field readout
+  (transport state with a drawn play mark on the left, SOUND ON / dimmed
+  SOUND OFF on the right). The `PLAY ▸ 01` glyph is gone.
+- ✅ Keys are interactive only after insertion ends (`playback && !inserting`);
+  during insertion the only control is Skip animation.
+- ✅ Canvas sized before the tape moves: on selection the mechanism holds at
+  progress 0 until the R3F size changes or equals the viewport (0.3s
+  fallback), and the camera rig snaps its zoom to the new fit instead of
+  easing, so the studio lands in the full-viewport box before the cassette
+  lifts.
+- ✅ Print rendering: `Print` is a transparent `Decal` in the chassis
+  material (roughness 0.82, metalness 0.12, flat shading, no depth write),
+  so labels no longer sit on lighter patches. Textures carry ~1280 px per
+  world unit at the plane's own aspect; type is measured with `fitType` and
+  set smaller rather than compressed; capitals are centered on their actual
+  bounds; canvas tracking is applied for the 0.1em control labels. The spine
+  label is now 192×966 and the face label 256×480, matching their planes
+  (the spine was 26% off). Pixel ratio is capped at 2 during modeled playback,
+  1.75 in browse.
+- Docs: rewrote the Playback buttons section, the control typography bullet,
+  The Signature Print Rule, and the insertion/pixel-ratio notes in DESIGN.md;
+  synced the sidecar (control/label purposes, `canvas-settle` motion entry)
+  and the surface brief.
+- Validation: 22 Chrome tests (a new transport regression records every
+  frame from inside the render loop and proves the tape waits for the
+  reported playback box, keys have no hit areas during insertion, hit areas
+  are empty and transparent in playback, and pixel ratio is 2 in playback
+  and 1.75 after eject; the fonts regression now checks every canvas print
+  against its plane's proportions), production build, ESLint, formatting,
+  and a clean Impeccable detector pass. Reviewed 2× renders of browse,
+  insertion start and mid-flight, playback, hover, sound on, keyboard focus,
+  after-eject, and 390px phone playback.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

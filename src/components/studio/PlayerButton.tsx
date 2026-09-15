@@ -1,44 +1,53 @@
-import { useRef, useState, type ReactNode, type RefObject } from 'react'
+import { useRef, useState, type RefObject } from 'react'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { Solid, Print } from './geometry'
 import styles from './StudioScene.module.css'
 
-/** A native, keyboard-accessible hit area follows the modeled key cap. */
+/**
+ * A working deck key: one printed cap label in every state, and during
+ * playback an invisible native button over the cap that carries the
+ * accessible name, keyboard focus, and the press.
+ */
 export default function PlayerButton({
   name,
   position,
   size,
+  label,
+  accessibleName,
+  title,
   interactive,
   portal,
-  label,
-  print,
   pressed,
   onClick,
-  children,
 }: {
   name: string
   position: [number, number, number]
   size: [number, number]
+  /** The cap print, in capitals. */
+  label: string
+  accessibleName: string
+  title?: string
   interactive: boolean
   portal: RefObject<HTMLDivElement | null>
-  label: string
-  print: string
   pressed?: boolean
   onClick: () => void
-  children: ReactNode
 }) {
   const button = useRef<HTMLButtonElement>(null)
   const [hovered, setHovered] = useState(false)
   const [down, setDown] = useState(false)
+  // The hit area unmounts on eject; release a cap it left lit or pressed.
+  if (!interactive && (hovered || down)) {
+    setHovered(false)
+    setDown(false)
+  }
   useFrame(({ camera }) => {
     if (!button.current) return
-    // Orthographic projection: keep the target on its cap, with a 44px floor
-    // while the camera is still wide during insertion. No continuous animation.
+    // Orthographic projection: the target follows the cap's projected size,
+    // with a 44px floor. No continuous animation.
     const view = camera.matrixWorldInverse.elements
     button.current.style.width = `${Math.max(44, size[0] * camera.zoom * Math.abs(view[0]))}px`
     button.current.style.height = `${Math.max(44, size[1] * camera.zoom * Math.abs(view[5]))}px`
-    button.current.style.fontSize = `clamp(0.75rem, ${camera.zoom * 0.052}px, 0.875rem)`
   })
   return (
     <group name={name} position={position}>
@@ -47,13 +56,24 @@ export default function PlayerButton({
         color="#171d25"
         bevel={0.009}
       />
-      <Solid
-        size={[size[0], size[1], 0.065]}
-        position={[0, 0, down ? 0.015 : 0.034]}
-        color={hovered ? '#66727e' : '#4d5865'}
-        bevel={0.014}
-      />
-      {interactive ? (
+      {/* The label is part of the cap: it travels with the press. */}
+      <group position={[0, 0, down ? 0.015 : 0.034]}>
+        <Solid
+          size={[size[0], size[1], 0.065]}
+          color={hovered ? '#66727e' : '#4d5865'}
+          bevel={0.014}
+        />
+        <Print
+          name={`${name}-label`}
+          text={label}
+          width={size[0] - 0.04}
+          height={0.11}
+          weight={600}
+          tracking={0.1}
+          position={[0, 0, 0.0335]}
+        />
+      </group>
+      {interactive && (
         <Html
           center
           position={[0, 0, 0.072]}
@@ -63,10 +83,10 @@ export default function PlayerButton({
           <button
             ref={button}
             type="button"
-            className={styles.playerButton}
-            aria-label={label}
+            className={styles.playerKey}
+            aria-label={accessibleName}
             aria-pressed={pressed}
-            title={label === 'Eject tape' ? 'Eject tape (Escape)' : label}
+            title={title ?? accessibleName}
             onPointerDown={(event) => {
               event.stopPropagation()
               setDown(true)
@@ -84,18 +104,8 @@ export default function PlayerButton({
               setDown(false)
             }}
             onClick={onClick}
-          >
-            {children}
-          </button>
+          />
         </Html>
-      ) : (
-        <Print
-          text={print}
-          width={size[0] * 0.82}
-          height={0.085}
-          position={[0, 0, 0.068]}
-          background="#4d5865"
-        />
       )}
     </group>
   )

@@ -56,11 +56,17 @@ loading or failure, preserving focus and scroll for the playback visit. Ejecting
 returns to the studio; a subsequent selection uses the normal viewport rule.
 The explicit fullHeight prop/class sizes this reader independently of viewport
 CSS. Playback controls are physical keys on the modeled player: sound at the
-left with clearance inside its fascia, and eject at the right. Their labels use
-compact uppercase Archivo. Skip animation is a plain underlined interface action
+left with clearance inside its fascia, and eject at the right. Each cap carries
+one printed uppercase Archivo label that is identical in browse and playback
+and moves with the press; during playback an invisible native button over the
+cap carries the accessible name, pressed state, and focus ring, sized to the
+cap with a 44px floor. Sound state reads in the deck's status window beside
+the transport state, not on the key. Keys are interactive only after insertion
+ends. Selection sizes the canvas to the viewport and refits the studio before
+the tape moves; the studio renders at pixel ratio 2 during modeled playback.
+Skip animation is a plain underlined interface action
 at the viewport's lower right during insertion, or inside the native loading
-screen. Native
-button targets follow the caps with a 44px floor; the playback camera keeps
+screen. The playback camera keeps
 both CRT and deck in view. The native reader integrates these actions into
 its lower hardware panel, respecting the bottom safe area. There is no
 page-wide playback footer.

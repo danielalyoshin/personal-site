@@ -318,7 +318,7 @@ text preferences.
 - **Nameplate** (`nameplate`): compact identity at 0.9375rem, with a 0.8125rem mobile override. The role underneath stays at 0.75rem.
 - **Body / introduction** (`body`, `intro-body`): inherited page baseline is 1.0625rem. Introductory prose is 1rem at every width, with 1.6 leading and 0.005em tracking. Its short aside is capped at 36ch.
 - **Functional text** (`functional-body`, `functional-title`, `functional-secondary`): 0.875rem selection guidance and tape names at weight 550; the archive section heading uses weight 650 and 1.5 leading. Tape names use 1.35 leading, captions 1.5. Instructions, placeholder disclosures, footer, and loading copy use 0.75rem.
-- **Navigation / control** (`navigation`, `control`): 0.8125rem navigation at weight 500 across all widths. Hardware controls use uppercase Archivo at weight 600 and 0.1em tracking; native-reader labels use 0.75rem, and modeled keys scale with the camera between 0.75rem and 0.875rem. Skip animation uses a quiet 0.75rem sentence-case text action at weight 500.
+- **Navigation / control** (`navigation`, `control`): 0.8125rem navigation at weight 500 across all widths. Hardware controls use uppercase Archivo at weight 600 and 0.1em tracking; native-reader labels use 0.75rem, and each modeled key cap carries one printed label set at 0.0715 world units, about 16px at the desktop playback zoom, in every state. Skip animation uses a quiet 0.75rem sentence-case text action at weight 500.
 - **Label** (`label`): tracked uppercase silkscreen. The introductory kicker uses 0.6875rem at weight 600 with 0.12em tracking. Printed hardware text is confined to the signature prints (The Signature Print Rule below); the shell has no decorative metadata tier, no scene caption number, no clock, and no edition marks. The 9px index numbers, archive count, and footer edition, and the 10px play symbol, are inherited sizes below the intended 11px floor and are owed to the typeset pass, not a sanctioned tier. The 42px AV–01 loading mark remains a graphic identifier.
 - **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking. Balanced wrapping and a 1.5rem floor keep titles distinct from prose; both modes cap at 2rem. Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes. Available tube width shortens that measure on phones. Prose uses weight 440, 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline uses weight 600 and 1.5 leading. The modeled screen uses 1–1.0625rem; full-height reading uses 1–1.125rem. Long text can wrap without horizontal scrolling.
@@ -330,7 +330,7 @@ sizes are texture coordinates, not recommended HTML font sizes.
 
 **The Silkscreen Rule.** Printed hardware text never glows. Its hierarchy comes from size appropriate to the object, weight, spacing, and contrast against the material.
 
-**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, so glyphs never stretch.
+**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.
 
 **The Tube-Scale Rule.** Screen-interior type scales with the tube using cqi units. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.
 
@@ -447,14 +447,21 @@ eject key beneath the playback status window. Decorative
 REW/PLAY/FF/STOP keys are removed. The cassette opening, flap, and internal
 clearances remain the transport's source of truth.
 
-Each working key combines a beveled mesh cap with a native HTML button anchored
-to its projected position. Hit areas track the cap's size with a 44px floor;
-labels use uppercase Archivo at weight 600, 0.1em tracking, and camera-relative
-0.75–0.875rem sizing. Hover/focus lightens the matte material, pointer
-press depresses the cap, and keyboard focus retains the crisp cyan outline.
-Sound exposes its pressed state and on/off label; the Escape shortcut is
-carried by the eject button's title and the native reader's key, not by fascia
-print. Nothing emits light. The article precedes the keys in native tab order.
+Each working key is a beveled mesh cap with one printed label (SOUND, EJECT)
+in uppercase Archivo at weight 600 and 0.1em tracking. The label is part of
+the cap, identical in browse and playback, and travels with the press. During
+playback an invisible native button sits over the cap, sized to it with a
+44px floor; it carries the accessible name, the sound key's pressed state,
+the eject key's Escape title, and the crisp cyan keyboard-focus outline, and
+nothing else: no text, icon, or background. Hover/focus lightens the matte
+material and pointer press depresses the cap. Keys become interactive only
+after insertion ends; during insertion the only control is Skip animation.
+
+The status window is the deck's readout, a two-field print in its dark
+recess: transport state on the left (STANDBY, LOADING, a drawn play mark with
+PLAY, or NO SIGNAL) and sound state on the right (SOUND ON in the readout's
+light ink, SOUND OFF dimmed). Sound state lives here, not on the key. Nothing
+emits light. The article precedes the keys in native tab order.
 
 Phones, short viewports, direct links, and graphics fallback put the same actions
 inside the native reader's lower hardware panel. These controls have 44px
@@ -510,13 +517,18 @@ Selection lifts clear of the rack, pulls forward of the table, turns flat,
 aligns with the deck slot, and seats inside the hollow bay. The flap closes
 before the camera moves to reading position.
 
-One render-driven timeline coordinates the mechanism (nominally 2.4 seconds,
+Selection first moves the canvas to its full-viewport box and fits the studio
+to that box at once; the tape waits at rest until the new box has been
+reported and drawn, then the mechanism starts, so the deck never jumps while
+the cassette is moving. One render-driven timeline coordinates the mechanism
+(nominally 2.4 seconds,
 with frame deltas capped at 0.05 seconds, so slow rendering can lengthen it).
 Camera interpolation follows afterward and is not a fixed 560ms CSS dolly.
 Skip finishes immediately; reduced motion snaps tape and camera state and
 disables orbit damping. Deep links begin seated; eject returns focus to the
 corresponding archive link. There is no ambient geometry animation. The scene
-loads lazily, renders on demand, caps pixel ratio at 1.75, and disposes generated
+loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
+modeled playback, and disposes generated
 textures and geometries.
 
 ### CRT reader

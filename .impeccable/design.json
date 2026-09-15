@@ -309,7 +309,7 @@
       },
       "label": {
         "displayName": "Silkscreen",
-        "purpose": "Tracked uppercase printed labels; never glowing."
+        "purpose": "Tracked uppercase printed labels as transparent decals in the chassis material; never glowing, never stretched."
       },
       "navigation": {
         "displayName": "Navigation",
@@ -317,7 +317,7 @@
       },
       "control": {
         "displayName": "Playback control",
-        "purpose": "Uppercase Archivo hardware labels at weight 600, 0.1em tracking, with 44px minimum hit areas. Native labels use 0.75rem; modeled labels scale from 0.75rem to 0.875rem."
+        "purpose": "Uppercase Archivo hardware labels at weight 600, 0.1em tracking, with 44px minimum hit areas. Native labels use 0.75rem; each modeled key cap carries one printed label (0.0715 world units, about 16px at desktop playback zoom) in every state, with an invisible native hit area over it during playback."
       },
       "screen-title": {
         "displayName": "Screen title",
@@ -426,6 +426,11 @@
         "name": "shell-feedback",
         "value": "200ms",
         "purpose": "Archive background/border and reset border transitions."
+      },
+      {
+        "name": "canvas-settle",
+        "value": "one drawn frame at the playback box (0.3s fallback)",
+        "purpose": "Selection sizes the canvas to the viewport and refits the studio at once; the tape waits at rest until that box is reported and drawn."
       },
       {
         "name": "tape-insert",

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Path, Shape } from 'three'
 import { Disc, Solid } from './geometry'
 import { DetailBoxes, Fasteners, Turned } from './ModelDetails'
-import { makeTexture, useTextureDisposal } from './textures'
+import { fitType, makeTexture, useTextureDisposal } from './textures'
 
 const screws: [number, number, number][] = [
   [-0.745, 0.415, 0.195],
@@ -81,23 +81,24 @@ export default function CassetteModel({
   title?: string
   accent?: string
 }) {
+  // 256 × 480 matches the 0.233 × 0.436 label plane, so the print never stretches.
   const label = useMemo(
     () =>
-      makeTexture(256, 512, (ctx) => {
+      makeTexture(256, 480, (ctx) => {
         ctx.fillStyle = '#d5d9d4'
-        ctx.fillRect(0, 0, 256, 512)
+        ctx.fillRect(0, 0, 256, 480)
         ctx.fillStyle = accent
-        ctx.fillRect(20, 26, 216, 36)
+        ctx.fillRect(20, 24, 216, 34)
         ctx.fillStyle = '#25303a'
         ctx.textAlign = 'center'
-        ctx.font = '650 40px "Archivo Variable", sans-serif'
-        ctx.fillText(title, 128, 150, 216)
-        ctx.fillRect(20, 191, 216, 2)
+        fitType(ctx, title, 40, 216, 650)
+        ctx.fillText(title, 128, 141)
+        ctx.fillRect(20, 179, 216, 2)
         ctx.font = '750 66px "Archivo Variable", sans-serif'
-        ctx.fillText('VHS', 128, 310)
+        ctx.fillText('VHS', 128, 291)
         ctx.font = '500 28px "Archivo Variable", sans-serif'
-        ctx.fillText('HI-FI', 128, 403)
-        ctx.fillRect(20, 456, 216, 2)
+        ctx.fillText('HI-FI', 128, 378)
+        ctx.fillRect(20, 428, 216, 2)
       }),
     [title, accent],
   )

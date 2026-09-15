@@ -48,6 +48,42 @@ export function useTextureDisposal(texture: CanvasTexture) {
   }, [texture])
 }
 
+export const PRINT_FONT = '"Archivo Variable", sans-serif'
+
+/**
+ * Set a print's type and measure it against the room it has. Text that would
+ * overflow is set smaller, never compressed, so glyphs keep their proportions.
+ * Returns the size used, so callers can place baselines and tracking exactly.
+ */
+export function fitType(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  size: number,
+  maxWidth: number,
+  weight = 500,
+  tracking = 0,
+) {
+  const apply = (px: number) => {
+    ctx.font = `${weight} ${px}px ${PRINT_FONT}`
+    ctx.letterSpacing = `${px * tracking}px`
+  }
+  apply(size)
+  const measured = ctx.measureText(text).width
+  if (measured > maxWidth) {
+    size = Math.floor((size * maxWidth) / measured)
+    apply(size)
+  }
+  return size
+}
+
+/** Vertical offset that centers a run of capitals on y, not its em box. */
+export function capitalsOffset(ctx: CanvasRenderingContext2D, text: string) {
+  const metrics = ctx.measureText(text)
+  return (
+    (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2
+  )
+}
+
 export function makeTexture(
   width: number,
   height: number,

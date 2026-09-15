@@ -1,7 +1,12 @@
 import { useEffect, useMemo } from 'react'
 import type { ThreeElements } from '@react-three/fiber'
-import { ExtrudeGeometry, Shape } from 'three'
-import { makeTexture, useTextureDisposal } from './textures'
+import { ExtrudeGeometry, MathUtils, Shape, type CanvasTexture } from 'three'
+import {
+  capitalsOffset,
+  fitType,
+  makeTexture,
+  useTextureDisposal,
+} from './textures'
 
 type BoxProps = Omit<ThreeElements['mesh'], 'args'> & {
   size: [number, number, number]
@@ -72,43 +77,89 @@ export function Disc({
   )
 }
 
-/** Printed text whose texture matches the plane's proportions, so glyphs never stretch. */
+/**
+ * A printed mark laid onto a surface. Only the inked pixels render, in the
+ * same matte material as the chassis, so print never sits on a differently
+ * lit patch and never casts a rectangular shadow.
+ */
+export function Decal({
+  texture,
+  width,
+  height,
+  ...props
+}: Omit<ThreeElements['mesh'], 'args'> & {
+  texture: CanvasTexture
+  width: number
+  height: number
+}) {
+  return (
+    <mesh receiveShadow {...props}>
+      <planeGeometry args={[width, height]} />
+      <meshStandardMaterial
+        map={texture}
+        transparent
+        depthWrite={false}
+        roughness={0.82}
+        metalness={0.12}
+        flatShading
+        polygonOffset
+        polygonOffsetFactor={-1}
+      />
+    </mesh>
+  )
+}
+
+/** Texture pixels per world unit: about 3× the playback zoom on a 2× display. */
+const PRINT_DENSITY = 1280
+
+/** One line of printed capitals, set to its plane's proportions and measured to fit. */
 export function Print({
   text,
   width = 1,
   height = 0.12,
   color = '#b7bbc6',
-  background = '#343840',
+  weight = 500,
+  tracking = 0,
   ...props
 }: Omit<ThreeElements['mesh'], 'args'> & {
   text: string
   width?: number
   height?: number
   color?: string
-  background?: string
+  weight?: number
+  /** Letter spacing in em, matching the control typography in CSS. */
+  tracking?: number
 }) {
   const texture = useMemo(() => {
-    const textureHeight = Math.round((1024 * height) / width)
-    return makeTexture(1024, textureHeight, (ctx) => {
-      ctx.fillStyle = background
-      ctx.fillRect(0, 0, 1024, textureHeight)
+    const textureWidth = MathUtils.clamp(
+      Math.round(width * PRINT_DENSITY),
+      256,
+      2048,
+    )
+    const textureHeight = Math.max(
+      8,
+      Math.round((textureWidth * height) / width),
+    )
+    return makeTexture(textureWidth, textureHeight, (ctx) => {
       ctx.fillStyle = color
-      ctx.font = `500 ${textureHeight * 0.65}px "Archivo Variable", sans-serif`
       ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillText(text, 512, textureHeight / 2, 980)
+      ctx.textBaseline = 'alphabetic'
+      const size = fitType(
+        ctx,
+        text,
+        textureHeight * 0.65,
+        textureWidth * 0.94,
+        weight,
+        tracking,
+      )
+      // Canvas tracking trails the last glyph; shift by half a step to center.
+      ctx.fillText(
+        text,
+        textureWidth / 2 + (size * tracking) / 2,
+        textureHeight / 2 + capitalsOffset(ctx, text),
+      )
     })
-  }, [text, color, background, height, width])
+  }, [text, color, height, width, weight, tracking])
   useTextureDisposal(texture)
-  return (
-    <mesh {...props}>
-      <planeGeometry args={[width, height]} />
-      <meshStandardMaterial
-        map={texture}
-        roughness={0.85}
-        polygonOffset
-        polygonOffsetFactor={-1}
-      />
-    </mesh>
-  )
+  return <Decal texture={texture} width={width} height={height} {...props} />
 }

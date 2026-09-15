@@ -112,31 +112,39 @@ test('cold-cache fonts redraw live labels and the current preview without revivi
       const state = _roots
         .get(document.querySelector('canvas')!)!
         .store.getState()
-      const textures = new Set<CanvasTexture>()
+      const textures = new Map<CanvasTexture, string>()
       state.scene.traverse((node) => {
-        const mesh = node as import('three').Mesh
+        const mesh = node as import('three').Mesh<import('three').PlaneGeometry>
         if (!mesh.isMesh) return
         const materials = Array.isArray(mesh.material)
           ? mesh.material
           : [mesh.material]
         for (const material of materials) {
           const map = (material as import('three').MeshBasicMaterial).map
-          if (map?.image instanceof HTMLCanvasElement)
-            textures.add(map as CanvasTexture)
+          if (!(map?.image instanceof HTMLCanvasElement)) continue
+          // Every canvas print lies on a plane cut to the same proportions.
+          const { width, height } = mesh.geometry.parameters
+          const stretch =
+            map.image.width / map.image.height / (width / height) - 1
+          textures.set(
+            map as CanvasTexture,
+            `${map.image.width}×${map.image.height}${
+              Math.abs(stretch) > 0.03 ? ` stretched ${stretch.toFixed(2)}` : ''
+            }`,
+          )
         }
       })
-      window.studioFontProbe.active = [...textures].map((texture) => ({
+      window.studioFontProbe.active = [...textures.keys()].map((texture) => ({
         texture,
         pixels: (texture.image as HTMLCanvasElement).toDataURL(),
         version: texture.version,
       }))
-      return [...textures].map(
-        (texture) => `${texture.image.width}×${texture.image.height}`,
-      )
+      return [...textures.values()]
     })
-    expect(sizes).toEqual(expect.arrayContaining(['192×768', '1024×768']))
-    // Printed labels are aspect-fitted: 1024 wide, with the plane's own height.
-    expect(sizes.some((size) => /^1024×(?!768$)\d+$/.test(size))).toBe(true)
+    expect(sizes).toEqual(expect.arrayContaining(['192×966', '1024×768']))
+    expect(sizes.filter((size) => size.includes('stretched'))).toEqual([])
+    // The deck's status window, model line, and two cap labels are prints too.
+    expect(sizes.length).toBeGreaterThanOrEqual(6)
     // Let the reduced-motion preview frame finish before font release, so
     // the next frame must be requested by the font-driven texture update.
     await page.waitForTimeout(150)

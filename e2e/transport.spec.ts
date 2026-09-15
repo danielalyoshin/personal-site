@@ -46,6 +46,22 @@ test('all six cassettes clear the studio and enter the open player before playba
       page.getByRole('button', { name: 'Skip animation' }),
     ).toBeVisible()
     await expect(page.locator('article')).toHaveCount(0)
+    // The mechanism waits for the full-viewport canvas box (covered below);
+    // this synchronous frame loop cannot observe it, so let it land first.
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+          const { _roots } = (await import(
+            fiberModule
+          )) as typeof import('@react-three/fiber')
+          const { size } = _roots
+            .get(document.querySelector('canvas')!)!
+            .store.getState()
+          return [size.width, size.height]
+        }),
+      )
+      .toEqual([page.viewportSize()!.width, page.viewportSize()!.height])
     const result = await page.evaluate(async (slug) => {
       const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
       const threeModule = '/node_modules/.vite/deps/three.js'
@@ -326,6 +342,154 @@ test('physical playback keys follow the player, remain clickable after resize, a
   await page.getByRole('button', { name: 'Eject tape', exact: true }).click()
   await expect(page).toHaveURL('/')
   await expect(alpha).toBeFocused()
+})
+
+test('the canvas is sized before the tape moves, and the keys keep one printed label from browse to playback', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 1000 },
+    deviceScaleFactor: 2,
+    reducedMotion: 'no-preference',
+  })
+  const page = await context.newPage()
+  try {
+    await page.goto('/')
+    await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+      'data-ready',
+      'true',
+    )
+    await advanceScene(page, 80)
+    const sequence = await page.evaluate(async () => {
+      const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        fiberModule
+      )) as typeof import('@react-three/fiber')
+      const root = _roots.get(document.querySelector('canvas')!)!.store
+      const { scene, size, viewport, internal } = root.getState()
+      const tape = scene.getObjectByName('tape-placeholder-alpha')!
+      const home = tape.position.clone()
+      const labels = () => ({
+        sound: !!scene.getObjectByName('player-sound-label'),
+        eject: !!scene.getObjectByName('player-eject-label'),
+      })
+      const before = {
+        width: size.width,
+        height: size.height,
+        dpr: viewport.dpr,
+        labels: labels(),
+      }
+      // Record every frame from inside the loop, after the scene's own
+      // callbacks: the box that frame saw, and whether the tape has moved.
+      const frames: { width: number; height: number; moved: boolean }[] = []
+      internal.subscribers.push({
+        ref: {
+          current: (state) => {
+            frames.push({
+              width: state.size.width,
+              height: state.size.height,
+              moved: tape.position.distanceTo(home) > 1e-4,
+            })
+          },
+        },
+        priority: 0,
+        store: root,
+      })
+      document
+        .querySelector<HTMLAnchorElement>(
+          'a[href="/project/placeholder-alpha"]',
+        )!
+        .click()
+      // Step frames by hand while layout, the resize observer, and React
+      // deliver the new box. A canvas re-render restores demand mode, so any
+      // frame the loop runs on its own is recorded just the same.
+      for (let step = 0; step < 90 && !frames.some((f) => f.moved); step++) {
+        await new Promise((resolve) => setTimeout(resolve, 4))
+        const state = root.getState()
+        state.setFrameloop('never')
+        state.advance(state.clock.elapsedTime + 1 / 60)
+      }
+      return {
+        before,
+        frames,
+        viewport: { width: innerWidth, height: innerHeight },
+        keysDuringInsertion: document.querySelectorAll(
+          'button[aria-label="Eject tape"], button[aria-label="Sound effects"]',
+        ).length,
+        labels: labels(),
+      }
+    })
+    expect(sequence.before.labels).toEqual({ sound: true, eject: true })
+    expect(sequence.labels).toEqual({ sound: true, eject: true })
+    expect(sequence.before.width).toBeLessThan(sequence.viewport.width)
+    expect(sequence.before.dpr).toBe(1.75)
+    expect(sequence.keysDuringInsertion).toBe(0)
+    const { width, height } = sequence.viewport
+    const firstSized = sequence.frames.findIndex(
+      (frame) => frame.width === width && frame.height === height,
+    )
+    const firstMove = sequence.frames.findIndex((frame) => frame.moved)
+    expect(firstSized).toBeGreaterThanOrEqual(0)
+    expect(firstMove).toBeGreaterThan(firstSized)
+    // The frame that released the tape had already drawn the playback box,
+    // and the release came from that box, not from the timed fallback.
+    expect(sequence.frames[firstMove - 1]).toEqual({
+      width,
+      height,
+      moved: false,
+    })
+    expect(firstMove - firstSized).toBeLessThanOrEqual(2)
+    await page.getByRole('button', { name: 'Skip animation' }).click()
+    await expect(page.locator('article h2')).toBeFocused()
+    const playback = await page.evaluate(async () => {
+      const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        fiberModule
+      )) as typeof import('@react-three/fiber')
+      const state = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      const keys = [
+        ...document.querySelectorAll<HTMLButtonElement>(
+          'button[aria-label="Eject tape"], button[aria-label="Sound effects"]',
+        ),
+      ]
+      return {
+        dpr: state.viewport.dpr,
+        keys: keys.map((key) => ({
+          text: key.textContent,
+          children: key.childElementCount,
+          background: getComputedStyle(key).backgroundColor,
+        })),
+        labels: {
+          sound: !!state.scene.getObjectByName('player-sound-label'),
+          eject: !!state.scene.getObjectByName('player-eject-label'),
+        },
+      }
+    })
+    expect(playback.dpr).toBe(2)
+    expect(playback.labels).toEqual({ sound: true, eject: true })
+    expect(playback.keys).toEqual([
+      { text: '', children: 0, background: 'rgba(0, 0, 0, 0)' },
+      { text: '', children: 0, background: 'rgba(0, 0, 0, 0)' },
+    ])
+    await page.keyboard.press('Escape')
+    await expect(page).toHaveURL('/')
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+          const { _roots } = (await import(
+            fiberModule
+          )) as typeof import('@react-three/fiber')
+          return _roots.get(document.querySelector('canvas')!)!.store.getState()
+            .viewport.dpr
+        }),
+      )
+      .toBe(1.75)
+  } finally {
+    await context.close()
+  }
 })
 
 test('the compact player supports skip, sound, and eject on a narrow touch screen', async ({

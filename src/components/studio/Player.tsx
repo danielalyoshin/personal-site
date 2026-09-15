@@ -1,12 +1,87 @@
-import { useRef, type RefObject } from 'react'
+import { useMemo, useRef, type RefObject } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Group } from 'three'
 import type { Project } from '../../content/types'
-import { Solid, Print } from './geometry'
+import { Decal, Solid, Print } from './geometry'
+import {
+  capitalsOffset,
+  fitType,
+  makeTexture,
+  useTextureDisposal,
+} from './textures'
 import { PLAYER, slotFlapAngle } from './transport'
 import PlayerButton from './PlayerButton'
-import { EjectIcon, SoundIcon, type DeckControlsProps } from '../DeckControls'
+import type { DeckControlsProps } from '../DeckControls'
 import { changeSound } from '../../lib/sound'
+
+type DeckMode = 'standby' | 'loading' | 'play' | 'nosignal'
+
+const STATUS: Record<DeckMode, string> = {
+  standby: 'STANDBY',
+  loading: 'LOADING',
+  play: 'PLAY',
+  nosignal: 'NO SIGNAL',
+}
+
+/** The deck's readout: transport state on the left, sound state on the right. */
+function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
+  const texture = useMemo(
+    () =>
+      makeTexture(1024, 125, (ctx) => {
+        const middle = 63
+        const size = fitType(ctx, STATUS[mode], 74, 560, 500, 0.06)
+        ctx.textBaseline = 'alphabetic'
+        ctx.fillStyle = '#c4ccd2'
+        let x = 32
+        if (mode === 'play') {
+          // A drawn play mark, not a glyph borrowed from a fallback font.
+          const half = size * 0.3
+          ctx.beginPath()
+          ctx.moveTo(x, middle - half)
+          ctx.lineTo(x + half * 1.7, middle)
+          ctx.lineTo(x, middle + half)
+          ctx.closePath()
+          ctx.fill()
+          x += half * 1.7 + size * 0.36
+        }
+        ctx.textAlign = 'left'
+        ctx.fillText(
+          STATUS[mode],
+          x,
+          middle + capitalsOffset(ctx, STATUS[mode]),
+        )
+        const sound = soundOn ? 'SOUND ON' : 'SOUND OFF'
+        fitType(ctx, sound, 74, 400, 500, 0.06)
+        ctx.textAlign = 'right'
+        ctx.fillStyle = soundOn ? '#c4ccd2' : '#7f8994'
+        // Trailing tracking sits after the last glyph; keep the right edge true.
+        ctx.fillText(
+          sound,
+          992 + 74 * 0.06,
+          middle + capitalsOffset(ctx, sound),
+        )
+      }),
+    [mode, soundOn],
+  )
+  useTextureDisposal(texture)
+  return (
+    <>
+      <Solid
+        size={[0.93, 0.16, 0.028]}
+        position={[1.25, 0.23, 1.25]}
+        color="#111920"
+        bevel={0.014}
+      />
+      <Decal
+        name="player-status"
+        texture={texture}
+        width={0.82}
+        height={0.1}
+        position={[1.25, 0.23, 1.265]}
+      />
+    </>
+  )
+}
 
 export default function Player({
   tape,
@@ -29,6 +104,13 @@ export default function Player({
   useFrame(() => {
     if (flap.current) flap.current.rotation.x = slotFlapAngle(progress.current)
   })
+  const mode: DeckMode = invalid
+    ? 'nosignal'
+    : inserting
+      ? 'loading'
+      : tape
+        ? 'play'
+        : 'standby'
 
   return (
     <group name="vhs-player" position={PLAYER.position}>
@@ -122,61 +204,35 @@ export default function Player({
         />
       </group>
 
-      <Solid
-        size={[0.93, 0.16, 0.028]}
-        position={[1.25, 0.23, 1.25]}
-        color="#111920"
-        bevel={0.014}
-      />
-      <Print
-        text={
-          invalid
-            ? 'NO SIGNAL'
-            : inserting
-              ? 'LOADING'
-              : tape
-                ? 'PLAY  ▸  01'
-                : 'STANDBY'
-        }
-        width={0.82}
-        height={0.1}
-        position={[1.25, 0.23, 1.266]}
-        background="#111920"
-        color="#c4ccd2"
-      />
+      <StatusWindow mode={mode} soundOn={soundOn} />
       <Print
         text="AV–01  /  4 HEAD · HI-FI STEREO"
         width={1.65}
         height={0.09}
         position={[-0.3, -0.29, 1.243]}
-        background="#444d58"
       />
       <PlayerButton
         name="player-sound"
         position={[-1.555, 0.09, 1.253]}
         size={[0.3, 0.3]}
+        label="SOUND"
+        accessibleName="Sound effects"
         interactive={interactive}
         portal={portal}
-        label="Sound effects"
-        print="SOUND"
         pressed={soundOn}
         onClick={changeSound}
-      >
-        <SoundIcon enabled={soundOn} />
-        <span>{soundOn ? 'On' : 'Off'}</span>
-      </PlayerButton>
+      />
       <PlayerButton
         name="player-eject"
         position={[1.25, -0.09, 1.253]}
         size={[0.93, 0.32]}
+        label="EJECT"
+        accessibleName="Eject tape"
+        title="Eject tape (Escape)"
         interactive={interactive}
         portal={portal}
-        label="Eject tape"
-        print="EJECT"
         onClick={onEject}
-      >
-        <EjectIcon /> Eject
-      </PlayerButton>
+      />
       {[-1.45, 1.45].map((x) => (
         <Solid
           key={x}
