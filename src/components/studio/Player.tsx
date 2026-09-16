@@ -16,6 +16,19 @@ import { changeSound } from '../../lib/sound'
 
 type DeckMode = 'standby' | 'loading' | 'play' | 'eject' | 'nosignal'
 
+type Point = [number, number, number]
+
+/**
+ * The fascia's parting line: the four fascia pieces again, a hair larger on
+ * their outer edges and set into the groove where they meet the chassis.
+ */
+const FASCIA_SEAM: { size: Point; position: Point }[] = [
+  { size: [3.66, 0.115, 0.012], position: [0, 0.3825, -0.045] },
+  { size: [3.66, 0.295, 0.012], position: [0, -0.2925, -0.045] },
+  { size: [0.54, 0.47, 0.012], position: [-1.56, 0.09, -0.045] },
+  { size: [1.14, 0.47, 0.012], position: [1.26, 0.09, -0.045] },
+]
+
 const STATUS: Record<DeckMode, string> = {
   standby: 'STANDBY',
   loading: 'LOADING',
@@ -186,7 +199,7 @@ export default function Player({
           name="slot-top"
           size={[3.64, 0.105, 0.12]}
           position={[0, 0.3775, 0]}
-          color="#4a535f"
+          color="#444d58"
           bevel={0.012}
         />
         <Solid
@@ -210,6 +223,17 @@ export default function Player({
           color="#444d58"
           bevel={0.01}
         />
+        {/* A parting line where the fascia meets the chassis, as on the
+            cassette housing: four pieces, so the opening stays clear. */}
+        {FASCIA_SEAM.map(({ size, position }, index) => (
+          <Solid
+            key={index}
+            size={size}
+            position={position}
+            color="#171d25"
+            bevel={0.002}
+          />
+        ))}
       </group>
 
       <group name="player-slot" position={[-0.3, 0.09, 0.56]}>
@@ -235,7 +259,7 @@ export default function Player({
         <Solid
           size={[1.92, 0.443, 0.026]}
           position={[0, -0.2215, 0]}
-          color="#252d37"
+          color="#2f3843"
           bevel={0.008}
         />
         <Solid
@@ -276,15 +300,18 @@ export default function Player({
         portal={portal}
         onClick={onEject}
       />
-      {[-1.45, 1.45].map((x) => (
-        <Solid
-          key={x}
-          size={[0.28, 0.08, 1.6]}
-          position={[x, -0.47, 0]}
-          color="#171b20"
-          bevel={0.014}
-        />
-      ))}
+      {/* Four isolating pads in the speaker's style, tucked under the corners. */}
+      {[-1.55, 1.55].flatMap((x) =>
+        [-0.95, 0.95].map((z) => (
+          <Solid
+            key={`${x}-${z}`}
+            size={[0.28, 0.035, 0.22]}
+            position={[x, -0.4475, z]}
+            color="#141d27"
+            bevel={0.012}
+          />
+        )),
+      )}
     </group>
   )
 }

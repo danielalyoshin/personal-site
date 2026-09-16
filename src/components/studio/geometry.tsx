@@ -71,7 +71,7 @@ export function Disc({
 }) {
   return (
     <mesh castShadow receiveShadow {...props}>
-      <cylinderGeometry args={[radius, radius, depth, 16]} />
+      <cylinderGeometry args={[radius, radius, depth, 24]} />
       <meshStandardMaterial color={color} roughness={0.8} flatShading />
     </mesh>
   )

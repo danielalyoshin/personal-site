@@ -700,6 +700,58 @@ site, seamless both ways.
   now moves the pointer off the link it clicked, since the layer's return
   is a layout change that re-hovers the link underneath (a real preview).
 
+#### Scene cohesion round (2026-09-16)
+
+Daniel asked for a refinement pass so every object shares one level of
+detail, fidelity, clarity, and consistency, naming the cassettes, the holder,
+and the speaker as the strongest pieces; the goal is cohesion, not realism.
+
+- Analysis: the three strong objects share one grammar: a dark recess under a
+  lighter raised plane, a fine parting line, 24-sided turned parts, merged
+  ribs, fitted fasteners, and four isolating pads. The deck, the monitor, the
+  headphones, and the table each missed part of it.
+- ✅ Deck: the fascia is one tone (the top strip was a lighter band); a
+  parting line, four thin pieces around the opening so the collision spec's
+  per-mesh boxes stay clear, sits in the groove where the fascia meets the
+  chassis; the slot flap is a door a step darker than the fascia inside the
+  dark bay rather than a near-black plate; the two foot rails became one
+  recessed base under the chassis.
+- ✅ Monitor: the 17 vent slats are two merged `DetailBoxes` grilles (the
+  side vent was a dark panel with grooves, now slats like the top); the two
+  foot rails became one recessed base inset from bezel and shell. A parting
+  fin between bezel and shell was tried and removed: the bezel's chamfer
+  hides it from every authored camera. Four pads per object were tried
+  first; Daniel saw them in his browser as "black cubes with nothing", only
+  two of them visible under the chin. Recessed bases 0.08–0.09 tall came
+  next; from the front-on playback camera he saw those as "jarring black
+  rectangles with no depth or detail". Both were then seated at the
+  speaker's proportion (deck gap 0.035; the monitor's bezel 0.03 above the
+  deck), which moved the deck to y 1.24, the slot to 1.31, the monitor to
+  3.10, the screen to 3.23, and the playback centre to 2.64
+  (`transport.ts`), and Daniel asked for the feet to be modeled in the
+  speaker's and holder's style: four dark corner pads, 0.28 × 0.035 × 0.22
+  under the deck, 0.4 × 0.03 × 0.28 under the bezel's front corners and
+  0.4 × 0.19 × 0.28 reaching the shell's rear corners on the monitor
+  (DESIGN.md, The Same Grammar Rule).
+- The transport spec's viewport check on the physical keys now compares the
+  button's bounding box to the viewport in whole pixels: Playwright's
+  `toBeInViewport({ ratio: 1 })` read 0.9999998 for a fully visible key at
+  1024 × 720 because the key's rect comes through a fractional 3D transform.
+- ✅ Screen: the idle texture's lit area has the reader's rounded corners
+  (26px on the 1024px canvas, the 14px screen radius) over a black tube,
+  which is now always black, so the tube keeps one shape in browse and play.
+- ✅ Headphones: the earcup's outer face is a raised ring around a sunken
+  core, the speaker's layering in the cup's oval; the stand post is
+  flat-shaded like every turned part.
+- ✅ Table: two thin legs whose foot rails showed as stray dark bars at the
+  front corners became one recessed dark pedestal under the slab.
+- ✅ `Disc` is 24-sided like `Turned`.
+- Docs: DESIGN.md Shapes (The Same Grammar Rule) and CRT reader.
+- Validation: object-by-object renders from the authored camera before and
+  after, high-zoom checks of the new seam, vents, cup, screen corner, and
+  table edge, phone and short-laptop browse views, `tsc`, ESLint, Prettier,
+  and the Playwright suite.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

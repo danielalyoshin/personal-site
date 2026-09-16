@@ -1,12 +1,15 @@
 import { MathUtils, Quaternion, Vector3 } from 'three'
 
 // World coordinates shared by the player, cassette path, and camera.
+// The deck sits on a 0.035 shadow line, the speaker's proportion, and the
+// monitor's bezel 0.03 above the deck; the screen and the playback centre
+// follow the monitor.
 export const PLAYER = {
-  position: [-1.35, 1.29, 0.25] as [number, number, number],
-  slot: new Vector3(-1.65, 1.36, 1.49),
-  seated: new Vector3(-1.65, 1.36, 0.4),
-  screenY: 3.35,
-  playbackY: 2.71,
+  position: [-1.35, 1.24, 0.25] as [number, number, number],
+  slot: new Vector3(-1.65, 1.31, 1.49),
+  seated: new Vector3(-1.65, 1.31, 0.4),
+  screenY: 3.23,
+  playbackY: 2.64,
 }
 
 export const INSERT_SECONDS = 2.4

@@ -324,6 +324,13 @@ function Screen({
   const texture = useMemo(
     () =>
       makeTexture(1024, 768, (ctx) => {
+        // The lit area has the reader's corners (14px on its 560px plane),
+        // so the tube reads the same before and after a tape goes in.
+        ctx.fillStyle = '#07080c'
+        ctx.fillRect(0, 0, 1024, 768)
+        ctx.beginPath()
+        ctx.roundRect(0, 0, 1024, 768, 26)
+        ctx.clip()
         ctx.fillStyle = '#242bd9'
         ctx.fillRect(0, 0, 1024, 768)
         ctx.fillStyle = '#bfc9ff'
@@ -369,10 +376,7 @@ function Screen({
   return (
     <group name="crt-screen" position={[-1.35, PLAYER.screenY, 1.22]}>
       <Solid size={[2.84, 2.14, 0.055]} bevel={0.02}>
-        <meshBasicMaterial
-          color={open && !inserting ? '#07080c' : '#242bd9'}
-          toneMapped={false}
-        />
+        <meshBasicMaterial color="#07080c" toneMapped={false} />
       </Solid>
       {(!open || inserting) && (
         <mesh position={[0, 0, 0.031]}>
@@ -459,6 +463,16 @@ const dialPointer = [
   },
 ]
 
+// Vent slats, merged into one draw per grille like the cassette's ribs.
+const topVents = Array.from({ length: 8 }, (_, i) => ({
+  size: [1.45, 0.014, 0.036] as [number, number, number],
+  position: [0, 1.285, -0.57 + i * 0.086] as [number, number, number],
+}))
+const sideVents = Array.from({ length: 9 }, (_, i) => ({
+  size: [0.017, 0.016, 0.49] as [number, number, number],
+  position: [1.563, 0.37 + i * 0.065, -0.5] as [number, number, number],
+}))
+
 /**
  * The monitor's one control: a turned knob in a recessed escutcheon with a
  * raised ring, a molded pointer, and a short arc of tick marks, built from the
@@ -478,7 +492,7 @@ function Dial(props: { position: [number, number, number] }) {
 
 function Monitor() {
   return (
-    <group name="crt-monitor" position={[-1.35, 3.22, 0.15]}>
+    <group name="crt-monitor" position={[-1.35, 3.1, 0.15]}>
       <Solid
         size={[3.12, 2.52, 1.5]}
         position={[0, 0.02, -0.31]}
@@ -504,31 +518,25 @@ function Monitor() {
         bevel={0.055}
       />
       <Dial position={[1.338, -1.142, 0.99]} />
-      {Array.from({ length: 9 }, (_, i) => (
+      <DetailBoxes boxes={sideVents} color="#161c25" />
+      <DetailBoxes boxes={topVents} color="#191f28" />
+      {/* Four isolating pads in the speaker's style, tucked under the
+          corners: low ones under the bezel, taller ones reaching the shell. */}
+      {[-1, 1].map((x) => (
         <Solid
-          key={i}
-          size={[0.017, 0.49, 0.065]}
-          position={[1.563, 0.37 + i * 0.065, -0.5]}
-          rotation={[Math.PI / 2, 0, 0]}
-          color="#161c25"
-          bevel={0.002}
-        />
-      ))}
-      {Array.from({ length: 8 }, (_, i) => (
-        <Solid
-          key={i}
-          size={[1.45, 0.014, 0.036]}
-          position={[0, 1.285, -0.57 + i * 0.086]}
-          color="#191f28"
-          bevel={0.002}
+          key={`front-${x}`}
+          size={[0.4, 0.03, 0.28]}
+          position={[x * 1.39, -1.415, 0.65]}
+          color="#141d27"
+          bevel={0.012}
         />
       ))}
       {[-1, 1].map((x) => (
         <Solid
-          key={x}
-          size={[0.48, 0.1, 0.75]}
-          position={[x, -1.44, 0.1]}
-          color="#161b22"
+          key={`rear-${x}`}
+          size={[0.4, 0.19, 0.28]}
+          position={[x * 1.275, -1.335, -0.86]}
+          color="#141d27"
           bevel={0.012}
         />
       ))}
@@ -558,22 +566,14 @@ function Table() {
         color="#252c35"
         bevel={0.012}
       />
-      {[-3.78, 3.78].map((x) => (
-        <group key={x}>
-          <Solid
-            size={[0.15, 0.43, 2.75]}
-            position={[x, 0.355, 0.1]}
-            color="#343c46"
-            bevel={0.018}
-          />
-          <Solid
-            size={[0.4, 0.055, 2.92]}
-            position={[x, 0.18, 0.1]}
-            color="#1a2029"
-            bevel={0.018}
-          />
-        </group>
-      ))}
+      {/* A recessed pedestal carries the top: one broad plane in shadow,
+          rather than two thin legs whose foot rails showed at the corners. */}
+      <Solid
+        size={[7.6, 0.4, 3.2]}
+        position={[0, 0.36, 0.48]}
+        color="#1a2029"
+        bevel={0.018}
+      />
     </group>
   )
 }

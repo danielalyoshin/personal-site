@@ -358,7 +358,7 @@ the sides, as a real tabletop would. Every object still contributes to
 headroom. The framing updates during insertion, resize, and eject, and is
 computed for the studio's eased frame rather than the canvas, so it changes
 smoothly as the frame grows out of the page box and shrinks back (The Soft
-Zoom Rule, under Cassettes and insertion). Playback centers the CRT and player together at y = 2.71 and blends toward
+Zoom Rule, under Cassettes and insertion). Playback centers the CRT and player together at y = 2.64 and blends toward
 their combined bounds as the camera turns, preserving the complete chassis
 and clickable front panel throughout the zoom. Reduced motion applies the same fit immediately.
 The view is authored, not orbited: there is no drag-to-look and no reset, so
@@ -418,8 +418,10 @@ lists the shadows used by the active surfaces.
 
 ## Shapes
 
-Broad planes and single-segment bevels define modeled equipment. Speaker drivers
-use 24-sided revolved profiles for mounting rings, rubber surrounds, recessed
+Broad planes and single-segment bevels define modeled equipment. Every
+circular part is a 24-sided revolved profile, discs and pivots included, and
+every curved surface is flat-shaded. Speaker drivers
+use those profiles for mounting rings, rubber surrounds, recessed
 cones, and dust caps. The cabinet has an inset baffle, rear connection panel,
 and isolating feet. Cassettes share one shell with cut-out reel windows,
 24-sided winding rings, toothed hubs, a hinged-edge guard, underside sockets,
@@ -427,13 +429,38 @@ molded ribs, and a fine housing seam. Their labels remain matte printed surfaces
 The monitor's one dial, on the flat face of its chin, is a turned knob in a
 recessed escutcheon with a raised ring, a molded pointer slot, and seven tick
 marks over its sweep, built from the same 24-sided profiles and merged details
-as the speaker and its fasteners.
+as the speaker and its fasteners; its top and side vents are merged slat
+grilles of the same construction, the bezel's step over the rear shell is
+its parting line, and it stands on four isolating pads in the speaker's
+style: low ones under the bezel's front corners, taller ones reaching the
+shell's rear corners.
+The deck's fascia is one tone, with a fine parting line set into the groove
+where it meets the chassis, as on the cassette housing; its slot flap is a
+door, a step darker than the fascia with a lighter finger lip, inside the
+dark bay; it stands on four corner pads 0.035 tall, the speaker's proportion.
 The archive holder has symmetric sloped side cheeks, fitted fasteners, individual
 guide channels, a rear stop, and a low retaining lip. Small repeated
 details are merged into shared draws within each assembly. Recessed windows,
 vents, the hollow deck bay, and a hinged slot flap supply selective detail.
-Headphones use a padded elliptical band, oval earcups, compact tapered mounts,
-and a stand with a fitted cradle. Keep surfaces clean and matte.
+Headphones use a padded elliptical band, oval earcups whose outer face is a
+raised ring around a sunken core (the speaker's mount-and-cone layering in
+the cup's own oval), compact tapered mounts, and a stand with a fitted cradle
+on a faceted post. The table is a slab on a recessed dark pedestal over its
+plinth. Keep surfaces clean and matte.
+
+**The Same Grammar Rule.** Every object is built from the one vocabulary the
+strongest pieces established: a dark recess under a lighter raised plane, a
+fine parting line where two housings meet, 24-sided turned parts, merged
+ribs and slats for repeated detail, and fitted fasteners where the real
+object shows them. Every piece of equipment stands on four isolating pads
+in one style, the speaker's: dark, low (about 0.035 units, the speaker's
+proportion), and tucked under the corners, so from every authored camera
+they read as a shadow line, not as parts. The table alone stands on its
+pedestal. A taller bare block under a chassis reads as an unfinished part,
+and a recessed face that tall reads as a flat black bar from the front-on
+playback camera; both were tried and rejected. A new
+object earns its detail from this list, at the scale of the cassette's, not
+from ornament of its own.
 
 HTML control corners use the small radii above: hairline focus and OSD links,
 slightly rounded playback buttons, and subtly rounded archive entries. The
@@ -610,6 +637,9 @@ motion swaps at the same moment. The dissolve stops early if playback closes,
 the viewport drops below the reading breakpoints, or graphics are lost.
 
 The modeled idle image is a local 1024 × 768 canvas texture with static scanlines.
+Its lit area has the reader's corners, 26 texture pixels for the 14px screen
+radius on the reader's 560px plane, over the black tube, so the screen keeps
+one shape before and after a tape goes in.
 Its main message uses 128px texture type; the two-line selection instruction
 uses 88px so it remains legible at the opening camera scale. These are texture
 coordinates, and scale with the physical screen rather than HTML font tokens.

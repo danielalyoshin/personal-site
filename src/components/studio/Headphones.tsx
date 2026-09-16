@@ -61,12 +61,20 @@ export default function Headphones() {
     const opening = new Path()
     opening.absellipse(0, 0, 0.105, 0.17, 0, Math.PI * 2, true, 0)
     cushion.holes.push(opening)
+    // The outer face is a raised ring around a sunken core, the speaker's
+    // mount-and-cone layering in the cup's own oval.
+    const ring = oval(0.145, 0.21)
+    const well = new Path()
+    well.absellipse(0, 0, 0.105, 0.16, 0, Math.PI * 2, true, 0)
+    ring.holes.push(well)
     return {
       band: extrude(arch(0.59, 0.64, 0.545, 0.595), 0.18, 0.012),
       pad: extrude(arch(0.544, 0.593, 0.497, 0.546), 0.155, 0.009),
       mount,
       cup: extrude(oval(0.185, 0.265), 0.145, 0.025),
       inset: extrude(oval(0.145, 0.21), 0.015, 0.009),
+      ring: extrude(ring, 0.015, 0.009),
+      core: extrude(oval(0.1, 0.152), 0.006, 0.004),
       cushion: extrude(cushion, 0.07, 0.018),
       // Match the cradle to the headband's underside so it rests on a curved
       // contact surface instead of intersecting a flat rectangular block.
@@ -131,6 +139,7 @@ export default function Headphones() {
           color="#818d9a"
           roughness={0.68}
           metalness={0.3}
+          flatShading
         />
       </mesh>
       <group position={[0, 1.36, 0.065]}>
@@ -162,12 +171,19 @@ export default function Headphones() {
               <meshStandardMaterial color="#35414e" roughness={0.78} />
             </mesh>
             <mesh
-              geometry={geometry.inset}
+              geometry={geometry.ring}
               position={[0, 0, 0.089]}
               castShadow
               receiveShadow
             >
               <meshStandardMaterial color="#485563" roughness={0.83} />
+            </mesh>
+            <mesh
+              geometry={geometry.core}
+              position={[0, 0, 0.081]}
+              receiveShadow
+            >
+              <meshStandardMaterial color="#2a343f" roughness={0.9} />
             </mesh>
             <mesh geometry={geometry.inset} position={[0, 0, -0.091]}>
               <meshStandardMaterial color="#101720" roughness={1} />

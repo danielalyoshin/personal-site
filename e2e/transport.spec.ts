@@ -261,7 +261,20 @@ test('physical playback keys follow the player, remain clickable after resize, a
       ['Eject tape', 'player-eject'],
     ]) {
       const button = page.getByRole('button', { name, exact: true })
-      await expect(button).toBeInViewport({ ratio: 1 })
+      // Whole pixels inside the viewport. IntersectionObserver's ratio can
+      // read 0.9999998 for a fully visible key: its rect comes through a
+      // fractional 3D transform, so the area quotient carries float noise.
+      await expect
+        .poll(async () => {
+          const box = (await button.boundingBox())!
+          return (
+            box.x >= 0 &&
+            box.y >= 0 &&
+            box.x + box.width <= viewport.width &&
+            box.y + box.height <= viewport.height
+          )
+        })
+        .toBe(true)
       expect(
         await button.evaluate(
           (el) => !!el.closest('[data-testid="studio-scene"]'),
