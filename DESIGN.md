@@ -295,7 +295,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY and the runtime use 1.125–1.375rem (4.5cqi) with 1.2 leading; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
-**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks sit on a 20-unit box at 18px. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed on the modeled EJECT cap ahead of its label at the capitals' height. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform. Canvas print
@@ -446,8 +446,10 @@ REW/PLAY/FF/STOP keys are removed. The cassette opening, flap, and internal
 clearances remain the transport's source of truth.
 
 Each working key is a beveled mesh cap with one printed label (SOUND, EJECT)
-in uppercase Archivo at weight 600 and 0.1em tracking. The label is part of
-the cap, identical in browse and playback, and travels with the press. During
+in uppercase Archivo at weight 600 and 0.1em tracking; EJECT's label is led
+by the drawn eject mark, set to the capitals' height and half an em before
+them, as on the native key. The label is part of the cap, identical in browse
+and playback, and travels with the press. During
 playback an invisible native button sits over the cap, sized to it with a
 44px floor; it carries the accessible name, the sound key's pressed state,
 the eject key's Escape title, and the crisp cyan keyboard-focus outline, and
@@ -458,10 +460,11 @@ after insertion ends; during insertion the only control is Skip animation.
 The status window is the deck's readout, a two-field print in its dark
 recess: transport state on the left (STANDBY, LOADING, a drawn play mark with
 PLAY, or NO SIGNAL) and the sound mark on the right: the same speaker as the
-native key, drawn in the readout's light ink with two waves when sound is on
-and a red slash across it when off. Sound state lives here, not on the key,
-and the mark carries no word. Nothing emits light; the slash is printed ink,
-the deck's one colour print. The article precedes the keys in native tab order.
+native key, a filled body in the readout's light ink like its play mark, with
+two stroked waves when sound is on and a red slash across it when off. Sound
+state lives here, not on the key, and the mark carries no word. Nothing emits
+light; the slash is printed ink, the deck's one colour print. The article
+precedes the keys in native tab order.
 
 Phones, short viewports, direct links, and graphics fallback put the same actions
 inside the native reader's lower hardware panel. These controls have 44px

@@ -590,6 +590,12 @@ Five changes Daniel asked for after the closing polish.
   eject (shared `.key` in `DeckControls.module.css`), led by a drawn skip
   mark, at the viewport's lower right during modeled insertion and inside
   the native loading screen.
+- ✅ Follow-up, same day: the speaker marks are filled bodies with stroked
+  waves or slash, matching the filled play, eject, and skip marks, in the
+  canvas print and the SVG alike; the modeled EJECT cap's label is led by a
+  drawn eject mark (`Print` gained a `mark` prop, passed through
+  `PlayerButton`); the dial moved down and right to the chin's visual
+  centre, its ring's right edge on the screen glass's right edge.
 - Docs: DESIGN.md (frontmatter, Drawn Mark Rule, Layout, Shapes, playback
   buttons, the Studio tools section is now Sound toggle, tape index,
   insertion), the surface brief, the sidecar, and README.

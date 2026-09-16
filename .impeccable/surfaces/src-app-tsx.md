@@ -73,8 +73,8 @@ the normal viewport rule.
 The explicit fullHeight prop/class sizes this reader independently of viewport
 CSS. Playback controls are physical keys on the modeled player: sound at the
 left with clearance inside its fascia, and eject at the right. Each cap carries
-one printed uppercase Archivo label that is identical in browse and playback
-and moves with the press; during playback an invisible native button over the
+one printed uppercase Archivo label (EJECT led by the drawn eject mark) that
+is identical in browse and playback and moves with the press; during playback an invisible native button over the
 cap carries the accessible name, pressed state, and focus ring, sized to the
 cap with a 44px floor. Sound state reads in the deck's status window beside
 the transport state as a drawn speaker mark (waves when on, a red slash when

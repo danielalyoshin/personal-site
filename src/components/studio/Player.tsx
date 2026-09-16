@@ -24,9 +24,10 @@ const STATUS: Record<DeckMode, string> = {
 }
 
 /**
- * The sound mark, drawn to match the SVG speaker on the native deck key: the
- * speaker body with two waves when on, or with a red slash across it when off.
- * `box` is the mark's height; the 20-unit icon grid scales to it.
+ * The sound mark, the same speaker as the SVG on the native deck key: a filled
+ * body, like the readout's play mark, with two stroked waves when on or a red
+ * slash across it when off. `box` is the mark's height; the 20-unit icon grid
+ * scales to it, so the body stands as tall as the readout's capitals.
  */
 function drawSoundMark(
   ctx: CanvasRenderingContext2D,
@@ -39,9 +40,10 @@ function drawSoundMark(
   const left = right - box
   const x = (u: number) => left + u * unit
   const y = (u: number) => middle + (u - 10) * unit
-  ctx.lineWidth = unit * 1.7
+  ctx.lineWidth = unit * 1.6
   ctx.lineJoin = 'round'
   ctx.lineCap = 'round'
+  ctx.fillStyle = '#c4ccd2'
   ctx.strokeStyle = '#c4ccd2'
   ctx.beginPath()
   ctx.moveTo(x(9), y(4))
@@ -51,7 +53,7 @@ function drawSoundMark(
   ctx.lineTo(x(5), y(13))
   ctx.lineTo(x(9), y(16))
   ctx.closePath()
-  ctx.stroke()
+  ctx.fill()
   if (on) {
     ctx.beginPath()
     ctx.arc(x(7.53), y(10), 6 * unit, -0.7297, 0.7297)
@@ -94,7 +96,7 @@ function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
           x,
           middle + capitalsOffset(ctx, STATUS[mode]),
         )
-        drawSoundMark(ctx, 992, middle, 92, soundOn)
+        drawSoundMark(ctx, 992, middle, 88, soundOn)
       }),
     [mode, soundOn],
   )
@@ -262,6 +264,7 @@ export default function Player({
         position={[1.25, -0.09, 1.253]}
         size={[0.93, 0.32]}
         label="EJECT"
+        mark="eject"
         accessibleName="Eject tape"
         title="Eject tape (Escape)"
         interactive={interactive}

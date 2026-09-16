@@ -324,7 +324,7 @@ function Monitor() {
         color="#151a23"
         bevel={0.055}
       />
-      <Dial position={[1.29, -1.118, 0.99]} />
+      <Dial position={[1.338, -1.142, 0.99]} />
       {Array.from({ length: 9 }, (_, i) => (
         <Solid
           key={i}

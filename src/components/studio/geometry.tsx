@@ -112,9 +112,38 @@ export function Decal({
 /** Texture pixels per world unit: about 3× the playback zoom on a 2× display. */
 const PRINT_DENSITY = 1280
 
-/** One line of printed capitals, set to its plane's proportions and measured to fit. */
+/** Drawn marks a print can lead with (The Drawn Mark Rule: never a typed glyph). */
+export type PrintMark = 'eject'
+
+/**
+ * The eject mark of the native key, as a canvas path: a triangle over a bar
+ * on a 14-unit square, the same proportions as the SVG icon.
+ */
+function drawEjectMark(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  middle: number,
+  size: number,
+) {
+  const unit = size / 14
+  const x = (u: number) => left + u * unit
+  const y = (u: number) => middle + (u - 7) * unit
+  ctx.beginPath()
+  ctx.moveTo(x(7), y(0))
+  ctx.lineTo(x(14), y(9))
+  ctx.lineTo(x(0), y(9))
+  ctx.closePath()
+  ctx.rect(x(0), y(11), size, unit * 3)
+  ctx.fill()
+}
+
+/**
+ * One line of printed capitals, set to its plane's proportions and measured
+ * to fit, optionally led by a drawn mark set to the capitals' height.
+ */
 export function Print({
   text,
+  mark,
   width = 1,
   height = 0.12,
   color = '#b7bbc6',
@@ -123,6 +152,7 @@ export function Print({
   ...props
 }: Omit<ThreeElements['mesh'], 'args'> & {
   text: string
+  mark?: PrintMark
   width?: number
   height?: number
   color?: string
@@ -142,24 +172,45 @@ export function Print({
     )
     return makeTexture(textureWidth, textureHeight, (ctx) => {
       ctx.fillStyle = color
-      ctx.textAlign = 'center'
       ctx.textBaseline = 'alphabetic'
-      const size = fitType(
+      const room = textureWidth * 0.94
+      let size = fitType(
         ctx,
         text,
         textureHeight * 0.65,
-        textureWidth * 0.94,
+        room,
         weight,
         tracking,
       )
-      // Canvas tracking trails the last glyph; shift by half a step to center.
+      const middle = textureHeight / 2
+      if (!mark) {
+        ctx.textAlign = 'center'
+        // Canvas tracking trails the last glyph; shift by half a step to center.
+        ctx.fillText(
+          text,
+          textureWidth / 2 + (size * tracking) / 2,
+          middle + capitalsOffset(ctx, text),
+        )
+        return
+      }
+      // The mark stands as tall as the capitals and sits half an em before
+      // them; the pair is centred as one unit, trailing tracking excluded.
+      const metrics = ctx.measureText(text)
+      const capitals = metrics.actualBoundingBoxAscent
+      const gap = size * 0.5
+      if (metrics.width + capitals + gap > room)
+        size = fitType(ctx, text, size, room - capitals - gap, weight, tracking)
+      const textWidth = ctx.measureText(text).width - size * tracking
+      const left = (textureWidth - (capitals + gap + textWidth)) / 2
+      drawEjectMark(ctx, left, middle, capitals)
+      ctx.textAlign = 'left'
       ctx.fillText(
         text,
-        textureWidth / 2 + (size * tracking) / 2,
-        textureHeight / 2 + capitalsOffset(ctx, text),
+        left + capitals + gap,
+        middle + capitalsOffset(ctx, text),
       )
     })
-  }, [text, color, height, width, weight, tracking])
+  }, [text, mark, color, height, width, weight, tracking])
   useTextureDisposal(texture)
   return <Decal texture={texture} width={width} height={height} {...props} />
 }

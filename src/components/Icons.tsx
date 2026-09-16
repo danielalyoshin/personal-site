@@ -48,8 +48,9 @@ export function ExternalIcon(props: IconProps) {
 }
 
 /**
- * The deck's sound key: waves when enabled, a red slash across the speaker
- * when muted. The same mark is printed in the modeled deck's status window.
+ * The deck's sound key: a filled speaker, like the eject and skip marks, with
+ * stroked waves when enabled or a red slash across it when muted. The same
+ * mark is printed in the modeled deck's status window.
  */
 export function SoundIcon({ enabled }: { enabled: boolean }) {
   return (
@@ -59,15 +60,16 @@ export function SoundIcon({ enabled }: { enabled: boolean }) {
       height="18"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.4"
+      strokeWidth="1.5"
+      strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M9 4 5 7H2v6h3l4 3z" />
+      <path d="M9 4 5 7H2v6h3l4 3z" fill="currentColor" stroke="none" />
       {enabled ? (
         <path d="M12 6a6 6 0 0 1 0 8M15 3a10 10 0 0 1 0 14" />
       ) : (
-        <path d="M3 17 17 3" stroke="var(--rec-red)" strokeLinecap="round" />
+        <path d="M3 17 17 3" stroke="var(--rec-red)" />
       )}
     </svg>
   )

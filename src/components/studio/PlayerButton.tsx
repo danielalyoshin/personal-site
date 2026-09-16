@@ -1,7 +1,7 @@
 import { useRef, useState, type RefObject } from 'react'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { Solid, Print } from './geometry'
+import { Solid, Print, type PrintMark } from './geometry'
 import styles from './StudioScene.module.css'
 
 /**
@@ -14,6 +14,7 @@ export default function PlayerButton({
   position,
   size,
   label,
+  mark,
   accessibleName,
   title,
   interactive,
@@ -26,6 +27,8 @@ export default function PlayerButton({
   size: [number, number]
   /** The cap print, in capitals. */
   label: string
+  /** A drawn mark leading the cap print. */
+  mark?: PrintMark
   accessibleName: string
   title?: string
   interactive: boolean
@@ -66,6 +69,7 @@ export default function PlayerButton({
         <Print
           name={`${name}-label`}
           text={label}
+          mark={mark}
           width={size[0] - 0.04}
           height={0.11}
           weight={600}
