@@ -531,6 +531,42 @@ against WebGL; the July entries below remain a record of the original build.
   the held-module case now asserts the takeover with carried scroll depth and
   article focus), production build, ESLint, formatting, and the detector.
 
+#### Closing polish — verification round (2026-09-15)
+
+- ✅ One bounded verification round closed the critique follow-up: production
+  build, ESLint, Prettier, the 23 Chrome tests, and the Impeccable detector,
+  with screenshots at 1440×900 (browse, hover preview, insertion, modeled
+  playback with sound on and keyboard focus on Eject, after eject, the About
+  deep link after its dissolve, the modeled NO SIGNAL screen), 1280×680
+  (short-desktop native reader), 1024×768, and 390×844, 360×740, and 320×568
+  phones (browse, native reader and article end, deep link). No page errors
+  and no horizontal overflow at any width; the phone fit measured the
+  equipment 19–23px inside the canvas with the screen 90px wide at 320px and
+  110px at 390px.
+- ✅ Fallback screen radius: the HTML CRT's base `.screen` rule used 12px
+  while the documented screen radius is 14px; every screen now shares 14px
+  and the embedded override is gone. The detector's only remaining item is
+  the native deck keys' darker 3px bottom edge, a documented false positive.
+- ✅ Sidecar brought in line with the distill, layout, typeset, and handoff
+  passes: the typography entries mirror the DESIGN.md roles (the stale
+  nameplate, navigation, weight-440 prose, 9px number, functional-body,
+  intro-body, and secondary-OSD entries are gone), The Signature Print Rule,
+  The One Column Rule, and The Handoff Rule are recorded alongside the
+  earlier five, and the Do and Don't lists are taken from DESIGN.md.
+- ✅ Surface brief: `related_targets` is back on one double-quoted line, the
+  form Impeccable's frontmatter reader parses (Prettier had wrapped and
+  re-quoted it, so Stage.tsx and StudioScene.tsx no longer resolved as
+  related targets); `.impeccable/surfaces/` is excluded from Prettier so the
+  tool-written frontmatter stays parseable.
+- Known and intentional: a deep link's programmatic title focus shows the
+  OSD underline (keyboard arrivals need it); phones show the native reader's
+  loading screen for the mechanism's 2.4 seconds unless skipped; the
+  THREE.Clock deprecation warning comes from React Three Fiber's clock, not
+  project code.
+- Validation: production build, ESLint, formatting, 23 Chrome tests, and the
+  detector, re-run after the radius change. README's pixel-ratio note now
+  reads 1.75 in browse and 2 in modeled playback.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

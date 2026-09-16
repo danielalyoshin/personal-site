@@ -6,3 +6,6 @@ package-lock.json
 
 # Vendored Impeccable skill; preserve upstream formatting
 .agents/skills/impeccable/
+
+# Impeccable writes these briefs; their frontmatter lists must stay on one line
+.impeccable/surfaces/

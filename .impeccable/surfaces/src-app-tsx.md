@@ -1,9 +1,8 @@
 ---
 version: 1
-slug: 'src-app-tsx'
-primary_target: 'src/App.tsx'
-related_targets:
-  ['src/components/Stage.tsx', 'src/components/studio/StudioScene.tsx']
+slug: "src-app-tsx"
+primary_target: "src/App.tsx"
+related_targets: ["src/components/Stage.tsx", "src/components/studio/StudioScene.tsx"]
 ---
 
 # Surface: Midnight Studio in three dimensions

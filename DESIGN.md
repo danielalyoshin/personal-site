@@ -416,9 +416,9 @@ fill reveal the objects without making them emit.
 - **Native reader surround**: an opaque 20px spread in page-ground color masks the expanded reader's surroundings; it is not a glow.
 
 The token file retains older recess, object, edge, and CSS-cast definitions.
-The embedded reader hides the old chin and cast, removes bezel shadows, and
-uses its 14px screen radius in place of the older 12px screen rule;
-these legacy definitions are not the current 3D material system. The sidecar
+The embedded reader hides the old chin and cast and removes bezel shadows;
+every screen, embedded or fallback, shares the 14px screen radius. These
+legacy definitions are not the current 3D material system. The sidecar
 lists the shadows used by the active surfaces.
 
 **The One Light Rule.** The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck. Equipment labels, controls, and page chrome never glow.

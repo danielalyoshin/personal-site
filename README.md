@@ -49,8 +49,9 @@ WebGL unavailability or context loss falls back to the full HTML archive reader.
 | `e2e/`                                  | Studio, transport, loading, font, and touch regressions |
 
 The scene is lazy-loaded and renders only when needed. Pixel ratio is capped at
-1.75. The 3D dependency chunk is approximately 250 KB gzipped; the HTML shell
-loads separately. See the [React Three Fiber rendering guidance](https://r3f.docs.pmnd.rs/advanced/scaling-performance).
+1.75 in browse and 2 during modeled playback. The 3D dependency chunk is
+approximately 250 KB gzipped; the HTML shell loads separately. See the
+[React Three Fiber rendering guidance](https://r3f.docs.pmnd.rs/advanced/scaling-performance).
 
 ## Verify
 
