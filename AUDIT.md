@@ -1,4 +1,392 @@
-# Technical UI audit — 2026-09-15
+# Technical UI audit — 2026-09-16
+
+Second technical audit, run as the Stage 9 shell pass ahead of Stage 8 content.
+It records findings only; application code was not changed. The 2026-09-15
+audit and its remediation addendum follow below as history.
+
+## Implementation integrity verdict: PASS
+
+The implementation still expresses one product-specific system: procedural
+low-poly equipment, restrained HTML chrome, tape-driven navigation, CRT-contained
+effects, and explicit placeholders. The bundled detector returned one advisory
+(a false positive, see below); no design-system drift, decorative filler, or
+interchangeable structure was found. All 26 Chrome regression tests, the
+production build, ESLint, and Prettier pass.
+
+Release readiness now hinges on the loading path and publishing metadata rather
+than on interaction defects.
+
+## Executive summary
+
+**Audit Health Score: 16/20 — Good; address the weak dimensions.**
+
+**10 consolidated issues: 0 P0, 1 P1, 5 P2, 4 P3.**
+
+| #         | Dimension                | Score     | Key finding                                                                              |
+| --------- | ------------------------ | --------- | ---------------------------------------------------------------------------------------- |
+| 1         | Accessibility            | 3/4       | The document title never changes across routes; seven links fail label-in-name           |
+| 2         | Performance              | 3/4       | Blank until JavaScript runs (Lighthouse mobile 62–67); grain repaints 5×/s at rest       |
+| 3         | Responsive design        | 3/4       | No overflow or clipping at any tested size; three shell links sit at 40–42px             |
+| 4         | Theming                  | 3/4       | Screen palette duplicated in WebGL with a drifted idle blue; eight non-token radii       |
+| 5         | Implementation integrity | 4/4       | Coherent, product-specific, placeholders explicit; detector advisory is a false positive |
+| **Total** |                          | **16/20** | **Good**                                                                                 |
+
+Top issues:
+
+1. Route changes never update the document title, and there is no route-level
+   metadata (P1).
+2. The page paints nothing until the main chunk executes; Lighthouse's mobile
+   profile puts LCP at 3.7–3.9 s with a 3.2–3.4 s render delay (P2).
+3. The CRT grain animates a paint property five times a second for the whole
+   reading session, roughly 5% of a desktop core and more on phones (P2).
+4. Seven links' accessible names do not contain their visible text (P2).
+5. Project media has no intrinsic size and the first image is lazy-loaded (P2).
+
+Recommended order: harden (titles, handoff timing, media sizing) → optimize
+(pre-render, grain, scene boot) → clarify (label-in-name) → SEO scaffolding →
+adapt → polish.
+
+## Scope and verification
+
+- Reviewed the working tree at `f046514`: routing, stage, readers, scene, tokens,
+  stylesheets, content types, `index.html`, and the Vite output.
+- **Passed:** `npm run build`, `npm run lint`, `npm run format:check`, and all
+  **26 tests** in `npm run test:e2e` (Chrome, 1.5 min).
+- Static: Impeccable's detector (`detect.mjs --json src index.html`), a
+  source-map attribution of both chunks, and greps for literals, effects,
+  landmarks, timers, and title handling.
+- Live, against the production build served by `vite preview` on port 4173:
+  - axe-core 4.10.3 (WCAG 2.0/2.1 A+AA, 2.2 AA, best-practice) over nine states:
+    home at 1440×1000 and 390×844, modeled playback (clicked and deep-linked),
+    the phone native reader, `/project/nope`, `/nowhere`, and the no-WebGL
+    fallback home and reader. **Zero violations.** Seven `color-contrast` nodes
+    were returned as "incomplete" because of the screen overlays; they were
+    resolved by hand (see positive findings).
+  - Headings, landmarks, tab order, focus rings, touch targets, horizontal
+    overflow, and text-spacing overrides at 320, 390, 720×500, 768×1024,
+    844×390, and 1440.
+  - Handoff and focus timelines sampled every 16 ms on a real GPU (headed
+    Chrome).
+  - Loading and interaction metrics on a real GPU: desktop unthrottled, and a
+    phone profile (390×844, 4× CPU, 1.6 Mbps / 150 ms RTT, cache disabled).
+    Frame gaps during insert and eject; main-thread time at rest with
+    animations running, paused, and resumed.
+  - Lighthouse 12, mobile simulated profile, run **headed** so WebGL used the
+    real GPU. A first headless run scored 45 because SwiftShader rendered the
+    scene on the CPU; those numbers were discarded.
+- Not performed: physical devices, a screen-reader session, field data, or
+  browser-zoom conformance beyond the 720×500 reflow check. Real project media
+  and copy remain Stage 8 work.
+
+Measured baseline (production build, real GPU):
+
+| Measure                                  | Desktop, unthrottled | Phone profile, 4× CPU, slow 4G |
+| ---------------------------------------- | -------------------- | ------------------------------ |
+| Largest contentful paint (home)          | 88 ms (intro `h2`)   | 944 ms (intro `h2`)            |
+| Scene ready (`data-ready`)               | 580 ms               | 3,250 ms                       |
+| Long tasks during boot                   | 2, 132 ms total      | 3, 406 ms total, 173 ms max    |
+| Cumulative layout shift (home)           | 0.0001               | 0.023 (web font swap)          |
+| Insert transition frames over 33 ms      | 0 of 309             | 1 of 290                       |
+| Eject transition frames over 33 ms       | 0 of 310             | 0 of 299                       |
+| Animation frames requested at rest, 3 s  | 0                    | 0                              |
+| Deep link: article readable              | —                    | 945 ms                         |
+| Main chunk / scene chunk (gzip)          | 82 KB / 243 KB       | same                           |
+| Lighthouse mobile: performance           | 67 home, 62 project  |                                |
+| Lighthouse mobile: a11y / best-practices | 100 / 100            |                                |
+| Lighthouse mobile: SEO                   | 91 home, 92 project  |                                |
+
+## P1 — Major: resolve before release
+
+### 1. The document title and route metadata never change
+
+- **Location:** `src/components/Stage.tsx` (no title handling; `grep` finds
+  none), `index.html:5-11`.
+- **Category:** Accessibility / SEO.
+- **Evidence:** `document.title` is "Daniel Alyoshin — Design Engineer" on `/`,
+  `/project/placeholder-alpha`, `/project/nope`, and `/nowhere` alike. Browser
+  history, tabs, bookmarks, and screen-reader page announcements all read the
+  same title for every tape. No route carries its own description, canonical,
+  or share metadata.
+- **Impact:** Screen-reader users get no page-level confirmation that a tape
+  opened; shared links preview as the home page; search results cannot
+  distinguish projects.
+- **Standard:** [WCAG 2.4.2 Page Titled (A)](https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html).
+- **Recommendation:** Render `<title>` and `<meta name="description">` from
+  `Stage` (React 19 hoists them into `<head>`): "Placeholder: Alpha — Daniel
+  Alyoshin", "No signal — Daniel Alyoshin", and the home title. Per-project
+  share cards need the HTML pre-rendered (finding 2) or a host-level fallback;
+  the static defaults belong in finding 6.
+- **Suggested command:** `$impeccable harden`.
+
+## P2 — Minor: address in the next pass
+
+### 2. The page is blank until JavaScript runs, and the scene boots at once
+
+- **Location:** `index.html:16` (`<div id="root">` only), `src/main.tsx`,
+  `src/components/Stage.tsx:27` (scene import), `src/components/Stage.tsx:76`.
+- **Category:** Performance / SEO.
+- **Evidence:** Lighthouse (headed, mobile profile): home FCP 2.8 s, LCP 3.9 s
+  with a **3.4 s render delay**, TBT 690 ms, TTI 4.5 s, score 67; project route
+  LCP 3.7 s, TBT 1,030 ms, score 62. Main-chunk script evaluation (react-dom,
+  react-router, page render) is 1,121 ms in that simulation, more than the scene
+  chunk's 374 ms. The scene chunk (243 KB gzip) is requested as soon as the app
+  mounts, at 848 ms on the phone profile, and its boot produces long tasks of
+  166 and 173 ms while the intro is already readable. Source-map attribution:
+  the main chunk is ~55% react-dom and ~37% react-router by source size.
+- **Impact:** Visitors from a shared link on a slow phone see a dark page for
+  most of a second and a busy main thread for the next three; crawlers and
+  link unfurlers receive an empty body.
+- **Standard:** Core Web Vitals thresholds (LCP ≤ 2.5 s, TBT under 200 ms in
+  lab). Measured real-GPU numbers are better than the simulation (LCP 944 ms at
+  4× CPU), so this is a lab and slow-device concern, not a desktop one.
+- **Recommendation:** Pre-render the three route shapes at build time
+  (`react-dom/server` into static HTML for `/`, each `/project/:slug`, and the 404) and hydrate; guard `supportsWebGL` and `matchMedia` for the server
+  pass. Start the scene import after first paint (`requestIdleCallback` or an
+  intersection check on the exhibit) so the intro and index are interactive
+  before the scene boots. Keep the lazy chunk as is; splitting three.js further
+  will not help.
+- **Suggested command:** `$impeccable optimize`.
+
+### 3. The CRT grain repaints the reader five times a second for the whole visit
+
+- **Location:** `src/components/CRT.module.css:50-76` (`.grain`, `grainShift`).
+- **Category:** Performance.
+- **Evidence:** At rest during modeled playback, no animation frames are
+  requested and no DOM mutations occur, yet the main thread spends **206 ms of
+  every 4 s** (desktop, DPR 2) in style and paint. Pausing only the grain
+  animation drops that to 14 ms; pausing the REC blink as well drops it to 0;
+  resuming restores 212 ms. In the phone native reader the cost is 178 ms per
+  4 s unthrottled, so roughly 18% of a 4×-throttled core. The animation steps
+  `background-position`, a paint property, at 5 steps per second inside a
+  3D-transformed layer.
+- **Impact:** Battery and heat on phones for as long as a tape is open; the
+  visual result is a broadcast-style grain that could be produced on the
+  compositor for free.
+- **Standard:** Impeccable's expensive-animation check; the surface brief's
+  "canvas renders on demand" is honored, this is the HTML layer.
+- **Recommendation:** Animate `transform: translate(...)` on an oversized noise
+  tile (or step a `translate` on a pseudo-element) so the grain runs on the
+  compositor, or drop it to a static texture during reading. The REC blink and
+  idle cursor are negligible and can stay.
+- **Suggested command:** `$impeccable optimize`.
+
+### 4. Seven links' accessible names do not contain their visible text
+
+- **Location:** `src/components/Stage.tsx:419-457` (identity link),
+  `src/components/Stage.tsx:604-646` (tape index links).
+- **Category:** Accessibility.
+- **Evidence:** Lighthouse's `label-content-name-mismatch` audit (axe's
+  experimental rule, off in the default axe run) flags the identity link
+  (visible "Daniel Alyoshin Design engineer", name "Daniel Alyoshin home") and
+  all six tape index links (visible "01 ALPHA Placeholder", name "Play tape:
+  Placeholder: Alpha (2026)"). The About link was fixed last audit but its
+  visible text ("06 About Daniel Meet the maker") is still not contained.
+- **Impact:** Speech-control users who say the visible label may not match the
+  link; the mismatch is a conformance failure even though partial matches
+  usually work in practice.
+- **Standard:** [WCAG 2.5.3 Label in Name (A)](https://www.w3.org/WAI/WCAG22/Understanding/label-in-name.html).
+- **Recommendation:** Build the name from the visible content: drop the
+  `aria-label`, prefix a visually hidden "Play tape" and suffix the year inside
+  the link, and let the identity link's name be its visible text plus a hidden
+  "home".
+- **Suggested command:** `$impeccable clarify`.
+
+### 5. Project media has no intrinsic size and the first image is lazy
+
+- **Location:** `src/content/types.ts:9-14` (`ProjectMedia`),
+  `src/components/CRT.tsx:65-78`.
+- **Category:** Performance / Responsive design.
+- **Evidence:** `ProjectMedia` carries `src`, `alt`, and `caption` only; every
+  `<img>` renders without `width`/`height` and with `loading="lazy"`. Lighthouse
+  on the project route: "Largest Contentful Paint image was lazily loaded" and a
+  0.024 layout shift on `<figcaption>` ("media element lacking an explicit
+  size"); measured phone deep link CLS 0.050, of which 0.027 is the caption and
+  tag list moving when the image arrives.
+- **Impact:** Small today with one 200×150 SVG placeholder; with Stage 8
+  screenshots and recordings this becomes visible reader jump and a slower LCP
+  on every shared project link.
+- **Standard:** Core Web Vitals CLS; Lighthouse `lcp-lazy-loaded`.
+- **Recommendation:** Add `width` and `height` (or an aspect ratio) to
+  `ProjectMedia` so the type forces them, render them on `<img>` and
+  `<video>`, load the first media eagerly with `fetchpriority="high"`, and keep
+  the rest lazy. Do this before Stage 8 content lands so the content contract
+  is right from the first real entry.
+- **Suggested command:** `$impeccable harden`.
+
+### 6. Publishing scaffolding is missing
+
+- **Location:** `index.html:3-16`, `public/` (only `favicon.svg`),
+  `src/styles/global.css` (no `color-scheme`).
+- **Category:** SEO / Theming.
+- **Evidence:** No `robots.txt` (Lighthouse parses the SPA fallback HTML as
+  robots and reports 22 errors; SEO 91–92), no `sitemap.xml`, no canonical, no
+  Open Graph or Twitter card tags, no social card image, a placeholder favicon
+  (`public/favicon.svg` is a grey rounded square), no `apple-touch-icon`, no
+  `theme-color`, and `color-scheme` is `normal` on a dark-only site.
+- **Impact:** Shared links unfurl without a card; crawlers get parse errors;
+  iOS home-screen and tab UI fall back to defaults; native scrollbars and
+  `<video controls>` render in the light scheme.
+- **Standard:** Lighthouse SEO audits; PLAN.md Stage 9 deliverables.
+- **Recommendation:** Add `robots.txt` and `sitemap.xml` to `public/`, static
+  OG/Twitter defaults and a canonical in `index.html`, the VHS-glyph favicon
+  with an `apple-touch-icon`, `theme-color` set to `--ink-0`, and
+  `color-scheme: dark` on `:root`. The 1200×630 card is a render of the
+  studio; its copy is Daniel's.
+- **Suggested command:** `$impeccable harden`.
+
+## P3 — Polish
+
+### 7. Focus sits inside hidden content for part of the desktop handoff
+
+- **Location:** `src/components/Stage.tsx:683-716` (`aria-hidden={handoff ? true : undefined}`).
+- **Category:** Accessibility.
+- **Evidence:** Sampled at 16 ms on a real GPU: on `/project/placeholder-alpha`
+  the native reader receives `aria-hidden="true"` at 580 ms (handoff `pending`)
+  while the focused title still lives inside it; the modeled title takes focus
+  at 913 ms. That is **~330 ms** of focus inside an `aria-hidden` subtree
+  (~120 ms on `/project/nope`). axe reported it as an `aria-hidden-focus`
+  incomplete when it caught that state. One of three probe runs also showed
+  focus returning to `body` two seconds after the handoff; a second, targeted
+  run did not reproduce it.
+- **Impact:** A screen reader can lose its reading position for a beat while
+  the studio takes over; ordinary visitors see nothing.
+- **Standard:** [WCAG 4.1.2 / ARIA authoring guidance](https://www.w3.org/WAI/ARIA/apg/) on focus and hidden content.
+- **Recommendation:** Hide the native reader only once the modeled title holds
+  focus (`settled`/`fading`), or move focus before hiding. Re-check the
+  focus-to-body observation while there.
+- **Suggested command:** `$impeccable harden`.
+
+### 8. Screen palette and radii drift between tokens and scene literals
+
+- **Location:** `src/styles/tokens.css:22-27`,
+  `src/components/studio/StudioScene.tsx:327-363, 373, 402`; radii in
+  `src/components/Stage.module.css:212, 337, 462, 485`,
+  `src/components/CRT.module.css:26, 462`, `src/components/DeckControls.module.css:19`,
+  `src/components/studio/StudioScene.module.css:15`.
+- **Category:** Theming.
+- **Evidence:** The HTML idle screen uses `--crt-blue: #1523d6`; the modeled
+  screen paints `#242bd9` with tone mapping off, so the fallback and the studio
+  show different blues. Phosphor text is `#bfc9ff`/`#c4ccff`/`#f0f0ff` in the
+  texture and `#b4c4ff` in the point light versus `--screen-text: #dfe6ff`;
+  `--screen-black` is repeated as a literal. Eight `border-radius` values
+  (3, 14, 18, 24 px) fall outside the 2/4/8/12/20 token scale.
+- **Impact:** No visible mismatch inside one presentation; a palette change
+  must be made in two places and the two presentations already disagree on the
+  idle blue.
+- **Standard:** Design-token consistency; dark-only theming is intentional.
+- **Recommendation:** Export the screen palette once (a small TS module that
+  also feeds `tokens.css`, or read the custom properties at texture time) and
+  either add `--r-key: 3px` / `--r-screen: 14px` tokens or fold the strays onto
+  existing ones.
+- **Suggested command:** `$impeccable polish`.
+
+### 9. Three shell links sit under the 44 px benchmark
+
+- **Location:** `src/components/Stage.module.css:14-20, 48-58`.
+- **Category:** Responsive design.
+- **Evidence:** At every viewport the identity link measures **101×40 px**,
+  GitHub **56×42 px**, LinkedIn **63×42 px**. Everything else, including the
+  reader contact links and deck keys, is at or above 44 px.
+- **Impact:** Slightly more precise taps in the header and footer; no overlap
+  with neighbours.
+- **Standard:** 44 px is [WCAG 2.5.5 (AAA)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html);
+  the 24 px AA minimum passes.
+- **Recommendation:** Raise `padding-block` on `.navigation a, .footer a` to
+  13 px and give `.identity` a 44 px `min-height`.
+- **Suggested command:** `$impeccable adapt`.
+
+### 10. The full-viewport canvas stays live under the phone reader
+
+- **Location:** `src/components/Stage.tsx:527-535`,
+  `src/components/Stage.module.css:127-135`.
+- **Category:** Performance.
+- **Evidence:** While the native reader is open on a 390×844 phone, a
+  390×844 WebGL canvas (DPR capped at 1.75, 2048² shadow map) remains mounted
+  underneath, inert and fully covered. It requests no frames, so the cost is
+  retained GPU memory rather than CPU.
+- **Impact:** Low; matters most on memory-constrained phones during long
+  reads.
+- **Recommendation:** When the native reader owns playback, shrink the canvas
+  back to the box or unmount the renderer until eject.
+- **Suggested command:** `$impeccable optimize`.
+
+## Detector verification and false positives
+
+- The static detector returned one advisory, `border-accent-on-rounded` on
+  `DeckControls.module.css:18` (`border-bottom: 3px solid` with a 3 px radius).
+  Verified false positive: the thicker bottom edge is the hardware key's
+  mechanical relief, documented in the surface brief, and it moves on press.
+- axe reported seven `color-contrast` nodes as incomplete inside the readers
+  because the grain, scanline, and vignette layers overlap the text. Computed
+  by hand from the tokens: screen text 16.1:1, screen dim 8.0:1, screen soft
+  10.2:1, OSD white on CRT blue 9.4:1. Under the vignette's 25% darkening
+  (the most any text sits under) the lowest pair is 4.8:1; the 50% corner
+  where it would fall to 4.3:1 holds no text.
+- Lighthouse's `valid-source-maps` fails because production maps are not
+  shipped; that is a build choice, not a user issue. `render-blocking-resources`
+  is the 6 KB stylesheet (151 ms simulated); inlining it is optional.
+- The first (headless) Lighthouse run's TBT of 4.5 s and score of 45 were
+  SwiftShader artifacts and are not reported.
+- The console warning "THREE.Clock has been deprecated" comes from
+  `@react-three/fiber` 9.7.0 with three 0.186, not from app code.
+
+## Patterns and positive findings
+
+The remaining gaps cluster at the edges of the SPA model: what exists before
+JavaScript runs (title, metadata, first paint) and what the HTML layer does
+while the studio is idle (grain paint). The interaction model itself audits
+clean.
+
+Preserve these strengths:
+
+- axe: zero violations across nine states; Lighthouse accessibility and
+  best-practices 100 on both routes.
+- Keyboard: skip link first, arrows and Home/End on the index, the playback
+  loop cycles Sound → Eject → article, Escape ejects, and focus returns to the
+  ejected tape's link. Every stop draws the 2 px VFD ring.
+- Reduced motion keeps every state change: the reader opens in 372 ms, CSS
+  animations collapse to 0.01 ms with one iteration (grain static, REC solid),
+  and the handoff swaps instead of fading.
+- The on-demand loop is honored: zero animation frames requested at rest at
+  home, after a hover, during playback, and under the phone reader. Insert and
+  eject run without a dropped frame on desktop and with one 42 ms frame on the
+  4× phone profile.
+- No horizontal overflow at 320, 390, 720, 768, 844, or 1440, including with
+  WCAG text-spacing overrides on the home page and the reader; 720×500,
+  844×390, and 768×1024 all route to the native reader. Reader prose is 17 px
+  on the phone with a scrollable article and 44 px contact links.
+- Fonts are self-hosted, unicode-range subset, and `swap`; the first paint
+  shifts by 0.0001 on desktop and 0.023 on the phone profile (font swap).
+- The deep-link path is progressive: on the phone profile the article is
+  readable at 945 ms while the scene arrives at 3.3 s.
+- Token contrast is 4.79:1 or better everywhere on the chassis and 8:1 or
+  better on the screen; the DOM is 111 nodes and the heap 17 MB at home.
+- Placeholders remain explicit; no real project claims were introduced.
+
+## Recommended actions
+
+1. **P1 — `$impeccable harden`:** route titles and descriptions from `Stage`
+   (finding 1); hide the native reader only after the modeled title has focus
+   (7); typed media dimensions with an eager first image (5).
+2. **P2 — `$impeccable optimize`:** build-time pre-render with hydration and a
+   deferred scene boot (2); compositor-only grain (3); release the canvas under
+   the phone reader (10).
+3. **P2 — `$impeccable clarify`:** names composed from visible text on the
+   identity and tape index links (4).
+4. **P2 — `$impeccable harden`:** `robots.txt`, `sitemap.xml`, canonical,
+   Open Graph and Twitter defaults, VHS favicon and touch icon, `theme-color`,
+   `color-scheme: dark`, and the social card (6).
+5. **P3 — `$impeccable adapt`:** 44 px header and footer links (9).
+6. **P3 — `$impeccable polish`:** one source for the screen palette, radii on
+   the token scale (8), and a closing review of the completed fixes against
+   Midnight Studio.
+
+You can ask me to run these one at a time, all at once, or in any order you prefer.
+Re-run `$impeccable audit` after fixes to see your score improve.
+
+---
+
+# Technical UI audit — 2026-09-15 (historical)
 
 The findings and score below record the original audit. Follow-up fixes are
 tracked in the remediation addendum at the end; this is not a new audit score.

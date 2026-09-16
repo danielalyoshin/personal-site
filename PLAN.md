@@ -716,6 +716,20 @@ site, seamless both ways.
   P2 priorities. All five priorities were addressed in the critique follow-up
   above. The snapshot retains the original findings and score; it is not a
   post-remediation review. Stage 9 remains open.
+- Second technical UI audit completed on 2026-09-16 as the Stage 9 shell pass,
+  taken before Stage 8 content by Daniel's decision. Findings, measurements,
+  and reproduction steps are at the top of `AUDIT.md`; the 2026-09-15 audit is
+  kept below it as history. Score: 16/20 (was 13/20), with 1 major, 5 minor,
+  and 4 polish issues. axe reports zero violations across nine states;
+  Lighthouse (mobile profile, real GPU) scores 67/62 performance and 100
+  accessibility. Open work in fix order: route titles and metadata, build-time
+  pre-rendering with a deferred scene boot, compositor-only CRT grain, label-in-
+  name on seven links, typed media dimensions, robots/sitemap/OG/favicon/social
+  card, the handoff's aria-hidden timing, palette and radius consolidation,
+  44px header and footer links, and the canvas under the phone reader.
+  Content-dependent rechecks after Stage 8: alt text and image optimization on
+  real media, per-project share metadata, one more Lighthouse run.
+  Stage 9 remains open.
 - Lighthouse pass; image optimization; code-splitting if warranted.
 - A11y audit (contrast against the design tokens, alt text, focus order,
   screen-reader labels for the tape metaphor).
