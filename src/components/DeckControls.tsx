@@ -17,13 +17,14 @@ export default function DeckControls({ soundOn, onEject }: DeckControlsProps) {
     >
       <button
         type="button"
+        className={styles.key}
         aria-label="Sound effects"
         aria-pressed={soundOn}
         onClick={changeSound}
       >
         <SoundIcon enabled={soundOn} />
       </button>
-      <button type="button" onClick={onEject}>
+      <button type="button" className={styles.key} onClick={onEject}>
         <EjectIcon /> Eject tape <kbd>ESC</kbd>
       </button>
     </div>

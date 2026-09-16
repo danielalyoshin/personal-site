@@ -143,7 +143,6 @@ rounded:
   screen: '14px'
   expanded-reader: '18px'
   fallback-monitor: '24px'
-  round: '50%'
 spacing:
   xs: '4px'
   sm: '8px'
@@ -158,19 +157,6 @@ components:
     padding: '10px 12px'
   button-transport-hover:
     backgroundColor: '{colors.seam}'
-  button-animation-skip:
-    backgroundColor: 'transparent'
-    textColor: '{colors.silkscreen}'
-    typography: '{typography.caption}'
-    padding: '8px'
-    minWidth: '44px'
-    minHeight: '44px'
-  button-reset:
-    backgroundColor: 'transparent'
-    textColor: '{colors.silkscreen}'
-    rounded: '{rounded.round}'
-    width: '44px'
-    height: '44px'
   nav-link:
     textColor: '{colors.silkscreen}'
     typography: '{typography.functional}'
@@ -298,8 +284,8 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
 - **Body** (`body`): 1rem at weight 400. Introductory prose uses 1.6 leading and 0.005em tracking, capped at 36ch; the page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
-- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, drag hint, archive note, tape captions, footer statement, loading and fallback notes, Skip animation, and the Escape hint are weight 400 with 1.5 leading. The native deck keys are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
-- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the tape index numbers, the archive count, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
+- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, footer statement, loading and fallback notes, and the Escape hint are weight 400 with 1.5 leading. The native deck keys and Skip animation are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
+- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the tape index numbers, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
 
 ### Tube ramp
 
@@ -309,7 +295,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY and the runtime use 1.125–1.375rem (4.5cqi) with 1.2 leading; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
-**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), horizontal drag, reset, sound, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, 12px on tape entries, and 20px in the reset key; they take `currentColor` and are `aria-hidden`, so the label alone carries the accessible name. The REC dot and the idle cursor are CSS boxes.
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks sit on a 20-unit box at 18px. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform. Canvas print
@@ -344,11 +330,9 @@ uses 32px top spacing, reduced to 20px on those short desktop viewports and
 
 The selection guide precedes the canvas, 24px below the introduction. It
 pairs "Choose a tape to play" with a one-line instruction that points at the
-studio rather than the index. The guide's first line is centred on the reset
-key's 44px height, so the drag hint's baseline matches the guide's within
-half a pixel and the reset circle shares the same centre line; the
-instruction hangs 4px beneath, and the canvas follows it directly. There is
-no scene metadata line and no clock above the canvas. The index follows the
+studio rather than the index; the instruction hangs 4px beneath, and the
+canvas follows it directly. Nothing shares the guide's row: there is no scene
+metadata line, clock, drag hint, or reset above the canvas. The index follows the
 canvas with a seam and 16px top padding. This groups the artifact with its
 selection surfaces.
 
@@ -371,11 +355,13 @@ with 24px margins. Canvases up to 600px use the shell's 6% gutter as the
 margin and fit every piece of equipment horizontally, so no object is cropped
 and the widest pieces land on the text column; only the table may run out of
 the sides, as a real tabletop would. Every object still contributes to
-headroom. The framing updates during orbit, insertion, resize, and eject. Playback centers the CRT and player together at y = 2.71 and blends toward
+headroom. The framing updates during insertion, resize, and eject. Playback centers the CRT and player together at y = 2.71 and blends toward
 their combined bounds as the camera turns, preserving the complete chassis
 and clickable front panel throughout the zoom. Reduced motion applies the same fit immediately.
-On touch devices, vertical swipes scroll the page and pinch gestures zoom the
-browser; horizontal drags rotate the studio within its constraints.
+The view is authored, not orbited: there is no drag-to-look and no reset, so
+on every device swipes scroll the page and pinch gestures zoom the browser as
+they do anywhere else, and the canvas answers only clicks and taps on
+cassettes.
 
 Playback fills the viewport with the modeled CRT and VHS player; there is no
 fixed transport footer. Above both 767px width and 699px height, the camera
@@ -431,6 +417,10 @@ cones, and dust caps. The cabinet has an inset baffle, rear connection panel,
 and isolating feet. Cassettes share one shell with cut-out reel windows,
 24-sided winding rings, toothed hubs, a hinged-edge guard, underside sockets,
 molded ribs, and a fine housing seam. Their labels remain matte printed surfaces.
+The monitor's one dial, on the flat face of its chin, is a turned knob in a
+recessed escutcheon with a raised ring, a molded pointer slot, and seven tick
+marks over its sweep, built from the same 24-sided profiles and merged details
+as the speaker and its fasteners.
 The archive holder has symmetric sloped side cheeks, fitted fasteners, individual
 guide channels, a rear stop, and a low retaining lip. Small repeated
 details are merged into shared draws within each assembly. Recessed windows,
@@ -439,8 +429,8 @@ Headphones use a padded elliptical band, oval earcups, compact tapered mounts,
 and a stand with a fitted cradle. Keep surfaces clean and matte.
 
 HTML control corners use the small radii above: hairline focus and OSD links,
-slightly rounded playback buttons, and subtly rounded archive entries. Reset
-is circular. The embedded screen, native-reader frame, and fallback-monitor
+slightly rounded playback buttons, and subtly rounded archive entries. The
+embedded screen, native-reader frame, and fallback-monitor
 frame each retain their larger documented radius. Borders are generally 1px;
 keyboard focus uses a crisp 2px cyan outline with a 2px offset. The scrollable
 article uses an inset 2px OSD-white outline, offset by -4px, when focused.
@@ -467,9 +457,11 @@ after insertion ends; during insertion the only control is Skip animation.
 
 The status window is the deck's readout, a two-field print in its dark
 recess: transport state on the left (STANDBY, LOADING, a drawn play mark with
-PLAY, or NO SIGNAL) and sound state on the right (SOUND ON in the readout's
-light ink, SOUND OFF dimmed). Sound state lives here, not on the key. Nothing
-emits light. The article precedes the keys in native tab order.
+PLAY, or NO SIGNAL) and the sound mark on the right: the same speaker as the
+native key, drawn in the readout's light ink with two waves when sound is on
+and a red slash across it when off. Sound state lives here, not on the key,
+and the mark carries no word. Nothing emits light; the slash is printed ink,
+the deck's one colour print. The article precedes the keys in native tab order.
 
 Phones, short viewports, direct links, and graphics fallback put the same actions
 inside the native reader's lower hardware panel. These controls have 44px
@@ -477,21 +469,22 @@ minimum targets, 0.75rem uppercase labels at weight 600, small corners, a darker
 state. The Escape hint inside Eject is the same size in silkscreen at weight
 400, reading 7.5:1 on the key and 6.7:1 on hover. The fixed page-wide playback popup is removed in every reading mode.
 
-Skip animation is a plain underlined interface action, available only during
-insertion. It sits at the viewport's lower right for modeled playback and
-inside the native loading screen, with a 44px minimum target. It has no physical
-key, raised edge, or press movement; the deck's printed model label stays visible.
+Skip animation is a hardware key of the native deck family, available only
+during insertion: the same uppercase control type, seam-lit border, darker
+bottom edge, and press as the native reader's sound and eject keys, led by
+the drawn skip mark. It sits at the viewport's lower right for modeled
+playback and inside the native loading screen, with a 44px minimum target.
+It is HTML, never a modeled key: the deck carries no physical skip, and its
+printed model label stays visible.
 
-### Studio tools
+### Sound toggle
 
-Reset is an outlined 44px circle at every width holding a 20px drawn reset
-arrow; hover strengthens its border over 200ms, and a short drag hint precedes it above 1200px, 20px
-apart. These two are the only tools beside the guide, and both are centred on
-the guide's first line. There is no page-level sound control:
-the deck's SOUND key is the single toggle, live on the modeled player during
-playback and in the native reader's hardware panel otherwise. Its speaker SVG
-shows waves when enabled and a cross when disabled; `aria-pressed` carries the
-state. Sound is synthesized, default-off on every visit, never persisted, and
+The guide carries no tools: the view is authored, so there is no drag hint
+and no reset, and there is no page-level sound control. The deck's SOUND key
+is the single toggle, live on the modeled player during playback and in the
+native reader's hardware panel otherwise. Its speaker SVG shows waves when
+enabled and a red slash across the speaker when disabled; `aria-pressed`
+carries the state. Sound is synthesized, default-off on every visit, never persisted, and
 user-triggered: tick, insert, and eject. Because the toggle lives on the deck,
 hover ticks stay silent until a visitor has switched sound on during playback.
 
@@ -504,7 +497,7 @@ single visible route to the index, and neither link shows a count. Contact
 links stay in the footer. Internal About and tape links use the drawn play mark; the
 outward arrow is reserved for links that leave the site. Every mark is an
 `aria-hidden` SVG (The Drawn Mark Rule) set 0.5em from its label by flex
-gap, never by a typed space; the drag hint's leading arrow follows the same rule. The introduction
+gap, never by a typed space. The introduction
 has no index shortcut. A focus-revealed skip link leads to the accessible archive.
 
 ### Tape index
@@ -519,7 +512,7 @@ inset on every side and the accent strip inset to match. Names wrap as
 needed; 12px secondary copy distinguishes "Placeholder" from the About
 tape's "Meet the maker". The six links remain normal Tab stops,
 with arrows and Home/End for direct movement; About is included in its accessible name.
-The index heading carries the page's only tape count.
+The index heading carries no count; nothing on the shell does.
 
 ### Cassettes and insertion
 
@@ -539,8 +532,7 @@ the cassette is moving. One render-driven timeline coordinates the mechanism
 (nominally 2.4 seconds,
 with frame deltas capped at 0.05 seconds, so slow rendering can lengthen it).
 Camera interpolation follows afterward and is not a fixed 560ms CSS dolly.
-Skip finishes immediately; reduced motion snaps tape and camera state and
-disables orbit damping. Deep links begin seated (The Handoff Rule); eject
+Skip finishes immediately; reduced motion snaps tape and camera state. Deep links begin seated (The Handoff Rule); eject
 returns focus to the corresponding archive link. There is no ambient geometry animation. The scene
 loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
 modeled playback, and disposes generated

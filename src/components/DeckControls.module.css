@@ -5,7 +5,8 @@
   gap: 8px;
 }
 
-.controls button {
+/* The hardware key: shared by the native deck panel and Skip animation. */
+.key {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -26,26 +27,26 @@
   text-transform: uppercase;
 }
 
-.controls button:hover {
+.key:hover {
   border-top-color: var(--silk-dim);
   background: var(--seam);
 }
 
-.controls button:active {
+.key:active {
   border-bottom-width: 1px;
   transform: translateY(1px);
 }
 
 /* The Escape hint is a quieter register through weight alone; silk on the
    key's graphite reads at 7.5:1 at rest and 6.7:1 on hover. */
-.controls kbd {
+.key kbd {
   color: var(--silk);
   font: inherit;
   font-weight: 400;
 }
 
 @media (max-width: 600px) {
-  .controls kbd {
+  .key kbd {
     display: none;
   }
 }

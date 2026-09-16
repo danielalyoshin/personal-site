@@ -1,9 +1,3 @@
-.canvas {
-  /* OrbitControls sets an inline `none` on its event wrapper when connecting.
-     Vertical swipes and pinch zoom belong to the browser; horizontal drags orbit. */
-  touch-action: pan-y pinch-zoom !important;
-}
-
 .screenContent {
   width: 560px;
   height: 420px;

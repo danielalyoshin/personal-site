@@ -46,8 +46,7 @@
   font-size: var(--type-functional);
 }
 .navigation a,
-.footer a,
-.dragHint {
+.footer a {
   display: inline-flex;
   align-items: center;
   gap: 0.5em;
@@ -118,9 +117,6 @@
   width: 100%;
   position: relative;
 }
-.scene canvas {
-  touch-action: pan-y pinch-zoom;
-}
 .deckOverlay {
   position: absolute;
   inset: 0;
@@ -139,11 +135,8 @@
   line-height: var(--leading-title);
   color: var(--silk-hi);
 }
-/* The guide's first line shares the reset key's 44px centre line, so the
-   drag hint sits on its baseline; the instruction hangs beneath. */
 .objectCaption > span {
   display: block;
-  padding-top: calc((44px - var(--leading-title) * var(--type-functional)) / 2);
 }
 .objectCaption small {
   display: block;
@@ -152,32 +145,6 @@
   font-size: var(--type-caption);
   font-weight: 400;
   line-height: var(--leading-caption);
-}
-.sceneTools {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 44px;
-}
-.dragHint {
-  color: var(--silk-dim);
-  font-size: var(--type-caption);
-}
-.sceneTools button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: 1px solid var(--seam);
-  color: var(--silk);
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  transition: border-color 0.2s;
-}
-.sceneTools button:hover {
-  border-color: var(--silk-dim);
 }
 .archive {
   border-top: 1px solid var(--seam);
@@ -196,12 +163,6 @@
   font-weight: 600;
   line-height: var(--leading-title);
   color: var(--silk-hi);
-}
-.archiveHeading h2 span {
-  color: var(--silk-dim);
-  font-size: var(--type-label);
-  letter-spacing: var(--tracking-label);
-  margin-left: 8px;
 }
 .archiveHeading p {
   font-size: var(--type-caption);
@@ -339,24 +300,6 @@
   bottom: max(24px, env(safe-area-inset-bottom, 0px));
   z-index: 50;
 }
-.skipAnimation {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 8px;
-  border: 0;
-  background: transparent;
-  color: var(--silk);
-  font-family: var(--font-chassis);
-  font-size: var(--type-caption);
-  line-height: var(--leading-caption);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.3em;
-}
-.skipAnimation:hover,
-.skipAnimation:active {
-  color: var(--silk-hi);
-}
 .fallback {
   display: flex;
   height: 100%;
@@ -405,8 +348,7 @@
   }
 }
 @media (max-width: 1200px) {
-  .identity svg,
-  .dragHint {
+  .identity svg {
     display: none;
   }
   .tapeIndex {
@@ -454,9 +396,6 @@
   }
   .objectCaption small {
     line-height: 1.5;
-  }
-  .sceneTools {
-    gap: 4px;
   }
   .archiveHeading {
     align-items: flex-start;
@@ -524,6 +463,9 @@
 .readerLoading > span + span {
   color: var(--screen-dim);
   font-size: var(--type-caption);
+}
+.readerLoading button {
+  margin-top: 8px;
 }
 .readerDeck {
   display: flex;

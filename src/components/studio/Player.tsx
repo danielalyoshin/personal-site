@@ -23,13 +23,57 @@ const STATUS: Record<DeckMode, string> = {
   nosignal: 'NO SIGNAL',
 }
 
-/** The deck's readout: transport state on the left, sound state on the right. */
+/**
+ * The sound mark, drawn to match the SVG speaker on the native deck key: the
+ * speaker body with two waves when on, or with a red slash across it when off.
+ * `box` is the mark's height; the 20-unit icon grid scales to it.
+ */
+function drawSoundMark(
+  ctx: CanvasRenderingContext2D,
+  right: number,
+  middle: number,
+  box: number,
+  on: boolean,
+) {
+  const unit = box / 20
+  const left = right - box
+  const x = (u: number) => left + u * unit
+  const y = (u: number) => middle + (u - 10) * unit
+  ctx.lineWidth = unit * 1.7
+  ctx.lineJoin = 'round'
+  ctx.lineCap = 'round'
+  ctx.strokeStyle = '#c4ccd2'
+  ctx.beginPath()
+  ctx.moveTo(x(9), y(4))
+  ctx.lineTo(x(5), y(7))
+  ctx.lineTo(x(2), y(7))
+  ctx.lineTo(x(2), y(13))
+  ctx.lineTo(x(5), y(13))
+  ctx.lineTo(x(9), y(16))
+  ctx.closePath()
+  ctx.stroke()
+  if (on) {
+    ctx.beginPath()
+    ctx.arc(x(7.53), y(10), 6 * unit, -0.7297, 0.7297)
+    ctx.moveTo(x(15), y(3))
+    ctx.arc(x(7.86), y(10), 10 * unit, -0.7754, 0.7754)
+    ctx.stroke()
+  } else {
+    ctx.strokeStyle = '#ff3b30'
+    ctx.beginPath()
+    ctx.moveTo(x(3), y(17))
+    ctx.lineTo(x(17), y(3))
+    ctx.stroke()
+  }
+}
+
+/** The deck's readout: transport state on the left, the sound mark on the right. */
 function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
   const texture = useMemo(
     () =>
       makeTexture(1024, 125, (ctx) => {
         const middle = 63
-        const size = fitType(ctx, STATUS[mode], 74, 560, 600, 0.06)
+        const size = fitType(ctx, STATUS[mode], 74, 640, 600, 0.06)
         ctx.textBaseline = 'alphabetic'
         ctx.fillStyle = '#c4ccd2'
         let x = 32
@@ -50,16 +94,7 @@ function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
           x,
           middle + capitalsOffset(ctx, STATUS[mode]),
         )
-        const sound = soundOn ? 'SOUND ON' : 'SOUND OFF'
-        fitType(ctx, sound, 74, 400, 600, 0.06)
-        ctx.textAlign = 'right'
-        ctx.fillStyle = soundOn ? '#c4ccd2' : '#7f8994'
-        // Trailing tracking sits after the last glyph; keep the right edge true.
-        ctx.fillText(
-          sound,
-          992 + 74 * 0.06,
-          middle + capitalsOffset(ctx, sound),
-        )
+        drawSoundMark(ctx, 992, middle, 92, soundOn)
       }),
     [mode, soundOn],
   )

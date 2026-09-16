@@ -20,8 +20,6 @@ labels, and sound are local; no external model or texture service is required.
 ## Explore
 
 - Click a modeled cassette or its tape-index link to play it.
-- Drag the studio to change the angle; the circular arrow restores the view.
-  On touch screens, swipe vertically to scroll or horizontally to rotate.
 - Arrow keys and Home/End navigate the tape index; Enter plays a tape.
 - Eject or Escape returns to the archive and restores focus.
 - Sound is optional and defaults off each visit.
@@ -63,7 +61,7 @@ npm run test:e2e
 ```
 
 The browser suite uses installed Google Chrome (`channel: 'chrome'`). It covers
-real canvas rendering, modeled cassette selection, drag behavior, keyboard
+real canvas rendering, modeled cassette selection, drag safety, keyboard
 navigation, reading, focus return and containment, deep links, browser history,
 404s, reduced motion, 320px/390px mobile layouts, resize, sound reset, missing
 WebGL, and graphics context loss. Hardening cases cover delayed or failed scene

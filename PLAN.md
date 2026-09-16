@@ -567,6 +567,36 @@ against WebGL; the July entries below remain a record of the original build.
   detector, re-run after the radius change. README's pixel-ratio note now
   reads 1.75 in browse and 2 in modeled playback.
 
+#### Refinement round (2026-09-15)
+
+Five changes Daniel asked for after the closing polish.
+
+- ✅ The tape index heading carries no count; the "06" is gone, so no count
+  appears anywhere on the shell.
+- ✅ The deck's status window prints a drawn speaker mark instead of SOUND ON
+  / SOUND OFF: two waves when on, a red slash (rec red, the deck's one colour
+  print) across the speaker when off. The native deck key's SVG uses the same
+  slash in place of its former cross, so both readouts share one glyph.
+- ✅ The monitor's dial is now a turned knob in a recessed escutcheon with a
+  raised ring, a molded pointer slot, and seven tick marks over its sweep,
+  built from the speaker's 24-sided profiles and the fasteners' merged
+  details; it sits centred on the chin's flat face, above its old position.
+- ✅ Drag-to-orbit is removed: no OrbitControls, no drag hint, no reset key.
+  The camera is authored and only eases between the fitted browse and
+  playback views; a change of the skip counter still snaps it. The guide's
+  row no longer reserves a 44px key height, and the canvas keeps the
+  browser's default touch behaviour.
+- ✅ Skip animation is the same hardware key as the native reader's sound and
+  eject (shared `.key` in `DeckControls.module.css`), led by a drawn skip
+  mark, at the viewport's lower right during modeled insertion and inside
+  the native loading screen.
+- Docs: DESIGN.md (frontmatter, Drawn Mark Rule, Layout, Shapes, playback
+  buttons, the Studio tools section is now Sound toggle, tape index,
+  insertion), the surface brief, the sidecar, and README.
+- Validation: the framing test now holds the authored view instead of
+  sweeping the orbit limits; the pointer-drag and touch-swipe tests assert
+  that a horizontal drag leaves the camera and route untouched.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

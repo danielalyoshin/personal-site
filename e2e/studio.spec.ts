@@ -288,7 +288,6 @@ test('a pointer can select a modeled cassette and dragging does not navigate', a
   await page.mouse.move(x - 120, y + 30, { steps: 12 })
   await page.mouse.up()
   await expect(page).toHaveURL('/')
-  await page.getByRole('button', { name: 'Reset studio view' }).click()
   // Search the tape area using the actual raycast cursor, independent of GPU pixel colors.
   let found = false
   for (let row = 0.48; row <= 0.68 && !found; row += 0.04) {

@@ -6,12 +6,12 @@ import {
   type RefObject,
 } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Html, OrbitControls } from '@react-three/drei'
+import { Html } from '@react-three/drei'
 import { MathUtils, OrthographicCamera, Vector3 } from 'three'
-import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import type { Project } from '../../content/types'
 import { shelfTapes } from '../../content/projects'
-import { Solid, Disc } from './geometry'
+import { Solid } from './geometry'
+import { DetailBoxes, Turned } from './ModelDetails'
 import {
   makeTexture,
   subscribeTextureUpdates,
@@ -34,7 +34,8 @@ interface StudioProps extends DeckControlsProps {
   open: boolean
   invalid: boolean
   reduced: boolean
-  reset: number
+  /** Counts skipped insertions; a change during playback snaps the camera. */
+  skips: number
   inserting: boolean
   /** Modeled playback: the reader and keys live on the equipment. */
   playback: boolean
@@ -47,17 +48,17 @@ interface StudioProps extends DeckControlsProps {
   children: ReactNode
 }
 
+/** The camera is authored, not orbited: it eases between the fitted views. */
 function CameraRig({
   open,
   reduced,
-  reset,
+  skips,
   inserting,
-}: Pick<StudioProps, 'open' | 'reduced' | 'reset' | 'inserting'>) {
+}: Pick<StudioProps, 'open' | 'reduced' | 'skips' | 'inserting'>) {
   const { size, scene, invalidate } = useThree()
-  const controls = useRef<OrbitControlsImpl>(null)
   const moving = useRef(true)
   const initialized = useRef(false)
-  const previousReset = useRef(reset)
+  const previousSkips = useRef(skips)
   const skip = useRef(false)
   const settle = useRef(false)
   const look = useRef(new Vector3(0, 1.9, 0))
@@ -69,14 +70,14 @@ function CameraRig({
     invalidate()
   }, [scene, invalidate])
   useEffect(() => {
-    skip.current = open && previousReset.current !== reset
-    previousReset.current = reset
+    skip.current = open && previousSkips.current !== skips
+    previousSkips.current = skips
     // The canvas takes its playback box while the tape waits: fit it at once
     // rather than easing, so the studio lands before the mechanism starts.
     settle.current = inserting
     moving.current = true
     invalidate()
-  }, [open, reduced, reset, inserting, size, invalidate])
+  }, [open, reduced, skips, inserting, size, invalidate])
   useFrame(({ camera }, delta) => {
     const { position, target } = scratch.current
     if (!(camera instanceof OrthographicCamera) || !fit.current) return
@@ -103,7 +104,6 @@ function CameraRig({
         factor,
       )
       camera.lookAt(look.current)
-      controls.current?.target.copy(look.current)
     }
     const zoom = fit.current(
       camera,
@@ -129,25 +129,7 @@ function CameraRig({
       skip.current = false
     } else invalidate()
   })
-  return (
-    <OrbitControls
-      ref={controls}
-      makeDefault
-      enabled={!open}
-      enablePan={false}
-      enableZoom={false}
-      enableDamping={!reduced}
-      dampingFactor={0.12}
-      rotateSpeed={0.65}
-      minAzimuthAngle={-0.45}
-      maxAzimuthAngle={0.85}
-      minPolarAngle={0.87}
-      maxPolarAngle={1.42}
-      onStart={() => {
-        moving.current = false
-      }}
-    />
-  )
+  return null
 }
 
 function Screen({
@@ -247,6 +229,74 @@ function Screen({
   )
 }
 
+// The dial's turned profiles, as (radius, depth) from the chin's face.
+const dialWell: [number, number][] = [
+  [0, 0],
+  [0.07, 0],
+  [0.07, 0.006],
+  [0, 0.006],
+]
+const dialRing: [number, number][] = [
+  [0.07, 0],
+  [0.082, 0],
+  [0.082, 0.02],
+  [0.076, 0.024],
+  [0.07, 0.02],
+]
+const dialKnob: [number, number][] = [
+  [0, 0.004],
+  [0.06, 0.004],
+  [0.06, 0.02],
+  [0.052, 0.026],
+  [0.052, 0.078],
+  [0.046, 0.09],
+  [0.026, 0.097],
+  [0, 0.097],
+]
+// Seven marks over the knob's 270° sweep, from seven o'clock round to five.
+const dialTicks = Array.from({ length: 7 }, (_, i) => {
+  const angle = (Math.PI * 5) / 4 - (i * Math.PI) / 4
+  return {
+    size: [0.014, 0.005, 0.006] as [number, number, number],
+    position: [0.093 * Math.cos(angle), 0.093 * Math.sin(angle), 0.003] as [
+      number,
+      number,
+      number,
+    ],
+    rotation: angle,
+  }
+})
+// The pointer sits a third of the way round: set, not maxed.
+const dialPointerAngle = Math.PI / 2 - Math.PI / 5
+const dialPointer = [
+  {
+    size: [0.03, 0.007, 0.004] as [number, number, number],
+    position: [
+      0.034 * Math.cos(dialPointerAngle),
+      0.034 * Math.sin(dialPointerAngle),
+      0.099,
+    ] as [number, number, number],
+    rotation: dialPointerAngle,
+  },
+]
+
+/**
+ * The monitor's one control: a turned knob in a recessed escutcheon with a
+ * raised ring, a molded pointer, and a short arc of tick marks, built from the
+ * same 24-sided profiles and merged details as the speaker and fasteners.
+ */
+function Dial(props: { position: [number, number, number] }) {
+  return (
+    <group name="crt-dial" {...props}>
+      <Turned profile={dialWell} color="#12171f" />
+      <Turned profile={dialRing} color="#434a54" />
+      <DetailBoxes boxes={dialTicks} color="#5d6572" />
+      <Turned profile={dialKnob} color="#7d8591" roughness={0.76} />
+      <DetailBoxes boxes={dialPointer} color="#141b24" />
+    </group>
+  )
+}
+
 function Monitor() {
   return (
     <group name="crt-monitor" position={[-1.35, 3.22, 0.15]}>
@@ -274,13 +324,7 @@ function Monitor() {
         color="#151a23"
         bevel={0.055}
       />
-      <Disc
-        position={[1.29, -1.16, 1.04]}
-        rotation={[Math.PI / 2, 0, 0]}
-        radius={0.065}
-        depth={0.07}
-        color="#858b94"
-      />
+      <Dial position={[1.29, -1.118, 0.99]} />
       {Array.from({ length: 9 }, (_, i) => (
         <Solid
           key={i}
@@ -503,7 +547,6 @@ function SceneContents(props: StudioProps) {
 export default function StudioScene(props: StudioProps) {
   return (
     <Canvas
-      className={styles.canvas}
       shadows="percentage"
       orthographic
       camera={{ position: [8.2, 6.65, 12], zoom: 75, near: 0.1, far: 100 }}

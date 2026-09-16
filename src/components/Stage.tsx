@@ -17,7 +17,8 @@ import { useMediaQuery } from '../lib/useMediaQuery'
 import { supportsWebGL } from '../lib/supportsWebGL'
 import CRT from './CRT'
 import DeckControls from './DeckControls'
-import { DragIcon, ExternalIcon, PlayIcon, ResetIcon } from './Icons'
+import { ExternalIcon, PlayIcon, SkipIcon } from './Icons'
+import keys from './DeckControls.module.css'
 import styles from './Stage.module.css'
 
 const StudioScene = lazy(() => import('./studio/StudioScene'))
@@ -67,7 +68,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const invalid = notFound || (!!slug && !tape)
   const open = !!tape || invalid
   const [preview, setPreview] = useState<Project | null>(null)
-  const [reset, setReset] = useState(0)
+  const [skips, setSkips] = useState(0)
   const [ready, setReady] = useState(false)
   const [flat, setFlat] = useState(() => !supportsWebGL())
   // A direct link is readable before graphics load: the native reader opens
@@ -164,7 +165,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   }, [])
   const skipInsertion = useCallback(() => {
     onInserted()
-    setReset((value) => value + 1)
+    setSkips((value) => value + 1)
   }, [onInserted])
   const previewTape = useCallback((next: Project | null) => {
     if (next && next.slug !== previewSlug.current) playSound('tick')
@@ -265,7 +266,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       }
       if (loading && event.key !== 'Tab') {
         onInserted()
-        setReset((value) => value + 1)
+        setSkips((value) => value + 1)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -307,12 +308,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       fullHeight={native}
     />
   )
+  // The same hardware key as the native deck panel, so the one control
+  // offered during insertion belongs to the same family as sound and eject.
   const skipControl = (
-    <button
-      type="button"
-      className={styles.skipAnimation}
-      onClick={skipInsertion}
-    >
+    <button type="button" className={keys.key} onClick={skipInsertion}>
+      <SkipIcon />
       Skip animation
     </button>
   )
@@ -455,22 +455,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                 </small>
               </span>
             </div>
-            {!flat && (
-              <div className={styles.sceneTools}>
-                <span className={styles.dragHint}>
-                  <DragIcon className={styles.arrow} />
-                  Drag to look around
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setReset((value) => value + 1)}
-                  aria-label="Reset studio view"
-                  title="Reset view"
-                >
-                  <ResetIcon size={20} />
-                </button>
-              </div>
-            )}
           </div>
           <div
             className={styles.scene}
@@ -502,7 +486,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     open={open}
                     invalid={invalid}
                     reduced={reduced}
-                    reset={reset}
+                    skips={skips}
                     inserting={loading}
                     playback={open && !useNativeReader}
                     deckPortal={deckPortal}
@@ -533,9 +517,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           aria-hidden={open || undefined}
         >
           <div className={styles.archiveHeading}>
-            <h2 id="archive-title">
-              The tape index <span>06</span>
-            </h2>
+            <h2 id="archive-title">The tape index</h2>
             <p>Projects are being curated. Explore the placeholders.</p>
           </div>
           <ul className={styles.tapeIndex}>

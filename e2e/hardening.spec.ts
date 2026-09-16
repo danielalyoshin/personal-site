@@ -380,7 +380,7 @@ test.describe('touch input in the studio', () => {
     hasTouch: true,
   })
 
-  test('vertical swipes scroll the page while horizontal drags orbit and tapes remain tappable', async ({
+  test('vertical swipes scroll the page, horizontal drags leave the view alone, and tapes remain tappable', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -424,26 +424,22 @@ test.describe('touch input in the studio', () => {
         },
         { x: bounds.x + bounds.width * 0.3, y: bounds.y + bounds.height * 0.3 },
       )
-      await expect
-        .poll(async () => {
-          const next = await cameraPosition(page)
-          return Math.hypot(
-            ...next.map((value, index) => value - initialCamera[index]),
-          )
-        })
-        .toBeGreaterThan(0.05)
+      // The studio has no drag-to-orbit: the authored view stays put and the
+      // gesture neither scrolls nor selects.
+      await page.waitForTimeout(300)
+      const afterDrag = await cameraPosition(page)
+      expect(
+        Math.hypot(
+          ...afterDrag.map((value, index) => value - initialCamera[index]),
+        ),
+      ).toBeLessThan(0.01)
+      expect(
+        Math.hypot(
+          ...afterDrag.map((value, index) => value - originalCamera[index]),
+        ),
+      ).toBeLessThan(0.01)
       await expect(page).toHaveURL('/')
       expect(await page.evaluate(() => window.scrollY)).toBeLessThan(5)
-
-      await page.getByRole('button', { name: 'Reset studio view' }).click()
-      await expect
-        .poll(async () => {
-          const next = await cameraPosition(page)
-          return Math.hypot(
-            ...next.map((value, index) => value - originalCamera[index]),
-          )
-        })
-        .toBeLessThan(0.01)
       const tapePoint = await page.evaluate(async () => {
         const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
         const threeModule = '/node_modules/.vite/deps/three.js'

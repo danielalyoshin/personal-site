@@ -50,7 +50,7 @@ export function createStudioFraming(studio: Object3D) {
           .applyMatrix4(view)
         // Phones keep every piece of equipment in frame; only the table may
         // run out of the sides, as a real tabletop would. Every object still
-        // contributes to headroom, including during orbit and cassette flight.
+        // contributes to headroom, including during cassette flight.
         if (!narrow || !furniture)
           browseX = Math.max(browseX, Math.abs(point.x))
         browseY = Math.max(browseY, Math.abs(point.y))

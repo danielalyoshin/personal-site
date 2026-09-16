@@ -321,7 +321,7 @@
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "0.75rem at weight 400 and 1.5 leading: the role line, guide instruction, drag hint, archive note, tape captions, footer statement, loading and fallback notes, Skip animation, and the Escape hint."
+        "purpose": "0.75rem at weight 400 and 1.5 leading: the role line, guide instruction, archive note, tape captions, footer statement, loading and fallback notes, and the Escape hint. The native deck keys and Skip animation use the control variant."
       },
       "control": {
         "displayName": "Playback control",
@@ -329,7 +329,7 @@
       },
       "label": {
         "displayName": "Label",
-        "purpose": "0.6875rem uppercase at weight 600 and 0.12em tracking in dim silkscreen: the introductory kicker, tape index numbers, archive count, footer edition, and the native reader’s AV–01 mark. Nothing on the shell is set below this step."
+        "purpose": "0.6875rem uppercase at weight 600 and 0.12em tracking in dim silkscreen: the introductory kicker, tape index numbers, footer edition, and the native reader’s AV–01 mark. Nothing on the shell is set below this step."
       },
       "screen-title": {
         "displayName": "Screen title",
@@ -409,7 +409,7 @@
       {
         "name": "shell-feedback",
         "value": "200ms",
-        "purpose": "Archive background/border and reset border transitions."
+        "purpose": "Archive background/border transitions."
       },
       {
         "name": "canvas-settle",
@@ -494,26 +494,18 @@
     {
       "name": "Skip animation",
       "kind": "button",
-      "refersTo": "button-animation-skip",
-      "description": "Plain underlined interface action during insertion; outside the modeled hardware or inside the native loading screen.",
-      "html": "<div class=\"ds-sample\"><button class=\"ds-skipAnimation\" type=\"button\">Skip animation</button></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-skipAnimation {\n  min-width: 44px;\n  min-height: 44px;\n  padding: 8px;\n  border: 0;\n  background: transparent;\n  color: var(--silk);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  line-height: var(--leading-caption);\n  text-decoration: underline;\n  text-decoration-thickness: 1px;\n  text-underline-offset: 0.3em;\n}\n.ds-skipAnimation:hover,\n.ds-skipAnimation:active {\n  color: var(--silk-hi);\n}\n"
+      "refersTo": "button-transport",
+      "description": "The hardware key of the native deck family, led by a drawn skip mark; the one control during insertion, at the viewport’s lower right for modeled playback or inside the native loading screen. HTML, never a modeled key.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><button type=\"button\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M3 4l9 6-9 6zM14 4h3v12h-3z\"/></svg> Skip animation</button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: var(--tracking-control);\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk);\n  font: inherit;\n  font-weight: 400;\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n"
     },
     {
       "name": "Playback sound",
       "kind": "button",
       "refersTo": "button-transport",
-      "description": "Native-reader sound toggle; off and on states expose aria-pressed. During modeled playback the same toggle is the deck’s printed SOUND key, with its state read in the status window.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><div class=\"ds-sound-states\"><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"m13 7 5 6m0-6-5 6\"/></svg></button><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"true\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"M12 6a6 6 0 0 1 0 8M15 3a10 10 0 0 1 0 14\"/></svg></button></div></div></div>",
+      "description": "Native-reader sound toggle; off and on states expose aria-pressed. Waves when on, a red slash across the speaker when off. During modeled playback the same toggle is the deck’s printed SOUND key, with the same mark printed in the status window.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><div class=\"ds-sound-states\"><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"M3 17 17 3\" stroke=\"var(--rec-red)\" stroke-linecap=\"round\"/></svg></button><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"true\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\"/><path d=\"M12 6a6 6 0 0 1 0 8M15 3a10 10 0 0 1 0 14\"/></svg></button></div></div></div>",
       "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: var(--tracking-control);\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk);\n  font: inherit;\n  font-weight: 400;\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n\n.ds-sound-states{display:flex;gap:8px;}"
-    },
-    {
-      "name": "Reset studio view",
-      "kind": "button",
-      "refersTo": "button-reset",
-      "description": "44px circular control on the selection guide’s first line, centred on the same line as the guide text and 20px after the drag hint above 1200px; stronger border on hover. It and the drag hint are the only tools beside the guide; browse has no sound control.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-tools\"><button type=\"button\" aria-label=\"Reset studio view\" title=\"Reset view\"><svg viewBox=\"0 0 16 16\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M2.75 8a5.25 5.25 0 1 0 1.54-3.71\"/><path d=\"M4.29 1.6v2.69h2.69\"/></svg></button></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tools{display:flex;align-items:center;gap:20px;height:44px;}\n.ds-tools button{display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--seam);color:var(--silk);width:44px;height:44px;flex-shrink:0;border-radius:50%;transition:border-color 0.2s;}\n.ds-tools button:hover{border-color:var(--silk-dim);}\n@media (max-width: 600px){.ds-tools{gap:4px;}\n}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Site navigation",
@@ -573,7 +565,7 @@
       },
       {
         "name": "The Drawn Mark Rule",
-        "body": "Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from src/components/Icons.tsx: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), horizontal drag, reset, sound, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, 12px on tape entries, and 20px in the reset key; they take currentColor and are aria-hidden, so the label alone carries the accessible name. The REC dot and the idle cursor are CSS boxes.",
+        "body": "Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from src/components/Icons.tsx: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks sit on a 20-unit box at 18px. Every mark takes currentColor and is aria-hidden, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.",
         "section": "typography"
       },
       {

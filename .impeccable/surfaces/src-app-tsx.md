@@ -14,22 +14,21 @@ into a clean, artsy, intentional low-poly 3D experience. This supersedes the
 July SVG-only implementation. Normative direction: `DESIGN.md`.
 
 Composition: compact identity header and editorial introduction, selection
-guide whose first line carries the drag hint and reset above the orthographic
-3D exhibit, six-tape text index, GitHub/LinkedIn footer with the contact links
+guide above the orthographic 3D exhibit, six-tape text index, GitHub/LinkedIn footer with the contact links
 flush right. Every shell edge sits on the one column (the cassette mark hangs
 in the gutter above 1200px); the tape index entries' 12px insets are the only
 inboard edges, and each entry stacks its number over its name so it has one
 text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
-clock, caption number, page-level sound control, or edition marks; the index
-heading holds the page's only tape count, and the header's "The archive" link
-is its single visible index route at every width. Height-aware desktop framing keeps the studio and its
+clock, caption number, tape count, page-level sound control, or edition
+marks, and the header's "The archive" link is its single visible index route
+at every width. Height-aware desktop framing keeps the studio and its
 selection instruction together; phones use a closer, more frontal camera
 that fits every piece of equipment inside a full-bleed canvas snug to the
 studio, with the shell's gutter as its margin, so the speaker and headphones
 are never cropped (only the table runs out of frame).
 The larger opening canvas and enlarged idle-screen message support reading
-before selection. Geometry-aware framing preserves top clearance during orbit
-and blends into the complete CRT and player during playback zoom.
+before selection. Geometry-aware framing preserves top clearance during
+insertion and blends into the complete CRT and player during playback zoom.
 Type is one system: Archivo at 400, 600, and 800 (page and prints alike)
 and VT323 at 400. The shell renders six sizes on an 11px floor (display,
 2.625rem mark, 1rem body, 0.875rem functional, 0.75rem caption, 0.6875rem
@@ -53,9 +52,9 @@ a one-line instruction that points at the studio rather than the index.
 Hover/focus previews and raises a tape; click or Enter selects it. Internal
 playback links use the drawn play mark; links that leave the site carry the
 drawn outward arrow.
-Drag within constrained camera angles; reset restores the original view.
-Vertical touch swipes scroll the page; horizontal drags orbit, and pinch zoom
-remains a browser gesture. Modified clicks retain native link navigation.
+The view is authored: there is no drag-to-orbit and no reset, so touch
+swipes scroll the page and pinch zoom remains a browser gesture. Modified
+clicks retain native link navigation.
 Insertion moves the actual cassette into the deck, then the camera faces the
 screen. A skip control completes the transition. Reduced motion is immediate.
 
@@ -78,12 +77,13 @@ one printed uppercase Archivo label that is identical in browse and playback
 and moves with the press; during playback an invisible native button over the
 cap carries the accessible name, pressed state, and focus ring, sized to the
 cap with a 44px floor. Sound state reads in the deck's status window beside
-the transport state, not on the key. Keys are interactive only after insertion
+the transport state as a drawn speaker mark (waves when on, a red slash when
+off), not on the key. Keys are interactive only after insertion
 ends. Selection sizes the canvas to the viewport and refits the studio before
 the tape moves; the studio renders at pixel ratio 2 during modeled playback.
-Skip animation is a plain underlined interface action
-at the viewport's lower right during insertion, or inside the native loading
-screen. The playback camera keeps
+Skip animation is a hardware key of the native deck family, led by a drawn
+skip mark, at the viewport's lower right during insertion, or inside the
+native loading screen. The playback camera keeps
 both CRT and deck in view. The native reader integrates these actions into
 its lower hardware panel, respecting the bottom safe area. There is no
 page-wide playback footer.

@@ -2,13 +2,9 @@ import { expect, test, type Page } from '@playwright/test'
 
 // Project real vertices through the live camera, including intermediate frames.
 // A visible canvas or readable article alone cannot detect a cropped 3D chassis.
-async function inspectFrames(
-  page: Page,
-  frames: number,
-  orbit?: { azimuth: number; polar: number },
-) {
+async function inspectFrames(page: Page, frames: number) {
   return page.evaluate(
-    async ({ frames, orbit }) => {
+    async ({ frames }) => {
       const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
       const threeModule = '/node_modules/.vite/deps/three.js'
       const { _roots } = (await import(
@@ -21,15 +17,7 @@ async function inspectFrames(
         .get(document.querySelector('canvas')!)!
         .store.getState()
       const { camera, scene, size } = state
-      const controls = state.controls as import('three-stdlib').OrbitControls
       state.setFrameloop('never')
-      if (orbit) {
-        controls.dispatchEvent({ type: 'start' })
-        camera.position
-          .setFromSphericalCoords(14, orbit.polar, orbit.azimuth)
-          .add(controls.target)
-        controls.update()
-      }
       const point = new Vector3()
       const bounds = (name: string, except?: string) => {
         const result = {
@@ -81,11 +69,11 @@ async function inspectFrames(
         screenWidth: screen.right - screen.left,
       }
     },
-    { frames, orbit },
+    { frames },
   )
 }
 
-test('the opening studio keeps every object in frame and preserves headroom throughout its orbit', async ({
+test('the opening studio keeps every object in frame with headroom at every width', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -108,17 +96,10 @@ test('the opening studio keeps every object in frame and preserves headroom thro
     )
     expect(initial.studioMargin).toBeGreaterThanOrEqual(15)
     expect(initial.equipmentMargin).toBeGreaterThanOrEqual(15)
-    for (const azimuth of [-0.45, 0.85]) {
-      for (const polar of [0.87, 1.42]) {
-        const rotated = await inspectFrames(page, 2, { azimuth, polar })
-        expect(rotated.monitorMargin).toBeGreaterThanOrEqual(15)
-        expect(rotated.studioMargin).toBeGreaterThanOrEqual(15)
-        expect(rotated.equipmentMargin).toBeGreaterThanOrEqual(15)
-      }
-    }
-    await page.getByRole('button', { name: 'Reset studio view' }).click()
-    const reset = await inspectFrames(page, 2)
-    expect(reset.screenWidth).toBeCloseTo(initial.screenWidth, 0)
+    expect(initial.monitorMargin).toBeGreaterThanOrEqual(15)
+    // The view is authored, not orbited: later frames hold the same fit.
+    const settled = await inspectFrames(page, 6)
+    expect(settled.screenWidth).toBeCloseTo(initial.screenWidth, 0)
   }
 })
 
