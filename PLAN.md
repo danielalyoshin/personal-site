@@ -730,9 +730,12 @@ and the speaker as the strongest pieces; the goal is cohesion, not realism.
   3.10, the screen to 3.23, and the playback centre to 2.64
   (`transport.ts`), and Daniel asked for the feet to be modeled in the
   speaker's and holder's style: four dark corner pads, 0.28 × 0.035 × 0.22
-  under the deck, 0.4 × 0.03 × 0.28 under the bezel's front corners and
-  0.4 × 0.19 × 0.28 reaching the shell's rear corners on the monitor
-  (DESIGN.md, The Same Grammar Rule).
+  under the deck and 0.4 × 0.03 × 0.28 at all four corners of the monitor.
+  Taller rear pads reaching the monitor's stepped underside were tried and
+  removed ("look off"); Daniel then asked for the real-set construction:
+  the rear shell's floor dropped 0.16 to the bezel's bottom plane (shell
+  3.12 × 2.68 × 1.5 at y −0.06), so the underside is one plane on four
+  identical pads (DESIGN.md, The Same Grammar Rule).
 - The transport spec's viewport check on the physical keys now compares the
   button's bounding box to the viewport in whole pixels: Playwright's
   `toBeInViewport({ ratio: 1 })` read 0.9999998 for a fully visible key at

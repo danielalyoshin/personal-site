@@ -431,9 +431,9 @@ recessed escutcheon with a raised ring, a molded pointer slot, and seven tick
 marks over its sweep, built from the same 24-sided profiles and merged details
 as the speaker and its fasteners; its top and side vents are merged slat
 grilles of the same construction, the bezel's step over the rear shell is
-its parting line, and it stands on four isolating pads in the speaker's
-style: low ones under the bezel's front corners, taller ones reaching the
-shell's rear corners.
+its parting line, the rear shell's floor is level with the bezel's bottom
+as on a real set, and it stands on four identical low pads in the speaker's
+style under the bezel's front corners and the shell's rear corners.
 The deck's fascia is one tone, with a fine parting line set into the groove
 where it meets the chassis, as on the cassette housing; its slot flap is a
 door, a step darker than the fascia with a lighter finger lip, inside the
@@ -452,10 +452,11 @@ plinth. Keep surfaces clean and matte.
 strongest pieces established: a dark recess under a lighter raised plane, a
 fine parting line where two housings meet, 24-sided turned parts, merged
 ribs and slats for repeated detail, and fitted fasteners where the real
-object shows them. Every piece of equipment stands on four isolating pads
-in one style, the speaker's: dark, low (about 0.035 units, the speaker's
+object shows them. Every piece of equipment stands on isolating pads in
+one style, the speaker's: dark, low (about 0.035 units, the speaker's
 proportion), and tucked under the corners, so from every authored camera
-they read as a shadow line, not as parts. The table alone stands on its
+they read as a shadow line, not as parts; four under each of the deck, the
+monitor, the speaker, and the holder. The table alone stands on its
 pedestal. A taller bare block under a chassis reads as an unfinished part,
 and a recessed face that tall reads as a flat black bar from the front-on
 playback camera; both were tried and rejected. A new

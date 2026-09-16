@@ -493,9 +493,11 @@ function Dial(props: { position: [number, number, number] }) {
 function Monitor() {
   return (
     <group name="crt-monitor" position={[-1.35, 3.1, 0.15]}>
+      {/* The rear shell's floor is level with the bezel's bottom, as on a
+          real set, so the underside is one plane on four identical pads. */}
       <Solid
-        size={[3.12, 2.52, 1.5]}
-        position={[0, 0.02, -0.31]}
+        size={[3.12, 2.68, 1.5]}
+        position={[0, -0.06, -0.31]}
         color="#303640"
         bevel={0.17}
       />
@@ -520,26 +522,22 @@ function Monitor() {
       <Dial position={[1.338, -1.142, 0.99]} />
       <DetailBoxes boxes={sideVents} color="#161c25" />
       <DetailBoxes boxes={topVents} color="#191f28" />
-      {/* Four isolating pads in the speaker's style, tucked under the
-          corners: low ones under the bezel, taller ones reaching the shell. */}
-      {[-1, 1].map((x) => (
-        <Solid
-          key={`front-${x}`}
-          size={[0.4, 0.03, 0.28]}
-          position={[x * 1.39, -1.415, 0.65]}
-          color="#141d27"
-          bevel={0.012}
-        />
-      ))}
-      {[-1, 1].map((x) => (
-        <Solid
-          key={`rear-${x}`}
-          size={[0.4, 0.19, 0.28]}
-          position={[x * 1.275, -1.335, -0.86]}
-          color="#141d27"
-          bevel={0.012}
-        />
-      ))}
+      {/* Four identical low pads in the speaker's style: under the bezel's
+          front corners and the shell's rear corners. */}
+      {[
+        [1.39, 0.65],
+        [1.275, -0.86],
+      ].flatMap(([x, z]) =>
+        [-1, 1].map((side) => (
+          <Solid
+            key={`${side}-${z}`}
+            size={[0.4, 0.03, 0.28]}
+            position={[side * x, -1.415, z]}
+            color="#141d27"
+            bevel={0.012}
+          />
+        )),
+      )}
     </group>
   )
 }
