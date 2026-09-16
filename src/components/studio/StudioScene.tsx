@@ -584,10 +584,12 @@ function Table() {
 }
 
 function LooseTape() {
+  // The shell's underside rests on the tabletop (0.775 + 0.9 × 0.172); the
+  // slightly deeper guard and underside mold detail sink into the top unseen.
   return (
     <group
       name="decorative-tape"
-      position={[2.1, 0.96, 1.9]}
+      position={[2.1, 0.93, 1.9]}
       rotation={[0, -0.12, 0]}
     >
       <group rotation={[-Math.PI / 2, 0, 0]} scale={0.9}>
