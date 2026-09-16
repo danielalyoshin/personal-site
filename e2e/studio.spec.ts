@@ -307,3 +307,119 @@ test('a pointer can select a modeled cassette and dragging does not navigate', a
   expect(found).toBe(true)
   await expect(page).toHaveURL(/\/project\//)
 })
+
+test('the pointer preview hands over slot to slot without flicker while cassettes lift', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await ready(page)
+  const camera = () =>
+    page.evaluate(async () => {
+      const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        fiberModule
+      )) as typeof import('@react-three/fiber')
+      const { camera } = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      return [camera.zoom, camera.position.x, camera.position.y]
+        .map((value) => value.toFixed(3))
+        .join()
+    })
+  // The opening camera eases on its own frames; project once it has settled.
+  await expect
+    .poll(async () => {
+      const before = await camera()
+      await page.waitForTimeout(150)
+      return (await camera()) === before
+    })
+    .toBe(true)
+  const geometry = await page.evaluate(async () => {
+    const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const threeModule = '/node_modules/.vite/deps/three.js'
+    const { _roots } = (await import(
+      fiberModule
+    )) as typeof import('@react-three/fiber')
+    const { Box3, Vector3 } = (await import(
+      threeModule
+    )) as typeof import('three')
+    const state = _roots
+      .get(document.querySelector('canvas')!)!
+      .store.getState()
+    const rect = document.querySelector('canvas')!.getBoundingClientRect()
+    const toScreen = (point: InstanceType<typeof Vector3>) => {
+      point.project(state.camera)
+      return {
+        x: rect.x + ((point.x + 1) * rect.width) / 2,
+        y: rect.y + ((1 - point.y) * rect.height) / 2,
+      }
+    }
+    const rack = new Box3().setFromObject(
+      state.scene.getObjectByName('archive-holder')!,
+      true,
+    )
+    let left = Infinity
+    let right = -Infinity
+    for (let corner = 0; corner < 8; corner++) {
+      const { x } = toScreen(
+        new Vector3(
+          corner & 1 ? rack.max.x : rack.min.x,
+          corner & 2 ? rack.max.y : rack.min.y,
+          corner & 4 ? rack.max.z : rack.min.z,
+        ),
+      )
+      left = Math.min(left, x)
+      right = Math.max(right, x)
+    }
+    const centre = toScreen(
+      state.scene
+        .getObjectByName('tape-placeholder-gamma')!
+        .getWorldPosition(new Vector3()),
+    )
+    return {
+      left: Math.floor(left) - 10,
+      right: Math.ceil(right) + 10,
+      y: Math.round(centre.y),
+    }
+  })
+  // The selection guide names the previewed tape; read its first text node.
+  const caption = () =>
+    page.evaluate(
+      () =>
+        document
+          .querySelector('[data-testid="studio-scene"]')!
+          .previousElementSibling!.querySelector('span')!.firstChild!
+          .textContent,
+    )
+  const sweep = async (from: number, to: number) => {
+    await page.mouse.move(from, geometry.y)
+    await page.waitForTimeout(250)
+    const transitions: string[] = []
+    let last = await caption()
+    const step = 2 * Math.sign(to - from)
+    for (let x = from; step > 0 ? x <= to : x >= to; x += step) {
+      await page.mouse.move(x, geometry.y)
+      // Cassettes lift and settle underneath: every step hit-tests the scene
+      // mid-motion, which is where a moving target used to flicker.
+      await page.waitForTimeout(16)
+      const now = await caption()
+      if (now !== last) {
+        transitions.push(now!)
+        last = now
+      }
+    }
+    return transitions
+  }
+  const idle = 'Choose a tape to play'
+  const forward = await sweep(geometry.left, geometry.right)
+  const back = await sweep(geometry.right, geometry.left)
+  // Six slots, one handover each, and never back to a tape already left.
+  expect(forward).toHaveLength(7)
+  expect(forward.at(-1)).toBe(idle)
+  const tapes = forward.slice(0, 6)
+  expect(new Set(tapes).size).toBe(6)
+  expect(tapes).not.toContain(idle)
+  expect(back).toEqual([...tapes].reverse().concat(idle))
+})

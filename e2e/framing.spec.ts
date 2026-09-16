@@ -27,7 +27,8 @@ async function inspectFrames(page: Page, frames: number) {
           bottom: -Infinity,
         }
         scene.getObjectByName(name)!.traverse((object) => {
-          if (!(object instanceof Mesh)) return
+          // Pointer targets are invisible slot boxes; the framing skips them too.
+          if (!(object instanceof Mesh) || !object.visible) return
           for (let parent = object.parent; parent; parent = parent.parent)
             if (parent.name === except) return
           const positions = object.geometry.attributes.position

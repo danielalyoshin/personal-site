@@ -422,6 +422,11 @@
         "purpose": "Nominal render-driven cassette/flap timeline; capped frame deltas can extend elapsed time. Skippable; reduced motion completes immediately."
       },
       {
+        "name": "tape-eject",
+        "value": "1.8s",
+        "purpose": "The insertion timeline run back from wherever the tape is: flap opens, tape leaves the bay, turns, and settles into its slot while the camera returns to browse. Reduced motion completes immediately."
+      },
+      {
         "name": "camera-interpolation",
         "value": "1 - exp(-min(delta, 0.05) * 7)",
         "purpose": "Camera position, target, and zoom interpolate per frame after insertion; immediate for reduced motion or skip."

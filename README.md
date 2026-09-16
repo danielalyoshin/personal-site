@@ -35,16 +35,16 @@ WebGL unavailability or context loss falls back to the full HTML archive reader.
 
 ## Structure
 
-| Location                                | Purpose                                                 |
-| --------------------------------------- | ------------------------------------------------------- |
-| `src/components/Stage.tsx`              | Routes, archive, focus, playback controls, fallback     |
-| `src/components/studio/StudioScene.tsx` | Composition, lighting, camera, equipment                |
-| `src/components/studio/Tape.tsx`        | Cassette model, labels, hover, insertion                |
-| `src/components/studio/geometry.tsx`    | Single-bevel solids and printed details                 |
-| `src/components/CRT.tsx`                | HTML project reader and CRT effects                     |
-| `src/content/`                          | Typed project content and About tape                    |
-| `src/lib/sound.ts`                      | Opt-in synthesized mechanical cues                      |
-| `e2e/`                                  | Studio, transport, loading, font, and touch regressions |
+| Location                                | Purpose                                                     |
+| --------------------------------------- | ----------------------------------------------------------- |
+| `src/components/Stage.tsx`              | Routes, archive, focus, playback controls, fallback         |
+| `src/components/studio/StudioScene.tsx` | Composition, lighting, camera, equipment                    |
+| `src/components/studio/Tape.tsx`        | Cassette model, labels, slot hover target, insertion, eject |
+| `src/components/studio/geometry.tsx`    | Single-bevel solids and printed details                     |
+| `src/components/CRT.tsx`                | HTML project reader and CRT effects                         |
+| `src/content/`                          | Typed project content and About tape                        |
+| `src/lib/sound.ts`                      | Opt-in synthesized mechanical cues                          |
+| `e2e/`                                  | Studio, transport, loading, font, and touch regressions     |
 
 The scene is lazy-loaded and renders only when needed. Pixel ratio is capped at
 1.75 in browse and 2 during modeled playback. The 3D dependency chunk is

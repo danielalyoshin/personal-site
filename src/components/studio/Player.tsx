@@ -14,12 +14,13 @@ import PlayerButton from './PlayerButton'
 import type { DeckControlsProps } from '../DeckControls'
 import { changeSound } from '../../lib/sound'
 
-type DeckMode = 'standby' | 'loading' | 'play' | 'nosignal'
+type DeckMode = 'standby' | 'loading' | 'play' | 'eject' | 'nosignal'
 
 const STATUS: Record<DeckMode, string> = {
   standby: 'STANDBY',
   loading: 'LOADING',
   play: 'PLAY',
+  eject: 'EJECT',
   nosignal: 'NO SIGNAL',
 }
 
@@ -123,6 +124,7 @@ function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
 export default function Player({
   tape,
   inserting,
+  ejecting,
   progress,
   interactive,
   portal,
@@ -132,6 +134,7 @@ export default function Player({
 }: {
   tape: Project | null
   inserting: boolean
+  ejecting: boolean
   progress: RefObject<number>
   interactive: boolean
   portal: RefObject<HTMLDivElement | null>
@@ -143,11 +146,13 @@ export default function Player({
   })
   const mode: DeckMode = invalid
     ? 'nosignal'
-    : inserting
-      ? 'loading'
-      : tape
-        ? 'play'
-        : 'standby'
+    : ejecting
+      ? 'eject'
+      : inserting
+        ? 'loading'
+        : tape
+          ? 'play'
+          : 'standby'
 
   return (
     <group name="vhs-player" position={PLAYER.position}>

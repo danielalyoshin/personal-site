@@ -23,7 +23,7 @@ import Headphones from './Headphones'
 import Speaker from './Speaker'
 import TapeRack from './TapeRack'
 import CassetteModel from './CassetteModel'
-import { INSERT_SECONDS, PLAYER } from './transport'
+import { EJECT_SECONDS, INSERT_SECONDS, PLAYER } from './transport'
 import { createStudioFraming } from './framing'
 import styles from './StudioScene.module.css'
 import type { DeckControlsProps } from '../DeckControls'
@@ -37,12 +37,15 @@ interface StudioProps extends DeckControlsProps {
   /** Counts skipped insertions; a change during playback snaps the camera. */
   skips: number
   inserting: boolean
+  /** The tape running the mechanism back to its slot after eject. */
+  ejecting: Project | null
   /** Modeled playback: the reader and keys live on the equipment. */
   playback: boolean
   deckPortal: RefObject<HTMLDivElement | null>
   onSelect: (tape: Project) => void
   onPreview: (tape: Project | null) => void
   onInserted: () => void
+  onEjected: () => void
   onReady: () => void
   onUnavailable: () => void
   children: ReactNode
@@ -415,10 +418,13 @@ function LooseTape() {
 
 function SceneContents(props: StudioProps) {
   const { gl, invalidate } = useThree()
-  const { onReady, onUnavailable, onInserted } = props
+  const { onReady, onUnavailable, onInserted, onEjected } = props
   const progress = useRef(1)
   const previousTape = useRef<string | null>(null)
   const completed = useRef(false)
+  const ejected = useRef(false)
+  // Playback reopened by history before the tape landed: it seats again.
+  const ejecting = props.tape ? null : props.ejecting
   const hold = useRef<{
     width: number
     height: number
@@ -429,14 +435,31 @@ function SceneContents(props: StudioProps) {
   // finishes, even when a slow device takes longer to render the sequence.
   useFrame(({ size }, delta) => {
     const slug = props.tape?.slug ?? null
-    if (previousTape.current !== slug) {
-      previousTape.current = slug
+    if (slug && previousTape.current !== slug) {
       progress.current = 0
       completed.current = false
       // Selection also moves the canvas to its full-viewport box. Keep the
       // tape at rest until that box has been reported and drawn once.
       hold.current = { width: size.width, height: size.height, elapsed: 0 }
     }
+    previousTape.current = slug
+    const step = Math.min(delta, 0.05)
+    if (ejecting) {
+      // Eject runs the timeline back from wherever it is: the flap opens,
+      // the tape leaves the deck, turns, and settles into its slot along the
+      // path it came by. The canvas has its browse box back already.
+      hold.current = null
+      progress.current = props.reduced
+        ? 0
+        : Math.max(0, progress.current - step / EJECT_SECONDS)
+      if (progress.current > 0) invalidate()
+      else if (!ejected.current) {
+        ejected.current = true
+        onEjected()
+      }
+      return
+    }
+    ejected.current = false
     if (props.reduced || !props.inserting || !props.tape) {
       progress.current = 1
       hold.current = null
@@ -450,10 +473,7 @@ function SceneContents(props: StudioProps) {
         Math.abs(size.height - window.innerHeight) < 2
       if (resized || fills || waiting.elapsed > 0.3) hold.current = null
     } else
-      progress.current = Math.min(
-        1,
-        progress.current + Math.min(delta, 0.05) / INSERT_SECONDS,
-      )
+      progress.current = Math.min(1, progress.current + step / INSERT_SECONDS)
     if (props.inserting) {
       if (progress.current < 1) invalidate()
       else if (!completed.current) {
@@ -513,6 +533,7 @@ function SceneContents(props: StudioProps) {
         <Player
           tape={props.tape}
           inserting={props.inserting}
+          ejecting={!!ejecting}
           progress={progress}
           interactive={props.playback && !props.inserting}
           portal={props.deckPortal}
@@ -531,9 +552,10 @@ function SceneContents(props: StudioProps) {
             index={index}
             active={!props.open && props.preview?.slug === tape.slug}
             selected={props.tape?.slug === tape.slug}
+            ejecting={ejecting?.slug === tape.slug}
             reduced={props.reduced}
             progress={progress}
-            interactive={!props.open}
+            interactive={!props.open && ejecting?.slug !== tape.slug}
             onSelect={props.onSelect}
             onPreview={props.onPreview}
           />

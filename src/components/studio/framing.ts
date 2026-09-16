@@ -5,7 +5,8 @@ import type { Object3D, OrthographicCamera } from 'three'
 export function createStudioFraming(studio: Object3D) {
   const parts: { mesh: Mesh; playback: boolean; furniture: boolean }[] = []
   studio.traverse((object) => {
-    if (!(object instanceof Mesh)) return
+    // Pointer targets are invisible slot boxes; they never drive the framing.
+    if (!(object instanceof Mesh) || !object.visible) return
     let monitor = false
     let player = false
     let table = false

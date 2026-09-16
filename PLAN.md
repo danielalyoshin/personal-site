@@ -603,6 +603,44 @@ Five changes Daniel asked for after the closing polish.
   sweeping the orbit limits; the pointer-drag and touch-swipe tests assert
   that a horizontal drag leaves the camera and route untouched.
 
+#### Hover and eject round (2026-09-15)
+
+Two fixes Daniel asked for after using the studio.
+
+- ✅ Hovering between cassettes no longer jitters. The preview target is each
+  cassette's resting envelope in its rack slot, an invisible fixed box
+  (`pointer-target-<slug>`, excluded from framing), rather than the moving
+  shell. The lifted shell used to slide out from under the pointer, drop the
+  preview, land back under it, and lift again: a 1px sweep across the rack
+  flipped the preview 67–84 times. Fixed slots hand over at their shared
+  edge; the same sweep now yields one transition per cassette. Daniel
+  proposed the resting-area target himself; a deadzone would not have
+  stopped the oscillation.
+- ✅ Eject runs the insertion timeline back (`EJECT_SECONDS`, 1.8 seconds):
+  the flap opens, the tape leaves the bay, turns, and settles flat into its
+  slot. Focus still returns to its archive link, but that return no longer
+  previews the tape (Daniel: "I would rather it settle flat"). An eject during
+  insertion reverses from wherever the tape is; the deck reads EJECT for the
+  return; history back ejects the same way. Reduced motion and the fallback
+  reader return the tape at once.
+- ✅ The preview lift is an arc (rise, then forward; retreat, then drop)
+  instead of a straight diagonal, which had cut the corner of the rack's
+  retaining lip by a hair on every hover; the early-eject test caught it once
+  the returned tape settled flat.
+- Mechanism: `Stage` derives the ejecting tape on the render where playback
+  closes and commits selection and eject inside `startTransition`, because
+  React Router 7 navigates in a transition and any state set beside it
+  rendered first, seating a mid-flight tape or dropping a previewed one
+  before the mechanism took over. A flight interrupted by a new selection
+  snaps home; `Tape` judges completion by the last timeline position it saw
+  itself, since the shared timeline is already reset for the next tape.
+- Docs: DESIGN.md (Cassettes and insertion, status window), the surface
+  brief, the sidecar, README.
+- Validation: a pointer-sweep test asserts one preview transition per slot
+  in both directions; the transport spec steps the eject back from seated
+  and from mid-insertion, checking the open flap, no collisions, the
+  landing, and that the slot is live again.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

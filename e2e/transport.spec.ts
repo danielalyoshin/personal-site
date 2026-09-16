@@ -537,3 +537,188 @@ test('the compact player supports skip, sound, and eject on a narrow touch scree
     await context.close()
   }
 })
+
+// Step the eject by hand from wherever the tape is, yielding between frames
+// so React can commit the landing (it clears the eject from inside the loop).
+async function ejectRun(page: Page, slug: string) {
+  return page.evaluate(async (slug) => {
+    const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const threeModule = '/node_modules/.vite/deps/three.js'
+    const { _roots } = (await import(
+      fiberModule
+    )) as typeof import('@react-three/fiber')
+    const { Box3, Mesh, Quaternion } = (await import(
+      threeModule
+    )) as typeof import('three')
+    const root = _roots.get(document.querySelector('canvas')!)!.store
+    const state = root.getState()
+    const { scene } = state
+    const tape = scene.getObjectByName(`tape-${slug}`)!
+    // The fixed pointer target marks the slot the tape must return to.
+    const home = scene.getObjectByName(`pointer-target-${slug}`)!.position
+    const player = scene.getObjectByName('vhs-player')!
+    const flap = scene.getObjectByName('player-flap')!
+    const front = new Box3().setFromObject(
+      scene.getObjectByName('player-fascia')!,
+      true,
+    ).max.z
+    const obstacles = [
+      scene.getObjectByName('crt-monitor')!,
+      scene.getObjectByName('decorative-tape')!,
+      scene.getObjectByName('studio-tabletop')!,
+      scene.getObjectByName('headphones-and-stand')!,
+      ...scene
+        .getObjectByName('studio-model')!
+        .children.filter(
+          (child) => child.name.startsWith('tape-') && child !== tape,
+        ),
+    ]
+    scene.getObjectByName('archive-holder')!.traverse((part) => {
+      if (part instanceof Mesh && part.geometry.type !== 'PlaneGeometry')
+        obstacles.push(part)
+    })
+    const collisionFrames: string[] = []
+    let crossingFrames = 0
+    let closedFlapCrossing = 0
+    let movingFrames = 0
+    let maxFlap = 0
+    let landedAt = -1
+    const start = tape.position.clone()
+    const previous = tape.position.clone()
+    for (let frame = 0; frame < 220; frame++) {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      root.getState().setFrameloop('never')
+      state.advance(state.clock.elapsedTime + 1 / 60)
+      const bounds = new Box3().setFromObject(tape, true)
+      if (tape.position.distanceTo(previous) > 1e-5) movingFrames++
+      const outward = tape.position.z > previous.z
+      previous.copy(tape.position)
+      maxFlap = Math.max(maxFlap, flap.rotation.x)
+      for (const obstacle of obstacles)
+        if (bounds.intersectsBox(new Box3().setFromObject(obstacle, true)))
+          collisionFrames.push(`${frame}: ${obstacle.name}`)
+      player.traverse((part) => {
+        if (
+          part instanceof Mesh &&
+          part.geometry.type !== 'PlaneGeometry' &&
+          bounds.intersectsBox(new Box3().setFromObject(part, true))
+        )
+          collisionFrames.push(
+            `${frame}: player ${part.name || part.parent?.name}`,
+          )
+      })
+      if (outward && bounds.min.z < front && bounds.max.z > front) {
+        crossingFrames++
+        if (flap.rotation.x < 1.5) closedFlapCrossing++
+      }
+      // Flat in its slot: the focus returning to its link is no preview.
+      const atRest =
+        tape.position.distanceTo(home) < 1e-3 &&
+        tape.quaternion.angleTo(new Quaternion()) < 1e-3
+      if (landedAt < 0 && frame > 2 && atRest) landedAt = frame
+    }
+    return {
+      start: start.toArray(),
+      collisionFrames,
+      crossingFrames,
+      closedFlapCrossing,
+      movingFrames,
+      maxFlap,
+      flapEnd: flap.rotation.x,
+      landedAt,
+      restDistance: tape.position.distanceTo(home),
+    }
+  }, slug)
+}
+
+test('eject runs the mechanism back to the rack, from seated and from mid-insertion', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  await advanceScene(page, 80)
+  const gamma = page.getByRole('link', {
+    name: /^Play tape: Placeholder: Gamma/,
+  })
+  await gamma.click()
+  await page.getByRole('button', { name: 'Skip animation' }).click()
+  await expect(page.locator('article h2')).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  const seated = await ejectRun(page, 'placeholder-gamma')
+  expect(seated.collisionFrames).toEqual([])
+  // It left through the opening with the flap up, travelled rather than
+  // snapped, and settled in its slot with the flap closed behind it.
+  expect(seated.crossingFrames).toBeGreaterThan(4)
+  expect(seated.closedFlapCrossing).toBe(0)
+  expect(seated.movingFrames).toBeGreaterThan(60)
+  expect(seated.landedAt).toBeGreaterThan(60)
+  expect(seated.restDistance).toBeLessThan(1e-3)
+  expect(seated.flapEnd).toBe(0)
+  await expect(gamma).toBeFocused()
+  await expect(page.getByText('Choose a tape to play')).toBeVisible()
+  // Once landed, its slot answers the pointer again.
+  await page.evaluate(() => window.scrollTo(0, 0))
+  const slot = await page.evaluate(async () => {
+    const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const threeModule = '/node_modules/.vite/deps/three.js'
+    const { _roots } = (await import(
+      fiberModule
+    )) as typeof import('@react-three/fiber')
+    const { Vector3 } = (await import(threeModule)) as typeof import('three')
+    const state = _roots
+      .get(document.querySelector('canvas')!)!
+      .store.getState()
+    const rect = document.querySelector('canvas')!.getBoundingClientRect()
+    const point = state.scene
+      .getObjectByName('pointer-target-placeholder-gamma')!
+      .getWorldPosition(new Vector3())
+    point.z += 0.5
+    point.project(state.camera)
+    return {
+      x: rect.x + ((point.x + 1) * rect.width) / 2,
+      y: rect.y + ((1 - point.y) * rect.height) / 2,
+    }
+  })
+  await page.mouse.move(slot.x, slot.y)
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.cursor))
+    .toBe('pointer')
+  await page.mouse.move(10, 10)
+
+  // Escape mid-insertion: the tape retraces its outward path from where it
+  // is, never seating first, with the flap still closed.
+  await gamma.click()
+  await expect(
+    page.getByRole('button', { name: 'Skip animation' }),
+  ).toBeVisible()
+  await expect
+    .poll(() =>
+      page.evaluate(async () => {
+        const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+        const { _roots } = (await import(
+          fiberModule
+        )) as typeof import('@react-three/fiber')
+        const { size } = _roots
+          .get(document.querySelector('canvas')!)!
+          .store.getState()
+        return [size.width, size.height]
+      }),
+    )
+    .toEqual([page.viewportSize()!.width, page.viewportSize()!.height])
+  await advanceScene(page, 30)
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  const early = await ejectRun(page, 'placeholder-gamma')
+  expect(early.start[2]).toBeGreaterThan(1)
+  expect(early.collisionFrames).toEqual([])
+  expect(early.crossingFrames).toBe(0)
+  expect(early.maxFlap).toBeLessThan(0.1)
+  expect(early.movingFrames).toBeGreaterThan(10)
+  expect(early.restDistance).toBeLessThan(1e-3)
+})

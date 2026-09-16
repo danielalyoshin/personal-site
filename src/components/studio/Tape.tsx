@@ -1,16 +1,46 @@
 import { useMemo, useRef, type RefObject } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Group, Quaternion, Vector3 } from 'three'
+import { BoxGeometry, Group, MathUtils, Quaternion, Vector3 } from 'three'
 import type { Project } from '../../content/types'
 import CassetteModel from './CassetteModel'
 import { fitType, makeTexture, useTextureDisposal } from './textures'
 import { insertionPose } from './transport'
+
+/** A previewed cassette rises and comes forward by this much. */
+const LIFT = new Vector3(0, 0.22, 0.38)
+
+/**
+ * The preview arc from the slot (0) to the lifted pose (1): the shell rises
+ * before it comes forward, and retreats before it drops, so its bottom edge
+ * clears the rack's retaining lip both ways. A straight diagonal cut the
+ * lip's corner.
+ */
+function liftPose(home: Vector3, amount: number, out: Vector3) {
+  out.set(
+    home.x,
+    home.y + LIFT.y * amount * (2 - amount),
+    home.z + LIFT.z * amount * amount,
+  )
+}
+
+/**
+ * The pointer target is the shell's resting envelope in its slot: the rack's
+ * 0.43 pitch across, 1.68 tall, 1.09 deep to the spine. It never moves. The
+ * cassette itself lifts on preview, and a target that lifted with it would
+ * slide out from under a resting pointer, drop the preview, land back under
+ * the pointer, and lift again. Fixed slots hand over cleanly, one to the next.
+ */
+const SLOT_TARGET = new BoxGeometry(0.43, 1.68, 1.09)
+
+type Flight = 'insert' | 'eject' | null
 
 export interface TapeProps {
   tape: Project
   index: number
   active: boolean
   selected: boolean
+  /** The mechanism runs back from wherever it is until the tape is home. */
+  ejecting: boolean
   reduced: boolean
   progress: RefObject<number>
   interactive: boolean
@@ -23,6 +53,7 @@ export default function Tape({
   index,
   active,
   selected,
+  ejecting,
   reduced,
   progress,
   interactive,
@@ -35,7 +66,11 @@ export default function Tape({
     () => new Vector3(1.05 + index * 0.43, 1.72, 0.28),
     [index],
   )
-  const previousSelected = useRef(selected)
+  const previousFlight = useRef<Flight>(null)
+  /** Where the shell sits on the preview arc; a flight resumes from it. */
+  const lift = useRef(0)
+  /** The last timeline position a flight saw: an eject lands only at 0. */
+  const lastProgress = useRef(1)
   const scratch = useRef({
     target: new Vector3(),
     rotation: new Quaternion(),
@@ -86,69 +121,91 @@ export default function Tape({
   useFrame((_, delta) => {
     const { target, rotation, start, startRotation } = scratch.current
     if (!group.current) return
-    const selectionChanged = selected !== previousSelected.current
-    if (selectionChanged) {
-      start.copy(group.current.position)
-      startRotation.copy(group.current.quaternion)
-      previousSelected.current = selected
+    const flight: Flight = selected ? 'insert' : ejecting ? 'eject' : null
+    const previous = previousFlight.current
+    if (flight !== previous) {
+      previousFlight.current = flight
+      if (flight === 'insert') {
+        // From wherever the shell is: at rest, or lifted on preview.
+        start.copy(group.current.position)
+        startRotation.copy(group.current.quaternion)
+      }
     }
-    const dt = Math.min(delta, 0.05)
-    if (selected) {
+    if (flight === 'eject' && progress.current >= 0.34) {
+      // Back into the slot itself, flat. The path only depends on this
+      // start once the tape has turned; an early eject retraces its own
+      // outward start instead and settles the rest below.
+      start.copy(home)
+      startRotation.identity()
+      lift.current = 0
+    }
+    if (flight) {
+      lastProgress.current = progress.current
       insertionPose(progress.current, start, startRotation, target, rotation)
       group.current.position.copy(target)
       group.current.quaternion.copy(rotation)
-    } else {
-      target.copy(home)
-      target.y += active ? 0.22 : 0
-      target.z += active ? 0.38 : 0
-      const factor = reduced ? 1 : 1 - Math.exp(-dt * 14)
-      // Eject restores the archive immediately instead of cutting through the CRT.
-      if (selectionChanged) group.current.position.copy(target)
-      else group.current.position.lerp(target, factor)
-      rotation.identity()
-      group.current.quaternion.slerp(rotation, selectionChanged ? 1 : factor)
-      if (
-        group.current.position.distanceTo(target) > 0.001 ||
-        group.current.quaternion.angleTo(rotation) > 0.001
-      )
-        invalidate()
+      return
     }
+    // A mechanism that stops short (reduced motion, the fallback reader, a
+    // new selection mid-eject) restores the archive at once rather than
+    // cutting through the CRT; a landed tape only settles. The shared
+    // timeline may already be reset for the next tape, so completion is
+    // judged by the last position this flight itself saw.
+    const interrupted =
+      flight !== previous && (previous === 'insert' || lastProgress.current > 0)
+    const snap = reduced || interrupted
+    const factor = snap ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 14)
+    const raised = active ? 1 : 0
+    lift.current = MathUtils.lerp(lift.current, raised, factor)
+    liftPose(home, lift.current, target)
+    rotation.identity()
+    group.current.position.copy(target)
+    group.current.quaternion.slerp(rotation, factor)
+    if (
+      Math.abs(lift.current - raised) > 0.001 ||
+      group.current.quaternion.angleTo(rotation) > 0.001
+    )
+      invalidate()
   })
 
   return (
-    <group
-      ref={group}
-      name={`tape-${tape.slug}`}
-      position={home}
-      onPointerOver={(event) => {
-        event.stopPropagation()
-        if (interactive) {
-          document.body.style.cursor = 'pointer'
-          onPreview(tape)
-        }
-      }}
-      onPointerOut={() => {
-        document.body.style.cursor = ''
-        onPreview(null)
-      }}
-      onClick={(event) => {
-        event.stopPropagation()
-        if (event.delta < 5 && interactive) {
-          document.body.style.cursor = ''
-          onSelect(tape)
-        }
-      }}
-    >
-      <group rotation={[0, Math.PI / 2, Math.PI / 2]}>
-        <CassetteModel
-          title={tape.vhs.spineLabel.split(' · ')[0]}
-          accent={tape.vhs.accent}
-        />
+    <>
+      <group ref={group} name={`tape-${tape.slug}`} position={home}>
+        <group rotation={[0, Math.PI / 2, Math.PI / 2]}>
+          <CassetteModel
+            title={tape.vhs.spineLabel.split(' · ')[0]}
+            accent={tape.vhs.accent}
+          />
+        </group>
+        <mesh position={[0, 0, 0.546]}>
+          <planeGeometry args={[0.306, 1.54]} />
+          <meshStandardMaterial map={label} roughness={0.9} />
+        </mesh>
       </group>
-      <mesh position={[0, 0, 0.546]}>
-        <planeGeometry args={[0.306, 1.54]} />
-        <meshStandardMaterial map={label} roughness={0.9} />
-      </mesh>
-    </group>
+      <mesh
+        name={`pointer-target-${tape.slug}`}
+        geometry={SLOT_TARGET}
+        position={home}
+        visible={false}
+        onPointerOver={(event) => {
+          event.stopPropagation()
+          if (interactive) {
+            document.body.style.cursor = 'pointer'
+            onPreview(tape)
+          }
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = ''
+          onPreview(null)
+        }}
+        onClick={(event) => {
+          event.stopPropagation()
+          if (event.delta < 5 && interactive) {
+            document.body.style.cursor = ''
+            onSelect(tape)
+          }
+        }}
+      />
+    </>
   )
 }

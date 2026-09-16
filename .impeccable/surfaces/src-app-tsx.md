@@ -49,14 +49,19 @@ reveals broad planes; only the CRT emits light.
 
 Browse: "Choose a tape to play" explains the action before the canvas, with
 a one-line instruction that points at the studio rather than the index.
-Hover/focus previews and raises a tape; click or Enter selects it. Internal
+Hover/focus previews and raises a tape; click or Enter selects it. The
+pointer target is the cassette's resting slot, fixed while the shell lifts,
+so previews hand over cleanly from one slot to the next. Internal
 playback links use the drawn play mark; links that leave the site carry the
 drawn outward arrow.
 The view is authored: there is no drag-to-orbit and no reset, so touch
 swipes scroll the page and pinch zoom remains a browser gesture. Modified
 clicks retain native link navigation.
 Insertion moves the actual cassette into the deck, then the camera faces the
-screen. A skip control completes the transition. Reduced motion is immediate.
+screen. A skip control completes the transition. Eject runs the same
+mechanism back to the rack, from wherever the tape is, while the camera
+returns to browse; the deck reads EJECT meanwhile. Reduced motion is
+immediate both ways.
 
 Read: accessible HTML inside the modeled CRT when the viewport is wider than
 767px and taller than 699px. At widths up to 767px or heights up to 699px, use

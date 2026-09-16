@@ -1,6 +1,7 @@
 import {
   Component,
   lazy,
+  startTransition,
   Suspense,
   useCallback,
   useEffect,
@@ -93,6 +94,25 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   if (handoff && (!open || useNativeReader)) setHandoff(null)
   const [insertingSlug, setInsertingSlug] = useState<string | null>(null)
   const loading = !!tape && insertingSlug === tape.slug && !flat
+  // The tape in the deck, and the one running the mechanism back to its slot
+  // once playback closes by eject, Escape, or history. Both are settled on
+  // the closing render, so the route and the mechanism land together; the
+  // router commits navigation in a transition, after any state set beside it.
+  const [deckTape, setDeckTape] = useState<Project | null>(tape)
+  const [ejecting, setEjecting] = useState<Project | null>(null)
+  const [wasOpenRender, setWasOpenRender] = useState(open)
+  if (tape && tape.slug !== deckTape?.slug) setDeckTape(tape)
+  if (invalid && deckTape) setDeckTape(null)
+  if (open !== wasOpenRender) {
+    setWasOpenRender(open)
+    // Reduced motion and the fallback reader return the tape at once; the
+    // scene finishes immediately for the former, and there is no scene for
+    // the latter. Reopening mid-eject seats the tape again.
+    setEjecting(!open && ready && !flat ? deckTape : null)
+    // An eject mid-insertion reverses from where the tape is; clearing the
+    // insertion any earlier would seat it first.
+    if (!open) setInsertingSlug(null)
+  }
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
   const lastTape = useRef<string | null>(null)
   const titleEl = useRef<HTMLHeadingElement | null>(null)
@@ -100,6 +120,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const deckPortal = useRef<HTMLDivElement>(null)
   const nativeScreen = useRef<HTMLDivElement>(null)
   const wasOpen = useRef(open)
+  // Focus returning to the ejected tape's link is not a preview: the tape
+  // settles flat in its slot rather than lifting again.
+  const restoringFocus = useRef(false)
   const previewSlug = useRef<string | null>(null)
   const mode = invalid ? 'nosignal' : tape ? 'playing' : 'idle'
 
@@ -158,11 +181,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const onUnavailable = useCallback(() => {
     setFlat(true)
     setInsertingSlug(null)
+    setEjecting(null)
   }, [])
   const onInserted = useCallback(() => {
     setInsertingSlug(null)
     playSound('insert')
   }, [])
+  const onEjected = useCallback(() => setEjecting(null), [])
   const skipInsertion = useCallback(() => {
     onInserted()
     setSkips((value) => value + 1)
@@ -172,20 +197,28 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     previewSlug.current = next?.slug ?? null
     setPreview(next)
   }, [])
+  // The router commits navigation in a transition. State set beside it joins
+  // that transition, so a selection or an eject lands in one render: the
+  // cassette never starts settling from its preview, or seating, before the
+  // mechanism takes it from exactly where it is.
   const eject = useCallback(() => {
-    setInsertingSlug(null)
-    setNativePlayback(false)
     playSound('eject')
-    navigate('/')
+    startTransition(() => {
+      setNativePlayback(false)
+      navigate('/')
+    })
   }, [navigate])
   const select = useCallback(
     (next: Project) => {
       lastTape.current = next.slug
-      previewTape(null)
-      setNativePlayback(!ready)
-      setInsertingSlug(!reduced && !flat && ready ? next.slug : null)
       if (reduced || flat || !ready) playSound('insert')
-      navigate(`/project/${next.slug}`)
+      startTransition(() => {
+        previewTape(null)
+        setEjecting(null)
+        setNativePlayback(!ready)
+        setInsertingSlug(!reduced && !flat && ready ? next.slug : null)
+        navigate(`/project/${next.slug}`)
+      })
     },
     [flat, navigate, previewTape, ready, reduced],
   )
@@ -229,7 +262,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   }, [open, tape])
   useEffect(() => {
     if (!open && wasOpen.current && lastTape.current) {
+      restoringFocus.current = true
       tapeEls.current.get(lastTape.current)?.focus({ preventScroll: true })
+      restoringFocus.current = false
     }
     wasOpen.current = open
   }, [open])
@@ -488,6 +523,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     reduced={reduced}
                     skips={skips}
                     inserting={loading}
+                    ejecting={ejecting}
                     playback={open && !useNativeReader}
                     deckPortal={deckPortal}
                     soundOn={soundOn}
@@ -495,6 +531,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     onSelect={select}
                     onPreview={previewTape}
                     onInserted={onInserted}
+                    onEjected={onEjected}
                     onReady={onReady}
                     onUnavailable={onUnavailable}
                   >
@@ -545,7 +582,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     event.preventDefault()
                     select(item)
                   }}
-                  onFocus={() => previewTape(item)}
+                  onFocus={() => {
+                    if (!restoringFocus.current) previewTape(item)
+                  }}
                   onBlur={() => previewTape(null)}
                   onPointerEnter={() => previewTape(item)}
                   onPointerLeave={() => previewTape(null)}

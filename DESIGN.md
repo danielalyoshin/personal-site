@@ -459,7 +459,8 @@ after insertion ends; during insertion the only control is Skip animation.
 
 The status window is the deck's readout, a two-field print in its dark
 recess: transport state on the left (STANDBY, LOADING, a drawn play mark with
-PLAY, or NO SIGNAL) and the sound mark on the right: the same speaker as the
+PLAY, EJECT while the tape returns, or NO SIGNAL) and the sound mark on the
+right: the same speaker as the
 native key, a filled body in the readout's light ink like its play mark, with
 two stroked waves when sound is on and a red slash across it when off. Sound
 state lives here, not on the key, and the mark carries no word. Nothing emits
@@ -524,9 +525,16 @@ with the loose cassette uniformly scaled. Modeled spine labels retain classic,
 rental, and studio variants. High-resolution
 local canvas textures carry the print; hovering a tape or focusing its link
 lifts and previews the same cassette without changing its size or orientation.
-Selection lifts clear of the rack, pulls forward of the table, turns flat,
-aligns with the deck slot, and seats inside the hollow bay. The flap closes
-before the camera moves to reading position.
+The lift follows an arc that rises before it comes forward, and retreats
+before it drops, so the shell's bottom edge clears the rack's retaining lip
+both ways.
+The pointer target is each cassette's resting envelope in its rack slot (the
+0.43 pitch across, the shell's height and depth), an invisible fixed box that
+does not lift with the shell: a target that moved would slide out from under
+a resting pointer and flicker the preview, whereas fixed slots hand over
+cleanly at their shared edge. Selection lifts clear of the rack, pulls
+forward of the table, turns flat, aligns with the deck slot, and seats inside
+the hollow bay. The flap closes before the camera moves to reading position.
 
 Selection first moves the canvas to its full-viewport box and fits the studio
 to that box at once; the tape waits at rest until the new box has been
@@ -535,8 +543,18 @@ the cassette is moving. One render-driven timeline coordinates the mechanism
 (nominally 2.4 seconds,
 with frame deltas capped at 0.05 seconds, so slow rendering can lengthen it).
 Camera interpolation follows afterward and is not a fixed 560ms CSS dolly.
-Skip finishes immediately; reduced motion snaps tape and camera state. Deep links begin seated (The Handoff Rule); eject
-returns focus to the corresponding archive link. There is no ambient geometry animation. The scene
+Skip finishes immediately; reduced motion snaps tape and camera state. Deep links begin seated (The Handoff Rule).
+Eject runs the same timeline back, nominally 1.8 seconds, an exit quicker
+than the entrance: the flap opens, the tape leaves the bay, turns, and
+settles into its slot along the path it came by, while the camera returns to
+the browse view, and settles flat in its slot. Focus returns to the
+corresponding archive link, but that return is not a preview, so the tape
+stays seated until it is hovered or focused again; an eject during
+insertion reverses from wherever the tape is; the deck reads EJECT
+for the return; history back ejects the same way. Reduced motion and the
+fallback reader return the tape at once. Selection and eject commit inside
+the router's navigation transition, so the mechanism always starts from the
+cassette's exact pose. There is no ambient geometry animation. The scene
 loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
 modeled playback, and disposes generated
 textures and geometries.

@@ -10,6 +10,8 @@ export const PLAYER = {
 }
 
 export const INSERT_SECONDS = 2.4
+/** Eject runs the same path back; an exit is quicker than an entrance. */
+export const EJECT_SECONDS = 1.8
 export const FLAT_TAPE = new Quaternion().setFromAxisAngle(
   new Vector3(0, 0, 1),
   Math.PI / 2,
