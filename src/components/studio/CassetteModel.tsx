@@ -73,14 +73,8 @@ function chamferedRectangle(width: number, height: number, bevel: number) {
   return shape
 }
 
-/** Canonical VHS shell: 1.68 × 1.08 × 0.40. The broad printed face points +Z. */
-export default function CassetteModel({
-  title = 'SIDE A',
-  accent = '#bfc8cd',
-}: {
-  title?: string
-  accent?: string
-}) {
+/** The paper label stuck on the broad face; a blank shell carries none. */
+function FaceLabel({ title, accent }: { title: string; accent: string }) {
   // 256 × 480 matches the 0.233 × 0.436 label plane, so the print never stretches.
   const label = useMemo(
     () =>
@@ -103,6 +97,35 @@ export default function CassetteModel({
     [title, accent],
   )
   useTextureDisposal(label)
+  return (
+    <>
+      <Solid
+        size={[0.243, 0.448, 0.008]}
+        position={[0, 0.032, 0.198]}
+        color="#d5d9d4"
+        bevel={0.002}
+      />
+      <mesh position={[0, 0.032, 0.204]}>
+        <planeGeometry args={[0.233, 0.436]} />
+        <meshStandardMaterial map={label} roughness={0.9} />
+      </mesh>
+    </>
+  )
+}
+
+/**
+ * Canonical VHS shell: 1.68 × 1.08 × 0.40. The broad printed face points +Z.
+ * A blank shell is the same molding with no label stuck on it.
+ */
+export default function CassetteModel({
+  title = 'SIDE A',
+  accent = '#bfc8cd',
+  blank = false,
+}: {
+  title?: string
+  accent?: string
+  blank?: boolean
+}) {
   const face = useMemo(() => {
     const shape = chamferedRectangle(1.61, 0.91, 0.027)
     for (const x of [-0.43, 0.43]) {
@@ -149,16 +172,7 @@ export default function CassetteModel({
           <DetailBoxes boxes={teeth} color="#aeb8bb" />
         </group>
       ))}
-      <Solid
-        size={[0.243, 0.448, 0.008]}
-        position={[0, 0.032, 0.198]}
-        color="#d5d9d4"
-        bevel={0.002}
-      />
-      <mesh position={[0, 0.032, 0.204]}>
-        <planeGeometry args={[0.233, 0.436]} />
-        <meshStandardMaterial map={label} roughness={0.9} />
-      </mesh>
+      {!blank && <FaceLabel title={title} accent={accent} />}
       <DetailBoxes boxes={ribs} color="#27323d" />
       <Fasteners positions={screws} radius={0.014} color="#7a858f" />
       {/* The long hinged guard and its end pivots enclose the tape edge. */}

@@ -263,6 +263,25 @@
   height: var(--type-caption);
   color: var(--silk-dim);
 }
+/* A slot with nothing to play yet keeps its place and its number but is
+   drawn as an outline, not a tape: a dashed seam, no accent strip, no play
+   mark, and dim silkscreen throughout. It answers no pointer and takes no
+   focus, so the hover, focus, and preview fills never apply. */
+.tapeComing {
+  display: grid;
+  grid-template: auto auto / minmax(0, 1fr);
+  gap: 4px;
+  align-content: center;
+  padding: 12px;
+  min-height: 80px;
+  width: 100%;
+  border: 1px dashed var(--seam-lit);
+  border-radius: 3px;
+}
+.tapeComing .tapeLabel {
+  color: var(--silk-dim);
+  text-transform: none;
+}
 .footer {
   display: flex;
   align-items: center;

@@ -755,10 +755,53 @@ and the speaker as the strongest pieces; the goal is cohesion, not realism.
   table edge, phone and short-laptop browse views, `tsc`, ESLint, Prettier,
   and the Playwright suite.
 
+#### Blank slots round (2026-09-16)
+
+Daniel asked for a solution for cassettes without project data: an inactive
+state, greyed out with a stylized "On the way!" in the text index (changed
+to "Coming soon…" on his review), and in the studio a tape that is not
+selectable, does not animate, and is plain with no label.
+
+- ✅ Content: the rack has six fixed slots (`SHELF_SLOTS`), five for projects
+  and About at the right. `shelfTapes` is the project list, a `ComingTape`
+  for every project slot not yet filled, then About; `playableTapes` is
+  every entry with a route, and `findTape` searches only those. Adding a
+  project to `projects` fills the next blank slot; listing more than five
+  throws at load. Delta and Epsilon were removed so two slots are blank; the
+  three remaining placeholders keep the long-title, media, and studio-label
+  cases (the two-still gallery case went with Delta).
+- ✅ Index: a blank slot keeps its cell and number but is a plain text entry
+  (`.tapeComing`), not a link: 1px dashed seam-lit border, no accent strip,
+  no play mark, dim silkscreen reading "Coming soon…" over "Blank tape". It
+  takes no focus and no pointer; arrows and Home/End move between the
+  playable links only. The About shortcut selects `aboutTape` directly.
+- ✅ Studio: `BlankTape` seats the shared shell in its slot with
+  `CassetteModel blank` (the face label moved into a `FaceLabel` child so a
+  blank shell mounts no texture), no spine print, and no frame loop, behind
+  a slot target of its own that swallows the pointer (`stopPropagation` on
+  over and click). Without one, Gamma answered across the blank slots: the
+  three-quarter camera looks along the rack, so a ray through an empty slot
+  ran on into Gamma's 1.09-deep envelope, which Delta's target used to
+  occlude. Daniel reported it in review. The rack's slot pads and dividers
+  are unchanged. `slotHome` moved to `transport.ts` so both tape
+  kinds share the slot position.
+- ✅ Regression: the hover sweep now expects the guide to read idle across
+  the two blank slots; a new studio test covers the four links, the two read-
+  only entries, keyboard passes over them, zero printed maps on a blank shell
+  against two on a printed one, exactly four pointer targets, and NO SIGNAL
+  for `/project/coming-1`.
+- Docs: DESIGN.md Tape index (The Blank Slot Rule) and Cassettes, the
+  `tape-link-coming` token, the surface brief, README, and the sidecar
+  sample.
+- Validation: desktop, 1024px, and phone screenshots of the index and the
+  studio, `tsc`, ESLint, Prettier, and the Playwright suite.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,
   per-project label art.
+- Slots without a project hold blank tapes and read "Coming soon…" until one
+  lands (blank slots round above); real projects fill them in order.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

@@ -171,6 +171,12 @@ components:
     padding: '16px 12px'
   tape-link-preview:
     backgroundColor: '{colors.ink-2}'
+  tape-link-coming:
+    backgroundColor: 'transparent'
+    textColor: '{colors.silkscreen-dim}'
+    typography: '{typography.functional-title}'
+    rounded: '{rounded.archive}'
+    padding: '16px 12px'
   link-osd:
     backgroundColor: 'transparent'
     textColor: '{colors.osd-white}'
@@ -549,15 +555,32 @@ spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
 needed; 12px secondary copy distinguishes "Placeholder" from the About
-tape's "Meet the maker". The six links remain normal Tab stops,
-with arrows and Home/End for direct movement; About is included in its accessible name.
-The index heading carries no count; nothing on the shell does.
+tape's "Meet the maker". The playable links are normal Tab stops, with
+arrows and Home/End for direct movement between them; About is included in
+its accessible name. The index heading carries no count; nothing on the
+shell does.
+
+**The Blank Slot Rule.** The rack has six slots: five for projects and the
+About tape at the right. A project slot with nothing behind it yet keeps its
+place and its number but is drawn as an outline, not a tape: the same 80px
+cell and 12px inset, a 1px dashed seam-lit border, no accent strip, no play
+mark, and dim silkscreen throughout, reading "Coming soon…" over the caption
+"Blank tape". It is plain text, not a link: it answers no pointer, takes no
+focus, and the arrow keys pass over it. Adding a project to the content list
+turns the next blank slot into a playable tape and nothing else changes. A
+blank slot has no route, so a link to one reads NO SIGNAL like any dead tape.
 
 ### Cassettes and insertion
 
-The loose cassette and all six selectable tapes use the same modeled shell,
-with the loose cassette uniformly scaled. Modeled spine labels retain classic,
-rental, and studio variants. High-resolution
+The loose cassette, every playable tape, and every blank tape use the same
+modeled shell, with the loose cassette uniformly scaled. A blank slot's tape
+is that shell with nothing stuck on it, no spine print and no face label,
+seated flat in its slot. Its slot target swallows the pointer, so it never
+previews, lifts, or plays, and the printed tapes behind it in the
+three-quarter view do not answer through it: the camera looks along the
+rack, and a ray through an empty slot would run on into the next envelope
+(The Blank Slot Rule, under Tape index). Modeled spine labels retain
+classic, rental, and studio variants. High-resolution
 local canvas textures carry the print; hovering a tape or focusing its link
 lifts and previews the same cassette without changing its size or orientation.
 The lift follows an arc that rises before it comes forward, and retreats
@@ -670,6 +693,7 @@ small/medium gaps. They are informational labels, not filled chips or filters.
 - Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do keep placeholder projects explicitly labeled until Daniel supplies real content.
+- Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 
 ### Don't:
 

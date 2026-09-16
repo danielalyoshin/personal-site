@@ -1,8 +1,10 @@
 # Daniel Alyoshin — Midnight Studio
 
 A personal portfolio as a low-poly 3D studio. Pick a VHS cassette and the camera
-moves toward a CRT to play its project details. The six tapes currently contain
-five explicit placeholders and an About draft.
+moves toward a CRT to play its project details. The rack's six slots currently
+hold three explicit placeholders, two blank tapes marked "Coming soon…", and an
+About draft; adding a project to `src/content/projects/index.ts` fills the next
+blank slot.
 
 ## Develop
 

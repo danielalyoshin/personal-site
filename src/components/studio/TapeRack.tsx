@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Shape } from 'three'
 import { shelfTapes } from '../../content/projects'
+import { shelfKey } from '../../content/types'
 import { Solid } from './geometry'
 import { Fasteners } from './ModelDetails'
 
@@ -58,7 +59,7 @@ export default function TapeRack() {
       />
       {/* Channels keep a visible clearance beside every shell and its guide. */}
       {shelfTapes.map((tape, index) => (
-        <group key={tape.slug} position={[-1.075 + index * 0.43, 0, 0]}>
+        <group key={shelfKey(tape)} position={[-1.075 + index * 0.43, 0, 0]}>
           <Solid
             name={`rack-pad-${index}`}
             size={[0.393, 0.012, 1.08]}

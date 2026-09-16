@@ -1,10 +1,10 @@
 import { useMemo, useRef, type RefObject } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { BoxGeometry, Group, MathUtils, Quaternion, Vector3 } from 'three'
+import { Group, MathUtils, Quaternion, Vector3 } from 'three'
 import type { Project } from '../../content/types'
 import CassetteModel from './CassetteModel'
 import { fitType, makeTexture, useTextureDisposal } from './textures'
-import { insertionPose } from './transport'
+import { insertionPose, SLOT_TARGET, slotHome } from './transport'
 
 /** A previewed cassette rises and comes forward by this much. */
 const LIFT = new Vector3(0, 0.22, 0.38)
@@ -22,15 +22,6 @@ function liftPose(home: Vector3, amount: number, out: Vector3) {
     home.z + LIFT.z * amount * amount,
   )
 }
-
-/**
- * The pointer target is the shell's resting envelope in its slot: the rack's
- * 0.43 pitch across, 1.68 tall, 1.09 deep to the spine. It never moves. The
- * cassette itself lifts on preview, and a target that lifted with it would
- * slide out from under a resting pointer, drop the preview, land back under
- * the pointer, and lift again. Fixed slots hand over cleanly, one to the next.
- */
-const SLOT_TARGET = new BoxGeometry(0.43, 1.68, 1.09)
 
 type Flight = 'insert' | 'eject' | null
 
@@ -62,10 +53,7 @@ export default function Tape({
 }: TapeProps) {
   const group = useRef<Group>(null)
   const invalidate = useThree((state) => state.invalidate)
-  const home = useMemo(
-    () => new Vector3(1.05 + index * 0.43, 1.72, 0.28),
-    [index],
-  )
+  const home = useMemo(() => slotHome(index), [index])
   const previousFlight = useRef<Flight>(null)
   /** Where the shell sits on the preview arc; a flight resumes from it. */
   const lift = useRef(0)

@@ -1,4 +1,4 @@
-import { MathUtils, Quaternion, Vector3 } from 'three'
+import { BoxGeometry, MathUtils, Quaternion, Vector3 } from 'three'
 
 // World coordinates shared by the player, cassette path, and camera.
 // The deck sits on a 0.035 shadow line, the speaker's proportion, and the
@@ -11,6 +11,23 @@ export const PLAYER = {
   screenY: 3.23,
   playbackY: 2.64,
 }
+
+/** Where a shell rests in the rack's numbered slot, blank or printed. */
+export function slotHome(index: number) {
+  return new Vector3(1.05 + index * 0.43, 1.72, 0.28)
+}
+
+/**
+ * The pointer target is the shell's resting envelope in its slot: the rack's
+ * 0.43 pitch across, 1.68 tall, 1.09 deep to the spine. It never moves. The
+ * cassette itself lifts on preview, and a target that lifted with it would
+ * slide out from under a resting pointer, drop the preview, land back under
+ * the pointer, and lift again. Fixed slots hand over cleanly, one to the next.
+ * Every slot has one, blank slots included: the three-quarter camera looks
+ * along the rack, so a ray through an empty slot would run on into the
+ * envelope of the printed tape behind it.
+ */
+export const SLOT_TARGET = new BoxGeometry(0.43, 1.68, 1.09)
 
 export const INSERT_SECONDS = 2.4
 /** Eject runs the same path back; an exit is quicker than an entrance. */

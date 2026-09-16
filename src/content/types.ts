@@ -39,3 +39,25 @@ export interface Project {
   media: ProjectMedia[]
   vhs: VhsPresentation
 }
+
+/**
+ * A shelf slot with no project behind it yet. It holds a blank tape: nothing
+ * to play, nothing printed, and no route. The index reads it as "Coming soon…".
+ */
+export interface ComingTape {
+  /** Stable key for the slot; never a route. */
+  id: string
+  coming: true
+}
+
+/** Anything standing in the rack: a playable tape or a blank one. */
+export type ShelfTape = Project | ComingTape
+
+export function isComing(tape: ShelfTape): tape is ComingTape {
+  return 'coming' in tape
+}
+
+/** A stable React key for a shelf position. */
+export function shelfKey(tape: ShelfTape) {
+  return isComing(tape) ? tape.id : tape.slug
+}

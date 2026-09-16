@@ -118,7 +118,7 @@ for (const fail of [false, true]) {
         await expect(page.locator('canvas')).toHaveCount(0)
         await expect(
           page.getByRole('link', { name: /^Play tape:/ }),
-        ).toHaveCount(6)
+        ).toHaveCount(4)
       }
     } finally {
       held.release()

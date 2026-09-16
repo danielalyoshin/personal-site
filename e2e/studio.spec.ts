@@ -24,7 +24,7 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await page.goto('/')
   await ready(page)
   await expect(page.locator('canvas')).toBeVisible()
-  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(6)
+  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
   const alpha = page.getByRole('link', {
     name: 'Play tape: Placeholder: Alpha (2026)',
     exact: true,
@@ -415,11 +415,116 @@ test('the pointer preview hands over slot to slot without flicker while cassette
   const idle = 'Choose a tape to play'
   const forward = await sweep(geometry.left, geometry.right)
   const back = await sweep(geometry.right, geometry.left)
-  // Six slots, one handover each, and never back to a tape already left.
-  expect(forward).toHaveLength(7)
-  expect(forward.at(-1)).toBe(idle)
-  const tapes = forward.slice(0, 6)
-  expect(new Set(tapes).size).toBe(6)
-  expect(tapes).not.toContain(idle)
-  expect(back).toEqual([...tapes].reverse().concat(idle))
+  // One handover at each shared edge, and never back to a tape already left.
+  // The two blank slots after Gamma answer no pointer, so the guide reads
+  // idle across them until About.
+  const played = ['ALPHA', 'BETA · EXTENDED CUT', 'GAMMA']
+  expect(forward).toEqual([...played, idle, 'ABOUT · DANIEL', idle])
+  expect(back).toEqual(['ABOUT · DANIEL', idle, ...played.reverse(), idle])
+})
+
+test('slots without a project hold blank tapes that are coming soon', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await ready(page)
+  const entries = page.locator('#archive li')
+  await expect(entries).toHaveCount(6)
+  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
+  // Slots 04 and 05 are read, not played: no link, and outside the tab order.
+  for (const slot of [3, 4]) {
+    const entry = entries.nth(slot)
+    await expect(entry).toContainText(`0${slot + 1}`)
+    await expect(entry).toContainText('Coming soon…')
+    await expect(entry.locator('a, button, [tabindex]')).toHaveCount(0)
+  }
+  const gamma = page.getByRole('link', {
+    name: /^Play tape: Placeholder: Gamma/,
+  })
+  const about = page.getByRole('link', { name: /^Play tape: About Daniel/ })
+  await gamma.focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(about).toBeFocused()
+  await page.keyboard.press('ArrowLeft')
+  await expect(gamma).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(about).toBeFocused()
+  await page.keyboard.press('Home')
+  await page.keyboard.press('End')
+  await expect(about).toBeFocused()
+  // In the studio a blank slot holds the same shell with nothing printed,
+  // behind a slot target of its own that swallows the pointer.
+  const studio = await page.evaluate(async () => {
+    const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const { _roots } = (await import(
+      fiberModule
+    )) as typeof import('@react-three/fiber')
+    const state = _roots
+      .get(document.querySelector('canvas')!)!
+      .store.getState()
+    const prints = (name: string) => {
+      let count = 0
+      state.scene.getObjectByName(name)!.traverse((object) => {
+        const { material } = object as { material?: { map?: unknown } }
+        if (material?.map) count++
+      })
+      return count
+    }
+    const { Vector3 } =
+      (await import('/node_modules/.vite/deps/three.js')) as typeof import('three')
+    const rect = document.querySelector('canvas')!.getBoundingClientRect()
+    const centre = state.scene
+      .getObjectByName('tape-coming-1')!
+      .getWorldPosition(new Vector3())
+      .project(state.camera)
+    return {
+      blankPrints: prints('tape-coming-1'),
+      printedPrints: prints('tape-placeholder-gamma'),
+      targets: state.internal.interaction
+        .map((object) => object.name)
+        .filter((name) => name.startsWith('pointer-target-'))
+        .sort(),
+      blankCentre: {
+        x: rect.x + ((centre.x + 1) * rect.width) / 2,
+        y: rect.y + ((1 - centre.y) * rect.height) / 2,
+      },
+    }
+  })
+  expect(studio.blankPrints).toBe(0)
+  expect(studio.printedPrints).toBe(2)
+  expect(studio.targets).toEqual([
+    'pointer-target-about',
+    'pointer-target-coming-1',
+    'pointer-target-coming-2',
+    'pointer-target-placeholder-alpha',
+    'pointer-target-placeholder-beta',
+    'pointer-target-placeholder-gamma',
+  ])
+  // The three-quarter camera looks along the rack: a ray through a blank
+  // slot's own centre reaches Gamma's envelope behind it. The blank slot's
+  // target swallows it, so the guide stays idle and a click plays nothing.
+  // The focused About link is itself a preview; clear it first.
+  await about.blur()
+  const caption = () =>
+    page.evaluate(
+      () =>
+        document
+          .querySelector('[data-testid="studio-scene"]')!
+          .previousElementSibling!.querySelector('span')!.firstChild!
+          .textContent,
+    )
+  await expect.poll(caption).toBe('Choose a tape to play')
+  await page.mouse.move(studio.blankCentre.x, studio.blankCentre.y)
+  await page.waitForTimeout(300)
+  expect(await caption()).toBe('Choose a tape to play')
+  expect(await page.evaluate(() => document.body.style.cursor)).not.toBe(
+    'pointer',
+  )
+  await page.mouse.click(studio.blankCentre.x, studio.blankCentre.y)
+  await page.waitForTimeout(300)
+  await expect(page).toHaveURL('/')
+  expect(await caption()).toBe('Choose a tape to play')
+  // A blank slot has no route: a link to one reads NO SIGNAL like any dead tape.
+  await page.goto('/project/coming-1')
+  await expect(page.getByText('NO SIGNAL').first()).toBeVisible()
 })

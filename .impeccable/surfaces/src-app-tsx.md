@@ -14,7 +14,7 @@ into a clean, artsy, intentional low-poly 3D experience. This supersedes the
 July SVG-only implementation. Normative direction: `DESIGN.md`.
 
 Composition: compact identity header and editorial introduction, selection
-guide above the orthographic 3D exhibit, six-tape text index, GitHub/LinkedIn footer with the contact links
+guide above the orthographic 3D exhibit, six-slot text index, GitHub/LinkedIn footer with the contact links
 flush right. Every shell edge sits on the one column (the cassette mark hangs
 in the gutter above 1200px); the tape index entries' 12px insets are the only
 inboard edges, and each entry stacks its number over its name so it has one
@@ -39,7 +39,8 @@ weight-400 prose, semibold taglines, and tube-scaled VT323 metadata. Every
 arrow, play mark, and dot is drawn (SVG or a CSS box), never typed from a
 fallback font; the Escape hint reads at 7.5:1. Scene/transport controls
 provide 44px hit areas. The studio contains a
-beveled CRT, VCR, speaker, rack of six cassettes, loose cassette with reels,
+beveled CRT, VCR, speaker, rack of six cassettes (blank shells in unfilled
+slots), loose cassette with reels,
 headphones and stand, display table, and plinth. All geometry and printed
 textures are generated locally. Print is limited to the four signature marks
 (status window, AV–01 model line, spine number and name, idle screen) plus one
@@ -51,7 +52,12 @@ Browse: "Choose a tape to play" explains the action before the canvas, with
 a one-line instruction that points at the studio rather than the index.
 Hover/focus previews and raises a tape; click or Enter selects it. The
 pointer target is the cassette's resting slot, fixed while the shell lifts,
-so previews hand over cleanly from one slot to the next. Internal
+so previews hand over cleanly from one slot to the next. A project slot with
+nothing behind it yet holds a blank shell with no print, behind a slot
+target that swallows the pointer so the tapes behind it never answer, and
+its index entry is an outlined, dim "Coming soon…" text cell, not a link;
+adding a project to the content list fills the next such slot (The Blank
+Slot Rule in `DESIGN.md`). Internal
 playback links use the drawn play mark; links that leave the site carry the
 drawn outward arrow.
 The view is authored: there is no drag-to-orbit and no reset, so touch

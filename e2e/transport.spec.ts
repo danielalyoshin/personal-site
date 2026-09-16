@@ -17,7 +17,7 @@ async function advanceScene(page: Page, frames: number) {
   }, frames)
 }
 
-test('all six cassettes clear the studio and enter the open player before playback', async ({
+test('every playable cassette clears the studio and enters the open player before playback', async ({
   page,
 }) => {
   test.setTimeout(60_000)

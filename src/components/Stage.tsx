@@ -12,7 +12,9 @@ import {
 import type { CSSProperties, ErrorInfo, ReactNode } from 'react'
 import type { RootState } from '@react-three/fiber'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { findTape, shelfTapes } from '../content/projects'
+import { findTape, playableTapes, shelfTapes } from '../content/projects'
+import { aboutTape } from '../content/about'
+import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
 import { useReducedMotion } from '../lib/useReducedMotion'
@@ -341,10 +343,14 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, eject, loading, onInserted])
 
+  // Arrows and Home/End move between the tapes that play; a blank slot has
+  // no link to land on and is passed over.
   function moveTape(
     event: React.KeyboardEvent<HTMLAnchorElement>,
-    index: number,
+    from: Project,
   ) {
+    const index = playableTapes.indexOf(from)
+    const count = playableTapes.length
     const offset =
       event.key === 'ArrowRight' || event.key === 'ArrowDown'
         ? 1
@@ -355,11 +361,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       event.key === 'Home'
         ? 0
         : event.key === 'End'
-          ? shelfTapes.length - 1
-          : (index + offset + shelfTapes.length) % shelfTapes.length
+          ? count - 1
+          : (index + offset + count) % count
     if (offset || event.key === 'Home' || event.key === 'End') {
       event.preventDefault()
-      tapeEls.current.get(shelfTapes[next].slug)?.focus()
+      tapeEls.current.get(playableTapes[next].slug)?.focus()
     }
   }
 
@@ -468,7 +474,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               )
                 return
               event.preventDefault()
-              select(shelfTapes[shelfTapes.length - 1])
+              select(aboutTape)
             }}
           >
             About me
@@ -600,50 +606,67 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           </div>
           <ul className={styles.tapeIndex}>
             {shelfTapes.map((item, index) => (
-              <li key={item.slug}>
-                <Link
-                  to={`/project/${item.slug}`}
-                  style={{ '--tape-accent': item.vhs.accent } as CSSProperties}
-                  className={
-                    preview?.slug === item.slug ? styles.previewed : ''
-                  }
-                  aria-label={`Play tape: ${item.slug === 'about' ? 'About Daniel' : item.title} (${item.year})`}
-                  ref={(el) => {
-                    if (el) tapeEls.current.set(item.slug, el)
-                    else tapeEls.current.delete(item.slug)
-                  }}
-                  onClick={(event) => {
-                    if (
-                      event.metaKey ||
-                      event.ctrlKey ||
-                      event.shiftKey ||
-                      event.altKey
-                    )
-                      return
-                    event.preventDefault()
-                    select(item)
-                  }}
-                  onFocus={() => {
-                    if (!restoringFocus.current) previewTape(item)
-                  }}
-                  onBlur={() => previewTape(null)}
-                  onPointerEnter={() => previewTape(item)}
-                  onPointerLeave={() => previewTape(null)}
-                  onKeyDown={(event) => moveTape(event, index)}
-                >
-                  <span className={styles.tapeNumber}>
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <span className={styles.tapeLabel}>
-                    {item.slug === 'about'
-                      ? 'About Daniel'
-                      : item.vhs.spineLabel.split(' · ')[0]}
-                    <small>
-                      {item.slug === 'about' ? 'Meet the maker' : 'Placeholder'}
-                    </small>
-                  </span>
-                  <PlayIcon className={styles.playArrow} />
-                </Link>
+              <li key={shelfKey(item)}>
+                {isComing(item) ? (
+                  // A slot still waiting for its project: read, not played.
+                  <div className={styles.tapeComing}>
+                    <span className={styles.tapeNumber}>
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <span className={styles.tapeLabel}>
+                      Coming soon…
+                      <small>Blank tape</small>
+                    </span>
+                  </div>
+                ) : (
+                  <Link
+                    to={`/project/${item.slug}`}
+                    style={
+                      { '--tape-accent': item.vhs.accent } as CSSProperties
+                    }
+                    className={
+                      preview?.slug === item.slug ? styles.previewed : ''
+                    }
+                    aria-label={`Play tape: ${item.slug === 'about' ? 'About Daniel' : item.title} (${item.year})`}
+                    ref={(el) => {
+                      if (el) tapeEls.current.set(item.slug, el)
+                      else tapeEls.current.delete(item.slug)
+                    }}
+                    onClick={(event) => {
+                      if (
+                        event.metaKey ||
+                        event.ctrlKey ||
+                        event.shiftKey ||
+                        event.altKey
+                      )
+                        return
+                      event.preventDefault()
+                      select(item)
+                    }}
+                    onFocus={() => {
+                      if (!restoringFocus.current) previewTape(item)
+                    }}
+                    onBlur={() => previewTape(null)}
+                    onPointerEnter={() => previewTape(item)}
+                    onPointerLeave={() => previewTape(null)}
+                    onKeyDown={(event) => moveTape(event, item)}
+                  >
+                    <span className={styles.tapeNumber}>
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <span className={styles.tapeLabel}>
+                      {item.slug === 'about'
+                        ? 'About Daniel'
+                        : item.vhs.spineLabel.split(' · ')[0]}
+                      <small>
+                        {item.slug === 'about'
+                          ? 'Meet the maker'
+                          : 'Placeholder'}
+                      </small>
+                    </span>
+                    <PlayIcon className={styles.playArrow} />
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

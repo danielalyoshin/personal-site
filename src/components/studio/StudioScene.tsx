@@ -11,6 +11,7 @@ import { Html } from '@react-three/drei'
 import { MathUtils, OrthographicCamera, Vector3 } from 'three'
 import type { Project } from '../../content/types'
 import { shelfTapes } from '../../content/projects'
+import { isComing } from '../../content/types'
 import { Solid } from './geometry'
 import { DetailBoxes, Turned } from './ModelDetails'
 import {
@@ -19,6 +20,7 @@ import {
   useTextureDisposal,
 } from './textures'
 import Tape from './Tape'
+import BlankTape from './BlankTape'
 import Player from './Player'
 import Headphones from './Headphones'
 import Speaker from './Speaker'
@@ -720,21 +722,25 @@ function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
         <LooseTape />
         <TapeRack />
         <Headphones />
-        {shelfTapes.map((tape, index) => (
-          <Tape
-            key={tape.slug}
-            tape={tape}
-            index={index}
-            active={!props.open && props.preview?.slug === tape.slug}
-            selected={props.tape?.slug === tape.slug}
-            ejecting={ejecting?.slug === tape.slug}
-            reduced={props.reduced}
-            progress={progress}
-            interactive={!props.open && ejecting?.slug !== tape.slug}
-            onSelect={props.onSelect}
-            onPreview={props.onPreview}
-          />
-        ))}
+        {shelfTapes.map((tape, index) =>
+          isComing(tape) ? (
+            <BlankTape key={tape.id} id={tape.id} index={index} />
+          ) : (
+            <Tape
+              key={tape.slug}
+              tape={tape}
+              index={index}
+              active={!props.open && props.preview?.slug === tape.slug}
+              selected={props.tape?.slug === tape.slug}
+              ejecting={ejecting?.slug === tape.slug}
+              reduced={props.reduced}
+              progress={progress}
+              interactive={!props.open && ejecting?.slug !== tape.slug}
+              onSelect={props.onSelect}
+              onPreview={props.onPreview}
+            />
+          ),
+        )}
         <Screen {...props} />
       </group>
     </>
