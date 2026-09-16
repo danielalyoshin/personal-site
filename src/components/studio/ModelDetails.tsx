@@ -1,11 +1,84 @@
 import { useEffect, useMemo } from 'react'
 import type { ThreeElements } from '@react-three/fiber'
-import { BoxGeometry, CylinderGeometry, LatheGeometry, Vector2 } from 'three'
+import {
+  BoxGeometry,
+  CylinderGeometry,
+  ExtrudeGeometry,
+  LatheGeometry,
+  Path,
+  Shape,
+  Vector2,
+} from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
+import { MATTE, STUDIO } from './materials'
 
 type MeshProps = Omit<ThreeElements['mesh'], 'args'>
 type Point = [number, number, number]
 type DetailBox = { size: Point; position: Point; rotation?: number }
+
+/** A shallow vent plate with real openings over a dark well, facing +Z. */
+export function VentPanel({
+  width,
+  height,
+  rows,
+  color = STUDIO.shell,
+  ...props
+}: Omit<ThreeElements['group'], 'args'> & {
+  width: number
+  height: number
+  rows: number
+  color?: string
+}) {
+  const geometry = useMemo(() => {
+    const shape = new Shape()
+    const x = width / 2
+    const y = height / 2
+    const corner = 0.016
+    shape.moveTo(-x + corner, -y)
+    shape.lineTo(x - corner, -y)
+    shape.lineTo(x, -y + corner)
+    shape.lineTo(x, y - corner)
+    shape.lineTo(x - corner, y)
+    shape.lineTo(-x + corner, y)
+    shape.lineTo(-x, y - corner)
+    shape.lineTo(-x, -y + corner)
+    shape.closePath()
+    const pitch = (height - 0.065) / rows
+    const halfSlot = width / 2 - 0.05
+    for (let i = 0; i < rows; i++) {
+      const middle = (i - (rows - 1) / 2) * pitch
+      const halfGap = pitch * 0.24
+      const slot = new Path()
+      slot.moveTo(-halfSlot, middle - halfGap)
+      slot.lineTo(-halfSlot, middle + halfGap)
+      slot.lineTo(halfSlot, middle + halfGap)
+      slot.lineTo(halfSlot, middle - halfGap)
+      slot.closePath()
+      shape.holes.push(slot)
+    }
+    return new ExtrudeGeometry(shape, {
+      depth: 0.012,
+      steps: 1,
+      curveSegments: 1,
+      bevelEnabled: true,
+      bevelSegments: 1,
+      bevelSize: 0.002,
+      bevelThickness: 0.002,
+    }).translate(0, 0, 0.006)
+  }, [width, height, rows])
+  useEffect(() => () => geometry.dispose(), [geometry])
+  return (
+    <group {...props}>
+      <mesh position={[0, 0, 0.002]} receiveShadow>
+        <planeGeometry args={[width, height]} />
+        <meshStandardMaterial color={STUDIO.recess} roughness={1} />
+      </mesh>
+      <mesh geometry={geometry} castShadow receiveShadow>
+        <meshStandardMaterial color={color} {...MATTE} />
+      </mesh>
+    </group>
+  )
+}
 
 /** A revolved cross-section, facing +Z. Profiles model recesses and real rims. */
 export function Turned({
@@ -62,7 +135,7 @@ export function DetailBoxes({
 export function Fasteners({
   positions,
   radius = 0.019,
-  color = '#737e8b',
+  color = STUDIO.hardware,
 }: {
   positions: Point[]
   radius?: number
@@ -70,7 +143,7 @@ export function Fasteners({
 }) {
   const geometry = useMemo(() => {
     const heads = positions.map((position) => {
-      const head = new CylinderGeometry(radius, radius * 0.8, 0.007, 12)
+      const head = new CylinderGeometry(radius, radius * 0.8, 0.007, 24)
       head.rotateX(Math.PI / 2)
       head.translate(...position)
       return head

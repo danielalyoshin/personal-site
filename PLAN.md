@@ -796,6 +796,29 @@ selectable, does not animate, and is plain with no label.
 - Validation: desktop, 1024px, and phone screenshots of the index and the
   studio, `tsc`, ESLint, Prettier, and the Playwright suite.
 
+#### Scene finish refinement (2026-09-16)
+
+Daniel requested a scene-only refinement after Claude's recent rounds, keeping
+the established composition and bringing all equipment to the same finish.
+
+- ✅ Consolidated the main equipment's shell, fascia, trim, recess, rubber,
+  and hardware colors in `studio/materials.ts`, with one shared matte chassis
+  finish. Preserved the lighter tabletop, dark cassette molding, paper labels,
+  driver materials, colored tape accents, and the CRT as the only emitter.
+- ✅ Replaced the CRT's raised vent bars with shallow chamfered plates with
+  real slot openings over dark wells. Shared this construction with the
+  deck's exposed sides, adding restrained cover fasteners. Each vent assembly
+  is two draws, independent of slot count.
+- ✅ Matched headphone curves to the other equipment's 24-segment, faceted
+  construction; added fine earcup housing seams and fitted, slotted pivots.
+  Seated the stand post in a collar, added base fasteners, and matched its
+  four low pads to the speaker and rack. All screw heads now use 24 sides.
+- ✅ Corrected cassette face-label weights to the existing 400/600/800 system.
+- Validation: desktop, 1024px, 390px, and 320px visual review, object close-ups,
+  and modeled playback; all 27 Chrome tests, production build, ESLint, and
+  formatting passed. Existing tape clearances, blank-slot behavior, camera
+  transitions, keyboard access, reduced motion, and fallback reading passed.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

@@ -1,6 +1,22 @@
 import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Path, Shape } from 'three'
 import { Disc, Solid } from './geometry'
+import { Fasteners, Turned } from './ModelDetails'
+import { MATTE, STUDIO } from './materials'
+
+const pivotScrew: [number, number, number][] = [[0, 0.135, 0.144]]
+const standScrews: [number, number, number][] = [
+  [-0.16, 0, 0],
+  [0.16, 0, 0],
+]
+const standCollar: [number, number][] = [
+  [0.038, 0],
+  [0.063, 0],
+  [0.063, 0.019],
+  [0.054, 0.028],
+  [0.038, 0.028],
+  [0.038, 0],
+]
 
 function oval(width: number, height: number) {
   const shape = new Shape()
@@ -12,7 +28,7 @@ function extrude(shape: Shape, depth: number, bevel: number) {
   const geometry = new ExtrudeGeometry(shape, {
     depth,
     steps: 1,
-    curveSegments: 16,
+    curveSegments: 12,
     bevelEnabled: true,
     bevelSize: bevel,
     bevelThickness: bevel,
@@ -67,11 +83,16 @@ export default function Headphones() {
     const well = new Path()
     well.absellipse(0, 0, 0.105, 0.16, 0, Math.PI * 2, true, 0)
     ring.holes.push(well)
+    const seam = oval(0.211, 0.291)
+    const seamOpening = new Path()
+    seamOpening.absellipse(0, 0, 0.184, 0.264, 0, Math.PI * 2, true, 0)
+    seam.holes.push(seamOpening)
     return {
       band: extrude(arch(0.59, 0.64, 0.545, 0.595), 0.18, 0.012),
       pad: extrude(arch(0.544, 0.593, 0.497, 0.546), 0.155, 0.009),
       mount,
       cup: extrude(oval(0.185, 0.265), 0.145, 0.025),
+      seam: extrude(seam, 0.006, 0.001),
       inset: extrude(oval(0.145, 0.21), 0.015, 0.009),
       ring: extrude(ring, 0.015, 0.009),
       core: extrude(oval(0.1, 0.152), 0.006, 0.004),
@@ -115,28 +136,39 @@ export default function Headphones() {
       position={[3.77, 0.775, -1.02]}
       rotation={[0, -0.28, 0]}
     >
-      <Solid
-        size={[0.68, 0.035, 0.67]}
-        position={[0, 0.02, 0]}
-        color="#151c24"
-        bevel={0.012}
-      />
+      {[-0.25, 0.25].flatMap((x) =>
+        [-0.24, 0.24].map((z) => (
+          <Solid
+            key={`${x}-${z}`}
+            size={[0.15, 0.035, 0.15]}
+            position={[x, 0.0175, z]}
+            color={STUDIO.rubber}
+            bevel={0.008}
+          />
+        )),
+      )}
       <Solid
         size={[0.72, 0.08, 0.71]}
         position={[0, 0.075, 0]}
-        color="#424d5a"
+        color={STUDIO.face}
         bevel={0.035}
       />
       <Solid
         size={[0.18, 0.1, 0.2]}
         position={[0, 0.14, -0.055]}
-        color="#303b47"
+        color={STUDIO.shell}
         bevel={0.025}
       />
+      <group position={[0, 0.19, -0.055]} rotation={[-Math.PI / 2, 0, 0]}>
+        <Turned profile={standCollar} color={STUDIO.edge} />
+      </group>
+      <group position={[0, 0.118, -0.055]} rotation={[-Math.PI / 2, 0, 0]}>
+        <Fasteners positions={standScrews} radius={0.018} color={STUDIO.edge} />
+      </group>
       <mesh position={[0, 0.99, -0.055]} castShadow receiveShadow>
         <cylinderGeometry args={[0.035, 0.043, 1.7, 24]} />
         <meshStandardMaterial
-          color="#818d9a"
+          color={STUDIO.hardware}
           roughness={0.68}
           metalness={0.3}
           flatShading
@@ -144,20 +176,29 @@ export default function Headphones() {
       </mesh>
       <group position={[0, 1.36, 0.065]}>
         <mesh geometry={geometry.cradle} castShadow receiveShadow>
-          <meshStandardMaterial color="#3f4a56" roughness={0.82} />
+          <meshStandardMaterial color={STUDIO.face} {...MATTE} />
         </mesh>
         <mesh geometry={geometry.cradlePad} castShadow receiveShadow>
-          <meshStandardMaterial color="#151d27" roughness={0.98} />
+          <meshStandardMaterial
+            color={STUDIO.rubber}
+            roughness={0.98}
+            flatShading
+          />
         </mesh>
         <mesh geometry={geometry.band} castShadow receiveShadow>
           <meshStandardMaterial
-            color="#778390"
+            color={STUDIO.hardware}
             roughness={0.74}
             metalness={0.2}
+            flatShading
           />
         </mesh>
         <mesh geometry={geometry.pad} castShadow receiveShadow>
-          <meshStandardMaterial color="#222d39" roughness={0.95} />
+          <meshStandardMaterial
+            color={STUDIO.rubber}
+            roughness={0.95}
+            flatShading
+          />
         </mesh>
       </group>
       {[-1, 1].map((side) => (
@@ -168,7 +209,18 @@ export default function Headphones() {
         >
           <group rotation={[0, (side * Math.PI) / 2, 0]}>
             <mesh geometry={geometry.cup} castShadow receiveShadow>
-              <meshStandardMaterial color="#35414e" roughness={0.78} />
+              <meshStandardMaterial color={STUDIO.shell} {...MATTE} />
+            </mesh>
+            <mesh
+              geometry={geometry.seam}
+              position={[0, 0, -0.037]}
+              receiveShadow
+            >
+              <meshStandardMaterial
+                color={STUDIO.recess}
+                roughness={0.94}
+                flatShading
+              />
             </mesh>
             <mesh
               geometry={geometry.ring}
@@ -176,17 +228,25 @@ export default function Headphones() {
               castShadow
               receiveShadow
             >
-              <meshStandardMaterial color="#485563" roughness={0.83} />
+              <meshStandardMaterial color={STUDIO.face} {...MATTE} />
             </mesh>
             <mesh
               geometry={geometry.core}
               position={[0, 0, 0.081]}
               receiveShadow
             >
-              <meshStandardMaterial color="#2a343f" roughness={0.9} />
+              <meshStandardMaterial
+                color={STUDIO.recess}
+                roughness={0.9}
+                flatShading
+              />
             </mesh>
             <mesh geometry={geometry.inset} position={[0, 0, -0.091]}>
-              <meshStandardMaterial color="#101720" roughness={1} />
+              <meshStandardMaterial
+                color={STUDIO.recess}
+                roughness={1}
+                flatShading
+              />
             </mesh>
             <mesh
               geometry={geometry.cushion}
@@ -194,18 +254,23 @@ export default function Headphones() {
               castShadow
               receiveShadow
             >
-              <meshStandardMaterial color="#1b2530" roughness={0.98} />
+              <meshStandardMaterial
+                color={STUDIO.rubber}
+                roughness={0.98}
+                flatShading
+              />
             </mesh>
             <mesh geometry={geometry.mount} castShadow receiveShadow>
-              <meshStandardMaterial color="#596675" roughness={0.8} />
+              <meshStandardMaterial color={STUDIO.edge} {...MATTE} />
             </mesh>
             <Disc
-              radius={0.026}
+              radius={0.033}
               depth={0.012}
               position={[0, 0.135, 0.136]}
               rotation={[Math.PI / 2, 0, 0]}
-              color="#8c98a4"
+              color={STUDIO.recess}
             />
+            <Fasteners positions={pivotScrew} radius={0.022} />
           </group>
         </group>
       ))}

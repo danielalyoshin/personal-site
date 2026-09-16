@@ -255,9 +255,12 @@ Existing token names are retained; CSS uses `--silk-hi`, `--silk`, `--silk-dim`,
 - **Screen neutrals** (`screen-black`, `screen-text`, `screen-dim`, `screen-soft`, `osd-white`): reading ground, prose, metadata, secondary screen text, and OSD actions.
 
 Modeled graphite colors vary by material and plane to stay legible under studio
-lighting. The material values in `studio/` remain their source; do not replace
-them wholesale with page-background tokens. Sidecar tonal ramps are panel
-visualizations; synthesized steps are not additional application tokens.
+lighting. `studio/materials.ts` holds the shared shell, raised face, edge,
+recess, rubber, hardware, and tabletop colors, plus the matte chassis finish.
+The CRT, deck, speaker, rack, and headphones use these same material roles;
+cassette molding, paper, driver cones, and soft pads retain their own finishes.
+Do not replace these values with page-background tokens. Sidecar tonal ramps
+are panel visualizations; synthesized steps are not additional application tokens.
 
 **The Artifact Color Rule.** Saturated color belongs to cassette labels and screen output. Cassette accents come from project data; small VFD-cyan focus and status marks support interaction without coloring the page chrome.
 
@@ -435,24 +438,29 @@ molded ribs, and a fine housing seam. Their labels remain matte printed surfaces
 The monitor's one dial, on the flat face of its chin, is a turned knob in a
 recessed escutcheon with a raised ring, a molded pointer slot, and seven tick
 marks over its sweep, built from the same 24-sided profiles and merged details
-as the speaker and its fasteners; its top and side vents are merged slat
-grilles of the same construction, the bezel's step over the rear shell is
-its parting line, the rear shell's floor is level with the bezel's bottom
+as the speaker and its fasteners; its top and side vents are shallow chamfered
+plates with actual slots over a dark well, shared with the deck's side vents.
+Each grille uses two draws regardless of its slot count. The bezel's step over
+the rear shell is its parting line, the rear shell's floor is level with the bezel's bottom
 as on a real set, and it stands on four identical low pads in the speaker's
 style under the bezel's front corners and the shell's rear corners.
 The deck's fascia is one tone, with a fine parting line set into the groove
 where it meets the chassis, as on the cassette housing; its slot flap is a
 door, a step darker than the fascia with a lighter finger lip, inside the
-dark bay; it stands on four corner pads 0.035 tall, the speaker's proportion.
+dark bay; the cover's side vents and fitted screws give its exposed planes
+the same construction detail as the speaker. It stands on four corner pads
+0.035 tall, the speaker's proportion.
 The archive holder has symmetric sloped side cheeks, fitted fasteners, individual
 guide channels, a rear stop, and a low retaining lip. Small repeated
 details are merged into shared draws within each assembly. Recessed windows,
 vents, the hollow deck bay, and a hinged slot flap supply selective detail.
 Headphones use a padded elliptical band, oval earcups whose outer face is a
 raised ring around a sunken core (the speaker's mount-and-cone layering in
-the cup's own oval), compact tapered mounts, and a stand with a fitted cradle
-on a faceted post. The table is a slab on a recessed dark pedestal over its
-plinth. Keep surfaces clean and matte.
+the cup's own oval), a fine shell seam, and compact tapered mounts with slotted
+pivots. Hard and padded curves share the 24-segment, flat-shaded construction.
+The stand has a fitted cradle, a faceted post seated in a collar, two base
+fasteners, and four low corner pads. The table is a slab on a recessed dark
+pedestal over its plinth. Keep surfaces clean and matte.
 
 **The Same Grammar Rule.** Every object is built from the one vocabulary the
 strongest pieces established: a dark recess under a lighter raised plane, a
@@ -462,8 +470,8 @@ object shows them. Every piece of equipment stands on isolating pads in
 one style, the speaker's: dark, low (about 0.035 units, the speaker's
 proportion), and tucked under the corners, so from every authored camera
 they read as a shadow line, not as parts; four under each of the deck, the
-monitor, the speaker, and the holder. The table alone stands on its
-pedestal. A taller bare block under a chassis reads as an unfinished part,
+monitor, the speaker, the holder, and the headphone stand. The table alone
+stands on its pedestal. A taller bare block under a chassis reads as an unfinished part,
 and a recessed face that tall reads as a flat black bar from the front-on
 playback camera; both were tried and rejected. A new
 object earns its detail from this list, at the scale of the cassette's, not

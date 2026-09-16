@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { Group } from 'three'
 import type { Project } from '../../content/types'
 import { Decal, Solid, Print } from './geometry'
+import { Fasteners, VentPanel } from './ModelDetails'
+import { STUDIO } from './materials'
 import {
   capitalsOffset,
   fitType,
@@ -17,6 +19,11 @@ import { changeSound } from '../../lib/sound'
 type DeckMode = 'standby' | 'loading' | 'play' | 'eject' | 'nosignal'
 
 type Point = [number, number, number]
+
+const coverScrews: Point[] = [
+  [-0.88, 0.22, 0.008],
+  [0.88, 0.22, 0.008],
+]
 
 /**
  * The fascia's parting line: the four fascia pieces again, a hair larger on
@@ -120,7 +127,7 @@ function StatusWindow({ mode, soundOn }: { mode: DeckMode; soundOn: boolean }) {
       <Solid
         size={[0.93, 0.16, 0.028]}
         position={[1.25, 0.23, 1.25]}
-        color="#111920"
+        color={STUDIO.recess}
         bevel={0.014}
       />
       <Decal
@@ -175,21 +182,38 @@ export default function Player({
           <Solid
             size={[3.64, 0.1, 2.3]}
             position={[0, side * 0.38, 0]}
-            color="#353d48"
+            color={STUDIO.shell}
             bevel={0.025}
           />
           <Solid
             size={[0.1, 0.7, 2.3]}
             position={[side * 1.77, 0, 0]}
-            color="#303843"
+            color={STUDIO.shell}
             bevel={0.018}
           />
+          <group
+            position={[side * 1.821, 0, 0]}
+            rotation={[0, (side * Math.PI) / 2, 0]}
+          >
+            <VentPanel
+              name={`player-side-vents-${side}`}
+              width={0.88}
+              height={0.3}
+              rows={4}
+              position={[side * 0.35, -0.015, 0]}
+            />
+            <Fasteners
+              positions={coverScrews}
+              radius={0.018}
+              color={STUDIO.edge}
+            />
+          </group>
         </group>
       ))}
       <Solid
         size={[3.44, 0.66, 0.1]}
         position={[0, 0, -1.1]}
-        color="#171d25"
+        color={STUDIO.recess}
         bevel={0.01}
       />
 
@@ -199,28 +223,28 @@ export default function Player({
           name="slot-top"
           size={[3.64, 0.105, 0.12]}
           position={[0, 0.3775, 0]}
-          color="#444d58"
+          color={STUDIO.face}
           bevel={0.012}
         />
         <Solid
           name="slot-bottom"
           size={[3.64, 0.285, 0.12]}
           position={[0, -0.2875, 0]}
-          color="#444d58"
+          color={STUDIO.face}
           bevel={0.016}
         />
         <Solid
           name="slot-left"
           size={[0.53, 0.47, 0.12]}
           position={[-1.555, 0.09, 0]}
-          color="#444d58"
+          color={STUDIO.face}
           bevel={0.01}
         />
         <Solid
           name="slot-right"
           size={[1.13, 0.47, 0.12]}
           position={[1.255, 0.09, 0]}
-          color="#444d58"
+          color={STUDIO.face}
           bevel={0.01}
         />
         {/* A parting line where the fascia meets the chassis, as on the
@@ -230,7 +254,7 @@ export default function Player({
             key={index}
             size={size}
             position={position}
-            color="#171d25"
+            color={STUDIO.recess}
             bevel={0.002}
           />
         ))}
@@ -259,13 +283,13 @@ export default function Player({
         <Solid
           size={[1.92, 0.443, 0.026]}
           position={[0, -0.2215, 0]}
-          color="#2f3843"
+          color={STUDIO.shell}
           bevel={0.008}
         />
         <Solid
           size={[1.67, 0.012, 0.005]}
           position={[0, -0.39, 0.015]}
-          color="#4d5866"
+          color={STUDIO.edge}
           bevel={0.001}
         />
       </group>
@@ -307,7 +331,7 @@ export default function Player({
             key={`${x}-${z}`}
             size={[0.28, 0.035, 0.22]}
             position={[x, -0.4475, z]}
-            color="#141d27"
+            color={STUDIO.rubber}
             bevel={0.012}
           />
         )),

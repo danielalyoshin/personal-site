@@ -13,7 +13,8 @@ import type { Project } from '../../content/types'
 import { shelfTapes } from '../../content/projects'
 import { isComing } from '../../content/types'
 import { Solid } from './geometry'
-import { DetailBoxes, Turned } from './ModelDetails'
+import { DetailBoxes, Turned, VentPanel } from './ModelDetails'
+import { STUDIO } from './materials'
 import {
   makeTexture,
   subscribeTextureUpdates,
@@ -465,16 +466,6 @@ const dialPointer = [
   },
 ]
 
-// Vent slats, merged into one draw per grille like the cassette's ribs.
-const topVents = Array.from({ length: 8 }, (_, i) => ({
-  size: [1.45, 0.014, 0.036] as [number, number, number],
-  position: [0, 1.285, -0.57 + i * 0.086] as [number, number, number],
-}))
-const sideVents = Array.from({ length: 9 }, (_, i) => ({
-  size: [0.017, 0.016, 0.49] as [number, number, number],
-  position: [1.563, 0.37 + i * 0.065, -0.5] as [number, number, number],
-}))
-
 /**
  * The monitor's one control: a turned knob in a recessed escutcheon with a
  * raised ring, a molded pointer, and a short arc of tick marks, built from the
@@ -483,11 +474,11 @@ const sideVents = Array.from({ length: 9 }, (_, i) => ({
 function Dial(props: { position: [number, number, number] }) {
   return (
     <group name="crt-dial" {...props}>
-      <Turned profile={dialWell} color="#12171f" />
-      <Turned profile={dialRing} color="#434a54" />
-      <DetailBoxes boxes={dialTicks} color="#5d6572" />
-      <Turned profile={dialKnob} color="#7d8591" roughness={0.76} />
-      <DetailBoxes boxes={dialPointer} color="#141b24" />
+      <Turned profile={dialWell} color={STUDIO.recess} />
+      <Turned profile={dialRing} color={STUDIO.face} />
+      <DetailBoxes boxes={dialTicks} color={STUDIO.edge} />
+      <Turned profile={dialKnob} color={STUDIO.hardware} roughness={0.76} />
+      <DetailBoxes boxes={dialPointer} color={STUDIO.recess} />
     </group>
   )
 }
@@ -500,30 +491,44 @@ function Monitor() {
       <Solid
         size={[3.12, 2.68, 1.5]}
         position={[0, -0.06, -0.31]}
-        color="#303640"
+        color={STUDIO.shell}
         bevel={0.17}
       />
       <Solid
         size={[3.35, 2.8, 0.52]}
         position={[0, 0, 0.59]}
-        color="#464c56"
+        color={STUDIO.face}
         bevel={0.12}
       />
       <Solid
         size={[3.17, 2.61, 0.22]}
         position={[0, 0.015, 0.88]}
-        color="#363c46"
+        color={STUDIO.shell}
         bevel={0.07}
       />
       <Solid
         size={[3.01, 2.29, 0.075]}
         position={[0, 0.13, 1.015]}
-        color="#151a23"
+        color={STUDIO.recess}
         bevel={0.055}
       />
       <Dial position={[1.338, -1.142, 0.99]} />
-      <DetailBoxes boxes={sideVents} color="#161c25" />
-      <DetailBoxes boxes={topVents} color="#191f28" />
+      <VentPanel
+        name="monitor-side-vents"
+        width={0.62}
+        height={0.65}
+        rows={9}
+        position={[1.56, 0.63, -0.5]}
+        rotation={[0, Math.PI / 2, 0]}
+      />
+      <VentPanel
+        name="monitor-top-vents"
+        width={1.55}
+        height={0.72}
+        rows={8}
+        position={[0, 1.28, -0.27]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
       {/* Four identical low pads in the speaker's style: under the bezel's
           front corners and the shell's rear corners. */}
       {[
@@ -535,7 +540,7 @@ function Monitor() {
             key={`${side}-${z}`}
             size={[0.4, 0.03, 0.28]}
             position={[side * x, -1.415, z]}
-            color="#141d27"
+            color={STUDIO.rubber}
             bevel={0.012}
           />
         )),
@@ -550,20 +555,20 @@ function Table() {
       <Solid
         size={[9.5, 0.16, 5.15]}
         position={[0, 0.08, 0]}
-        color="#242a33"
+        color={STUDIO.shell}
         bevel={0.1}
       />
       <Solid
         name="studio-tabletop"
         size={[8.65, 0.19, 4]}
         position={[0, 0.68, 0.48]}
-        color="#535b65"
+        color={STUDIO.tabletop}
         bevel={0.035}
       />
       <Solid
         size={[8.48, 0.08, 3.86]}
         position={[0, 0.56, 0.48]}
-        color="#252c35"
+        color={STUDIO.recess}
         bevel={0.012}
       />
       {/* A recessed pedestal carries the top: one broad plane in shadow,

@@ -4,6 +4,7 @@ import { shelfTapes } from '../../content/projects'
 import { shelfKey } from '../../content/types'
 import { Solid } from './geometry'
 import { Fasteners } from './ModelDetails'
+import { MATTE, STUDIO } from './materials'
 
 const sideScrews: [number, number, number][] = [
   [-0.47, 0.105, 0.0455],
@@ -40,7 +41,7 @@ export default function TapeRack() {
             key={`${x}-${z}`}
             size={[0.26, 0.032, 0.18]}
             position={[x, 0.016, z]}
-            color="#151f29"
+            color={STUDIO.rubber}
             bevel={0.008}
           />
         )),
@@ -48,7 +49,7 @@ export default function TapeRack() {
       <Solid
         size={[2.98, 0.07, 1.45]}
         position={[0, 0.067, 0]}
-        color="#414d59"
+        color={STUDIO.face}
         bevel={0.022}
       />
       <Solid
@@ -72,7 +73,7 @@ export default function TapeRack() {
               name={`rack-divider-${index}`}
               size={[0.012, 0.15, 1.12]}
               position={[0.215, 0.19, 0.025]}
-              color="#4b5864"
+              color={STUDIO.edge}
               bevel={0.003}
             />
           )}
@@ -82,14 +83,14 @@ export default function TapeRack() {
         name="rack-backstop"
         size={[2.69, 0.27, 0.055]}
         position={[0, 0.255, -0.595]}
-        color="#35424e"
+        color={STUDIO.shell}
         bevel={0.009}
       />
       <Solid
         name="rack-front-lip"
         size={[2.69, 0.065, 0.04]}
         position={[0, 0.139, 0.625]}
-        color="#53616f"
+        color={STUDIO.edge}
         bevel={0.006}
       />
       {[-1, 1].map((side) => (
@@ -104,12 +105,7 @@ export default function TapeRack() {
             castShadow
             receiveShadow
           >
-            <meshStandardMaterial
-              color="#4a5866"
-              roughness={0.82}
-              metalness={0.12}
-              flatShading
-            />
+            <meshStandardMaterial color={STUDIO.face} {...MATTE} />
           </mesh>
           <group rotation={[0, side < 0 ? 0 : Math.PI, 0]}>
             <Fasteners positions={sideScrews} radius={0.021} />

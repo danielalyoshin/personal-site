@@ -47,6 +47,10 @@ textures are generated locally. Print is limited to the four signature marks
 label per working key cap; every other object is unlettered. Matte graphite,
 carefully selected small details, saturated cassette accents, blue idle screen. Neutral studio fill
 reveals broad planes; only the CRT emits light.
+Equipment finishes share the shell, face, trim, recess, rubber, and hardware
+roles in `studio/materials.ts`. The monitor and deck use the same slotted vent
+plates; headphone seams, pivots, and stand fittings follow the cassette and
+speaker construction, with 24-segment curves and four low stand pads.
 
 Browse: "Choose a tape to play" explains the action before the canvas, with
 a one-line instruction that points at the studio rather than the index.

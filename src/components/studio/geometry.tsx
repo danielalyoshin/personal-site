@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import type { ThreeElements } from '@react-three/fiber'
 import { ExtrudeGeometry, MathUtils, Shape, type CanvasTexture } from 'three'
+import { MATTE, STUDIO } from './materials'
 import {
   capitalsOffset,
   fitType,
@@ -17,7 +18,7 @@ type BoxProps = Omit<ThreeElements['mesh'], 'args'> & {
 /** A single chamfer defines the edge: broad planes, crisp silhouettes, no subdivision. */
 export function Solid({
   size: [width, height, depth],
-  color = '#343840',
+  color = STUDIO.shell,
   bevel = 0.04,
   children,
   ...props
@@ -47,14 +48,7 @@ export function Solid({
   useEffect(() => () => geometry.dispose(), [geometry])
   return (
     <mesh geometry={geometry} castShadow receiveShadow {...props}>
-      {children ?? (
-        <meshStandardMaterial
-          color={color}
-          roughness={0.82}
-          metalness={0.12}
-          flatShading
-        />
-      )}
+      {children ?? <meshStandardMaterial color={color} {...MATTE} />}
     </mesh>
   )
 }
@@ -99,9 +93,7 @@ export function Decal({
         map={texture}
         transparent
         depthWrite={false}
-        roughness={0.82}
-        metalness={0.12}
-        flatShading
+        {...MATTE}
         polygonOffset
         polygonOffsetFactor={-1}
       />

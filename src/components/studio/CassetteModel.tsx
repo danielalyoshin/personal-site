@@ -85,12 +85,12 @@ function FaceLabel({ title, accent }: { title: string; accent: string }) {
         ctx.fillRect(20, 24, 216, 34)
         ctx.fillStyle = '#25303a'
         ctx.textAlign = 'center'
-        fitType(ctx, title, 40, 216, 650)
+        fitType(ctx, title, 40, 216, 600)
         ctx.fillText(title, 128, 141)
         ctx.fillRect(20, 179, 216, 2)
-        ctx.font = '750 66px "Archivo Variable", sans-serif'
+        ctx.font = '800 66px "Archivo Variable", sans-serif'
         ctx.fillText('VHS', 128, 291)
-        ctx.font = '500 28px "Archivo Variable", sans-serif'
+        ctx.font = '400 28px "Archivo Variable", sans-serif'
         ctx.fillText('HI-FI', 128, 378)
         ctx.fillRect(20, 428, 216, 2)
       }),
@@ -206,7 +206,7 @@ export default function CassetteModel({
         color="#121c25"
         bevel={0.002}
       />
-      {/* The underside gets its own sockets and mold detail, visible during orbit. */}
+      {/* The underside's sockets and mold detail are revealed in transit. */}
       <group rotation={[0, Math.PI, 0]}>
         <Solid
           size={[1.58, 0.91, 0.012]}

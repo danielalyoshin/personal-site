@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { ExtrudeGeometry, Path, Shape } from 'three'
 import { Disc, Solid } from './geometry'
 import { Fasteners, Turned } from './ModelDetails'
+import { MATTE, STUDIO } from './materials'
 
 const mount: [number, number][] = [
   [0.82, 0],
@@ -90,17 +91,17 @@ export default function Speaker() {
       <Solid
         size={[0.89, 1.45, 0.86]}
         position={[0, 0, -0.025]}
-        color="#35404b"
+        color={STUDIO.shell}
         bevel={0.055}
       />
       <Solid
         size={[0.82, 1.37, 0.036]}
         position={[0, 0, 0.421]}
-        color="#151d27"
+        color={STUDIO.recess}
         bevel={0.02}
       />
       <mesh geometry={baffle} position={[0, 0, 0.441]} castShadow receiveShadow>
-        <meshStandardMaterial color="#424d59" roughness={0.84} flatShading />
+        <meshStandardMaterial color={STUDIO.face} {...MATTE} />
       </mesh>
       {/* The woofer slopes into its opening; the soft surround stands proud. */}
       {[
@@ -136,7 +137,7 @@ export default function Speaker() {
             key={`${x}-${z}`}
             size={[0.16, 0.035, 0.18]}
             position={[x, -0.7425, z]}
-            color="#141d27"
+            color={STUDIO.rubber}
             bevel={0.012}
           />
         )),
