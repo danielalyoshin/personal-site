@@ -202,8 +202,12 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await ready(page)
   const guide = page.getByText('Choose a tape to play')
   await expect(guide).toBeInViewport({ ratio: 1 })
+  await expect(guide).toContainText('Select a cassette in the studio.')
   await expect(page.locator('canvas')).toBeInViewport({ ratio: 1 })
   await page.setViewportSize({ width: 390, height: 844 })
+  // The fitted rack is about 110px across on a phone: the guide points at
+  // the index, whose entries are in reach.
+  await expect(guide).toContainText('Pick one from the index below.')
   await expect(
     page.getByRole('link', {
       name: 'Play tape: Placeholder: Alpha (2026)',

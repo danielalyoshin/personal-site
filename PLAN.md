@@ -819,6 +819,54 @@ the established composition and bringing all equipment to the same finish.
   formatting passed. Existing tape clearances, blank-slot behavior, camera
   transitions, keyboard access, reduced motion, and fallback reading passed.
 
+#### Phone selection and laptop reader (2026-09-16)
+
+The third critique (27/36) put phone selection first: at 390px the six slot
+targets sit on a 16.6px pitch under a guide that said to select in the
+studio, so a mis-tap opened the wrong tape full-screen; common laptops drew
+the modeled reader's prose under its 16px floor with nothing showing that
+the article scrolled. `/impeccable adapt`, first of the agreed order.
+
+- ✅ Touch selection (The Touch Rule in `DESIGN.md`): a touch tap on a
+  cassette previews it (lift, guide, idle screen) and a second tap plays
+  it; a mouse is unchanged. `Tape.tsx` skips the hover preview for touch
+  pointers and branches its click on `active`. Every slot also answers a
+  tap inside its projected rectangle grown to at least 44 × 44px about its
+  centre, nearest centre first, blank slots swallowing theirs
+  (`resolveSlotTap` in `transport.ts`); the scene registers the handler in
+  the renderer's store as `onPointerMissed`, read live per event. Double
+  clicks are ignored there: Chrome turns a second tap within ~300ms into a
+  mouse-typed `dblclick`, which selected on the first attempt in testing.
+- ✅ Guide: at 600px and below the instruction reads "Pick one from the
+  index below."; while previewed it reads "Tap again to play" on devices
+  without hover (`useMediaQuery` in `Stage.tsx`). The 44px-per-slot ask
+  cannot be met literally at the phone fit (the whole rack is about 110px
+  across), so the index is the phone's primary selection surface and the
+  studio a live picture.
+- ✅ Modeled reader (The Tube-Scale Rule): where the playback zoom would
+  draw the 560px reader plane smaller, `Screen` enlarges the Html plane's
+  group and shrinks the content to match (`playbackZoom` in `framing.ts`,
+  the same fit the rig runs from the playback pose), so one CSS px is one
+  screen px and the prose's rem floor is real: 16.0px at 1280 × 720 (was
+  15.3), 16.8 at 1366 × 768 and 1024 × 768, 16.0 at 800 × 700; 1440 × 900
+  and larger are unchanged. The 699px breakpoint stays, so those laptops
+  keep the modeled playback. The framing now lives in `SceneContents` and
+  is shared by the rig and the screen.
+- ✅ Continuation cues: a 3.5rem bottom fade that lifts once the article's
+  end is in view (`data-more` kept on the article by a callback ref with
+  scroll and resize observers, no React state), and a `screen-scroll`
+  scrollbar token at 3.5:1 (was seam-lit at 1.8:1). Both readers.
+- Regression: hardening's touch test covers the guide copy, the two-step
+  tap, the catch beside About, the blank swallow, and the cancel; a new
+  `reader.spec.ts` measures the drawn prose size at 1440 × 900, 1366 × 768,
+  1280 × 720, and 1024 × 768, the fade's lift, and the scrollbar colour;
+  studio's first-viewport test reads both guide lines.
+- Docs: DESIGN.md (The Touch Rule, The Tube-Scale Rule, Layout guide copy,
+  CRT reader cues, `screen-scroll`, a Do), the sidecar, the surface brief,
+  README.
+- Next in the agreed order: polish (the LOADING sub-line), harden, clarify,
+  polish.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

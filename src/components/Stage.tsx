@@ -68,6 +68,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const expandedReader = useMediaQuery(
     '(max-width: 767px), (max-height: 699px)',
   )
+  // At phone widths the fitted rack is about 110px across, so the guide
+  // sends the visitor to the index; the studio still answers taps.
+  const phone = useMediaQuery('(max-width: 600px)')
+  // Without hover, a first tap previews a modeled tape and a second plays it.
+  const touchOnly = useMediaQuery('(hover: none)')
   const soundOn = useSoundEnabled()
   const tape = findTape(slug) ?? null
   const invalid = notFound || (!!slug && !tape)
@@ -522,10 +527,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                 {preview ? preview.vhs.spineLabel : 'Choose a tape to play'}
                 <small>
                   {preview
-                    ? preview.slug === 'about'
-                      ? 'About Daniel · Select to play'
-                      : 'Placeholder tape · Select to play'
-                    : 'Select a cassette in the studio.'}
+                    ? `${preview.slug === 'about' ? 'About Daniel' : 'Placeholder tape'} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
+                    : phone
+                      ? 'Pick one from the index below.'
+                      : 'Select a cassette in the studio.'}
                 </small>
               </span>
             </div>

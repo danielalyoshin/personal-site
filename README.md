@@ -48,7 +48,7 @@ WebGL unavailability or context loss falls back to the full HTML archive reader.
 | `src/components/CRT.tsx`                | HTML project reader and CRT effects                         |
 | `src/content/`                          | Typed project content and About tape                        |
 | `src/lib/sound.ts`                      | Opt-in synthesized mechanical cues                          |
-| `e2e/`                                  | Studio, transport, loading, font, and touch regressions     |
+| `e2e/`                                  | Studio, transport, reader, loading, font, touch regressions |
 
 The scene is lazy-loaded and renders only when needed. Pixel ratio is capped at
 1.75 in browse and 2 during modeled playback. The 3D dependency chunk is
@@ -71,8 +71,10 @@ navigation, reading, focus return and containment, deep links, browser history,
 WebGL, and graphics context loss. Hardening cases cover delayed or failed scene
 loading, the deep-link handoff to the modeled screen with carried focus and
 scroll, modified clicks, contact targets, native
-touch gestures, and delayed-font texture redraws. It starts a local server when
-needed.
+touch gestures with the two-tap cassette preview and its 44px catch, and
+delayed-font texture redraws. The reader case measures the modeled prose at
+its real drawn size on laptop viewports and the article's continuation cues.
+It starts a local server when needed.
 
 ## Impeccable in Codex
 

@@ -9,3 +9,4 @@ package-lock.json
 
 # Impeccable writes these briefs; their frontmatter lists must stay on one line
 .impeccable/surfaces/
+.impeccable/critique/

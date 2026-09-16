@@ -4,7 +4,7 @@ import { Group, MathUtils, Quaternion, Vector3 } from 'three'
 import type { Project } from '../../content/types'
 import CassetteModel from './CassetteModel'
 import { fitType, makeTexture, useTextureDisposal } from './textures'
-import { insertionPose, SLOT_TARGET, slotHome } from './transport'
+import { insertionPose, isTouchEvent, SLOT_TARGET, slotHome } from './transport'
 
 /** A previewed cassette rises and comes forward by this much. */
 const LIFT = new Vector3(0, 0.22, 0.38)
@@ -177,10 +177,11 @@ export default function Tape({
         visible={false}
         onPointerOver={(event) => {
           event.stopPropagation()
-          if (interactive) {
-            document.body.style.cursor = 'pointer'
-            onPreview(tape)
-          }
+          // A finger over the slot is a tap in progress, not a hover: the
+          // tap itself previews (The Touch Rule).
+          if (!interactive || isTouchEvent(event.nativeEvent)) return
+          document.body.style.cursor = 'pointer'
+          onPreview(tape)
         }}
         onPointerOut={() => {
           document.body.style.cursor = ''
@@ -188,10 +189,12 @@ export default function Tape({
         }}
         onClick={(event) => {
           event.stopPropagation()
-          if (event.delta < 5 && interactive) {
-            document.body.style.cursor = ''
-            onSelect(tape)
-          }
+          if (event.delta >= 5 || !interactive) return
+          document.body.style.cursor = ''
+          // Touch has no hover to confirm with, so the first tap lifts the
+          // tape and names it; the tape already previewed is the one to play.
+          if (isTouchEvent(event.nativeEvent) && !active) onPreview(tape)
+          else onSelect(tape)
         }}
       />
     </>

@@ -1,5 +1,25 @@
-import { MathUtils, Matrix4, Mesh, Vector3 } from 'three'
-import type { Object3D, OrthographicCamera } from 'three'
+import { MathUtils, Matrix4, Mesh, OrthographicCamera, Vector3 } from 'three'
+import type { Object3D } from 'three'
+import { PLAYER } from './transport'
+
+export type StudioFraming = ReturnType<typeof createStudioFraming>
+
+const playbackCamera = new OrthographicCamera()
+
+/**
+ * The zoom the playback view settles on for a frame of this size: the same
+ * fit the rig runs, taken from the camera's playback pose ahead of time. The
+ * modeled reader sizes itself to it before the camera arrives.
+ */
+export function playbackZoom(
+  fit: StudioFraming,
+  width: number,
+  height: number,
+) {
+  playbackCamera.position.set(PLAYER.playbackX, PLAYER.playbackY, 12)
+  playbackCamera.lookAt(PLAYER.playbackX, PLAYER.playbackY, 0)
+  return fit(playbackCamera, width, height, 1)
+}
 
 /** Fit the rendered equipment, excluding the shadow-catching ground plane. */
 export function createStudioFraming(studio: Object3D) {

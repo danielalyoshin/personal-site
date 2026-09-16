@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -8,7 +9,7 @@ import {
 } from 'react'
 import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
-import { MathUtils, OrthographicCamera, Vector3 } from 'three'
+import { Group, MathUtils, OrthographicCamera, Vector3 } from 'three'
 import type { Project } from '../../content/types'
 import { shelfTapes } from '../../content/projects'
 import { isComing } from '../../content/types'
@@ -27,8 +28,18 @@ import Headphones from './Headphones'
 import Speaker from './Speaker'
 import TapeRack from './TapeRack'
 import CassetteModel from './CassetteModel'
-import { EJECT_SECONDS, INSERT_SECONDS, PLAYER } from './transport'
-import { createStudioFraming } from './framing'
+import {
+  EJECT_SECONDS,
+  INSERT_SECONDS,
+  isTouchEvent,
+  PLAYER,
+  resolveSlotTap,
+} from './transport'
+import {
+  createStudioFraming,
+  playbackZoom,
+  type StudioFraming,
+} from './framing'
 import styles from './StudioScene.module.css'
 import type { DeckControlsProps } from '../DeckControls'
 
@@ -131,6 +142,7 @@ function CameraRig({
   returning,
   box,
   phase,
+  framing,
   onReturned,
 }: Pick<
   StudioProps,
@@ -141,8 +153,8 @@ function CameraRig({
   | 'returning'
   | 'box'
   | 'onReturned'
-> & { phase: RefObject<Phase> }) {
-  const { size, scene, invalidate } = useThree()
+> & { phase: RefObject<Phase>; framing: RefObject<StudioFraming | null> }) {
+  const { size, invalidate } = useThree()
   const rig = useRef({
     moving: true,
     initialized: false,
@@ -163,7 +175,6 @@ function CameraRig({
     look: new Vector3(0, 1.9, 0),
     focus: 0,
     frame: { x: 0, y: 0, width: 0, height: 0 } as Frame,
-    fit: null as ReturnType<typeof createStudioFraming> | null,
   })
   const scratch = useRef({
     position: new Vector3(),
@@ -174,12 +185,6 @@ function CameraRig({
     goal: { x: 0, y: 0, width: 0, height: 0 } as Frame,
   })
   useEffect(() => {
-    rig.current.fit = createStudioFraming(
-      scene.getObjectByName('studio-model')!,
-    )
-    invalidate()
-  }, [scene, invalidate])
-  useEffect(() => {
     const state = rig.current
     state.skip = open && state.previousSkips !== skips
     state.previousSkips = skips
@@ -189,7 +194,8 @@ function CameraRig({
   useFrame(({ camera, size }, delta) => {
     const state = rig.current
     const { position, target, right, up, canvas, goal } = scratch.current
-    if (!(camera instanceof OrthographicCamera) || !state.fit) return
+    const fit = framing.current
+    if (!(camera instanceof OrthographicCamera) || !fit) return
     const { open, returning, inserting } = phase.current
     // A move that starts from rest begins with an ordinary frame's step, not
     // the whole gap since the last drawn frame: idle time, or a long commit.
@@ -243,12 +249,12 @@ function CameraRig({
     const focus = open && !inserting
     const narrow = size.width <= 600
     position.set(
-      focus ? -1.35 : narrow ? 3.8 : 5.8,
+      focus ? PLAYER.playbackX : narrow ? 3.8 : 5.8,
       focus ? PLAYER.playbackY : narrow ? 5.05 : 5.75,
       12,
     )
     target.set(
-      focus ? -1.35 : narrow ? 0.25 : 0,
+      focus ? PLAYER.playbackX : narrow ? 0.25 : 0,
       focus ? PLAYER.playbackY : narrow ? 2 : 1.9,
       0,
     )
@@ -268,12 +274,7 @@ function CameraRig({
     }
     camera.position.copy(state.base)
     camera.lookAt(state.look)
-    const zoom = state.fit(
-      camera,
-      state.frame.width,
-      state.frame.height,
-      state.focus,
-    )
+    const zoom = fit(camera, state.frame.width, state.frame.height, state.focus)
     // Shrink immediately when an edge needs space; ease back into a closer
     // fit. A shrinking frame is followed exactly, so it stays smooth.
     camera.zoom = snap
@@ -314,16 +315,57 @@ function CameraRig({
   return null
 }
 
+/** The modeled reader's reference plane: 560 CSS px across the 2.8-unit screen. */
+const READER_WIDTH = 560
+const READER_HEIGHT = 420
+/** Drei's transform mode draws one CSS px as zoom × distanceFactor / 400 px. */
+const READER_DISTANCE = 2
+/** The zoom at which one reader CSS px is one screen px. */
+const READER_ZOOM = 400 / READER_DISTANCE
+
 function Screen({
   open,
   invalid,
   preview,
   inserting,
+  framing,
   children,
 }: Pick<
   StudioProps,
   'open' | 'invalid' | 'preview' | 'inserting' | 'children'
->) {
+> & { framing: RefObject<StudioFraming | null> }) {
+  const plane = useRef<Group>(null)
+  const content = useRef<HTMLDivElement | null>(null)
+  const reader = useRef({ width: 0, height: 0, enlarge: 1 })
+  // Drei mounts the reader through its own root, after the frame that sized
+  // the plane: the content takes its size as it arrives.
+  const sizeContent = useCallback((el: HTMLDivElement | null) => {
+    content.current = el
+    if (!el) return
+    const { enlarge } = reader.current
+    el.style.width = `${READER_WIDTH / enlarge}px`
+    el.style.height = `${READER_HEIGHT / enlarge}px`
+  }, [])
+  useFrame(({ size }) => {
+    const fit = framing.current
+    const state = reader.current
+    if (!plane.current || !fit) return
+    if (size.width === state.width && size.height === state.height) return
+    state.width = size.width
+    state.height = size.height
+    // Below the reference zoom the tube would draw the reader smaller than
+    // its CSS, and with it the prose under the 16px it was set at. Enlarge
+    // the plane and shrink the content to match, so one CSS px is one
+    // screen px and the type's rem floors are real pixels (The Tube-Scale
+    // Rule). Above the reference zoom the reader scales up as before.
+    state.enlarge = Math.max(
+      1,
+      READER_ZOOM / playbackZoom(fit, size.width, size.height),
+    )
+    plane.current.scale.setScalar(state.enlarge)
+    plane.current.updateWorldMatrix(true, false)
+    sizeContent(content.current)
+  }, -1)
   const texture = useMemo(
     () =>
       makeTexture(1024, 768, (ctx) => {
@@ -387,23 +429,25 @@ function Screen({
           <meshBasicMaterial map={texture} toneMapped={false} />
         </mesh>
       )}
-      {open && !inserting && children && (
-        <Html
-          transform
-          distanceFactor={2}
-          position={[0, 0, 0.035]}
-          zIndexRange={[40, 30]}
-          style={{ pointerEvents: 'auto' }}
-        >
-          <div
-            className={styles.screenContent}
-            onPointerDown={(event) => event.stopPropagation()}
-            data-testid="project-reader"
+      <group ref={plane} position={[0, 0, 0.035]}>
+        {open && !inserting && children && (
+          <Html
+            transform
+            distanceFactor={READER_DISTANCE}
+            zIndexRange={[40, 30]}
+            style={{ pointerEvents: 'auto' }}
           >
-            {children}
-          </div>
-        </Html>
-      )}
+            <div
+              className={styles.screenContent}
+              ref={sizeContent}
+              onPointerDown={(event) => event.stopPropagation()}
+              data-testid="project-reader"
+            >
+              {children}
+            </div>
+          </Html>
+        )}
+      </group>
       <pointLight
         position={[0, -0.8, 0.6]}
         color={open && !invalid ? '#b4c4ff' : '#4145ff'}
@@ -600,8 +644,55 @@ function LooseTape() {
 }
 
 function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
-  const { gl, invalidate } = useThree()
+  const { gl, scene, invalidate } = useThree()
+  const get = useThree((state) => state.get)
+  const set = useThree((state) => state.set)
   const { onReady, onUnavailable, onInserted, onEjected } = props
+  const framing = useRef<StudioFraming | null>(null)
+  // What a tap that hit nothing means, read from the page's latest commit.
+  const latest = useRef(props)
+  useLayoutEffect(() => {
+    latest.current = props
+  })
+  useEffect(() => {
+    framing.current = createStudioFraming(
+      scene.getObjectByName('studio-model')!,
+    )
+    invalidate()
+  }, [scene, invalidate])
+  // A click or tap that hit nothing interactive. The renderer reads this
+  // from its store on every event, so it stays live across renders.
+  useEffect(() => {
+    const onPointerMissed = (event: MouseEvent) => {
+      // A second tap close on the first also arrives as a double click, a
+      // mouse-typed event the click before it has already answered.
+      if (event.type !== 'click') return
+      const { open, ejecting, preview, onPreview, onSelect } = latest.current
+      // A fingertip clear of every slot target may still mean a slot: the
+      // nearest one whose 44px catch holds the tap (The Touch Rule).
+      if (!open && isTouchEvent(event)) {
+        const { camera } = get()
+        const index = resolveSlotTap(
+          event.clientX,
+          event.clientY,
+          shelfTapes.length,
+          camera,
+          gl.domElement.getBoundingClientRect(),
+        )
+        if (index >= 0) {
+          const slot = shelfTapes[index]
+          // A blank slot swallows the tap, and a returning tape is not
+          // yet a choice.
+          if (isComing(slot) || ejecting?.slug === slot.slug) return
+          if (preview?.slug === slot.slug) onSelect(slot)
+          else onPreview(slot)
+          return
+        }
+      }
+      onPreview(null)
+    }
+    set({ onPointerMissed })
+  }, [get, gl, set])
   const progress = useRef(1)
   const previousTape = useRef<string | null>(null)
   const completed = useRef(false)
@@ -681,7 +772,7 @@ function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
   }, [gl, invalidate, onReady, onUnavailable])
   return (
     <>
-      <CameraRig {...props} phase={props.phase} />
+      <CameraRig {...props} phase={props.phase} framing={framing} />
       <ambientLight intensity={0.85} color="#e8e9ee" />
       <hemisphereLight args={['#eceef3', '#36383e', 1.2]} />
       <directionalLight
@@ -748,7 +839,7 @@ function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
             />
           ),
         )}
-        <Screen {...props} />
+        <Screen {...props} framing={framing} />
       </group>
     </>
   )
@@ -781,7 +872,6 @@ export default function StudioScene(props: StudioProps) {
       style={{ pointerEvents: props.returning ? 'none' : 'auto' }}
       fallback={<p>The tape archive is available below.</p>}
       onCreated={props.onCreated}
-      onPointerMissed={() => props.onPreview(null)}
     >
       <SceneContents {...props} phase={phase} />
     </Canvas>

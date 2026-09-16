@@ -5,6 +5,30 @@ import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
 
 export type ScreenMode = 'idle' | 'playing' | 'nosignal' | 'ejecting'
 
+/**
+ * Marks the article while more of it lies below the fold, so the fade at
+ * the tube's foot shows only when there is something to scroll to. Kept on
+ * the element itself: it is a reading cue, not reader state.
+ */
+function watchContinuation(article: HTMLElement | null) {
+  if (!article) return
+  const update = () => {
+    const remaining =
+      article.scrollHeight - article.clientHeight - article.scrollTop
+    if (remaining > 1) article.dataset.more = ''
+    else delete article.dataset.more
+  }
+  update()
+  article.addEventListener('scroll', update, { passive: true })
+  const resized = new ResizeObserver(update)
+  resized.observe(article)
+  if (article.firstElementChild) resized.observe(article.firstElementChild)
+  return () => {
+    article.removeEventListener('scroll', update)
+    resized.disconnect()
+  }
+}
+
 interface CRTProps {
   /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
   embedded?: boolean
@@ -47,6 +71,7 @@ export default function CRT({
                 className={styles.reader}
                 tabIndex={0}
                 aria-label={`${tape.title} details`}
+                ref={watchContinuation}
               >
                 <div className={styles.readerContent}>
                   <h2 tabIndex={-1} ref={onTitleEl} className={styles.title}>
@@ -122,6 +147,7 @@ export default function CRT({
                   </p>
                 </div>
               </article>
+              <div className={styles.osdBottom} aria-hidden="true" />
             </div>
           ) : mode === 'nosignal' ? (
             <div className={styles.centerScreen}>

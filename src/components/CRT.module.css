@@ -152,7 +152,26 @@
   letter-spacing: var(--tracking-body);
   overflow-wrap: anywhere;
   scrollbar-width: thin;
-  scrollbar-color: var(--seam-lit) transparent;
+  scrollbar-color: var(--screen-scroll) transparent;
+}
+
+/* The article's continuation, mirrored from the OSD's fade above: the last
+   lines run under a dark fade while more remains, and the fade lifts once
+   the end is in view so the REC line closes the tape uncovered. */
+.osdBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3.5rem;
+  background: linear-gradient(transparent, var(--screen-black) 70%);
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity var(--t-med);
+}
+
+.reader:not([data-more]) + .osdBottom {
+  opacity: 0;
 }
 
 .readerContent {

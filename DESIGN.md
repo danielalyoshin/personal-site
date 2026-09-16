@@ -19,6 +19,7 @@ colors:
   screen-soft: '#aeb8dd'
   osd-white: '#ffffff'
   rec-red: '#ff3b30'
+  screen-scroll: '#5c6683'
   phosphor: '#b4c4ff'
   studio-blue: '#242bd9'
 typography:
@@ -307,14 +308,16 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 **The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed on the modeled EJECT cap ahead of its label at the capitals' height. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
-therefore describe the screen plane before its visual transform. Canvas print
+therefore describe the screen plane before its visual transform, except below
+the reference zoom, where the plane is sized to the tube and computed sizes
+are real (The Tube-Scale Rule). Canvas print
 sizes are texture coordinates, not recommended HTML font sizes.
 
 **The Silkscreen Rule.** Printed hardware text never glows. Its hierarchy comes from size appropriate to the object, weight, spacing, and contrast against the material.
 
 **The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints share the page's weights: 600 for the status window, the AV–01 line, and the key caps; 800 for each spine's number and name. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.
 
-**The Tube-Scale Rule.** Screen-interior type scales with the tube using cqi units. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.
+**The Tube-Scale Rule.** Screen-interior type scales with the tube using cqi units. The modeled reader is authored on a 560px plane and drawn at the playback zoom; where that zoom would draw the plane smaller than 560px (laptops at 1280 × 720 and 1366 × 768, tablets at 1024 × 768), the plane is enlarged and its content shrunk to match, so one CSS pixel is one screen pixel and the prose's 1rem floor is a real 16px floor. Above that zoom the reader scales up with the tube as before. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.
 
 ## Layout
 
@@ -340,7 +343,12 @@ uses 32px top spacing, reduced to 20px on those short desktop viewports and
 The selection guide precedes the canvas, 24px below the introduction. It
 pairs "Choose a tape to play" with a one-line instruction that points at the
 studio rather than the index; the instruction hangs 4px beneath, and the
-canvas follows it directly. Nothing shares the guide's row: there is no scene
+canvas follows it directly. At widths of 600px and below the instruction
+points at the index instead, "Pick one from the index below.", because the
+fitted rack is about 110px across there and the index entries are the
+targets in reach; the studio still answers taps (The Touch Rule, under
+Cassettes and insertion). While a tape is previewed the instruction reads
+"Select to play", or "Tap again to play" on a device without hover. Nothing shares the guide's row: there is no scene
 metadata line, clock, drag hint, or reset above the canvas. The index follows the
 canvas with a seam and 16px top padding. This groups the artifact with its
 selection surfaces.
@@ -602,6 +610,19 @@ cleanly at their shared edge. Selection lifts clear of the rack, pulls
 forward of the table, turns flat, aligns with the deck slot, and seats inside
 the hollow bay. The flap closes before the camera moves to reading position.
 
+**The Touch Rule.** A touch has no hover to confirm with, so on touch the
+preview is a step of its own: the first tap on a cassette lifts and names
+it, in the guide and on the idle screen, and a second tap on the same
+cassette plays it; a tap on another cassette moves the preview, and a tap
+clear of the rack drops it. A mouse is unchanged: hover previews, click
+plays. Slots are far narrower than a fingertip at the phone fit (29px wide
+on a 16.6px pitch at 390px), so every slot target also answers a tap
+inside its projected rectangle grown to at least 44 × 44px about its
+centre, the nearest centre winning where the catches overlap; a blank
+slot's catch swallows its tap as its target does. A tap that lands on a
+target directly is that tape's. The catch is read from the camera at the
+moment of the tap, so it follows every fit and resize.
+
 **The Soft Zoom Rule.** Choosing a tape and ejecting it are one continuous
 camera move each way; no frame ever shows the studio jump between its box
 on the page and the viewport. The studio's box keeps its place in the page
@@ -648,7 +669,12 @@ Selectable, scrollable HTML inside the modeled screen, with a complete native
 reader when WebGL is missing, fails, or loses context. Prose uses screen-text;
 metadata uses dim screen text. Playback OSD sits above the reader with a dark
 fade behind it; its play mark is drawn at 0.7em with the OSD's own light, and
-the REC dot closing the article is a blinking 0.5em circle. Project media spans the reading column, with a seam border and
+the REC dot closing the article is a blinking 0.5em circle. The article's
+continuation is visible: a 3.5rem fade to screen black at the tube's foot
+mirrors the OSD's fade above while more of the article lies below, and
+lifts (240ms) once its end is in view, so the REC line closes the tape
+uncovered; the reader's thin scrollbar thumb is screen-scroll, 3.5:1 on the
+tube. Both cues serve the modeled and the native reader alike. Project media spans the reading column, with a seam border and
 small control corners. The article is a named Tab stop within the playback
 focus loop, so keyboard users can return from transport controls and resume
 scrolling. Initial focus still announces the title. Missing-tape and unknown-route
@@ -701,6 +727,7 @@ small/medium gaps. They are informational labels, not filled chips or filters.
 - Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do keep placeholder projects explicitly labeled until Daniel supplies real content.
+- Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 
 ### Don't:

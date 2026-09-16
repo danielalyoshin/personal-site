@@ -288,19 +288,21 @@ test('CRT contact links have separate touch targets at phone and desktop sizes',
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/project/about')
   await ready(page)
-  const reader = page.getByRole('article', { name: 'Daniel Alyoshin details' })
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 1440, height: 1000 },
   ]) {
     await page.setViewportSize(viewport)
     // The reader follows the viewport rule: native on the phone, modeled on
-    // the desktop. Measure once the right one is on stage.
-    await expect(
-      page.getByTestId(
-        viewport.width < 768 ? 'native-reader' : 'project-reader',
-      ),
-    ).toBeVisible()
+    // the desktop. Measure the one on stage; the other is still unmounting
+    // for a tick after a resize.
+    const frame = page.getByTestId(
+      viewport.width < 768 ? 'native-reader' : 'project-reader',
+    )
+    await expect(frame).toBeVisible()
+    const reader = frame.getByRole('article', {
+      name: 'Daniel Alyoshin details',
+    })
     await expect(reader).toBeVisible()
     const github = reader.getByRole('link', { name: 'GITHUB', exact: true })
     const linkedin = reader.getByRole('link', {
@@ -440,7 +442,23 @@ test.describe('touch input in the studio', () => {
       ).toBeLessThan(0.01)
       await expect(page).toHaveURL('/')
       expect(await page.evaluate(() => window.scrollY)).toBeLessThan(5)
-      const tapePoint = await page.evaluate(async () => {
+      // The selection guide: its title line and the instruction beneath.
+      const guide = () =>
+        page.evaluate(() => {
+          const span = document
+            .querySelector('[data-testid="studio-scene"]')!
+            .previousElementSibling!.querySelector('span')!
+          return [
+            span.firstChild!.textContent,
+            span.querySelector('small')!.textContent,
+          ]
+        })
+      const idle = ['Choose a tape to play', 'Pick one from the index below.']
+      // At phone widths the fitted rack is about 110px across, so the guide
+      // sends the visitor to the index. The studio still answers taps.
+      expect(await guide()).toEqual(idle)
+      // Where each slot target lands on screen.
+      const slots = await page.evaluate(async () => {
         const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
         const threeModule = '/node_modules/.vite/deps/three.js'
         const { _roots } = (await import(
@@ -451,16 +469,82 @@ test.describe('touch input in the studio', () => {
         )) as typeof import('three')
         const canvas = document.querySelector('canvas')!
         const state = _roots.get(canvas)!.store.getState()
-        const tape = state.scene.getObjectByName('tape-placeholder-alpha')!
-        const center = new Box3().setFromObject(tape).getCenter(new Vector3())
-        center.project(state.camera)
         const rect = canvas.getBoundingClientRect()
-        return {
-          x: rect.x + ((center.x + 1) / 2) * rect.width,
-          y: rect.y + ((1 - center.y) / 2) * rect.height,
+        const slots: Record<
+          string,
+          { left: number; right: number; top: number; bottom: number }
+        > = {}
+        for (const target of state.internal.interaction) {
+          if (!target.name.startsWith('pointer-target-')) continue
+          const box = new Box3().setFromObject(target, true)
+          const slot = {
+            left: Infinity,
+            right: -Infinity,
+            top: Infinity,
+            bottom: -Infinity,
+          }
+          for (let corner = 0; corner < 8; corner++) {
+            const point = new Vector3(
+              corner & 1 ? box.max.x : box.min.x,
+              corner & 2 ? box.max.y : box.min.y,
+              corner & 4 ? box.max.z : box.min.z,
+            ).project(state.camera)
+            const x = rect.x + ((point.x + 1) / 2) * rect.width
+            const y = rect.y + ((1 - point.y) / 2) * rect.height
+            slot.left = Math.min(slot.left, x)
+            slot.right = Math.max(slot.right, x)
+            slot.top = Math.min(slot.top, y)
+            slot.bottom = Math.max(slot.bottom, y)
+          }
+          slots[target.name.replace('pointer-target-', '')] = slot
         }
+        return slots
       })
-      await page.touchscreen.tap(tapePoint.x, tapePoint.y)
+      const centre = (slot: {
+        left: number
+        right: number
+        top: number
+        bottom: number
+      }) => ({
+        x: (slot.left + slot.right) / 2,
+        y: (slot.top + slot.bottom) / 2,
+      })
+      // Each slot is far narrower than a fingertip here.
+      expect(slots.about.right - slots.about.left).toBeLessThan(44)
+      // A touch has no hover to confirm with: the first tap on a cassette
+      // previews it and the second plays it (The Touch Rule).
+      const alpha = centre(slots['placeholder-alpha'])
+      await page.touchscreen.tap(alpha.x, alpha.y)
+      await expect
+        .poll(guide)
+        .toEqual(['ALPHA', 'Placeholder tape · Tap again to play'])
+      await expect(page).toHaveURL('/')
+      // Every slot answers within a 44px catch about its centre: a tap 5px
+      // clear of About's target still means About, and the nearest slot
+      // wins, so the preview moves rather than the page.
+      const about = centre(slots.about)
+      await page.touchscreen.tap(slots.about.right + 5, about.y)
+      await expect
+        .poll(guide)
+        .toEqual(['ABOUT · DANIEL', 'About Daniel · Tap again to play'])
+      await expect(page).toHaveURL('/')
+      // A blank slot swallows its tap, and a tap clear of the rack cancels.
+      const blank = centre(slots['coming-1'])
+      await page.touchscreen.tap(blank.x, blank.y)
+      await page.waitForTimeout(300)
+      expect(await guide()).toEqual([
+        'ABOUT · DANIEL',
+        'About Daniel · Tap again to play',
+      ])
+      await page.touchscreen.tap(bounds.x + 24, bounds.y + 24)
+      await expect.poll(guide).toEqual(idle)
+      await expect(page).toHaveURL('/')
+      // The tape already previewed is the one a tap plays.
+      await page.touchscreen.tap(alpha.x, alpha.y)
+      await expect
+        .poll(guide)
+        .toEqual(['ALPHA', 'Placeholder tape · Tap again to play'])
+      await page.touchscreen.tap(alpha.x, alpha.y)
       await expect(page).toHaveURL('/project/placeholder-alpha')
       await expect(
         page.getByRole('article', { name: 'Placeholder: Alpha details' }),

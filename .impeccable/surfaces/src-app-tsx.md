@@ -53,8 +53,14 @@ plates; headphone seams, pivots, and stand fittings follow the cassette and
 speaker construction, with 24-segment curves and four low stand pads.
 
 Browse: "Choose a tape to play" explains the action before the canvas, with
-a one-line instruction that points at the studio rather than the index.
-Hover/focus previews and raises a tape; click or Enter selects it. The
+a one-line instruction that points at the studio rather than the index; at
+widths of 600px and below it points at the index instead ("Pick one from
+the index below."), because the fitted rack is about 110px across there.
+Hover/focus previews and raises a tape; click or Enter selects it. Touch
+previews first: a tap lifts and names a cassette (the guide reads "Tap
+again to play"), a second tap on it plays it, and every slot answers a tap
+within a 44px catch about its centre, nearest centre first, blank slots
+swallowing theirs (The Touch Rule in `DESIGN.md`). The
 pointer target is the cassette's resting slot, fixed while the shell lifts,
 so previews hand over cleanly from one slot to the next. A project slot with
 nothing behind it yet holds a blank shell with no print, behind a slot
@@ -80,7 +86,12 @@ rejoins the page; no frame shows a jump either way. Reduced motion is
 immediate both ways.
 
 Read: accessible HTML inside the modeled CRT when the viewport is wider than
-767px and taller than 699px. At widths up to 767px or heights up to 699px, use
+767px and taller than 699px; where the playback zoom would draw the 560px
+reader plane smaller, the plane is enlarged and its content shrunk to match,
+so the 16px prose floor is real on 1280 × 720 and 1366 × 768 laptops (The
+Tube-Scale Rule in `DESIGN.md`). A bottom fade marks the article's
+continuation until its end is in view, and the scrollbar thumb reads 3.5:1
+on the tube, in both readers. At widths up to 767px or heights up to 699px, use
 a full-height native CRT reader with a 16px prose floor, scaling to 18px.
 Direct project links and tape selections before graphics are ready use this
 reader immediately at every viewport size. It stays pinned only until the

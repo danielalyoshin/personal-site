@@ -288,6 +288,21 @@
           "oklch(83.571% 0.25100 268.533)",
           "oklch(95.000% 0.25100 268.533)"
         ]
+      },
+      "screen-scroll": {
+        "role": "neutral",
+        "displayName": "Screen scrollbar",
+        "canonical": "#5c6683",
+        "tonalRamp": [
+          "oklch(15.000% 0.05678 272.289)",
+          "oklch(26.429% 0.05678 272.289)",
+          "oklch(37.857% 0.05678 272.289)",
+          "oklch(49.286% 0.05678 272.289)",
+          "oklch(60.714% 0.05678 272.289)",
+          "oklch(72.143% 0.05678 272.289)",
+          "oklch(83.571% 0.05678 272.289)",
+          "oklch(95.000% 0.05678 272.289)"
+        ]
       }
     },
     "typographyMeta": {
@@ -598,7 +613,7 @@
       },
       {
         "name": "The Tube-Scale Rule",
-        "body": "Screen-interior type scales with the tube using cqi units. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.",
+        "body": "Screen-interior type scales with the tube using cqi units. The modeled reader is authored on a 560px plane and drawn at the playback zoom; where that zoom would draw the plane smaller than 560px (laptops at 1280 × 720 and 1366 × 768, tablets at 1024 × 768), the plane is enlarged and its content shrunk to match, so one CSS pixel is one screen pixel and the prose's 1rem floor is a real 16px floor. Above that zoom the reader scales up with the tube as before. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.",
         "section": "typography"
       },
       {
@@ -612,6 +627,11 @@
         "section": "elevation"
       },
       {
+        "name": "The Touch Rule",
+        "body": "A touch has no hover to confirm with, so on touch the preview is a step of its own: the first tap on a cassette lifts and names it, in the guide and on the idle screen, and a second tap on the same cassette plays it; a tap on another cassette moves the preview, and a tap clear of the rack drops it. A mouse is unchanged: hover previews, click plays. Slots are far narrower than a fingertip at the phone fit (29px wide on a 16.6px pitch at 390px), so every slot target also answers a tap inside its projected rectangle grown to at least 44 × 44px about its centre, the nearest centre winning where the catches overlap; a blank slot's catch swallows its tap as its target does. A tap that lands on a target directly is that tape's. The catch is read from the camera at the moment of the tap, so it follows every fit and resize.",
+        "section": "components"
+      },
+      {
         "name": "The Handoff Rule",
         "body": "A desktop deep link's native reader hands over to the modeled screen once, when the scene is ready. The studio composes underneath the still-opaque reader with the tape already seated, the flap closed, the deck reading PLAY, and the keys live, until the modeled reader is mounted and placed on the tube plus one drawn frame; then the native frame dissolves over 560ms (--t-dolly, --ease-out) while the tube's tracking entrance plays through it. The modeled article inherits the native reader's scroll depth and keeps focus in the article if that is where it was, otherwise on the title. During the dissolve the outgoing frame is aria-hidden and inert, then unmounts. An invalid slug hands off the same way to the modeled NO SIGNAL screen. Reduced motion swaps at the same moment. The dissolve stops early if playback closes, the viewport drops below the reading breakpoints, or graphics are lost.",
         "section": "components"
@@ -623,7 +643,8 @@
       "Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.",
       "Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.",
       "Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.",
-      "Do keep placeholder projects explicitly labeled until Daniel supplies real content."
+      "Do keep placeholder projects explicitly labeled until Daniel supplies real content.",
+      "Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip."
     ],
     "donts": [
       "Don't add grunge, sepia, dirt, wear, photographic textures, or degraded page chrome.",
