@@ -5,10 +5,12 @@ import {
   Suspense,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react'
 import type { CSSProperties, ErrorInfo, ReactNode } from 'react'
+import type { RootState } from '@react-three/fiber'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, shelfTapes } from '../content/projects'
 import type { Project } from '../content/types'
@@ -100,6 +102,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // router commits navigation in a transition, after any state set beside it.
   const [deckTape, setDeckTape] = useState<Project | null>(tape)
   const [ejecting, setEjecting] = useState<Project | null>(null)
+  // After playback closes, the camera brings the studio back into its box on
+  // the page before the canvas rejoins the page's layout; until then the
+  // viewport layer stays detached over the page.
+  const [returning, setReturning] = useState(false)
   const [wasOpenRender, setWasOpenRender] = useState(open)
   if (tape && tape.slug !== deckTape?.slug) setDeckTape(tape)
   if (invalid && deckTape) setDeckTape(null)
@@ -109,14 +115,21 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     // scene finishes immediately for the former, and there is no scene for
     // the latter. Reopening mid-eject seats the tape again.
     setEjecting(!open && ready && !flat ? deckTape : null)
+    setReturning(!open && ready && !flat)
     // An eject mid-insertion reverses from where the tape is; clearing the
     // insertion any earlier would seat it first.
     if (!open) setInsertingSlug(null)
   }
+  // Without a scene to ease it back, the canvas rejoins the page at once.
+  if (returning && (open || flat)) setReturning(false)
+  const detached = open || returning
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
   const lastTape = useRef<string | null>(null)
   const titleEl = useRef<HTMLHeadingElement | null>(null)
   const stageEl = useRef<HTMLDivElement>(null)
+  const sceneBox = useRef<HTMLDivElement>(null)
+  const viewportEl = useRef<HTMLDivElement>(null)
+  const studio = useRef<RootState | null>(null)
   const deckPortal = useRef<HTMLDivElement>(null)
   const nativeScreen = useRef<HTMLDivElement>(null)
   const wasOpen = useRef(open)
@@ -178,16 +191,21 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     }
   }, [])
   const onReady = useCallback(() => setReady(true), [])
+  const onCreated = useCallback((state: RootState) => {
+    studio.current = state
+  }, [])
   const onUnavailable = useCallback(() => {
     setFlat(true)
     setInsertingSlug(null)
     setEjecting(null)
+    setReturning(false)
   }, [])
   const onInserted = useCallback(() => {
     setInsertingSlug(null)
     playSound('insert')
   }, [])
   const onEjected = useCallback(() => setEjecting(null), [])
+  const onReturned = useCallback(() => setReturning(false), [])
   const skipInsertion = useCallback(() => {
     onInserted()
     setSkips((value) => value + 1)
@@ -250,16 +268,31 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     const timer = window.setTimeout(() => setHandoff(null), HANDOFF_FALLBACK_MS)
     return () => window.clearTimeout(timer)
   }, [handoff])
+  // The viewport layer changes box in this commit: it leaves the studio's box
+  // on the page for the whole viewport, or comes back. Size the renderer in
+  // the same commit, so the frame that paints the new box is drawn for it;
+  // measured through the resize observer, the old drawing would paint once
+  // at the new box's origin first.
+  useLayoutEffect(() => {
+    const state = studio.current
+    const layer = viewportEl.current
+    if (!state || !layer) return
+    const rect = layer.getBoundingClientRect()
+    state.setSize(rect.width, rect.height, rect.top, rect.left)
+    state.invalidate()
+  }, [detached])
   useEffect(() => {
     if (tape) lastTape.current = tape.slug
-    if (open) {
+  }, [tape])
+  useEffect(() => {
+    if (detached) {
       const previous = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       return () => {
         document.body.style.overflow = previous
       }
     }
-  }, [open, tape])
+  }, [detached])
   useEffect(() => {
     if (!open && wasOpen.current && lastTape.current) {
       restoringFocus.current = true
@@ -492,57 +525,65 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             </div>
           </div>
           <div
-            className={styles.scene}
+            className={`${styles.scene} ${detached ? styles.detached : ''} ${returning ? styles.returning : ''}`}
             data-testid="studio-scene"
             data-ready={ready || flat}
+            data-detached={detached || undefined}
+            ref={sceneBox}
             inert={(open && useNativeReader) || undefined}
             aria-hidden={(open && useNativeReader) || undefined}
           >
-            {flat ? (
-              open && useNativeReader ? null : (
-                fallback
-              )
-            ) : (
-              <SceneBoundary
-                fallback={open && useNativeReader ? null : fallback}
-                onUnavailable={onUnavailable}
-              >
-                <Suspense
-                  fallback={
-                    <div className={styles.loading}>
-                      <span className={styles.loadingMark}>AV–01</span>
-                      <span>Setting the scene…</span>
-                    </div>
-                  }
+            <div className={styles.viewport} ref={viewportEl}>
+              {flat ? (
+                open && useNativeReader ? null : (
+                  fallback
+                )
+              ) : (
+                <SceneBoundary
+                  fallback={open && useNativeReader ? null : fallback}
+                  onUnavailable={onUnavailable}
                 >
-                  <StudioScene
-                    tape={tape}
-                    preview={preview}
-                    open={open}
-                    invalid={invalid}
-                    reduced={reduced}
-                    skips={skips}
-                    inserting={loading}
-                    ejecting={ejecting}
-                    playback={open && !useNativeReader}
-                    deckPortal={deckPortal}
-                    soundOn={soundOn}
-                    onEject={eject}
-                    onSelect={select}
-                    onPreview={previewTape}
-                    onInserted={onInserted}
-                    onEjected={onEjected}
-                    onReady={onReady}
-                    onUnavailable={onUnavailable}
+                  <Suspense
+                    fallback={
+                      <div className={styles.loading}>
+                        <span className={styles.loadingMark}>AV–01</span>
+                        <span>Setting the scene…</span>
+                      </div>
+                    }
                   >
-                    {useNativeReader ? null : readerFor(false)}
-                  </StudioScene>
-                </Suspense>
-              </SceneBoundary>
-            )}
-            {/* Deck keys follow the screen in native tab order, even when the
-                screen HTML mounts later at the end of the insertion. */}
-            <div ref={deckPortal} className={styles.deckOverlay} />
+                    <StudioScene
+                      tape={tape}
+                      preview={preview}
+                      open={open}
+                      invalid={invalid}
+                      reduced={reduced}
+                      skips={skips}
+                      inserting={loading}
+                      ejecting={ejecting}
+                      returning={returning}
+                      playback={open && !useNativeReader}
+                      box={sceneBox}
+                      deckPortal={deckPortal}
+                      soundOn={soundOn}
+                      onEject={eject}
+                      onSelect={select}
+                      onPreview={previewTape}
+                      onInserted={onInserted}
+                      onEjected={onEjected}
+                      onReturned={onReturned}
+                      onReady={onReady}
+                      onCreated={onCreated}
+                      onUnavailable={onUnavailable}
+                    >
+                      {useNativeReader ? null : readerFor(false)}
+                    </StudioScene>
+                  </Suspense>
+                </SceneBoundary>
+              )}
+              {/* Deck keys follow the screen in native tab order, even when
+                  the screen HTML mounts later at the end of the insertion. */}
+              <div ref={deckPortal} className={styles.deckOverlay} />
+            </div>
           </div>
         </section>
 

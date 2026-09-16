@@ -112,10 +112,32 @@
   position: relative;
   margin-top: 24px;
 }
+/* The studio's place on the page. The box keeps its size for as long as the
+   page exists, so nothing below it moves when the viewport layer detaches. */
 .scene {
   height: clamp(360px, min(48vw, calc(100svh - 350px)), 680px);
   width: 100%;
   position: relative;
+}
+/* The canvas lives in this layer: inside the box while browsing, and over
+   the whole viewport, transparent, once a tape is chosen. The camera keeps
+   drawing the studio in the box's place and eases it out to fill the
+   viewport, and back into the box after eject, so the swap between the two
+   layouts is never visible. */
+.viewport {
+  position: absolute;
+  inset: 0;
+}
+.detached .viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+/* On the way back the page is live again underneath: links answer the
+   pointer at once, and the shrinking studio waits to be hovered until it
+   has rejoined the page. */
+.returning .viewport {
+  pointer-events: none;
 }
 .deckOverlay {
   position: absolute;
@@ -319,13 +341,21 @@
 .fallbackNote {
   font-size: var(--type-caption);
 }
-.playing .scene {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: auto;
-  z-index: 20;
-  background: var(--ink-0);
+/* Playback dissolves the page around the studio as the view zooms in, and
+   brings it back as the view zooms out; the graphite ground stays. */
+.header,
+.intro,
+.sceneCaption,
+.archive,
+.footer {
+  transition: opacity var(--t-dolly) var(--ease-out);
+}
+.playing .header,
+.playing .intro,
+.playing .sceneCaption,
+.playing .archive,
+.playing .footer {
+  opacity: 0;
 }
 .playing .fallbackMonitor {
   width: min(700px, 95vw);
@@ -417,10 +447,6 @@
     gap: 18px;
   }
   .footer > span:first-child {
-    width: 100%;
-  }
-  .playing .scene {
-    margin: 0;
     width: 100%;
   }
 }

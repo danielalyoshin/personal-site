@@ -641,6 +641,65 @@ Two fixes Daniel asked for after using the studio.
   and from mid-insertion, checking the open flap, no collisions, the
   landing, and that the slot is live again.
 
+#### Soft zoom round (2026-09-16)
+
+Daniel's report after using the studio: inserting and ejecting a tape showed
+"frame snapping / viewport snapping and blips" too fast to see clearly; he
+asked for a soft zoom into the screen and a soft zoom back out into the
+site, seamless both ways.
+
+- Mechanism found (per-frame screencast of headless Chrome): on selection
+  the canvas jumped from its page box to a fixed full-viewport box in one
+  commit, but its drawing buffer was resized a frame later through the
+  resize observer, so one painted frame showed the old-size render parked at
+  the viewport's top-left with the page gone; the next frame refit the
+  studio to the viewport in a jump. Eject was the mirror: two frames of the
+  fullscreen render clipped into the small box, then a squeezed playback fit
+  that zoomed out, plus a scroll jump because the box left the page's flow.
+- ✅ The studio's box (`.scene`) stays in the page's flow with its height; a
+  `.viewport` layer inside it holds the canvas and detaches over the
+  viewport, transparent, while `open || returning` (`data-detached`).
+  `Stage` sizes the renderer in the same commit as that layout change
+  (`useLayoutEffect` → `RootState.setSize` via `onCreated`), so no frame
+  paints the old drawing at the new box's origin.
+- ✅ `CameraRig` eases the studio's _frame_: a viewport-pixel rectangle that
+  is the canvas while browsing, starts at the page box on selection and
+  grows to the viewport (rate 5/s), and on eject shrinks from the viewport
+  back to the live page box. The fit is computed for the frame and the
+  camera is panned onto the frame's centre (orthographic, so a lateral move
+  is an exact pixel pan), which makes both box swaps pixel-identical. It
+  reports `onReturned` once the frame sits on the box; `Stage` then clears
+  `returning` and the canvas rejoins the page while the tape finishes its
+  return inside it. Scroll stays locked until then.
+- ✅ The page chrome (header, intro, guide, archive, footer) dissolves over
+  560ms as the studio zooms in and returns as it zooms out; the fixed layer
+  no longer paints an opaque ground.
+- ✅ Three further mechanisms the live loop demanded: the rig reads the
+  transport phase (`open`, `returning`, `inserting`) from a ref that
+  `StudioScene` writes in the page's layout effect, because R3F delivers
+  props to the scene a commit later than the page resizes the canvas, and
+  a per-frame recorder caught one frame drawn fitted to the full viewport
+  before the exact departure frame; a move that starts from rest caps its
+  first step at 1/60s instead of the 50ms delta cap, which had made the
+  eject's first frame a 20% jump after the idle playback loop; and the
+  returning layer is pointer-transparent (`pointerEvents` on the R3F
+  `Canvas` style, since its wrapper opts back into pointer events), so the
+  archive answers clicks right after eject. `html` also gets
+  `scrollbar-gutter: stable`, so locking scroll cannot reflow the page
+  under the zoom on classic-scrollbar platforms.
+- Docs: DESIGN.md (The Soft Zoom Rule under Cassettes and insertion; Layout),
+  the surface brief, the sidecar (`studio-frame`, `page-dissolve`), README.
+- Validation: `e2e/zoom.spec.ts` steps frames by hand across a selection and
+  an eject from a scrolled page and asserts the first detached frame draws
+  the screen within 1.5px of its rest position, no frame moves it more than
+  40px or scales the zoom outside 0.85–1.2×, the canvas always fills its
+  layer, the chrome opacity reaches 0 and 1, and the studio lands back
+  within 1.5px with the scroll position kept. Before/after screencast
+  filmstrips (desktop and phone) and a live-loop per-frame recorder
+  confirmed the stale frames are gone; the transport spec's early-eject run
+  now moves the pointer off the link it clicked, since the layer's return
+  is a layout change that re-hovers the link underneath (a real preview).
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

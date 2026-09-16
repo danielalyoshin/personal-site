@@ -60,7 +60,13 @@ clicks retain native link navigation.
 Insertion moves the actual cassette into the deck, then the camera faces the
 screen. A skip control completes the transition. Eject runs the same
 mechanism back to the rack, from wherever the tape is, while the camera
-returns to browse; the deck reads EJECT meanwhile. Reduced motion is
+returns to browse; the deck reads EJECT meanwhile. Both are one soft zoom
+(The Soft Zoom Rule in `DESIGN.md`): the studio's box keeps its place on the
+page, the canvas detaches over the viewport transparently and is sized in
+the same commit, the camera keeps the studio where the box had it and grows
+its frame to the viewport while the page chrome dissolves, and on eject the
+frame shrinks back into the box as the chrome returns before the canvas
+rejoins the page; no frame shows a jump either way. Reduced motion is
 immediate both ways.
 
 Read: accessible HTML inside the modeled CRT when the viewport is wider than
@@ -84,8 +90,9 @@ cap carries the accessible name, pressed state, and focus ring, sized to the
 cap with a 44px floor. Sound state reads in the deck's status window beside
 the transport state as a drawn speaker mark (waves when on, a red slash when
 off), not on the key. Keys are interactive only after insertion
-ends. Selection sizes the canvas to the viewport and refits the studio before
-the tape moves; the studio renders at pixel ratio 2 during modeled playback.
+ends. Selection sizes the canvas to the viewport in the same commit and eases
+the studio's frame out to it; the studio renders at pixel ratio 2 during
+modeled playback.
 Skip animation is a hardware key of the native deck family, led by a drawn
 skip mark, at the viewport's lower right during insertion, or inside the
 native loading screen. The playback camera keeps

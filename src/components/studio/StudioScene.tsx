@@ -1,11 +1,12 @@
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   type ReactNode,
   type RefObject,
 } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import { MathUtils, OrthographicCamera, Vector3 } from 'three'
 import type { Project } from '../../content/types'
@@ -39,51 +40,203 @@ interface StudioProps extends DeckControlsProps {
   inserting: boolean
   /** The tape running the mechanism back to its slot after eject. */
   ejecting: Project | null
+  /**
+   * Playback has closed and the canvas still covers the viewport: the camera
+   * eases the studio back into its box on the page, then reports in.
+   */
+  returning: boolean
   /** Modeled playback: the reader and keys live on the equipment. */
   playback: boolean
+  /** The studio's box on the page, which keeps its place during playback. */
+  box: RefObject<HTMLDivElement | null>
   deckPortal: RefObject<HTMLDivElement | null>
   onSelect: (tape: Project) => void
   onPreview: (tape: Project | null) => void
   onInserted: () => void
   onEjected: () => void
+  /** The studio is drawn in its box again; the canvas can rejoin the page. */
+  onReturned: () => void
   onReady: () => void
+  onCreated: (state: RootState) => void
   onUnavailable: () => void
   children: ReactNode
 }
 
-/** The camera is authored, not orbited: it eases between the fitted views. */
+/**
+ * The transport phase as of the page's latest commit. The renderer delivers
+ * props to the scene a commit later than the page, but the canvas is resized
+ * in the page's commit, so the rig reads the phase from here on every frame
+ * and never draws one frame for the old phase in the new box.
+ */
+interface Phase {
+  open: boolean
+  returning: boolean
+  inserting: boolean
+}
+
+/** A rectangle in viewport pixels. */
+interface Frame {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+function setFrame(frame: Frame, rect: Frame) {
+  frame.x = rect.x
+  frame.y = rect.y
+  frame.width = rect.width
+  frame.height = rect.height
+}
+
+function easeFrame(frame: Frame, goal: Frame, factor: number) {
+  frame.x = MathUtils.lerp(frame.x, goal.x, factor)
+  frame.y = MathUtils.lerp(frame.y, goal.y, factor)
+  frame.width = MathUtils.lerp(frame.width, goal.width, factor)
+  frame.height = MathUtils.lerp(frame.height, goal.height, factor)
+}
+
+function frameDistance(a: Frame, b: Frame) {
+  return Math.max(
+    Math.abs(a.x - b.x),
+    Math.abs(a.y - b.y),
+    Math.abs(a.width - b.width),
+    Math.abs(a.height - b.height),
+  )
+}
+
+/** The camera eases between the fitted views at this rate. */
+const VIEW_RATE = 7
+/** The studio's frame grows out of its box, and shrinks back, at this rate. */
+const FRAME_RATE = 5
+
+/**
+ * The camera is authored, not orbited: it eases between the fitted views.
+ *
+ * It also eases the studio's frame. While browsing, the frame is the canvas
+ * in its box on the page. Selection moves the canvas over the whole viewport,
+ * but the studio keeps drawing in the box's place, and its frame then grows
+ * softly to the viewport; after eject the frame shrinks back to the box, and
+ * only then does the canvas rejoin the page. The studio is fitted to the
+ * frame and panned onto its centre, so neither box change is visible.
+ */
 function CameraRig({
   open,
   reduced,
   skips,
   inserting,
-}: Pick<StudioProps, 'open' | 'reduced' | 'skips' | 'inserting'>) {
+  returning,
+  box,
+  phase,
+  onReturned,
+}: Pick<
+  StudioProps,
+  | 'open'
+  | 'reduced'
+  | 'skips'
+  | 'inserting'
+  | 'returning'
+  | 'box'
+  | 'onReturned'
+> & { phase: RefObject<Phase> }) {
   const { size, scene, invalidate } = useThree()
-  const moving = useRef(true)
-  const initialized = useRef(false)
-  const previousSkips = useRef(skips)
-  const skip = useRef(false)
-  const settle = useRef(false)
-  const look = useRef(new Vector3(0, 1.9, 0))
-  const focusAmount = useRef(0)
-  const fit = useRef<ReturnType<typeof createStudioFraming> | null>(null)
-  const scratch = useRef({ position: new Vector3(), target: new Vector3() })
+  const rig = useRef({
+    moving: true,
+    initialized: false,
+    previousSkips: skips,
+    skip: false,
+    wasOpen: open,
+    wasReturning: returning,
+    wasInserting: inserting,
+    /** Seconds left to wait for the viewport box after a selection. */
+    departing: 0,
+    returned: false,
+    lastWidth: 0,
+    lastHeight: 0,
+    /** A change outside the phase (skip, reduced motion, resize) to follow. */
+    wake: false,
+    /** The authored view, before the pan that centres the frame. */
+    base: new Vector3(),
+    look: new Vector3(0, 1.9, 0),
+    focus: 0,
+    frame: { x: 0, y: 0, width: 0, height: 0 } as Frame,
+    fit: null as ReturnType<typeof createStudioFraming> | null,
+  })
+  const scratch = useRef({
+    position: new Vector3(),
+    target: new Vector3(),
+    right: new Vector3(),
+    up: new Vector3(),
+    canvas: { x: 0, y: 0, width: 0, height: 0 } as Frame,
+    goal: { x: 0, y: 0, width: 0, height: 0 } as Frame,
+  })
   useEffect(() => {
-    fit.current = createStudioFraming(scene.getObjectByName('studio-model')!)
+    rig.current.fit = createStudioFraming(
+      scene.getObjectByName('studio-model')!,
+    )
     invalidate()
   }, [scene, invalidate])
   useEffect(() => {
-    skip.current = open && previousSkips.current !== skips
-    previousSkips.current = skips
-    // The canvas takes its playback box while the tape waits: fit it at once
-    // rather than easing, so the studio lands before the mechanism starts.
-    settle.current = inserting
-    moving.current = true
+    const state = rig.current
+    state.skip = open && state.previousSkips !== skips
+    state.previousSkips = skips
+    state.wake = true
     invalidate()
-  }, [open, reduced, skips, inserting, size, invalidate])
-  useFrame(({ camera }, delta) => {
-    const { position, target } = scratch.current
-    if (!(camera instanceof OrthographicCamera) || !fit.current) return
+  }, [open, reduced, skips, inserting, returning, size, invalidate])
+  useFrame(({ camera, size }, delta) => {
+    const state = rig.current
+    const { position, target, right, up, canvas, goal } = scratch.current
+    if (!(camera instanceof OrthographicCamera) || !state.fit) return
+    const { open, returning, inserting } = phase.current
+    // A move that starts from rest begins with an ordinary frame's step, not
+    // the whole gap since the last drawn frame: idle time, or a long commit.
+    const step = Math.min(delta, state.moving ? 0.05 : 1 / 60)
+    if (
+      state.wake ||
+      open !== state.wasOpen ||
+      returning !== state.wasReturning ||
+      inserting !== state.wasInserting
+    ) {
+      state.moving = true
+      state.wake = false
+    }
+    const resized =
+      size.width !== state.lastWidth || size.height !== state.lastHeight
+    state.lastWidth = size.width
+    state.lastHeight = size.height
+    canvas.x = size.left
+    canvas.y = size.top
+    canvas.width = size.width
+    canvas.height = size.height
+    // Where the frame is heading: the whole canvas, or, on the way back to
+    // the page, the studio's box.
+    const detached = open || returning
+    if (returning && box.current)
+      setFrame(goal, box.current.getBoundingClientRect())
+    else setFrame(goal, canvas)
+    if (open && !state.wasOpen) state.returned = false
+    // The departure frame is drawn exactly where the box had the studio; the
+    // frame starts easing out on the next one.
+    let departure = false
+    if (open && !state.wasOpen && !state.wasReturning && box.current) {
+      // Depart from the box: the canvas takes the viewport in this commit or
+      // the next, and the studio holds its place until the frame eases out.
+      setFrame(state.frame, box.current.getBoundingClientRect())
+      state.departing = 0.5
+      departure = true
+    } else if (!detached) {
+      // Browsing: the canvas is the box.
+      setFrame(state.frame, canvas)
+    } else if (resized && state.departing <= 0 && !returning) {
+      // A viewport resize during playback refits at once, as before.
+      setFrame(state.frame, goal)
+    }
+    if (state.departing > 0)
+      state.departing = resized ? 0 : state.departing - step
+    state.wasOpen = open
+    state.wasReturning = returning
+    state.wasInserting = inserting
+
     const focus = open && !inserting
     const narrow = size.width <= 600
     position.set(
@@ -96,41 +249,64 @@ function CameraRig({
       focus ? PLAYER.playbackY : narrow ? 2 : 1.9,
       0,
     )
-    const snap = reduced || !initialized.current || skip.current
-    const factor = snap ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 7)
-    if (moving.current) {
-      camera.position.lerp(position, factor)
-      look.current.lerp(target, factor)
-      focusAmount.current = MathUtils.lerp(
-        focusAmount.current,
-        focus ? 1 : 0,
-        factor,
-      )
-      camera.lookAt(look.current)
+    const snap = reduced || !state.initialized || state.skip
+    const drift = snap ? 1 : 1 - Math.exp(-step * FRAME_RATE)
+    // The way back is one move: the view pulls back at the frame's own rate.
+    const factor = returning
+      ? drift
+      : snap
+        ? 1
+        : 1 - Math.exp(-step * VIEW_RATE)
+    if (state.moving) {
+      state.base.lerp(position, factor)
+      state.look.lerp(target, factor)
+      state.focus = MathUtils.lerp(state.focus, focus ? 1 : 0, factor)
+      if (!departure) easeFrame(state.frame, goal, drift)
     }
-    const zoom = fit.current(
+    camera.position.copy(state.base)
+    camera.lookAt(state.look)
+    const zoom = state.fit(
       camera,
-      size.width,
-      size.height,
-      focusAmount.current,
+      state.frame.width,
+      state.frame.height,
+      state.focus,
     )
-    // Shrink immediately when an edge needs space; ease back into a closer fit.
-    // This also protects the very first frame after a canvas resize or eject.
-    camera.zoom = settle.current
+    // Shrink immediately when an edge needs space; ease back into a closer
+    // fit. A shrinking frame is followed exactly, so it stays smooth.
+    camera.zoom = snap
       ? zoom
       : Math.min(zoom, MathUtils.lerp(camera.zoom, zoom, factor))
-    settle.current = false
     camera.updateProjectionMatrix()
-    initialized.current = true
+    // Pan the studio onto the frame's centre rather than the canvas's. An
+    // orthographic camera moves the picture exactly as far as it moves.
+    const dx =
+      (state.frame.x + state.frame.width / 2 - (canvas.x + canvas.width / 2)) /
+      camera.zoom
+    const dy =
+      (state.frame.y +
+        state.frame.height / 2 -
+        (canvas.y + canvas.height / 2)) /
+      camera.zoom
+    right.set(1, 0, 0).applyQuaternion(camera.quaternion)
+    up.set(0, 1, 0).applyQuaternion(camera.quaternion)
+    camera.position.addScaledVector(right, -dx).addScaledVector(up, dy)
+    camera.updateMatrixWorld()
+    state.initialized = true
+    const framed = frameDistance(state.frame, goal) < 0.5
     if (
-      (!moving.current ||
-        (camera.position.distanceTo(position) < 0.002 &&
-          look.current.distanceTo(target) < 0.002)) &&
-      Math.abs(camera.zoom - zoom) < 0.02
+      (!state.moving ||
+        (state.base.distanceTo(position) < 0.002 &&
+          state.look.distanceTo(target) < 0.002)) &&
+      Math.abs(camera.zoom - zoom) < 0.02 &&
+      framed
     ) {
-      moving.current = false
-      skip.current = false
+      state.moving = false
+      state.skip = false
     } else invalidate()
+    if (returning && framed && !state.returned) {
+      state.returned = true
+      onReturned()
+    }
   })
   return null
 }
@@ -416,7 +592,7 @@ function LooseTape() {
   )
 }
 
-function SceneContents(props: StudioProps) {
+function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
   const { gl, invalidate } = useThree()
   const { onReady, onUnavailable, onInserted, onEjected } = props
   const progress = useRef(1)
@@ -438,8 +614,9 @@ function SceneContents(props: StudioProps) {
     if (slug && previousTape.current !== slug) {
       progress.current = 0
       completed.current = false
-      // Selection also moves the canvas to its full-viewport box. Keep the
-      // tape at rest until that box has been reported and drawn once.
+      // Selection also moves the canvas to its full-viewport box, sized in
+      // the same commit. Keep the tape at rest until that box has been drawn
+      // once, in case the size arrives through the resize observer instead.
       hold.current = { width: size.width, height: size.height, elapsed: 0 }
     }
     previousTape.current = slug
@@ -497,7 +674,7 @@ function SceneContents(props: StudioProps) {
   }, [gl, invalidate, onReady, onUnavailable])
   return (
     <>
-      <CameraRig {...props} />
+      <CameraRig {...props} phase={props.phase} />
       <ambientLight intensity={0.85} color="#e8e9ee" />
       <hemisphereLight args={['#eceef3', '#36383e', 1.2]} />
       <directionalLight
@@ -567,6 +744,19 @@ function SceneContents(props: StudioProps) {
 }
 
 export default function StudioScene(props: StudioProps) {
+  // Written in the page's commit, read by the rig on every frame (see Phase).
+  const phase = useRef<Phase>({
+    open: props.open,
+    returning: props.returning,
+    inserting: props.inserting,
+  })
+  useLayoutEffect(() => {
+    phase.current = {
+      open: props.open,
+      returning: props.returning,
+      inserting: props.inserting,
+    }
+  })
   return (
     <Canvas
       shadows="percentage"
@@ -575,10 +765,14 @@ export default function StudioScene(props: StudioProps) {
       dpr={props.playback ? [1, 2] : [1, 1.75]}
       frameloop="demand"
       gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
+      // The renderer's own wrapper opts back into pointer events; on the way
+      // back to the page the links underneath must answer the pointer first.
+      style={{ pointerEvents: props.returning ? 'none' : 'auto' }}
       fallback={<p>The tape archive is available below.</p>}
+      onCreated={props.onCreated}
       onPointerMissed={() => props.onPreview(null)}
     >
-      <SceneContents {...props} />
+      <SceneContents {...props} phase={phase} />
     </Canvas>
   )
 }

@@ -6,6 +6,10 @@
 
 html {
   height: 100%;
+  /* Playback locks the page's scroll. Keep the scrollbar's gutter either
+     way, so locking never reflows the page and the studio's box stays put
+     under the zoom. */
+  scrollbar-gutter: stable;
 }
 
 body {

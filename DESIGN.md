@@ -355,7 +355,10 @@ with 24px margins. Canvases up to 600px use the shell's 6% gutter as the
 margin and fit every piece of equipment horizontally, so no object is cropped
 and the widest pieces land on the text column; only the table may run out of
 the sides, as a real tabletop would. Every object still contributes to
-headroom. The framing updates during insertion, resize, and eject. Playback centers the CRT and player together at y = 2.71 and blends toward
+headroom. The framing updates during insertion, resize, and eject, and is
+computed for the studio's eased frame rather than the canvas, so it changes
+smoothly as the frame grows out of the page box and shrinks back (The Soft
+Zoom Rule, under Cassettes and insertion). Playback centers the CRT and player together at y = 2.71 and blends toward
 their combined bounds as the camera turns, preserving the complete chassis
 and clickable front panel throughout the zoom. Reduced motion applies the same fit immediately.
 The view is authored, not orbited: there is no drag-to-look and no reset, so
@@ -364,7 +367,11 @@ they do anywhere else, and the canvas answers only clicks and taps on
 cassettes.
 
 Playback fills the viewport with the modeled CRT and VHS player; there is no
-fixed transport footer. Above both 767px width and 699px height, the camera
+fixed transport footer. The canvas layer over the viewport is transparent;
+the page chrome around the studio fades to the graphite ground and back
+rather than being covered. The root keeps a stable scrollbar gutter, so
+locking the page's scroll for playback never reflows the page under the
+zoom. Above both 767px width and 699px height, the camera
 faces the modeled screen and HTML occupies its 4:3 plane. At widths up to
 767px **or** heights up to 699px, the native reader fills the available height
 with its own scroll area. Its frame is inset 12px vertically and 10px
@@ -536,18 +543,35 @@ cleanly at their shared edge. Selection lifts clear of the rack, pulls
 forward of the table, turns flat, aligns with the deck slot, and seats inside
 the hollow bay. The flap closes before the camera moves to reading position.
 
-Selection first moves the canvas to its full-viewport box and fits the studio
-to that box at once; the tape waits at rest until the new box has been
-reported and drawn, then the mechanism starts, so the deck never jumps while
-the cassette is moving. One render-driven timeline coordinates the mechanism
-(nominally 2.4 seconds,
-with frame deltas capped at 0.05 seconds, so slow rendering can lengthen it).
-Camera interpolation follows afterward and is not a fixed 560ms CSS dolly.
-Skip finishes immediately; reduced motion snaps tape and camera state. Deep links begin seated (The Handoff Rule).
+**The Soft Zoom Rule.** Choosing a tape and ejecting it are one continuous
+camera move each way; no frame ever shows the studio jump between its box
+on the page and the viewport. The studio's box keeps its place in the page
+throughout, so nothing beneath it moves and the scroll position is kept. On
+selection the canvas layer detaches from the box over the whole viewport,
+transparent, and is sized in the same commit, so the first frame it paints
+is drawn for that box; the camera keeps drawing the studio exactly where the
+box had it, then grows its frame to the viewport (exponential ease, rate 5
+per second, about 0.9 seconds to settle) while the page chrome dissolves
+over 560ms (`--t-dolly`, `--ease-out`). The tape's mechanism starts on the
+next frame, so the studio grows as the cassette lifts. One render-driven
+timeline coordinates the mechanism (nominally 2.4 seconds, with frame
+deltas capped at 0.05 seconds, so slow rendering can lengthen it). The
+camera turns onto the screen afterward, at rate 7 per second, never as a
+fixed 560ms CSS dolly. A move that starts from rest begins with an ordinary
+frame's step, never the idle gap since the last drawn frame. Skip finishes
+immediately; reduced motion snaps tape, frame and camera state. Deep links
+begin seated (The Handoff Rule).
 Eject runs the same timeline back, nominally 1.8 seconds, an exit quicker
 than the entrance: the flap opens, the tape leaves the bay, turns, and
-settles into its slot along the path it came by, while the camera returns to
-the browse view, and settles flat in its slot. Focus returns to the
+settles into its slot along the path it came by, while the view pulls back
+from the screen and the studio's frame shrinks into its box in one move at
+the frame's rate, as the page chrome returns; the layer over the page is
+pointer-transparent on the way back, so the archive answers the pointer at
+once. Only once the frame has settled on the box does the canvas rejoin the
+page, again without a visible change, and the tape finishes its return
+there. The scene reads the transport phase from the page's own commit, not
+from its props, which arrive a commit later, so no frame is drawn for the old
+phase in the new box. Focus returns to the
 corresponding archive link, but that return is not a preview, so the tape
 stays seated until it is hovered or focused again; an eject during
 insertion reverses from wherever the tape is; the deck reads EJECT

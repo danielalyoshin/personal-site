@@ -694,6 +694,9 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
   // Escape mid-insertion: the tape retraces its outward path from where it
   // is, never seating first, with the flap still closed.
   await gamma.click()
+  // The click leaves the pointer on the link; once the studio has zoomed
+  // back onto the page that would be a real hover and lift the landed tape.
+  await page.mouse.move(10, 10)
   await expect(
     page.getByRole('button', { name: 'Skip animation' }),
   ).toBeVisible()

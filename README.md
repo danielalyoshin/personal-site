@@ -21,7 +21,9 @@ labels, and sound are local; no external model or texture service is required.
 
 - Click a modeled cassette or its tape-index link to play it.
 - Arrow keys and Home/End navigate the tape index; Enter plays a tape.
-- Eject or Escape returns to the archive and restores focus.
+- Eject or Escape returns to the archive and restores focus. Choosing a tape
+  zooms the studio softly out of its place on the page and eject zooms it
+  back in; the page dissolves and returns around it.
 - Sound is optional and defaults off each visit.
 - `/project/:slug` opens a tape directly; `/project/about` introduces Daniel.
 

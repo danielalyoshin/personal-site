@@ -412,9 +412,14 @@
         "purpose": "Archive background/border transitions."
       },
       {
-        "name": "canvas-settle",
-        "value": "one drawn frame at the playback box (0.3s fallback)",
-        "purpose": "Selection sizes the canvas to the viewport and refits the studio at once; the tape waits at rest until that box is reported and drawn."
+        "name": "studio-frame",
+        "value": "1 - exp(-min(delta, 0.05) * 5), about 0.9s to settle",
+        "purpose": "The studio's frame eases between its box on the page and the viewport (The Soft Zoom Rule): the canvas detaches transparently and is sized in the same commit, the studio keeps its place, its frame grows to the viewport on selection and shrinks back into the box after eject before the canvas rejoins the page. No frame shows a jump. Immediate for reduced motion or skip."
+      },
+      {
+        "name": "page-dissolve",
+        "value": "opacity 560ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The header, introduction, guide, archive and footer fade to the graphite ground as the studio zooms in, and return as it zooms out; the canvas over the viewport is transparent, never an opaque cover."
       },
       {
         "name": "tape-insert",
@@ -424,12 +429,12 @@
       {
         "name": "tape-eject",
         "value": "1.8s",
-        "purpose": "The insertion timeline run back from wherever the tape is: flap opens, tape leaves the bay, turns, and settles into its slot while the camera returns to browse. Reduced motion completes immediately."
+        "purpose": "The insertion timeline run back from wherever the tape is: flap opens, tape leaves the bay, turns, and settles into its slot while the camera pulls back and the studio's frame shrinks into its page box. Reduced motion completes immediately."
       },
       {
         "name": "camera-interpolation",
         "value": "1 - exp(-min(delta, 0.05) * 7)",
-        "purpose": "Camera position, target, and zoom interpolate per frame after insertion; immediate for reduced motion or skip."
+        "purpose": "Camera position, target, and zoom interpolate per frame, onto the screen after insertion and back to browse on eject; the zoom fits the eased studio frame. Immediate for reduced motion or skip."
       },
       {
         "name": "reader-handoff",
