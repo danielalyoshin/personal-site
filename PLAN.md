@@ -867,6 +867,27 @@ the article scrolled. `/impeccable adapt`, first of the agreed order.
 - Next in the agreed order: polish (the LOADING sub-line), harden, clarify,
   polish.
 
+#### Loading readout (2026-09-17)
+
+The third critique's insertion finding: the modeled tube printed LOADING
+TAPE over CHOOSE A TAPE / TO PLAY, because the `Screen` texture branched its
+headline on `inserting` but its sub-lines on `preview` alone. `/impeccable
+polish`, second of the agreed order.
+
+- ✅ The One Readout Rule in `DESIGN.md`: the texture resolves one name (the
+  tape going in, else the one under the pointer) and branches headline and
+  sub-lines together. Loading reads LOADING TAPE over that tape's name, as
+  the native loading screen does, and the invitation lines stay off. The
+  icon and headline keep their place across all three states, so nothing
+  jumps at the click. The map is rebuilt on `name` and `inserting` only.
+- ✅ Names are fitted to the lit area (`fitTubeType`: set smaller, never
+  compressed), headline and sub-line alike, ahead of Stage 8's real names.
+- Regression: transport's "the tube names the tape going in…" records what
+  each canvas map is painted with (an init script around `clearRect` and
+  `fillText`) and reads the live screen map at rest, previewing, and with
+  the loop held mid-insertion. It fails on the old texture.
+- Next in the agreed order: harden, clarify, polish.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

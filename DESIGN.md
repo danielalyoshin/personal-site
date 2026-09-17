@@ -610,6 +610,14 @@ cleanly at their shared edge. Selection lifts clear of the rack, pulls
 forward of the table, turns flat, aligns with the deck slot, and seats inside
 the hollow bay. The flap closes before the camera moves to reading position.
 
+**The One Readout Rule.** The modeled tube says one thing at a time, and its
+sub-lines always belong to its headline. At rest: INSERT TAPE over CHOOSE A
+TAPE / TO PLAY. Previewing: the cassette's name over SELECT THIS TAPE / TO
+PLAY. Loading: LOADING TAPE over the name of the tape going in and nothing
+else, as the native loading screen reads; an invitation never prints while a
+tape is on its way in. A name too long for the lit area is set smaller,
+never compressed, like any print.
+
 **The Touch Rule.** A touch has no hover to confirm with, so on touch the
 preview is a step of its own: the first tap on a cassette lifts and names
 it, in the guide and on the idle screen, and a second tap on the same

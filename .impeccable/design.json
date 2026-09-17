@@ -627,6 +627,11 @@
         "section": "elevation"
       },
       {
+        "name": "The One Readout Rule",
+        "body": "The modeled tube says one thing at a time, and its sub-lines always belong to its headline. At rest: INSERT TAPE over CHOOSE A TAPE / TO PLAY. Previewing: the cassette's name over SELECT THIS TAPE / TO PLAY. Loading: LOADING TAPE over the name of the tape going in and nothing else, as the native loading screen reads; an invitation never prints while a tape is on its way in. A name too long for the lit area is set smaller, never compressed, like any print.",
+        "section": "components"
+      },
+      {
         "name": "The Touch Rule",
         "body": "A touch has no hover to confirm with, so on touch the preview is a step of its own: the first tap on a cassette lifts and names it, in the guide and on the idle screen, and a second tap on the same cassette plays it; a tap on another cassette moves the preview, and a tap clear of the rack drops it. A mouse is unchanged: hover previews, click plays. Slots are far narrower than a fingertip at the phone fit (29px wide on a 16.6px pitch at 390px), so every slot target also answers a tap inside its projected rectangle grown to at least 44 × 44px about its centre, the nearest centre winning where the catches overlap; a blank slot's catch swallows its tap as its target does. A tap that lands on a target directly is that tape's. The catch is read from the camera at the moment of the tap, so it follows every fit and resize.",
         "section": "components"

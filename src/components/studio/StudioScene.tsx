@@ -323,7 +323,21 @@ const READER_DISTANCE = 2
 /** The zoom at which one reader CSS px is one screen px. */
 const READER_ZOOM = 400 / READER_DISTANCE
 
+/** Tube type that would overrun the lit area is set smaller, never compressed. */
+function fitTubeType(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  size: number,
+  maxWidth: number,
+) {
+  ctx.font = `${size}px "VT323", monospace`
+  const measured = ctx.measureText(text).width
+  if (measured > maxWidth)
+    ctx.font = `${Math.floor((size * maxWidth) / measured)}px "VT323", monospace`
+}
+
 function Screen({
+  tape,
   open,
   invalid,
   preview,
@@ -332,7 +346,7 @@ function Screen({
   children,
 }: Pick<
   StudioProps,
-  'open' | 'invalid' | 'preview' | 'inserting' | 'children'
+  'tape' | 'open' | 'invalid' | 'preview' | 'inserting' | 'children'
 > & { framing: RefObject<StudioFraming | null> }) {
   const plane = useRef<Group>(null)
   const content = useRef<HTMLDivElement | null>(null)
@@ -366,6 +380,9 @@ function Screen({
     plane.current.updateWorldMatrix(true, false)
     sizeContent(content.current)
   }, -1)
+  // The tube names one tape at a time: the one going in, else the one under
+  // the pointer.
+  const name = (inserting ? tape : preview)?.vhs.spineLabel.split(' · ')[0]
   const texture = useMemo(
     () =>
       makeTexture(1024, 768, (ctx) => {
@@ -392,21 +409,23 @@ function Screen({
         ctx.arc(538, 252, 16, 0, Math.PI * 2)
         ctx.stroke()
         ctx.fillStyle = '#f0f0ff'
-        ctx.font = '128px "VT323", monospace'
         ctx.textAlign = 'center'
-        ctx.fillText(
-          inserting
-            ? 'LOADING TAPE'
-            : preview
-              ? preview.vhs.spineLabel.split(' · ')[0]
-              : 'INSERT TAPE',
-          512,
-          410,
-        )
+        const headline = inserting ? 'LOADING TAPE' : (name ?? 'INSERT TAPE')
+        fitTubeType(ctx, headline, 128, 896)
+        ctx.fillText(headline, 512, 410)
         ctx.fillStyle = '#c4ccff'
-        ctx.font = '88px "VT323", monospace'
-        ctx.fillText(preview ? 'SELECT THIS TAPE' : 'CHOOSE A TAPE', 512, 515)
-        ctx.fillText('TO PLAY', 512, 603)
+        if (inserting) {
+          // A tape on its way in is past inviting: the sub-line names it, as
+          // the native loading screen does, and the invitation stays off.
+          if (name) {
+            fitTubeType(ctx, name, 88, 896)
+            ctx.fillText(name, 512, 515)
+          }
+        } else {
+          ctx.font = '88px "VT323", monospace'
+          ctx.fillText(name ? 'SELECT THIS TAPE' : 'CHOOSE A TAPE', 512, 515)
+          ctx.fillText('TO PLAY', 512, 603)
+        }
         ctx.textAlign = 'left'
         ctx.font = '24px "VT323", monospace'
         ctx.fillText('ALYOSHIN ARCHIVE', 64, 698)
@@ -415,7 +434,7 @@ function Screen({
         ctx.fillStyle = 'rgba(0,0,0,.12)'
         for (let y = 0; y < 768; y += 4) ctx.fillRect(0, y, 1024, 1)
       }),
-    [preview, inserting],
+    [name, inserting],
   )
   useTextureDisposal(texture)
   return (

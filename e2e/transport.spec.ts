@@ -1,5 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 
+declare global {
+  interface Window {
+    tubePrints: WeakMap<HTMLCanvasElement, string[]>
+  }
+}
+
 // Inspect the live Three scene, so these checks catch geometry and animation
 // regressions that successful HTML navigation alone cannot reveal.
 async function advanceScene(page: Page, frames: number) {
@@ -232,6 +238,80 @@ test('skip, eject during loading, and reduced motion leave the player usable', a
     page.getByRole('button', { name: 'Skip animation' }),
   ).toHaveCount(0)
   await expect(page.locator('article h2')).toBeFocused()
+})
+
+test('the tube names the tape going in and never invites another while it loads', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // Canvas maps cannot be read back as text: record what each is painted
+  // with, starting over whenever a map is cleared for a repaint.
+  await page.addInitScript(() => {
+    window.tubePrints = new WeakMap()
+    const { clearRect, fillText } = CanvasRenderingContext2D.prototype
+    CanvasRenderingContext2D.prototype.clearRect = function (...args) {
+      window.tubePrints.set(this.canvas, [])
+      return clearRect.apply(this, args)
+    }
+    CanvasRenderingContext2D.prototype.fillText = function (...args) {
+      window.tubePrints.get(this.canvas)?.push(args[0])
+      return fillText.apply(this, args)
+    }
+  })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  // Holding the loop while reading keeps the insertion from finishing, and
+  // the screen map from unmounting, between polls.
+  const prints = (hold = false) =>
+    page.evaluate(async (hold) => {
+      const module = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        module
+      )) as typeof import('@react-three/fiber')
+      const state = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      if (hold) state.setFrameloop('never')
+      const found: string[][] = []
+      state.scene.getObjectByName('crt-screen')!.traverse((node) => {
+        const { material } = node as import('three').Mesh
+        const map = (material as import('three').MeshBasicMaterial)?.map
+        if (map?.image instanceof HTMLCanvasElement)
+          found.push(window.tubePrints.get(map.image) ?? [])
+      })
+      return found[0] ?? []
+    }, hold)
+
+  await expect
+    .poll(prints)
+    .toEqual(
+      expect.arrayContaining(['INSERT TAPE', 'CHOOSE A TAPE', 'TO PLAY']),
+    )
+  const alpha = page.getByRole('link', {
+    name: /Play tape: Placeholder: Alpha/,
+  })
+  await alpha.focus()
+  await expect
+    .poll(prints)
+    .toEqual(expect.arrayContaining(['ALPHA', 'SELECT THIS TAPE', 'TO PLAY']))
+
+  await alpha.click()
+  await expect
+    .poll(() => prints(true))
+    .toEqual(
+      expect.arrayContaining(['SP  ·  LOADING', 'LOADING TAPE', 'ALPHA']),
+    )
+  const loading = await prints(true)
+  for (const invitation of [
+    'INSERT TAPE',
+    'CHOOSE A TAPE',
+    'SELECT THIS TAPE',
+    'TO PLAY',
+  ])
+    expect(loading).not.toContain(invitation)
 })
 
 test('physical playback keys follow the player, remain clickable after resize, and return focus on eject', async ({
