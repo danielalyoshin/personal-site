@@ -294,8 +294,8 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
 - **Body** (`body`): 1rem at weight 400. Introductory prose uses 1.6 leading and 0.005em tracking, capped at 36ch; the page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
-- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, footer statement, loading and fallback notes, and the Escape hint are weight 400 with 1.5 leading. The native deck keys and Skip animation are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
-- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the tape index numbers, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
+- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, footer statement, the loading note, and the Escape hint are weight 400 with 1.5 leading. The native deck keys and Skip animation are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
+- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries' numbers, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
 
 ### Tube ramp
 
@@ -303,7 +303,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 
 - **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
-- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the runtime use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
+- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
 **The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed on the modeled EJECT cap ahead of its label at the capitals' height. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
 
@@ -315,7 +315,7 @@ sizes are texture coordinates, not recommended HTML font sizes.
 
 **The Silkscreen Rule.** Printed hardware text never glows. Its hierarchy comes from size appropriate to the object, weight, spacing, and contrast against the material.
 
-**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints share the page's weights: 600 for the status window, the AV–01 line, and the key caps; 800 for each spine's number and name. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.
+**The Signature Print Rule.** The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line (AV–01 / VHS, the same mark the native reader's deck carries, with no specification after it), each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints share the page's weights: 600 for the status window, the AV–01 line, and the key caps; 800 for each spine's number and name. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.
 
 **The Tube-Scale Rule.** Screen-interior type scales with the tube using cqi units. The modeled reader is authored on a 560px plane and drawn at the playback zoom; where that zoom would draw the plane smaller than 560px (laptops at 1280 × 720 and 1366 × 768, tablets at 1024 × 768), the plane is enlarged and its content shrunk to match, so one CSS pixel is one screen pixel and the prose's 1rem floor is a real 16px floor. Above that zoom the reader scales up with the tube as before. At widths up to 767px or heights up to 699px, the full-height native reader preserves a 16px prose floor and independent scrolling; comprehension takes priority over the physical metaphor.
 
@@ -331,7 +331,7 @@ the nameplate, kicker, display line, guide, archive heading, and footer
 statement on the left; the navigation, introductory aside, archive note, and
 contact links on the right. The cassette mark hangs 16px into the left gutter
 above 1200px so the name stays on the column, and is not drawn below that
-width. The only inboard edges are the tape index entries' own 12px insets.
+width. The only inboard edges are the archive entries' own 12px insets.
 
 The archive uses six equal columns, three at 1200px and below, and two at 600px
 and below, with an 8px gap. Flex list items and full-width links keep each row's
@@ -341,17 +341,21 @@ uses 32px top spacing, reduced to 20px on those short desktop viewports and
 16px on phones. At 600px and below, the introduction stacks and the footer wraps.
 
 The selection guide precedes the canvas, 24px below the introduction. It
-pairs "Choose a tape to play" with a one-line instruction that points at the
-studio rather than the index; the instruction hangs 4px beneath, and the
-canvas follows it directly. At widths of 600px and below the instruction
-points at the index instead, "Pick one from the index below.", because the
-fitted rack is about 110px across there and the index entries are the
-targets in reach; the studio still answers taps (The Touch Rule, under
-Cassettes and insertion). While a tape is previewed the instruction reads
-"Select to play", or "Tap again to play" on a device without hover. Nothing shares the guide's row: there is no scene
-metadata line, clock, drag hint, or reset above the canvas. The index follows the
-canvas with a seam and 16px top padding. This groups the artifact with its
-selection surfaces.
+pairs "Choose a tape to play" with a one-line instruction that says where:
+"Pick one in the studio." on a desktop; the instruction hangs 4px beneath,
+and the canvas follows it directly. At widths of 600px and below, and
+wherever there is no studio to pick from (no WebGL, lost graphics), it
+reads "Pick one from the archive below.": the fitted rack is about 110px
+across on a phone and the archive's entries are the targets in reach; the
+studio still answers taps (The Touch Rule, under Cassettes and insertion).
+Both lines finish the headline's sentence with the same verb and the same
+noun, the tape; "cassette" is the modeled object's name in this document,
+never the visitor's. While a tape is previewed the guide shows its spine
+name over its caption and the action: "Placeholder tape · Select to play",
+or "Tap again to play" on a device without hover. Nothing shares the
+guide's row: there is no scene metadata line, clock, drag hint, or reset
+above the canvas. The archive follows the canvas with a seam and 16px top
+padding. This groups the artifact with its selection surfaces.
 
 The footer sets the statement and the edition mark on the left and the
 contact links flush right on the column, mirroring the header. At 600px and
@@ -509,8 +513,9 @@ them, as on the native key. The label is part of the cap, identical in browse
 and playback, and travels with the press. During
 playback an invisible native button sits over the cap, sized to it with a
 44px floor; it carries the accessible name, the sound key's pressed state,
-the eject key's Escape title, and the crisp cyan keyboard-focus outline, and
-nothing else: no text, icon, or background. Hover/focus lightens the matte
+the eject key's Escape shortcut (`aria-keyshortcuts` and a hover title), and
+the crisp cyan keyboard-focus outline, and nothing else: no text, icon, or
+background. Hover/focus lightens the matte
 material and pointer press depresses the cap. Keys become interactive only
 after insertion ends; during insertion the only control is Skip animation.
 
@@ -528,7 +533,10 @@ Phones, short viewports, direct links, and graphics fallback put the same action
 inside the native reader's lower hardware panel. These controls have 44px
 minimum targets, 0.75rem uppercase labels at weight 600, small corners, a darker bottom edge, and a pressed
 state. The Escape hint inside Eject is the same size in silkscreen at weight
-400, reading 7.5:1 on the key and 6.7:1 on hover. The fixed page-wide playback popup is removed in every reading mode.
+400, reading 7.5:1 on the key and 6.7:1 on hover. The hint is a legend, not
+part of the key's name: both Eject keys are named "Eject tape" and declare
+Escape through `aria-keyshortcuts`, and the legend is hidden from assistive
+technology, so neither key is ever announced as "Eject tape ESC". The fixed page-wide playback popup is removed in every reading mode.
 
 Skip animation is a hardware key of the native deck family, available only
 during insertion: the same uppercase control type, seam-lit border, darker
@@ -558,27 +566,49 @@ hover ticks stay silent until a visitor has switched sound on during playback.
 
 Plain Archivo links with generous vertical padding and no underline. Hover
 raises text contrast; keyboard focus retains the cyan outline. The header
-carries "The archive" and About at every width; "The archive" is the page's
-single visible route to the index, and neither link shows a count. Contact
+carries "The archive" and "About" at every width; "The archive" is the page's
+single visible route to the section of that name, and neither link shows a
+count. Contact
 links stay in the footer. Internal About and tape links use the drawn play mark; the
 outward arrow is reserved for links that leave the site. Every mark is an
 `aria-hidden` SVG (The Drawn Mark Rule) set 0.5em from its label by flex
 gap, never by a typed space. The introduction
-has no index shortcut. A focus-revealed skip link leads to the accessible archive.
+has no archive shortcut. A focus-revealed skip link, "Skip to the archive",
+leads to the same section.
 
-### Tape index
+**The One Name Rule.** A thing has one name wherever a visitor meets it, and
+a link's words are the heading it lands on. The collection of tapes is **the
+archive**: the header link, the section's heading, the skip link, the phone
+guide ("Pick one from the archive below."), the status messages, and the idle
+tube's ALYOSHIN ARCHIVE. It is never "the tape index" or "the shelf" in
+anything a visitor reads or hears; the modeled rack and holder are object
+names for this document only. A tape has one short name, its spine name
+(`vhs.spineLabel`: ALPHA, ABOUT), printed on the spine and repeated as
+written by the archive entry, the guide, the idle tube, and both loading
+screens; and one title, which heads the reader, names the document, and
+fills the entry's accessible name ("Play tape: About (2026)"). The About
+tape follows the same rule as every tape: it is "About" in the header, ABOUT
+on its spine, and "About" on the tube, where the owner's name is already
+printed once, in the ident. A tape's caption ("Placeholder tape", "Meet the
+maker", "Blank tape") is the same words in the archive entry and in the
+guide. The visitor's noun is "tape"; "cassette" names the modeled object in
+this document.
 
-A linked entry with a numbered label, explicit placeholder caption, play symbol,
+### The archive
+
+The section a visitor knows as "The archive" (The One Name Rule): six entries
+in rack order. A linked entry with a numbered label, explicit placeholder caption, play symbol,
 and a thin accent strip supplied by its tape data. Each entry uses a seam border
 and small corners; hover, focus, or modeled-tape preview fills it with ink-2 and
 strengthens the border. The number sits above the name in the 11px label tier, as on a cassette
 spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
-needed; 12px secondary copy distinguishes "Placeholder" from the About
-tape's "Meet the maker". The playable links are normal Tab stops, with
-arrows and Home/End for direct movement between them; About is included in
-its accessible name. The index heading carries no count; nothing on the
+needed; 12px secondary copy distinguishes "Placeholder tape" from the About
+tape's "Meet the maker", and the guide repeats the same caption while that
+tape is previewed. The playable links are normal Tab stops, with
+arrows and Home/End for direct movement between them; each is named "Play
+tape:" with the tape's title and year. The archive's heading carries no count; nothing on the
 shell does.
 
 **The Blank Slot Rule.** The rack has six slots: five for projects and the
@@ -600,7 +630,7 @@ seated flat in its slot. Its slot target swallows the pointer, so it never
 previews, lifts, or plays, and the printed tapes behind it in the
 three-quarter view do not answer through it: the camera looks along the
 rack, and a ray through an empty slot would run on into the next envelope
-(The Blank Slot Rule, under Tape index). Modeled spine labels retain
+(The Blank Slot Rule, under The archive). Modeled spine labels retain
 classic, rental, and studio variants. High-resolution
 local canvas textures carry the print; hovering a tape or focusing its link
 lifts and previews the same cassette without changing its size or orientation.
@@ -678,7 +708,7 @@ modeled playback, and disposes generated
 textures and geometries.
 
 **The Way Back Rule.** Every exit lands focus somewhere the visitor can see.
-After a tape, focus returns to that tape's entry in the index; after NO
+After a tape, focus returns to that tape's entry in the archive; after NO
 SIGNAL, where no tape played, it lands on the nameplate that opens the page,
 which holds the page's first heading. A focus ring that shows must be on
 screen: when the browser draws the ring (a keyboard exit), the entry is
@@ -717,16 +747,33 @@ its own sentence and the live region.
 
 **The Ident Rule.** The tube says whose archive is playing. The OSD's top
 bar has three fields: the transport state at the left, the station ident
-(DANIEL ALYOSHIN) on the tube's centre line, and the tape's counter at the
-right; NO SIGNAL carries the ident alone in the same place. It lives in the
+(DANIEL ALYOSHIN) on the tube's centre line, and the tape's reading time
+at the right (The True Readout Rule); NO SIGNAL carries the ident alone in
+the same place. It lives in the
 reader, not the shell, so it is there in a deep link's first second, through
 the handoff, in the native reader on a phone, and on a dead link, which is
 often a first visit. The shell's nameplate dissolves with the rest of the
 page; nothing of the shell is pinned over the studio. The outer fields
 share the spare width equally so the ident is centred; on a tube too narrow
-for that they pack to their content, and below 15.5rem the counter gives
-way, never the name. The name is read from `src/content/site.ts`, the same
-source that closes every document title.
+for that they pack to their content, and the reading time gives way in
+steps, never the name: below 19.5rem it drops its word and keeps its number
+(1 MIN), which holds two characters of air beside the name on a 320px phone,
+and below 15.5rem it goes. The name is read from `src/content/site.ts`, the
+same source that closes every document title.
+
+**The True Readout Rule.** Every readout states something true of the site,
+or it is not printed. The tube's counter is the tape's reading time, 1 MIN
+READ: whole minutes at 230 words a minute over the title, tagline,
+paragraphs, and captions, never under one, derived in
+`src/content/readingTime.ts` and never typed into a tape's content, so it
+stays true as the copy changes. The OSD bar is decorative to assistive
+technology, so the article's meta line carries the same fact for a screen
+reader ("1 minute read"). No tape speed (SP, LP), invented runtime, head
+count, or stereo claim appears on the tube, the deck, or the idle screen.
+The transport states, the owner's name, the archive's name, the REC date,
+and NO SIGNAL's reasons are all statements of fact. AV–01 and CH 01 are
+names, not claims: the machine's, and the home route's, as CHANNEL NOT FOUND
+names a route that is missing.
 
 **The Handoff Rule.** A desktop deep link's native reader hands over to the
 modeled screen once, when the scene is ready. The studio composes underneath
@@ -746,7 +793,11 @@ Its lit area has the reader's corners, 26 texture pixels for the 14px screen
 radius on the reader's 560px plane, over the black tube, so the screen keeps
 one shape before and after a tape goes in.
 Its main message uses 128px texture type; the two-line selection instruction
-uses 88px so it remains legible at the opening camera scale. These are texture
+uses 88px so it remains legible at the opening camera scale. Its corners
+carry the transport state (STANDBY, or LOADING while a tape goes in) at the
+top left, CH 01 at the top right, ALYOSHIN ARCHIVE at the bottom left, and
+the model mark AV–01 at the bottom right, as on the fallback's idle screen,
+which prints the state and the mark alone. These are texture
 coordinates, and scale with the physical screen rather than HTML font tokens.
 HTML screen effects comprise faint stepped grain (0.8s), scanlines, a vignette,
 one tracking entrance (400ms), and the REC blink (1.2s). The fallback idle cursor
@@ -793,6 +844,7 @@ build has none. The address itself is a Stage 10 decision.
 - Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.
 - Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.
 - Do land focus in sight after every exit, and move the page for a ring only while the chrome is dissolved (The Way Back Rule).
+- Do call a thing by its one name everywhere a visitor meets it, and make a link's words the heading it lands on (The One Name Rule).
 - Do keep the owner's name on the tube in every reading state; identity during playback belongs to the OSD, not to shell chrome pinned over the studio (The Ident Rule).
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do keep placeholder projects explicitly labeled until Daniel supplies real content.
@@ -807,5 +859,6 @@ build has none. The address itself is a Stage 10 decision.
 - Don't type an arrow, play mark, or dot; draw it (The Drawn Mark Rule).
 - Don't add a weight beyond 400, 600, and 800, a seventh shell size, or any size below 11px.
 - Don't introduce glowing controls, neon outlines with blur, or saturated chassis surfaces.
+- Don't print VCR trivia as if it were information: no tape speeds, invented runtimes, head counts, or stereo claims (The True Readout Rule).
 - Don't letter the models beyond the signature prints, and don't add metadata, clocks, counts, or edition marks to the shell.
 - Don't substitute the old CSS dolly, deck VFD clock, or pulsing eject sample for the current 3D behavior.

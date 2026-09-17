@@ -296,7 +296,7 @@ export default function Player({
 
       <StatusWindow mode={mode} soundOn={soundOn} />
       <Print
-        text="AV–01  /  4 HEAD · HI-FI STEREO"
+        text="AV–01  /  VHS"
         width={1.65}
         height={0.09}
         position={[-0.3, -0.29, 1.243]}
@@ -320,6 +320,7 @@ export default function Player({
         mark="eject"
         accessibleName="Eject tape"
         title="Eject tape (Escape)"
+        shortcut="Escape"
         interactive={interactive}
         portal={portal}
         onClick={onEject}

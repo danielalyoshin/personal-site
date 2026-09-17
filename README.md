@@ -22,7 +22,7 @@ labels, and sound are local; no external model or texture service is required.
 ## Explore
 
 - Click a modeled cassette or its tape-index link to play it.
-- Arrow keys and Home/End navigate the tape index; Enter plays a tape.
+- Arrow keys and Home/End navigate the archive's entries; Enter plays a tape.
 - Eject or Escape returns to the archive and restores focus. Choosing a tape
   zooms the studio softly out of its place on the page and eject zooms it
   back in; the page dissolves and returns around it.

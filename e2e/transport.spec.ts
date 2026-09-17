@@ -213,7 +213,7 @@ test('skip, eject during loading, and reduced motion leave the player usable', a
     'data-ready',
     'true',
   )
-  const about = page.getByRole('link', { name: 'About me' })
+  const about = page.getByRole('link', { name: 'About', exact: true })
   await about.click()
   const skip = page.getByRole('button', { name: 'Skip animation' })
   await expect(skip).toBeVisible()
@@ -301,9 +301,7 @@ test('the tube names the tape going in and never invites another while it loads'
   await alpha.click()
   await expect
     .poll(() => prints(true))
-    .toEqual(
-      expect.arrayContaining(['SP  ·  LOADING', 'LOADING TAPE', 'ALPHA']),
-    )
+    .toEqual(expect.arrayContaining(['LOADING', 'LOADING TAPE', 'ALPHA']))
   const loading = await prints(true)
   for (const invitation of [
     'INSERT TAPE',
@@ -601,7 +599,7 @@ test('the compact player supports skip, sound, and eject on a narrow touch scree
       'true',
     )
     await advanceScene(page, 80)
-    await page.getByRole('link', { name: 'About me' }).tap()
+    await page.getByRole('link', { name: 'About', exact: true }).tap()
     const skip = page.getByRole('button', { name: 'Skip animation' })
     await expect(skip).toBeInViewport({ ratio: 1 })
     expect(await skip.evaluate((el) => !!el.closest('[role="group"]'))).toBe(

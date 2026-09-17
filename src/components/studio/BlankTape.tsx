@@ -7,7 +7,7 @@ import { SLOT_TARGET, slotHome } from './transport'
  * other cassette, seated flat in its slot, with nothing printed on the spine
  * or the face. Its slot target swallows the pointer, so it never previews,
  * lifts, or plays, and the printed tapes behind it in the three-quarter
- * view do not answer through it; the index entry beside it reads
+ * view do not answer through it; the archive entry beside it reads
  * "Coming soon…".
  */
 export default function BlankTape({

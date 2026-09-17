@@ -51,6 +51,14 @@ function landFocus(el: HTMLElement) {
   if (el.matches(':focus-visible')) el.scrollIntoView({ block: 'nearest' })
 }
 
+/**
+ * The line under a tape's name, the same words in the guide and the archive.
+ * Project tapes say what they are until real projects replace them.
+ */
+function tapeCaption(tape: Project) {
+  return tape.slug === aboutTape.slug ? 'Meet the maker' : 'Placeholder tape'
+}
+
 /** Keys that only modify another key are never the "any key" that skips. */
 const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta'])
 
@@ -83,7 +91,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     '(max-width: 767px), (max-height: 699px)',
   )
   // At phone widths the fitted rack is about 110px across, so the guide
-  // sends the visitor to the index; the studio still answers taps.
+  // sends the visitor to the archive's entries; the studio still answers taps.
   const phone = useMediaQuery('(max-width: 600px)')
   // Without hover, a first tap previews a modeled tape and a second plays it.
   const touchOnly = useMediaQuery('(hover: none)')
@@ -150,7 +158,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const pageTitle = invalid
     ? `No signal — ${site.owner}`
     : tape
-      ? `${tape.slug === 'about' ? 'About' : tape.title} — ${site.owner}`
+      ? `${tape.title} — ${site.owner}`
       : homeTitle
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
   const identityEl = useRef<HTMLAnchorElement>(null)
@@ -183,7 +191,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     // Drei mounts screen HTML through a separate React root. Focus after that
     // node is connected, including when reduced motion skips every timeout.
     const settle = () => {
-      if (!el.isConnected) return
+      // Playback can close while this waits on a frame (Escape during the
+      // handoff), and Drei unmounts its root a commit after the page does: a
+      // title still connected then must not take focus back from the exit.
+      if (!el.isConnected || !wasOpen.current) return
       // The modeled screen is taking over from a native reader still on
       // stage: wait until this reader is placed on the tube, then continue
       // reading where it was, at the same scroll depth and with focus still
@@ -459,11 +470,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const fallback = (
     <div className={styles.fallback}>
       <div className={styles.fallbackMonitor}>{readerFor(false)}</div>
-      {!open && (
-        <p className={styles.fallbackNote}>
-          The archive is ready. Choose a tape below.
-        </p>
-      )}
     </div>
   )
 
@@ -481,7 +487,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         inert={open || undefined}
         aria-hidden={open || undefined}
       >
-        Skip to tape archive
+        Skip to the archive
       </a>
       <header
         className={styles.header}
@@ -544,7 +550,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               select(aboutTape)
             }}
           >
-            About me
+            About
             <PlayIcon className={styles.arrow} />
           </Link>
         </nav>
@@ -558,7 +564,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           aria-labelledby="intro-title"
         >
           <div>
-            <p className={styles.eyebrow}>Independent mind. Hands-on maker.</p>
+            <p className={styles.eyebrow}>One person, both sides of the seam</p>
             <h2 id="intro-title">
               Digital work.
               <br />
@@ -589,10 +595,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                 {preview ? preview.vhs.spineLabel : 'Choose a tape to play'}
                 <small>
                   {preview
-                    ? `${preview.slug === 'about' ? 'About Daniel' : 'Placeholder tape'} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
-                    : phone
-                      ? 'Pick one from the index below.'
-                      : 'Select a cassette in the studio.'}
+                    ? `${tapeCaption(preview)} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
+                    : phone || flat
+                      ? 'Pick one from the archive below.'
+                      : 'Pick one in the studio.'}
                 </small>
               </span>
             </div>
@@ -672,7 +678,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           aria-hidden={open || undefined}
         >
           <div className={styles.archiveHeading}>
-            <h2 id="archive-title">The tape index</h2>
+            <h2 id="archive-title">The archive</h2>
             <p>Projects are being curated. Explore the placeholders.</p>
           </div>
           <ul className={styles.tapeIndex}>
@@ -698,7 +704,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     className={
                       preview?.slug === item.slug ? styles.previewed : ''
                     }
-                    aria-label={`Play tape: ${item.slug === 'about' ? 'About Daniel' : item.title} (${item.year})`}
+                    aria-label={`Play tape: ${item.title} (${item.year})`}
                     ref={(el) => {
                       if (el) tapeEls.current.set(item.slug, el)
                       else tapeEls.current.delete(item.slug)
@@ -726,14 +732,8 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <span className={styles.tapeLabel}>
-                      {item.slug === 'about'
-                        ? 'About Daniel'
-                        : item.vhs.spineLabel.split(' · ')[0]}
-                      <small>
-                        {item.slug === 'about'
-                          ? 'Meet the maker'
-                          : 'Placeholder'}
-                      </small>
+                      {item.vhs.spineLabel}
+                      <small>{tapeCaption(item)}</small>
                     </span>
                     <PlayIcon className={styles.playArrow} />
                   </Link>
@@ -749,7 +749,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         inert={open || undefined}
         aria-hidden={open || undefined}
       >
-        <span>Made with intention. A little nostalgia, too.</span>
+        <span>Want to talk shop? I’m on GitHub and LinkedIn.</span>
         <span className={styles.footerEdition}>DA / © 2026</span>
         <nav aria-label="Contact">
           <a

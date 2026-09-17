@@ -52,14 +52,36 @@ test('a keyboard exit lands focus on the tape link, in sight; a pointer exit lea
 
   // By pointer no ring shows, so nothing moves: the studio stays in view.
   await page.evaluate(() => window.scrollTo(0, 0))
-  await page.getByRole('link', { name: 'About me' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await page.getByRole('button', { name: 'Eject tape', exact: true }).click()
   await expect(page).toHaveURL('/')
-  const about = page.getByRole('link', { name: /^Play tape: About Daniel/ })
+  const about = page.getByRole('link', { name: /^Play tape: About/ })
   await expect(about).toBeFocused()
   expect(await about.evaluate((el) => el.matches(':focus-visible'))).toBe(false)
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
+})
+
+test('an exit during the handoff keeps the focus it landed', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  // Escape the moment the modeled reader mounts under the native one: its
+  // title is still waiting on a frame to take focus, and Drei unmounts its
+  // root a commit after the page closes playback.
+  await page.addInitScript(() => {
+    const watch = new MutationObserver(() => {
+      if (!document.querySelector('[data-testid="project-reader"] h2')) return
+      watch.disconnect()
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    })
+    watch.observe(document, { subtree: true, childList: true })
+  })
+  await page.goto('/project/placeholder-alpha')
+  await expect(page).toHaveURL('/')
+  await expect(page.getByTestId('project-reader')).toHaveCount(0)
+  // The late title must not take focus back and drop it on the page body.
+  await expect(alphaLink(page)).toBeFocused()
 })
 
 test('the exit from NO SIGNAL is printed on the tube and lands on the nameplate', async ({
@@ -251,11 +273,11 @@ test('the OSD bar keeps its three fields apart on the narrowest phone', async ({
     }
   })
   expect(fields.spans).toHaveLength(3)
-  const [play, ident, runtime] = fields.spans
+  const [play, ident, readTime] = fields.spans
   expect(play.left).toBeGreaterThanOrEqual(fields.left)
   expect(ident.left - play.right).toBeGreaterThanOrEqual(6)
-  expect(runtime.left - ident.right).toBeGreaterThanOrEqual(6)
-  expect(runtime.right).toBeLessThanOrEqual(fields.right)
+  expect(readTime.left - ident.right).toBeGreaterThanOrEqual(6)
+  expect(readTime.right).toBeLessThanOrEqual(fields.right)
 })
 
 test('the page ships a share card: Open Graph and Twitter tags over a rendered studio still', async ({

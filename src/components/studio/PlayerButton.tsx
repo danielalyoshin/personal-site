@@ -17,6 +17,7 @@ export default function PlayerButton({
   mark,
   accessibleName,
   title,
+  shortcut,
   interactive,
   portal,
   pressed,
@@ -31,6 +32,8 @@ export default function PlayerButton({
   mark?: PrintMark
   accessibleName: string
   title?: string
+  /** A key that also presses this one, in `aria-keyshortcuts` form. */
+  shortcut?: string
   interactive: boolean
   portal: RefObject<HTMLDivElement | null>
   pressed?: boolean
@@ -90,6 +93,7 @@ export default function PlayerButton({
             className={styles.playerKey}
             aria-label={accessibleName}
             aria-pressed={pressed}
+            aria-keyshortcuts={shortcut}
             title={title ?? accessibleName}
             onPointerDown={(event) => {
               event.stopPropagation()

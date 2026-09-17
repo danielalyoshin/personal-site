@@ -49,8 +49,15 @@ test('the modeled reader keeps a real 16px prose floor on common laptops and sho
     { width: 1024, height: 768 },
   ]) {
     await page.setViewportSize(viewport)
-    await expect.poll(async () => (await measure(page)).scale).toBeCloseTo(1, 1)
-    const reader = await measure(page)
+    // Judge one settled snapshot: a second reading after the poll could land
+    // on a frame of the next refit, with the plane and its content apart.
+    let reader = await measure(page)
+    await expect
+      .poll(async () => {
+        reader = await measure(page)
+        return reader.width < 560 && Math.abs(reader.scale - 1) < 0.01
+      })
+      .toBe(true)
     expect(reader.width).toBeLessThan(560)
     expect(reader.prose).toBeGreaterThanOrEqual(15.9)
     expect(reader.prose).toBeLessThanOrEqual(17.1)

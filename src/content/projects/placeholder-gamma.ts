@@ -16,7 +16,6 @@ export const placeholderGamma: Project = {
     spineLabel: 'GAMMA',
     labelVariant: 'studio',
     accent: '#2f7bff',
-    runtime: 'SP 0:07',
     recorded: 'MAY 2025',
   },
 }

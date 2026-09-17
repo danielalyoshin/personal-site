@@ -24,8 +24,15 @@ export default function DeckControls({ soundOn, onEject }: DeckControlsProps) {
       >
         <SoundIcon enabled={soundOn} />
       </button>
-      <button type="button" className={styles.key} onClick={onEject}>
-        <EjectIcon /> Eject tape <kbd>ESC</kbd>
+      {/* The ESC legend is a hint, not part of the key's name: the shortcut
+          is declared on the button, where assistive technology reads it. */}
+      <button
+        type="button"
+        className={styles.key}
+        aria-keyshortcuts="Escape"
+        onClick={onEject}
+      >
+        <EjectIcon /> Eject tape <kbd aria-hidden="true">ESC</kbd>
       </button>
     </div>
   )

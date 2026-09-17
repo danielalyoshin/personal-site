@@ -382,7 +382,7 @@ function Screen({
   }, -1)
   // The tube names one tape at a time: the one going in, else the one under
   // the pointer.
-  const name = (inserting ? tape : preview)?.vhs.spineLabel.split(' · ')[0]
+  const name = (inserting ? tape : preview)?.vhs.spineLabel
   const texture = useMemo(
     () =>
       makeTexture(1024, 768, (ctx) => {
@@ -397,7 +397,7 @@ function Screen({
         ctx.fillRect(0, 0, 1024, 768)
         ctx.fillStyle = '#bfc9ff'
         ctx.font = '28px "VT323", monospace'
-        ctx.fillText(inserting ? 'SP  ·  LOADING' : 'SP  ·  STANDBY', 64, 73)
+        ctx.fillText(inserting ? 'LOADING' : 'STANDBY', 64, 73)
         ctx.textAlign = 'right'
         ctx.fillText('CH 01', 960, 73)
         ctx.strokeStyle = '#818cfc'
@@ -430,7 +430,7 @@ function Screen({
         ctx.font = '24px "VT323", monospace'
         ctx.fillText('ALYOSHIN ARCHIVE', 64, 698)
         ctx.textAlign = 'right'
-        ctx.fillText('HI-FI STEREO', 960, 698)
+        ctx.fillText('AV–01', 960, 698)
         ctx.fillStyle = 'rgba(0,0,0,.12)'
         for (let y = 0; y < 768; y += 4) ctx.fillRect(0, y, 1024, 1)
       }),

@@ -26,7 +26,6 @@ export const placeholderAlpha: Project = {
     spineLabel: 'ALPHA',
     labelVariant: 'classic',
     accent: '#ff4554',
-    runtime: 'SP 0:42',
     recorded: 'JAN 2026',
   },
 }

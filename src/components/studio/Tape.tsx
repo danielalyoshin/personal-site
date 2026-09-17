@@ -81,7 +81,7 @@ export default function Tape({
         ctx.save()
         ctx.translate(113, 139)
         ctx.rotate(Math.PI / 2)
-        const name = tape.vhs.spineLabel.split(' · ')[0]
+        const name = tape.vhs.spineLabel
         fitType(ctx, name, 43, 630, 800)
         ctx.fillText(name, 0, 0)
         ctx.restore()
@@ -160,10 +160,7 @@ export default function Tape({
     <>
       <group ref={group} name={`tape-${tape.slug}`} position={home}>
         <group rotation={[0, Math.PI / 2, Math.PI / 2]}>
-          <CassetteModel
-            title={tape.vhs.spineLabel.split(' · ')[0]}
-            accent={tape.vhs.accent}
-          />
+          <CassetteModel title={tape.vhs.spineLabel} accent={tape.vhs.accent} />
         </group>
         <mesh position={[0, 0, 0.546]}>
           <planeGeometry args={[0.306, 1.54]} />

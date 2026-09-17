@@ -260,7 +260,7 @@ test('About preserves modified-click navigation and animates an ordinary click',
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
   await ready(page)
-  const about = page.getByRole('link', { name: 'About me' })
+  const about = page.getByRole('link', { name: 'About', exact: true })
   const [newTab] = await Promise.all([
     page.context().waitForEvent('page'),
     about.click({ modifiers: ['ControlOrMeta'] }),
@@ -278,7 +278,7 @@ test('About preserves modified-click navigation and animates an ordinary click',
   await expect(skip).toBeVisible()
   await skip.click()
   await expect(
-    page.getByRole('article', { name: 'Daniel Alyoshin details' }),
+    page.getByRole('article', { name: 'About details' }),
   ).toBeVisible()
 })
 
@@ -301,7 +301,7 @@ test('CRT contact links have separate touch targets at phone and desktop sizes',
     )
     await expect(frame).toBeVisible()
     const reader = frame.getByRole('article', {
-      name: 'Daniel Alyoshin details',
+      name: 'About details',
     })
     await expect(reader).toBeVisible()
     const github = reader.getByRole('link', { name: 'GITHUB', exact: true })
@@ -453,9 +453,10 @@ test.describe('touch input in the studio', () => {
             span.querySelector('small')!.textContent,
           ]
         })
-      const idle = ['Choose a tape to play', 'Pick one from the index below.']
+      const idle = ['Choose a tape to play', 'Pick one from the archive below.']
       // At phone widths the fitted rack is about 110px across, so the guide
-      // sends the visitor to the index. The studio still answers taps.
+      // sends the visitor to the archive's entries. The studio still answers
+      // taps.
       expect(await guide()).toEqual(idle)
       // Where each slot target lands on screen.
       const slots = await page.evaluate(async () => {
@@ -526,15 +527,15 @@ test.describe('touch input in the studio', () => {
       await page.touchscreen.tap(slots.about.right + 5, about.y)
       await expect
         .poll(guide)
-        .toEqual(['ABOUT · DANIEL', 'About Daniel · Tap again to play'])
+        .toEqual(['ABOUT', 'Meet the maker · Tap again to play'])
       await expect(page).toHaveURL('/')
       // A blank slot swallows its tap, and a tap clear of the rack cancels.
       const blank = centre(slots['coming-1'])
       await page.touchscreen.tap(blank.x, blank.y)
       await page.waitForTimeout(300)
       expect(await guide()).toEqual([
-        'ABOUT · DANIEL',
-        'About Daniel · Tap again to play',
+        'ABOUT',
+        'Meet the maker · Tap again to play',
       ])
       await page.touchscreen.tap(bounds.x + 24, bounds.y + 24)
       await expect.poll(guide).toEqual(idle)

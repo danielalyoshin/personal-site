@@ -79,7 +79,7 @@ test('deep links, browser history and both missing-route states', async ({
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect(
     page.getByRole('heading', {
-      name: 'Daniel Alyoshin',
+      name: 'About',
       exact: true,
       level: 2,
     }),
@@ -90,7 +90,7 @@ test('deep links, browser history and both missing-route states', async ({
   await expect(page).toHaveURL('/project/about')
   await expect(
     page.getByRole('heading', {
-      name: 'Daniel Alyoshin',
+      name: 'About',
       exact: true,
       level: 2,
     }),
@@ -109,13 +109,13 @@ test('reduced motion skips the tape flight and confines keyboard focus', async (
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await ready(page)
-  await page.getByRole('link', { name: 'About me' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
   await expect(
     page.getByRole('button', { name: 'Skip animation' }),
   ).toHaveCount(0)
   await expect(
     page.getByRole('heading', {
-      name: 'Daniel Alyoshin',
+      name: 'About',
       exact: true,
       level: 2,
     }),
@@ -131,7 +131,7 @@ test('reduced motion skips the tape flight and confines keyboard focus', async (
   await page.getByRole('button', { name: 'Eject tape' }).focus()
   await page.keyboard.press('Tab')
   await expect(
-    page.getByRole('article', { name: 'Daniel Alyoshin details' }),
+    page.getByRole('article', { name: 'About details' }),
   ).toBeFocused()
   await page.keyboard.press('Tab')
   await expect(
@@ -147,7 +147,7 @@ test('native reading covers narrow and short viewports and survives resize', asy
   await page.goto('/')
   await ready(page)
   await noOverflow(page)
-  await page.getByRole('link', { name: 'About me' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
   const reader = page.locator('article')
   await expect(reader).toBeVisible()
   for (const viewport of [
@@ -183,7 +183,7 @@ test('native reading covers narrow and short viewports and survives resize', asy
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect(
     page.getByRole('heading', {
-      name: 'Daniel Alyoshin',
+      name: 'About',
       exact: true,
       level: 2,
     }),
@@ -202,12 +202,12 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await ready(page)
   const guide = page.getByText('Choose a tape to play')
   await expect(guide).toBeInViewport({ ratio: 1 })
-  await expect(guide).toContainText('Select a cassette in the studio.')
+  await expect(guide).toContainText('Pick one in the studio.')
   await expect(page.locator('canvas')).toBeInViewport({ ratio: 1 })
   await page.setViewportSize({ width: 390, height: 844 })
   // The fitted rack is about 110px across on a phone: the guide points at
-  // the index, whose entries are in reach.
-  await expect(guide).toContainText('Pick one from the index below.')
+  // the archive's entries, which are in reach.
+  await expect(guide).toContainText('Pick one from the archive below.')
   await expect(
     page.getByRole('link', {
       name: 'Play tape: Placeholder: Alpha (2026)',
@@ -245,10 +245,10 @@ test('archive works without WebGL and after a graphics context is lost', async (
     context?.getExtension('WEBGL_lose_context')?.loseContext()
   })
   await expect(page.locator('canvas')).toHaveCount(0)
-  await page.getByRole('link', { name: 'About me' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
   await expect(
     page.getByRole('heading', {
-      name: 'Daniel Alyoshin',
+      name: 'About',
       exact: true,
       level: 2,
     }),
@@ -422,9 +422,9 @@ test('the pointer preview hands over slot to slot without flicker while cassette
   // One handover at each shared edge, and never back to a tape already left.
   // The two blank slots after Gamma answer no pointer, so the guide reads
   // idle across them until About.
-  const played = ['ALPHA', 'BETA · EXTENDED CUT', 'GAMMA']
-  expect(forward).toEqual([...played, idle, 'ABOUT · DANIEL', idle])
-  expect(back).toEqual(['ABOUT · DANIEL', idle, ...played.reverse(), idle])
+  const played = ['ALPHA', 'BETA', 'GAMMA']
+  expect(forward).toEqual([...played, idle, 'ABOUT', idle])
+  expect(back).toEqual(['ABOUT', idle, ...played.reverse(), idle])
 })
 
 test('slots without a project hold blank tapes that are coming soon', async ({
@@ -445,7 +445,7 @@ test('slots without a project hold blank tapes that are coming soon', async ({
   const gamma = page.getByRole('link', {
     name: /^Play tape: Placeholder: Gamma/,
   })
-  const about = page.getByRole('link', { name: /^Play tape: About Daniel/ })
+  const about = page.getByRole('link', { name: /^Play tape: About/ })
   await gamma.focus()
   await page.keyboard.press('ArrowRight')
   await expect(about).toBeFocused()

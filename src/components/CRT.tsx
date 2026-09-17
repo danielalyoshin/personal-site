@@ -1,4 +1,5 @@
 import type { Ref } from 'react'
+import { readingMinutes } from '../content/readingTime'
 import type { Project } from '../content/types'
 import { site } from '../content/site'
 import styles from './CRT.module.css'
@@ -67,7 +68,10 @@ export default function CRT({
                   PLAY
                 </span>
                 <span className={styles.osdIdent}>{site.owner}</span>
-                <span className={styles.osdRuntime}>{tape.vhs.runtime}</span>
+                <span className={styles.osdReadTime}>
+                  {readingMinutes(tape)} MIN
+                  <span className={styles.osdReadWord}> READ</span>
+                </span>
               </div>
               <article
                 className={styles.reader}
@@ -82,6 +86,11 @@ export default function CRT({
                   <p className={styles.meta}>
                     {tape.year}
                     {tape.role ? ` · ${tape.role.toUpperCase()}` : ''}
+                    {/* The OSD bar is decorative to assistive technology;
+                        its one fact that is not said elsewhere is said here. */}
+                    <span className="srOnly">
+                      {` · ${readingMinutes(tape)} minute read`}
+                    </span>
                   </p>
                   <p className={styles.tagline}>{tape.tagline}</p>
                   {tape.description.map((para) => (
@@ -180,14 +189,14 @@ export default function CRT({
                 </p>
                 <p className="srOnly">
                   Press the deck's Eject button or Escape to return to the
-                  shelf.
+                  archive.
                 </p>
               </div>
             </>
           ) : (
             <div className={styles.centerScreen}>
               <span className={styles.cornerTL} aria-hidden="true">
-                SP · STANDBY
+                STANDBY
               </span>
               <p className={styles.bigOsd} aria-hidden="true">
                 {mode === 'ejecting' ? (
@@ -203,10 +212,10 @@ export default function CRT({
                 )}
               </p>
               <p className="srOnly">
-                No tape playing. Choose a tape from the shelf.
+                No tape playing. Choose a tape from the archive.
               </p>
               <span className={styles.cornerBR} aria-hidden="true">
-                AV-01
+                AV–01
               </span>
             </div>
           )}

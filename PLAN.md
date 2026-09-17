@@ -953,6 +953,98 @@ render:card` (`scripts/render-social-card.mjs`: own Vite server, installed
 - **Stage 10 must set `SITE_URL`** so the card's image URL is absolute.
 - Next in the agreed order: clarify, polish.
 
+#### One name, true readouts (2026-09-17)
+
+The third critique's naming drift and ornamental readouts, plus Daniel's copy
+decision of 2026-09-16 (tighten the shell copy AND make the OSD honest).
+`/impeccable clarify`, fourth of the agreed order.
+
+- ✅ The One Name Rule in `DESIGN.md`. The collection is **the archive**
+  everywhere a visitor meets it: the header link, the heading it lands on
+  (was "The tape index"), the skip link ("Skip to the archive"), the phone
+  guide ("Pick one from the archive below."), the status messages, the
+  sr-only sentences (were "the shelf"), and the idle tube's ALYOSHIN ARCHIVE.
+  Chosen over "the tape index" because it names the collection, not a
+  widget: the rack in the studio and the list under it are the same archive,
+  and it was already the word in nine of eleven places.
+- ✅ The About tape has one name, "About", under the rule every tape follows:
+  one spine name (ABOUT, as printed) and one title ("About": reader heading,
+  document title, the entry's accessible name). Gone: "About me" in the
+  header, "About Daniel" in the entry, the guide and the accessible name,
+  "ABOUT · DANIEL" on the spine label, and "Daniel Alyoshin" as the reader's
+  title, which since the Ident Rule printed the name twice, 60px apart.
+  Three `slug === 'about'` special cases left `Stage.tsx`; the one that
+  remains picks the caption. `about.ts` changed in its `title` and
+  `spineLabel` only; the About prose is untouched and still Daniel's.
+- ✅ `vhs.spineLabel` is the short name as printed; the " · " convention and
+  every `.split(' · ')[0]` are gone, so the guide ("BETA · EXTENDED CUT")
+  and the native loading screen now name a tape as the entry, the spine, and
+  the tube do. Captions are one helper, `tapeCaption`: "Placeholder tape" or
+  "Meet the maker", the same words in the entry and the guide.
+- ✅ The guide's instruction finishes the headline's sentence with one verb
+  and one noun: "Pick one in the studio." (was "Select a cassette in the
+  studio."), "Pick one from the archive below." on phones and wherever there
+  is no studio (no WebGL, lost graphics), where it used to point at a studio
+  that was not there. The fallback's own note ("The archive is ready. Choose
+  a tape below.") said the same thing a third time and is removed.
+- ✅ The True Readout Rule in `DESIGN.md`. `vhs.runtime` ("SP 0:42",
+  "LP 2:14") is deleted from the content type; the OSD's right field is the
+  tape's reading time, 1 MIN READ, from `src/content/readingTime.ts` (230
+  words a minute over title, tagline, paragraphs, captions; never under one;
+  derived, so Stage 8 copy keeps it true with nothing to type). The article's
+  meta line says it to a screen reader, since the bar is `aria-hidden`.
+  Below 19.5rem of tube the word READ gives way (320px phones read 1 MIN
+  with 33px of air; packed, the full field sat 7px from the name), below
+  15.5rem the field, never the name.
+- ✅ The AV–01 line reads "AV–01 / VHS", the mark the native reader's deck
+  already carried; "4 HEAD · HI-FI STEREO" is gone and the print stays a
+  signature print. The idle tube's corners: STANDBY / LOADING (was "SP ·"),
+  CH 01, ALYOSHIN ARCHIVE, AV–01 (was HI-FI STEREO), matching the fallback's
+  idle screen, whose "AV-01" hyphen became the en dash used everywhere else.
+  CH 01 stays as the home route's name, as CHANNEL NOT FOUND names a missing
+  one; offered to Daniel as a cut. The cassette labels' "VHS HI-FI" format
+  mark is label art, not a readout, and was left.
+- ✅ Shell copy, Daniel's choices from three proposals a line (2026-09-17):
+  the kicker is "One person, both sides of the seam", his own About stance
+  ("working the seam between design and build… one person owns both sides")
+  in place of "Independent mind. Hands-on maker."; the display line "Digital
+  work. / Physical feeling." stays, by his decision; the footer reads "Want
+  to talk shop? I'm on GitHub and LinkedIn.", echoing the About tape's
+  closing line and giving the browse page the ending the critique said it
+  lacked, beside the two links it names. Both fit one line at 320px.
+- ✅ Both Eject keys are named "Eject tape" and declare Escape through
+  `aria-keyshortcuts`; the native key's ESC legend is `aria-hidden`, so it
+  is no longer announced as "Eject tape ESC".
+- ✅ Found while verifying, outside the brief: an Escape pressed while a deep
+  link's handoff was still pending let the modeled title's queued focus
+  frame run after the exit (Drei unmounts its root a commit after the page),
+  taking focus from the archive entry and dropping it on the page body when
+  the reader unmounted. `settle` in `Stage.tsx` now returns once playback
+  has closed (`wasOpen`). Reproduced on demand by a new exits test (failed 2
+  of 3 before, 0 of 16 after). `reader.spec` judged a second measurement
+  after its poll and could land on a refit frame under load; it now asserts
+  the snapshot it polled. `render:card` once captured the loading screen
+  after a dev-server reload dropped its injected CSS: the CSS is now added on
+  every load and the script refuses to write a card it has not checked.
+- Docs: `DESIGN.md` (The One Name Rule, The True Readout Rule, guide,
+  Navigation, "The archive" section, Ident Rule thresholds, key naming, idle
+  corners, Signature Print Rule, a Do and a Don't), the sidecar (two rules, a
+  do, a don't, renamed entries, samples), the surface brief, README.
+  `public/social-card.png` re-rendered for the new prints.
+- Validation: build, lint, format, detector clean; new `e2e/copy.spec.ts`
+  (one name for the archive across link, heading, skip link, status and
+  every canvas print, with no SP/LP/4 HEAD/STEREO printed anywhere; one name
+  for About across header, entry, guide, heading, title and status, and the
+  owner's name on the tube exactly once; the counter recomputed from the
+  words on the tube for three tapes, its sr-only twin, and the word giving
+  way at 320px with 14px of air or more; both Eject keys' names and
+  shortcuts; the footer's sentence beside the two links it names). 44 e2e
+  green.
+- Next in the agreed order: the closing polish (the 404 screen's `undefined`
+  class, sub-44px header and footer links, the THREE.Clock warning). A
+  candidate for it: during eject the modeled tube already reads INSERT TAPE
+  while the deck reads EJECT.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

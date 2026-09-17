@@ -14,9 +14,9 @@ into a clean, artsy, intentional low-poly 3D experience. This supersedes the
 July SVG-only implementation. Normative direction: `DESIGN.md`.
 
 Composition: compact identity header and editorial introduction, selection
-guide above the orthographic 3D exhibit, six-slot text index, GitHub/LinkedIn footer with the contact links
+guide above the orthographic 3D exhibit, the six-entry archive, GitHub/LinkedIn footer with the contact links
 flush right. Every shell edge sits on the one column (the cassette mark hangs
-in the gutter above 1200px); the tape index entries' 12px insets are the only
+in the gutter above 1200px); the archive entries' 12px insets are the only
 inboard edges, and each entry stacks its number over its name so it has one
 text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
 clock, caption number, tape count, page-level sound control, or edition
@@ -53,9 +53,14 @@ plates; headphone seams, pivots, and stand fittings follow the cassette and
 speaker construction, with 24-segment curves and four low stand pads.
 
 Browse: "Choose a tape to play" explains the action before the canvas, with
-a one-line instruction that points at the studio rather than the index; at
-widths of 600px and below it points at the index instead ("Pick one from
-the index below."), because the fitted rack is about 110px across there.
+a one-line instruction that says where: "Pick one in the studio." on a
+desktop, and "Pick one from the archive below." at widths of 600px and
+below, where the fitted rack is about 110px across, and wherever there is
+no studio to pick from (no WebGL, lost graphics). The collection has one
+name, the archive, in the header link, the heading it lands on, the skip
+link, the status messages, and the idle tube; each tape has one spine name
+and one title, the About tape ("About") included; captions are the same
+words in the archive and the guide (The One Name Rule in `DESIGN.md`).
 Hover/focus previews and raises a tape; click or Enter selects it. Touch
 previews first: a tap lifts and names a cassette (the guide reads "Tap
 again to play"), a second tap on it plays it, and every slot answers a tap
@@ -124,12 +129,19 @@ Missing WebGL and lost graphics
 contexts retain the entire archive and reader. Deep links, About, both 404
 states, Escape/eject, and focus return remain supported.
 The tube says whose archive is playing: the OSD's top bar reads PLAY, the
-station ident (DANIEL ALYOSHIN, centred, screen-soft), and the counter, in
-both readers, so the name is there in a deep link's first second, through
+station ident (DANIEL ALYOSHIN, centred, screen-soft), and the tape's
+reading time (1 MIN READ, derived from its copy; the word gives way below
+19.5rem of tube and the field below 15.5rem, never the name), in both
+readers, so the name is there in a deep link's first second, through
 the handoff, and on a phone; NO SIGNAL carries the ident alone and prints
 its exit beneath the reason (PRESS ESC OR EJECT TO RETURN; the deck's key
 alone at 600px and below). Nothing of the shell is pinned over the studio
-(The Ident Rule in `DESIGN.md`).
+(The Ident Rule in `DESIGN.md`). Every readout is true or absent: no tape
+speeds, invented runtimes, head counts, or stereo claims on the tube, the
+deck (AV–01 / VHS), or the idle screen, and a screen reader gets the
+reading time from the article's meta line (The True Readout Rule). Both
+Eject keys are named "Eject tape" and declare Escape as a shortcut; the ESC
+legend is not part of the name.
 
 Share: every route names itself in the document title ("Placeholder: Alpha —
 Daniel Alyoshin", "About — Daniel Alyoshin", "No signal — Daniel Alyoshin";

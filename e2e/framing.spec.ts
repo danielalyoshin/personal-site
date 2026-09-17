@@ -115,7 +115,7 @@ test('the CRT stays inside the canvas during insertion, playback zoom, resize an
     'true',
   )
   await inspectFrames(page, 80, { azimuth: 0.85, polar: 0.87 })
-  await page.getByRole('link', { name: 'About me' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
   expect((await inspectFrames(page, 150)).monitorMargin).toBeGreaterThanOrEqual(
     15,
   )
@@ -133,7 +133,7 @@ test('the CRT stays inside the canvas during insertion, playback zoom, resize an
   expect((await inspectFrames(page, 100)).monitorMargin).toBeGreaterThanOrEqual(
     15,
   )
-  await page.getByRole('link', { name: 'About me' }).click()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
   await page.getByRole('button', { name: 'Skip animation' }).click()
   expect((await inspectFrames(page, 2)).monitorMargin).toBeGreaterThanOrEqual(
     15,

@@ -1,4 +1,4 @@
-/* global document */
+/* global document, window */
 /**
  * Renders the share card, public/social-card.png, from the studio itself:
  * the real scene, at the browse camera, fitted to a 1200 × 630 frame on the
@@ -47,13 +47,38 @@ try {
     deviceScaleFactor: SUPERSAMPLE,
     reducedMotion: 'reduce',
   })
+  // Added on every load, so a dev-server reload mid-run cannot drop it.
+  await page.addInitScript((css) => {
+    const frame = () => {
+      const style = document.createElement('style')
+      style.textContent = css
+      document.head.append(style)
+    }
+    if (document.head) frame()
+    else document.addEventListener('DOMContentLoaded', frame)
+  }, FRAME_CSS)
   await page.goto(url)
-  await page.addStyleTag({ content: FRAME_CSS })
   await page.waitForSelector("[data-testid='studio-scene'][data-ready='true']")
   // Prints paint at once and redraw when Archivo and VT323 have loaded; the
   // refit to the frame and that redraw both land within a few frames.
   await page.waitForFunction(() => document.fonts.status === 'loaded')
   await page.waitForTimeout(1500)
+  // A reload inside that wait once put the loading screen in the frame.
+  // Check what is about to be captured instead of trusting the waits.
+  const framed = await page.evaluate(() => {
+    const scene = document.querySelector("[data-testid='studio-scene']")
+    const layer = scene?.firstElementChild?.getBoundingClientRect()
+    return (
+      scene?.getAttribute('data-ready') === 'true' &&
+      !!scene.querySelector('canvas') &&
+      layer?.width === window.innerWidth &&
+      layer?.height === window.innerHeight
+    )
+  })
+  if (!framed)
+    throw new Error(
+      'The studio was not ready and framed at capture; no card was written.',
+    )
   const drawn = await page.screenshot({ type: 'png' })
 
   // Average the drawing down to the card's size: shown at half scale on a

@@ -20,10 +20,9 @@ export const placeholderBeta: Project = {
   ],
   media: [],
   vhs: {
-    spineLabel: 'BETA · EXTENDED CUT',
+    spineLabel: 'BETA',
     labelVariant: 'rental',
     accent: '#ffc21a',
-    runtime: 'LP 2:14',
     recorded: 'AUG 2024',
   },
 }

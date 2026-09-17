@@ -346,14 +346,22 @@
   text-shadow: none;
 }
 
-.osdRuntime {
+.osdReadTime {
   justify-self: end;
 }
 
-/* On a tube too narrow for all three fields the counter gives way, never
-   the name: it is flavour, and the ident is why the bar is there. */
+/* The reading time gives way in steps, never the name: the ident is why
+   the bar is there. Below 19.5rem the counter would close to within two
+   characters of the name, so its word goes and the number stays; on a tube
+   too narrow for three fields the counter goes too. The article's meta line
+   says the same to a screen reader at every width. */
+@container (max-width: 19.5rem) {
+  .osdReadWord {
+    display: none;
+  }
+}
 @container (max-width: 15.5rem) {
-  .osdRuntime {
+  .osdReadTime {
     display: none;
   }
 }

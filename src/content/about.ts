@@ -6,7 +6,7 @@ import type { Project } from './types'
  */
 export const aboutTape: Project = {
   slug: 'about',
-  title: 'Daniel Alyoshin',
+  title: 'About',
   tagline: 'Design engineer — working the seam between design and build.',
   description: [
     'I design interfaces and then build them, and I care about the part in the middle where most of the quality lives: the motion, the states, the details that only survive when one person owns both sides.',
@@ -21,10 +21,9 @@ export const aboutTape: Project = {
   ],
   media: [],
   vhs: {
-    spineLabel: 'ABOUT · DANIEL',
+    spineLabel: 'ABOUT',
     labelVariant: 'studio',
     accent: '#61e8c6',
-    runtime: 'SP 1:00',
     recorded: 'JUL 2026',
   },
 }

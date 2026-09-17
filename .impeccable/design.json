@@ -344,7 +344,7 @@
       },
       "label": {
         "displayName": "Label",
-        "purpose": "0.6875rem uppercase at weight 600 and 0.12em tracking in dim silkscreen: the introductory kicker, tape index numbers, footer edition, and the native reader’s AV–01 mark. Nothing on the shell is set below this step."
+        "purpose": "0.6875rem uppercase at weight 600 and 0.12em tracking in dim silkscreen: the introductory kicker, the archive entries' numbers, footer edition, and the native reader’s AV–01 mark. Nothing on the shell is set below this step."
       },
       "screen-title": {
         "displayName": "Screen title",
@@ -372,7 +372,7 @@
       },
       "osd": {
         "displayName": "Playback OSD",
-        "purpose": "Tube-scaled VT323 at weight 400 for PLAY and the runtime, 1.125–1.375rem (4.5cqi) at 1.2 leading; the station ident shares this size in screen-soft, without the glow, on the tube's centre line."
+        "purpose": "Tube-scaled VT323 at weight 400 for PLAY and the reading time, 1.125–1.375rem (4.5cqi) at 1.2 leading; the station ident shares this size in screen-soft, without the glow, on the tube's centre line."
       },
       "osd-meta": {
         "displayName": "Screen metadata",
@@ -536,20 +536,20 @@
       "name": "Site navigation",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "0.875rem Archivo links at weight 400 at every width: the archive route (the page’s single visible index CTA) and About with a drawn play mark. No counts; hover raises the colour to high silkscreen.",
-      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive</a><a href=\"/project/about\">About me<svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></nav></div>",
+      "description": "0.875rem Archivo links at weight 400 at every width: the archive route (the page’s single visible route to the section of that name) and About with a drawn play mark. No counts; hover raises the colour to high silkscreen.",
+      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive</a><a href=\"/project/about\">About<svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></nav></div>",
       "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.875rem;}\n.ds-nav a{display:inline-flex;align-items:center;gap:0.5em;text-decoration:none;padding-block:12px;}\n.ds-nav .ds-arrow{flex-shrink:0;width:1em;height:1em;}\n.ds-nav a:hover{color:var(--silk-hi);}\n@media (max-width: 600px){.ds-nav{gap:18px;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
-      "name": "Tape index entry",
+      "name": "Archive entry",
       "kind": "card",
       "refersTo": "tape-link",
       "description": "Full-width archive link with 80px minimum height and a 12px inset on every side: the 0.6875rem label-tier number over a wrapping 0.875rem name and 0.75rem placeholder caption on one text edge, with the drawn play mark centred in its own column; flex list items equalize full-grid row heights.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-index\"><a href=\"/project/placeholder-alpha\" aria-label=\"Play tape: Placeholder: Alpha (2026)\" style=\"--tape-accent:#ff4554\"><span class=\"ds-number\">01</span><span class=\"ds-label\">Alpha<small>Placeholder</small></span><svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"0.75rem\" height=\"0.75rem\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></div></div>",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-index\"><a href=\"/project/placeholder-alpha\" aria-label=\"Play tape: Placeholder: Alpha (2026)\" style=\"--tape-accent:#ff4554\"><span class=\"ds-number\">01</span><span class=\"ds-label\">Alpha<small>Placeholder tape</small></span><svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"0.75rem\" height=\"0.75rem\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></div></div>",
       "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-index a{display:grid;grid-template:auto auto / minmax(0,1fr) auto;gap:4px 8px;align-content:center;width:100%;position:relative;padding:12px;min-height:80px;border:1px solid var(--seam);border-radius:3px;text-decoration:none;transition:background 0.2s,\n    border-color 0.2s;}\n.ds-index a::before{content:'';position:absolute;left:-1px;top:13px;bottom:13px;width:2px;background:var(--tape-accent);}\n.ds-index a:hover,.ds-index a:focus-visible,.ds-index a.ds-previewed{background:var(--ink-2);border-color:var(--seam-lit);}\n.ds-number{font-size:0.6875rem;font-weight:600;line-height:1.2;letter-spacing:0.12em;color:var(--silk-dim);}\n.ds-label{min-width:0;overflow-wrap:anywhere;font-size:0.875rem;line-height:1.35;color:var(--silk-hi);text-transform:capitalize;font-weight:600;}\n.ds-label small{display:block;font-size:0.75rem;line-height:1.5;color:var(--silk-dim);margin-top:4px;font-weight:400;text-transform:none;}\n.ds-index .ds-arrow{grid-column:2;grid-row:1 / -1;align-self:center;width:0.75rem;height:0.75rem;color:var(--silk-dim);}\n.ds-index a{box-sizing:border-box;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
-      "name": "Tape index entry, blank slot",
+      "name": "Archive entry, blank slot",
       "kind": "card",
       "refersTo": "tape-link-coming",
       "description": "A project slot with nothing behind it yet (The Blank Slot Rule): the same 80px cell and 12px inset drawn as an outline rather than a tape. A 1px dashed seam-lit border, no accent strip, no play mark, and dim silkscreen reading “Coming soon…” over “Blank tape”. Plain text, not a link: no hover, no focus, and the arrow keys pass over it.",
@@ -643,11 +643,19 @@
       },
       {
         "name": "The Way Back Rule",
-        "body": "Every exit lands focus somewhere the visitor can see. After a tape, focus returns to that tape's entry in the index; after NO SIGNAL, where no tape played, it lands on the nameplate that opens the page, which holds the page's first heading. A focus ring that shows must be on screen: when the browser draws the ring (a keyboard exit), the entry is brought into view by the shortest move and stands 24px clear of the viewport's edge; when it draws none (a pointer exit), the page stays exactly where it was. The move happens in the closing commit, before paint, while the page chrome is still fully dissolved, so it is never seen as a scroll: the studio eases back into its box where that now is. A press in the studio takes focus onto the studio's layer, as a press on a link takes it onto the link, so the focus that follows by script (Skip, then the title) is ringed for a keyboard and never for a mouse."
+        "body": "Every exit lands focus somewhere the visitor can see. After a tape, focus returns to that tape's entry in the archive; after NO SIGNAL, where no tape played, it lands on the nameplate that opens the page, which holds the page's first heading. A focus ring that shows must be on screen: when the browser draws the ring (a keyboard exit), the entry is brought into view by the shortest move and stands 24px clear of the viewport's edge; when it draws none (a pointer exit), the page stays exactly where it was. The move happens in the closing commit, before paint, while the page chrome is still fully dissolved, so it is never seen as a scroll: the studio eases back into its box where that now is. A press in the studio takes focus onto the studio's layer, as a press on a link takes it onto the link, so the focus that follows by script (Skip, then the title) is ringed for a keyboard and never for a mouse."
       },
       {
         "name": "The Ident Rule",
-        "body": "The tube says whose archive is playing. The OSD's top bar has three fields: the transport state at the left, the station ident (DANIEL ALYOSHIN) on the tube's centre line, and the tape's counter at the right; NO SIGNAL carries the ident alone in the same place. It lives in the reader, not the shell, so it is there in a deep link's first second, through the handoff, in the native reader on a phone, and on a dead link. The shell's nameplate dissolves with the rest of the page; nothing of the shell is pinned over the studio. On a tube too narrow for three centred fields they pack to their content, and below 15.5rem the counter gives way, never the name. The name is read from src/content/site.ts, the same source that closes every document title."
+        "body": "The tube says whose archive is playing. The OSD's top bar has three fields: the transport state at the left, the station ident (DANIEL ALYOSHIN) on the tube's centre line, and the tape's reading time at the right (The True Readout Rule); NO SIGNAL carries the ident alone in the same place. It lives in the reader, not the shell, so it is there in a deep link's first second, through the handoff, in the native reader on a phone, and on a dead link, which is often a first visit. The shell's nameplate dissolves with the rest of the page; nothing of the shell is pinned over the studio. The outer fields share the spare width equally so the ident is centred; on a tube too narrow for that they pack to their content, and the reading time gives way in steps, never the name: below 19.5rem it drops its word and keeps its number (1 MIN), which holds two characters of air beside the name on a 320px phone, and below 15.5rem it goes. The name is read from `src/content/site.ts`, the same source that closes every document title."
+      },
+      {
+        "name": "The One Name Rule",
+        "body": "A thing has one name wherever a visitor meets it, and a link's words are the heading it lands on. The collection of tapes is **the archive**: the header link, the section's heading, the skip link, the phone guide (\"Pick one from the archive below.\"), the status messages, and the idle tube's ALYOSHIN ARCHIVE. It is never \"the tape index\" or \"the shelf\" in anything a visitor reads or hears; the modeled rack and holder are object names for this document only. A tape has one short name, its spine name (`vhs.spineLabel`: ALPHA, ABOUT), printed on the spine and repeated as written by the archive entry, the guide, the idle tube, and both loading screens; and one title, which heads the reader, names the document, and fills the entry's accessible name (\"Play tape: About (2026)\"). The About tape follows the same rule as every tape: it is \"About\" in the header, ABOUT on its spine, and \"About\" on the tube, where the owner's name is already printed once, in the ident. A tape's caption (\"Placeholder tape\", \"Meet the maker\", \"Blank tape\") is the same words in the archive entry and in the guide. The visitor's noun is \"tape\"; \"cassette\" names the modeled object in this document."
+      },
+      {
+        "name": "The True Readout Rule",
+        "body": "Every readout states something true of the site, or it is not printed. The tube's counter is the tape's reading time, 1 MIN READ: whole minutes at 230 words a minute over the title, tagline, paragraphs, and captions, never under one, derived in `src/content/readingTime.ts` and never typed into a tape's content, so it stays true as the copy changes. The OSD bar is decorative to assistive technology, so the article's meta line carries the same fact for a screen reader (\"1 minute read\"). No tape speed (SP, LP), invented runtime, head count, or stereo claim appears on the tube, the deck, or the idle screen. The transport states, the owner's name, the archive's name, the REC date, and NO SIGNAL's reasons are all statements of fact. AV–01 and CH 01 are names, not claims: the machine's, and the home route's, as CHANNEL NOT FOUND names a route that is missing."
       }
     ],
     "dos": [
@@ -659,6 +667,7 @@
       "Do keep placeholder projects explicitly labeled until Daniel supplies real content.",
       "Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.",
       "Do land focus in sight after every exit, and move the page for a ring only while the chrome is dissolved (The Way Back Rule).",
+      "Do call a thing by its one name everywhere a visitor meets it, and make a link's words the heading it lands on (The One Name Rule).",
       "Do keep the owner's name on the tube in every reading state; identity during playback belongs to the OSD, not to shell chrome pinned over the studio (The Ident Rule)."
     ],
     "donts": [
@@ -668,6 +677,7 @@
       "Don't type an arrow, play mark, or dot; draw it (The Drawn Mark Rule).",
       "Don't add a weight beyond 400, 600, and 800, a seventh shell size, or any size below 11px.",
       "Don't introduce glowing controls, neon outlines with blur, or saturated chassis surfaces.",
+      "Don't print VCR trivia as if it were information: no tape speeds, invented runtimes, head counts, or stereo claims (The True Readout Rule).",
       "Don't letter the models beyond the signature prints, and don't add metadata, clocks, counts, or edition marks to the shell.",
       "Don't substitute the old CSS dolly, deck VFD clock, or pulsing eject sample for the current 3D behavior."
     ]
