@@ -1,5 +1,6 @@
 import type { Ref } from 'react'
 import type { Project } from '../content/types'
+import { site } from '../content/site'
 import styles from './CRT.module.css'
 import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
 
@@ -65,7 +66,8 @@ export default function CRT({
                   <PlayIcon className={styles.osdIcon} />
                   PLAY
                 </span>
-                <span>{tape.vhs.runtime}</span>
+                <span className={styles.osdIdent}>{site.owner}</span>
+                <span className={styles.osdRuntime}>{tape.vhs.runtime}</span>
               </div>
               <article
                 className={styles.reader}
@@ -150,19 +152,38 @@ export default function CRT({
               <div className={styles.osdBottom} aria-hidden="true" />
             </div>
           ) : mode === 'nosignal' ? (
-            <div className={styles.centerScreen}>
-              <h2 tabIndex={-1} ref={onTitleEl} className={styles.bigOsd}>
-                NO SIGNAL
-              </h2>
-              <p className={styles.subOsd}>
-                {noSignalReason === 'channel'
-                  ? 'CHANNEL NOT FOUND'
-                  : 'THIS TAPE DOES NOT EXIST'}
-              </p>
-              <p className="srOnly">
-                Press the deck's Eject button or Escape to return to the shelf.
-              </p>
-            </div>
+            <>
+              {/* A dead link is often a first visit: the tube still says
+                  whose machine this is, where a playing tape says it. */}
+              <div className={styles.osdTop} aria-hidden="true">
+                <span />
+                <span className={styles.osdIdent}>{site.owner}</span>
+                <span />
+              </div>
+              <div className={styles.centerScreen}>
+                <h2 tabIndex={-1} ref={onTitleEl} className={styles.bigOsd}>
+                  NO SIGNAL
+                </h2>
+                <p className={styles.subOsd}>
+                  {noSignalReason === 'channel'
+                    ? 'CHANNEL NOT FOUND'
+                    : 'THIS TAPE DOES NOT EXIST'}
+                </p>
+                {/* The way out, in sight: the same two exits the deck offers. */}
+                <p className={styles.exitHint} aria-hidden="true">
+                  PRESS <span className={styles.exitKey}>ESC OR </span>
+                  <span className={styles.osdPlay}>
+                    <EjectIcon className={styles.osdIcon} />
+                    EJECT
+                  </span>{' '}
+                  TO RETURN
+                </p>
+                <p className="srOnly">
+                  Press the deck's Eject button or Escape to return to the
+                  shelf.
+                </p>
+              </div>
+            </>
           ) : (
             <div className={styles.centerScreen}>
               <span className={styles.cornerTL} aria-hidden="true">

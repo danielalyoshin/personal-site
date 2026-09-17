@@ -888,6 +888,71 @@ polish`, second of the agreed order.
   the loop held mid-insertion. It fails on the old texture.
 - Next in the agreed order: harden, clarify, polish.
 
+#### Exits and shareability (2026-09-17)
+
+The third critique's two remaining P2s: the exit lost keyboard users, and a
+shared link previewed as nothing and opened on an unnamed machine.
+`/impeccable harden`, third of the agreed order.
+
+- ✅ The Way Back Rule in `DESIGN.md`. After a tape, focus returns to its
+  index entry; after NO SIGNAL it lands on the nameplate (the page's first
+  heading) instead of dropping to `<body>`. When the browser draws the ring
+  (`:focus-visible`, a keyboard exit) the entry is brought into view by the
+  shortest move with a 24px scroll margin; a pointer exit shows no ring and
+  the page stays put. The restore moved from a passive effect to a layout
+  effect in the closing commit, declared ahead of the renderer sizing: the
+  page moves before paint while the chrome is at opacity 0, so it is never
+  seen as a scroll, and the rig, which reads the box every frame, eases the
+  studio back to wherever the box now is.
+- ✅ Skip takes focus for the insertion (a stable callback ref). "Any key
+  skips" no longer fires on a bare modifier (Shift on its way to Shift+Tab
+  used to skip) or on Enter/Space over a focused key, which is that key's
+  own press.
+- ✅ The studio's layer is `tabIndex={-1}`: a press on a modeled cassette
+  takes focus with it, as a press on a link does. Left on `<body>`, Chrome
+  counted the script focus that followed as a keyboard's and ringed Skip,
+  then underlined the title, for a mouse. This also settles the critique's
+  note that the title underline showed after canvas clicks but not after
+  index clicks.
+- ✅ NO SIGNAL prints its exit beneath the reason, PRESS ESC OR EJECT TO
+  RETURN with the drawn eject mark, in both readers; at 600px and below it
+  names the deck's key alone, as the native Eject key drops its ESC legend.
+- ✅ The Ident Rule in `DESIGN.md`: the OSD's top bar is three fields, PLAY,
+  the station ident (DANIEL ALYOSHIN, centred, screen-soft, no glow), and the
+  counter; NO SIGNAL carries the ident alone. It lives in `CRT.tsx`, so both
+  readers print it in the same place and it is there in a deep link's first
+  second and through the handoff. Decision: identity during playback belongs
+  to the tube, not to a nameplate pinned over the studio; the pinned
+  nameplate could not reach the native reader or a scrolled page anyway.
+  `src/content/site.ts` holds the name for the ident and the titles.
+- ✅ Document titles per route from `Stage` (an effect on `document.title`;
+  React 19's hoisted `<title>` would sit after `index.html`'s static one and
+  lose to it): "Placeholder: Alpha — Daniel Alyoshin", "About — Daniel
+  Alyoshin", "No signal — Daniel Alyoshin", and the static home title.
+- ✅ Open Graph and Twitter `summary_large_image` tags in `index.html`, using
+  the existing title and description verbatim, over `public/social-card.png`:
+  a 1200 × 630 render of the studio itself, no copy set on it, from `npm run
+render:card` (`scripts/render-social-card.mjs`: own Vite server, installed
+  Chrome, drawn at 2× and averaged down, opaque, 190 KB). `vite.config.ts`
+  fills `%SITE_URL%` from the environment and warns when a build has none.
+- Regression: new `e2e/exits.spec.ts` (eight tests: keyboard and pointer
+  exits, both NO SIGNAL exits and the hint at desktop and phone, Skip focus
+  and the modifier guard, a real mouse selection carrying no ring, titles
+  across routes and history, the ident before graphics and centred after
+  the handoff, the three fields apart at 320px, and the served meta tags
+  with the card's real dimensions), and a second zoom test: a keyboard eject
+  at 1440 × 900 moves the page 140px under the dissolve and the studio still
+  lands within 1.5px of its box with per-frame continuity. 38 e2e green.
+- Left for later passes, by the agreed order: naming (the sr-only NO SIGNAL
+  sentence still says "shelf"; "ALYOSHIN ARCHIVE" on the idle tube) belongs
+  to clarify; the 404 screen's `undefined` class and the sub-44px header and
+  footer links to the closing polish. Still open from `AUDIT.md`, outside
+  this pass: robots/sitemap/canonical, the VHS-glyph favicon and
+  `apple-touch-icon`, `theme-color` and `color-scheme`, the handoff's
+  `aria-hidden` timing, and per-project share cards (needs pre-rendered HTML).
+- **Stage 10 must set `SITE_URL`** so the card's image URL is absolute.
+- Next in the agreed order: clarify, polish.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,
@@ -929,6 +994,8 @@ polish`, second of the agreed order.
 
 - Choose host (GitHub Pages / Vercel / Netlify / Cloudflare Pages) and wire the
   build. No deploy config or CI before this stage.
+- Set `SITE_URL` to the site's address for the release build, so the share
+  card's image URLs in `index.html` are absolute (the build warns without it).
 - Nothing is pushed at any stage unless Daniel explicitly asks; pushes go
   directly to `main` when asked.
 

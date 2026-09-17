@@ -124,14 +124,24 @@
   }
 }
 
-/* OSD chrome floats over the picture; its glow is inside the screen. */
+/* OSD chrome floats over the picture; its glow is inside the screen. Three
+   fields: transport state, the station ident, the tape's counter. The outer
+   columns share the spare width equally, so the ident sits on the tube's
+   centre line; when there is none to spare they pack to their content and
+   the ident gives up its centring before anything overlaps. */
 .osdTop {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns:
+    minmax(max-content, 1fr)
+    auto
+    minmax(max-content, 1fr);
+  align-items: center;
+  column-gap: 1ch;
+  white-space: nowrap;
   padding: 0.875rem 5cqi;
   font-family: var(--font-osd);
   font-size: var(--type-screen-osd);
@@ -317,6 +327,7 @@
 .osdPlay {
   display: inline-flex;
   align-items: center;
+  justify-self: start;
   gap: 0.35em;
 }
 
@@ -324,6 +335,27 @@
   width: 0.7em;
   height: 0.7em;
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+}
+
+/* The station ident: whose archive is playing, a step quieter than the
+   transport state beside it. The shell's nameplate dissolves with the page;
+   this line is the one that stays. */
+.osdIdent {
+  color: var(--screen-soft);
+  text-transform: uppercase;
+  text-shadow: none;
+}
+
+.osdRuntime {
+  justify-self: end;
+}
+
+/* On a tube too narrow for all three fields the counter gives way, never
+   the name: it is flavour, and the ident is why the bar is there. */
+@container (max-width: 15.5rem) {
+  .osdRuntime {
+    display: none;
+  }
 }
 
 .linkIcon {
@@ -371,6 +403,29 @@
   font-size: var(--type-screen-meta);
   line-height: 1.35;
   color: var(--screen-soft);
+}
+
+/* NO SIGNAL's way out, in the OSD's own light: the instruction the live
+   region speaks, printed for everyone else. It stands a step clear of the
+   reason above it, and wraps by phrase on a narrow tube. */
+.exitHint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 1ch;
+  margin-top: var(--sp-sm);
+  font-size: var(--type-screen-meta);
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* Phones have no Escape key: the hint names the deck's key alone there, as
+   the native Eject key drops its own ESC legend at the same width. */
+@media (max-width: 600px) {
+  .exitKey {
+    display: none;
+  }
 }
 
 .cursor {

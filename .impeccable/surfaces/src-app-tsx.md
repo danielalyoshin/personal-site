@@ -123,10 +123,30 @@ page-wide playback footer.
 Missing WebGL and lost graphics
 contexts retain the entire archive and reader. Deep links, About, both 404
 states, Escape/eject, and focus return remain supported.
+The tube says whose archive is playing: the OSD's top bar reads PLAY, the
+station ident (DANIEL ALYOSHIN, centred, screen-soft), and the counter, in
+both readers, so the name is there in a deep link's first second, through
+the handoff, and on a phone; NO SIGNAL carries the ident alone and prints
+its exit beneath the reason (PRESS ESC OR EJECT TO RETURN; the deck's key
+alone at 600px and below). Nothing of the shell is pinned over the studio
+(The Ident Rule in `DESIGN.md`).
+
+Share: every route names itself in the document title ("Placeholder: Alpha —
+Daniel Alyoshin", "About — Daniel Alyoshin", "No signal — Daniel Alyoshin";
+the home title is `index.html`'s). `index.html` carries Open Graph and
+Twitter large-image tags over `public/social-card.png`, a 1200 × 630 render
+of the studio itself with no copy set on it (`npm run render:card`); the
+build makes its URL absolute from `SITE_URL`, which is a Stage 10 decision.
 
 Accessibility: all tapes are ordinary links; arrows and Home/End move focus.
 During reading, background regions are inert and aria-hidden; focus remains
-inside the reader and transport. The named scrollable article is a Tab stop,
+inside the reader and transport. Skip holds focus for the insertion. Every
+exit lands focus in sight (The Way Back Rule in `DESIGN.md`): on the played
+tape's index entry, or on the nameplate after NO SIGNAL; when the browser
+rings it, the entry is brought into view, 24px clear of the edge, in the
+closing commit while the chrome is still dissolved, and a pointer exit
+leaves the page where it was. A press in the studio takes focus onto the
+studio's layer, so script focus after a mouse selection is never ringed. The named scrollable article is a Tab stop,
 allowing return from the transport controls; initial focus announces the title.
 About remains explicit in its archive link's accessible name. Sound is opt-in,
 synthesized, per-visit, and toggled only on the deck (modeled key during

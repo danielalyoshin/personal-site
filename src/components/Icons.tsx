@@ -90,8 +90,8 @@ export function SkipIcon() {
   )
 }
 
-/** The deck's eject key. */
-export function EjectIcon() {
+/** The deck's eject key; a class sizes it to the type it sits in on the OSD. */
+export function EjectIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 20 20"
@@ -99,6 +99,7 @@ export function EjectIcon() {
       height="18"
       fill="currentColor"
       aria-hidden="true"
+      {...props}
     >
       <path d="m10 3 7 9H3zM3 14h14v3H3z" />
     </svg>

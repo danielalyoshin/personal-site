@@ -303,7 +303,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 
 - **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
-- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY and the runtime use 1.125–1.375rem (4.5cqi) with 1.2 leading; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
+- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the runtime use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
 **The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed on the modeled EJECT cap ahead of its label at the capitals' height. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
 
@@ -536,7 +536,12 @@ bottom edge, and press as the native reader's sound and eject keys, led by
 the drawn skip mark. It sits at the viewport's lower right for modeled
 playback and inside the native loading screen, with a 44px minimum target.
 It is HTML, never a modeled key: the deck carries no physical skip, and its
-printed model label stays visible.
+printed model label stays visible. Skip takes focus for as long as it is on
+stage, so focus never rests on the page body during the flight and a
+keyboard visitor sees the ring on the one control there is. Any key still
+skips, except the ones that mean something else: Tab, a bare modifier (Shift
+on its way to Shift+Tab), and Enter or Space on a focused key, which is that
+key's own press.
 
 ### Sound toggle
 
@@ -660,8 +665,9 @@ page, again without a visible change, and the tape finishes its return
 there. The scene reads the transport phase from the page's own commit, not
 from its props, which arrive a commit later, so no frame is drawn for the old
 phase in the new box. Focus returns to the
-corresponding archive link, but that return is not a preview, so the tape
-stays seated until it is hovered or focused again; an eject during
+corresponding archive link (The Way Back Rule), but that return is not a
+preview, so the tape stays seated until it is hovered or focused again; an
+eject during
 insertion reverses from wherever the tape is; the deck reads EJECT
 for the return; history back ejects the same way. Reduced motion and the
 fallback reader return the tape at once. Selection and eject commit inside
@@ -670,6 +676,21 @@ cassette's exact pose. There is no ambient geometry animation. The scene
 loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
 modeled playback, and disposes generated
 textures and geometries.
+
+**The Way Back Rule.** Every exit lands focus somewhere the visitor can see.
+After a tape, focus returns to that tape's entry in the index; after NO
+SIGNAL, where no tape played, it lands on the nameplate that opens the page,
+which holds the page's first heading. A focus ring that shows must be on
+screen: when the browser draws the ring (a keyboard exit), the entry is
+brought into view by the shortest move and stands 24px clear of the
+viewport's edge; when it draws none (a pointer exit), the page stays exactly
+where it was. The move happens in the closing commit, before paint, while
+the page chrome is still fully dissolved, so it is never seen as a scroll:
+the studio simply eases back into its box where that now is (The Soft Zoom
+Rule holds to the pixel either way). A press in the studio takes focus onto
+the studio's layer, as a press on a link takes it onto the link, so the
+focus that follows by script (Skip, then the title) is ringed for a
+keyboard and never for a mouse. The layer is no Tab stop and owes no ring.
 
 ### CRT reader
 
@@ -687,7 +708,25 @@ small control corners. The article is a named Tab stop within the playback
 focus loop, so keyboard users can return from transport controls and resume
 scrolling. Initial focus still announces the title. Missing-tape and unknown-route
 screens use distinct NO SIGNAL messages and matching transport labels, with
-the same eject/Escape exit.
+the same eject/Escape exit. That exit is printed on the tube, a step below
+the reason: PRESS ESC OR EJECT TO RETURN, the drawn eject mark leading its
+word as on the key cap, in both readers. At widths of 600px and below it
+names the deck's key alone, as the native Eject key drops its ESC legend
+there. The printed line is decorative to assistive technology, which keeps
+its own sentence and the live region.
+
+**The Ident Rule.** The tube says whose archive is playing. The OSD's top
+bar has three fields: the transport state at the left, the station ident
+(DANIEL ALYOSHIN) on the tube's centre line, and the tape's counter at the
+right; NO SIGNAL carries the ident alone in the same place. It lives in the
+reader, not the shell, so it is there in a deep link's first second, through
+the handoff, in the native reader on a phone, and on a dead link, which is
+often a first visit. The shell's nameplate dissolves with the rest of the
+page; nothing of the shell is pinned over the studio. The outer fields
+share the spare width equally so the ident is centred; on a tube too narrow
+for that they pack to their content, and below 15.5rem the counter gives
+way, never the name. The name is read from `src/content/site.ts`, the same
+source that closes every document title.
 
 **The Handoff Rule.** A desktop deep link's native reader hands over to the
 modeled screen once, when the scene is ready. The studio composes underneath
@@ -725,6 +764,26 @@ stays white. Playback links preserve native modified-click behavior.
 Tags are bracketed uppercase text in screen-soft, wrapping with the existing
 small/medium gaps. They are informational labels, not filled chips or filters.
 
+### Document titles and share card
+
+Every route names itself. The home title is `index.html`'s static title;
+a tape reads "Placeholder: Alpha — Daniel Alyoshin", the About tape "About —
+Daniel Alyoshin", and both missing-route states "No signal — Daniel
+Alyoshin", so tabs, history, bookmarks, and a screen reader's page
+announcement tell tapes apart. `index.html` carries Open Graph and Twitter
+(`summary_large_image`) tags with the home title and the site description.
+Crawlers run no script, so every route unfurls with this one card.
+
+The card's image is the studio itself: `public/social-card.png`, 1200 × 630,
+rendered from the live scene at the browse camera on the graphite ground by
+`npm run render:card` (drawn at twice the size and averaged down). No copy
+is set on the image; its words are the title and description tags, which
+are Daniel's. Re-render it when the models, materials, lighting, or idle
+screen change. Image URLs are written as `%SITE_URL%/social-card.png`: the
+build fills the site's address from the `SITE_URL` environment variable,
+because several crawlers accept only absolute image URLs, and warns when a
+build has none. The address itself is a Stage 10 decision.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -733,6 +792,8 @@ small/medium gaps. They are informational labels, not filled chips or filters.
 - Do keep every retro effect inside the CRT screen area; its controlled light cast is the only outward glow.
 - Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.
 - Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.
+- Do land focus in sight after every exit, and move the page for a ring only while the chrome is dissolved (The Way Back Rule).
+- Do keep the owner's name on the tube in every reading state; identity during playback belongs to the OSD, not to shell chrome pinned over the studio (The Ident Rule).
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do keep placeholder projects explicitly labeled until Daniel supplies real content.
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.

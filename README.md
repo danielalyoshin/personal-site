@@ -74,7 +74,27 @@ scroll, modified clicks, contact targets, native
 touch gestures with the two-tap cassette preview and its 44px catch, and
 delayed-font texture redraws. The reader case measures the modeled prose at
 its real drawn size on laptop viewports and the article's continuation cues.
+The exits cases cover where focus lands after every way out (in sight for a
+keyboard, without moving the page for a pointer), Skip's focus, the printed
+NO SIGNAL exit, per-route document titles, the name on the tube from a deep
+link's first second, and the served share tags and card.
 It starts a local server when needed.
+
+## Share card
+
+`index.html` carries Open Graph and Twitter tags over `public/social-card.png`,
+a 1200 × 630 render of the studio itself. Re-render it after the models,
+materials, lighting, or idle screen change:
+
+```sh
+npm run render:card
+```
+
+The script starts its own Vite server and drives installed Chrome, as the
+browser suite does. The image URL is written as `%SITE_URL%/social-card.png`;
+a build fills it from the `SITE_URL` environment variable (or a `.env` file)
+and warns when it is unset, since several crawlers accept only absolute image
+URLs. Locally it resolves to a root-relative path.
 
 ## Impeccable in Codex
 

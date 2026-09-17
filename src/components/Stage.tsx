@@ -14,6 +14,7 @@ import type { RootState } from '@react-three/fiber'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, playableTapes, shelfTapes } from '../content/projects'
 import { aboutTape } from '../content/about'
+import { site } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
@@ -39,6 +40,19 @@ type Handoff = 'pending' | 'settled' | 'fading' | null
 const HANDOFF_SETTLE_GUARD_MS = 1500
 /** Unmount the faded native reader even if transitionend never arrives. */
 const HANDOFF_FALLBACK_MS = 900
+
+/**
+ * Focus that arrives by script after an exit. A focus ring that shows must be
+ * on screen, so a visible ring brings its element into view by the shortest
+ * move; a pointer exit shows no ring and leaves the page where it was.
+ */
+function landFocus(el: HTMLElement) {
+  el.focus({ preventScroll: true })
+  if (el.matches(':focus-visible')) el.scrollIntoView({ block: 'nearest' })
+}
+
+/** Keys that only modify another key are never the "any key" that skips. */
+const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta'])
 
 class SceneBoundary extends Component<
   { children: ReactNode; fallback: ReactNode; onUnavailable: () => void },
@@ -130,7 +144,16 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // Without a scene to ease it back, the canvas rejoins the page at once.
   if (returning && (open || flat)) setReturning(false)
   const detached = open || returning
+  // index.html's static title is the home title; every other route names
+  // what is in the deck, so tabs, history, and bookmarks tell tapes apart.
+  const [homeTitle] = useState(() => document.title)
+  const pageTitle = invalid
+    ? `No signal — ${site.owner}`
+    : tape
+      ? `${tape.slug === 'about' ? 'About' : tape.title} — ${site.owner}`
+      : homeTitle
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
+  const identityEl = useRef<HTMLAnchorElement>(null)
   const lastTape = useRef<string | null>(null)
   const titleEl = useRef<HTMLHeadingElement | null>(null)
   const stageEl = useRef<HTMLDivElement>(null)
@@ -217,6 +240,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     onInserted()
     setSkips((value) => value + 1)
   }, [onInserted])
+  // Insertion offers one control, so focus waits on it: a keyboard visitor
+  // sees the ring on Skip instead of losing focus to the page for the flight.
+  const onSkipEl = useCallback((el: HTMLButtonElement | null) => {
+    el?.focus({ preventScroll: true })
+  }, [])
   const previewTape = useCallback((next: Project | null) => {
     if (next && next.slug !== previewSlug.current) playSound('tick')
     previewSlug.current = next?.slug ?? null
@@ -275,6 +303,30 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     const timer = window.setTimeout(() => setHandoff(null), HANDOFF_FALLBACK_MS)
     return () => window.clearTimeout(timer)
   }, [handoff])
+  useEffect(() => {
+    document.title = pageTitle
+  }, [pageTitle])
+  // The way back lands focus where the visitor left the page: on the link of
+  // the tape that played, or, after NO SIGNAL, where no tape did, on the
+  // nameplate that opens the page. It runs in the closing commit, before
+  // paint, while the page chrome is still fully dissolved: if a showing ring
+  // has to bring its link into view, the page has already moved when the
+  // first frame of the return is drawn, and the studio eases back into its
+  // box wherever that now is. Declared ahead of the sizing below so the
+  // renderer measures the layer after any such move.
+  useLayoutEffect(() => {
+    if (!open && wasOpen.current) {
+      const target =
+        (lastTape.current && tapeEls.current.get(lastTape.current)) ||
+        identityEl.current
+      if (target) {
+        restoringFocus.current = true
+        landFocus(target)
+        restoringFocus.current = false
+      }
+    }
+    wasOpen.current = open
+  }, [open])
   // The viewport layer changes box in this commit: it leaves the studio's box
   // on the page for the whole viewport, or comes back. Size the renderer in
   // the same commit, so the frame that paints the new box is drawn for it;
@@ -290,7 +342,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   }, [detached])
   useEffect(() => {
     if (tape) lastTape.current = tape.slug
-  }, [tape])
+    // A dead link played no tape, so its exit has no link to return to.
+    else if (invalid) lastTape.current = null
+  }, [tape, invalid])
   useEffect(() => {
     if (detached) {
       const previous = document.body.style.overflow
@@ -300,14 +354,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       }
     }
   }, [detached])
-  useEffect(() => {
-    if (!open && wasOpen.current && lastTape.current) {
-      restoringFocus.current = true
-      tapeEls.current.get(lastTape.current)?.focus({ preventScroll: true })
-      restoringFocus.current = false
-    }
-    wasOpen.current = open
-  }, [open])
   useEffect(() => {
     if (!open) return
     const onKey = (event: KeyboardEvent) => {
@@ -339,14 +385,24 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           first?.focus()
         }
       }
-      if (loading && event.key !== 'Tab') {
-        onInserted()
-        setSkips((value) => value + 1)
-      }
+      // Any key skips the insertion, except the ones that mean something
+      // else: Tab moves focus, a bare modifier is the start of a chord (Shift
+      // before Tab), and Enter or Space on a focused key is that key's own.
+      const activates =
+        (event.key === 'Enter' || event.key === ' ') &&
+        event.target instanceof Element &&
+        !!event.target.closest('button, a[href]')
+      if (
+        loading &&
+        event.key !== 'Tab' &&
+        !MODIFIER_KEYS.has(event.key) &&
+        !activates
+      )
+        skipInsertion()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, eject, loading, onInserted])
+  }, [open, eject, loading, skipInsertion])
 
   // Arrows and Home/End move between the tapes that play; a blank slot has
   // no link to land on and is passed over.
@@ -390,7 +446,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // The same hardware key as the native deck panel, so the one control
   // offered during insertion belongs to the same family as sound and eject.
   const skipControl = (
-    <button type="button" className={keys.key} onClick={skipInsertion}>
+    <button
+      type="button"
+      className={keys.key}
+      onClick={skipInsertion}
+      ref={onSkipEl}
+    >
       <SkipIcon />
       Skip animation
     </button>
@@ -431,6 +492,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           to="/"
           className={styles.identity}
           aria-label="Daniel Alyoshin home"
+          ref={identityEl}
         >
           <svg viewBox="0 0 32 24" width="32" height="24" aria-hidden="true">
             <rect
@@ -544,7 +606,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             inert={(open && useNativeReader) || undefined}
             aria-hidden={(open && useNativeReader) || undefined}
           >
-            <div className={styles.viewport} ref={viewportEl}>
+            {/* A press in the studio takes focus with it, as a press on a
+                link does. Left on the page body, the browser would count the
+                focus that follows by script (Skip, then the title) as a
+                keyboard's and ring it for a mouse. */}
+            <div className={styles.viewport} ref={viewportEl} tabIndex={-1}>
               {flat ? (
                 open && useNativeReader ? null : (
                   fallback

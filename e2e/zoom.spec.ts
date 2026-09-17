@@ -73,6 +73,10 @@ async function sampleFrames(page: Page, frames: number, act?: string) {
         document
           .querySelector<HTMLButtonElement>('button[aria-label="Eject tape"]')!
           .click()
+      if (act === 'escape')
+        window.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }),
+        )
       for (let frame = 0; frame < frames; frame++) {
         await new Promise((resolve) => setTimeout(resolve, 0))
         const state = root.getState()
@@ -160,4 +164,48 @@ test('selection and eject zoom the studio softly between its box and the viewpor
   expect(landing.chromeOpacity).toBe(1)
   expect(await page.evaluate(() => window.scrollY)).toBe(160)
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+})
+
+test('a keyboard eject that brings the tape link into view still lands the studio softly in its box', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // The index starts below this viewport, so the restored link is off screen.
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  const rest = (await sampleFrames(page, 60)).at(-1)!
+  await sampleFrames(page, 200, 'select')
+  await expect(page.locator('article h2')).toBeFocused()
+  const dolly = await sampleFrames(page, 60)
+
+  const ejection = await sampleFrames(page, 200, 'escape')
+  await expect(page).toHaveURL('/')
+  // The page moved under the dissolved chrome to show the focused link...
+  const moved = await page.evaluate(() => window.scrollY)
+  expect(moved).toBeGreaterThan(0)
+  const link = page.getByRole('link', {
+    name: 'Play tape: Placeholder: Alpha (2026)',
+    exact: true,
+  })
+  await expect(link).toBeFocused()
+  expect(
+    await link.evaluate((el) => {
+      const rect = el.getBoundingClientRect()
+      return rect.top >= 0 && rect.bottom <= window.innerHeight
+    }),
+  ).toBe(true)
+  // ...and the studio never jumped: it eased from the screen into its box,
+  // which now sits that much higher on the viewport.
+  expectContinuity([dolly.at(-1)!, ...ejection], 'ejection')
+  const landing = ejection.at(-1)!
+  expect(landing.detached).toBe(false)
+  expect(landing.chromeOpacity).toBe(1)
+  expect(Math.abs(landing.x - rest.x)).toBeLessThan(1.5)
+  expect(Math.abs(landing.y - (rest.y - moved))).toBeLessThan(1.5)
+  expect(landing.zoom / rest.zoom).toBeCloseTo(1, 2)
 })
