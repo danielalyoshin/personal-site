@@ -1045,6 +1045,77 @@ decision of 2026-09-16 (tighten the shell copy AND make the OSD honest).
   candidate for it: during eject the modeled tube already reads INSERT TAPE
   while the deck reads EJECT.
 
+#### Closing polish (2026-09-21)
+
+The last command of the 2026-09-16 critique's agreed order: its P3 bundle,
+then one bounded verification round.
+
+- ✅ Every screen state has a rule of its own. `CRT.tsx` classes the tube by
+  mode, and `nosignal` had never had a rule, so both 404 screens carried the
+  class `undefined` and sat on the screen's rest bloom while their cast on
+  the deck was already playback's. `.nosignal` now joins `.playing`: a lit
+  tube of OSD on the black ground takes the play bloom (0.10 → 0.16 alpha on
+  the same 40px spread), in the modeled and the native reader.
+- ✅ The nameplate and the contact links meet the 44px floor (`AUDIT.md`
+  finding 9): 101 × 40 → 101 × 44, and 56 × 42 / 63 × 42 → 44 tall. The floor
+  is a hit area, not a layout change: `.identity` takes a 44px `min-height`
+  and centres its two lines, the shared link rule states the floor once, and
+  the caption-size footer links overhang their row by the 1px difference
+  (a `min(0px, …)` margin, so nothing is absorbed once text preferences make
+  the link taller than the floor). Measured before and after at 1440 × 1000,
+  1280 × 720, 390 × 844 and 320 × 640: header, footer and document heights
+  and every text position identical.
+- ✅ The console is clean. The THREE.Clock deprecation is raised by React
+  Three Fiber 9.7.0's own store (three r183 deprecated Clock for Timer; 9.7.0
+  is the latest stable), so nothing in the app can act on it.
+  `studio/threeConsole.ts` uses three's `setConsoleFunction` to drop that one
+  line by its exact text and pass everything else through as three would,
+  stack traces included; it is imported by the lazy studio module, so three
+  stays out of the main bundle. Probed against the live module: a different
+  warning, the same warning reworded, an error with parameters and a log all
+  still print. Delete the module when R3F moves to Timer.
+- Docs: `DESIGN.md` (`nav-link` floor, Shadow Vocabulary's state list,
+  Navigation's floor, NO SIGNAL under CRT reader, the clean console beside
+  lazy loading), the sidecar (three bloom purposes, the navigation sample
+  and description), the surface brief.
+- Validation: build, lint, format and the design hook clean; three new
+  hardening tests, each seen failing on the old source first (no element on
+  stage classed `undefined` or `null` on home, a tape, and both 404 routes in
+  both readers, with NO SIGNAL's bloom equal to playback's; all five shell
+  links at least 44 × 44 at four viewports; load, play and eject without a
+  console warning or error). 47 e2e green. The production build was probed
+  separately: clean console through load, play, eject and a dead link, with
+  the filter in the studio chunk only.
+- The suite ran on port 5199 through a throwaway config: another project's
+  dev server held `127.0.0.1:5173`, and `reuseExistingServer: true` would
+  have pointed every test at it without a word. A candidate for Stage 9: have
+  the config check what it is attaching to, or take its port from the
+  environment.
+- ✅ Two calls on the models, flagged by the round and made the same day at
+  Daniel's request. The modeled tube's light on NO SIGNAL was the idle blue
+  under a black screen (the point light's `open && !invalid` in
+  `StudioScene.tsx`); it is now phosphor whenever playback is open, as the
+  HTML tube's bloom and cast already were. And while a tape returned, the
+  tube read STANDBY / INSERT TAPE / CHOOSE A TAPE / TO PLAY while the deck
+  read EJECT: it now reads EJECT in the corner and EJECT, led by the key
+  cap's drawn mark, over the returning tape's name, with no invitation until
+  the tape lands (The One Readout Rule gained the return). A preview made
+  during the return waits for the landing; reduced motion returns the tape
+  at once, so the readout is skipped there rather than flashed for a frame.
+  `drawEjectMark` moved from `geometry.tsx` to `textures.ts` so the cap and
+  the tube share one path. Two new transport tests, each seen failing first
+  (the tube's prints mid-return and after landing, held with the frame loop;
+  the point light's colour at rest, on a tape, and on both 404 routes).
+  49 e2e green, build, lint and format clean; mid-return and NO SIGNAL frames
+  inspected at 1440 × 900.
+- Noticed, not changed: `CRT.tsx` still carries an `ejecting` screen mode
+  and `.ejecting` rule that `Stage.tsx` never passes (it only sends idle,
+  playing, or nosignal), so the HTML tube's EJECT readout is dead code; and
+  during insertion the modeled light is already phosphor while the tube is
+  still blue.
+- The critique's agreed order (adapt → polish → harden → clarify → polish) is
+  complete. Next is Stage 8 content, then the Stage 9 remainder.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,

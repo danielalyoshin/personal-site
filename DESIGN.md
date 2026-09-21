@@ -162,6 +162,7 @@ components:
     textColor: '{colors.silkscreen}'
     typography: '{typography.functional}'
     padding: '12px 0'
+    minHeight: '44px'
   nav-link-hover:
     textColor: '{colors.silkscreen-hi}'
   tape-link:
@@ -305,7 +306,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
-**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed on the modeled EJECT cap ahead of its label at the capitals' height. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform, except below
@@ -426,7 +427,7 @@ fill reveal the objects without making them emit.
 ### Shadow Vocabulary
 
 - **Monitor support** (`--shadow-unit`): the active HTML fallback frame uses the existing ambient drop shadow.
-- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): existing CSS screen states. The modeled CRT supplies its own local point light.
+- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): the HTML tube's states. Every state has a rule of its own: idle and ejecting take the blue idle bloom; playback and NO SIGNAL, both a lit tube of OSD on the black ground, take the play bloom, as both take the play cast on the deck; the rest value is the screen's base beneath them. The modeled CRT supplies its own local point light to the same rule: phosphor whenever playback is open, NO SIGNAL included, and blue over the blue idle tube.
 - **Native reader surround**: an opaque 20px spread in page-ground color masks the expanded reader's surroundings; it is not a glow.
 
 The token file retains older recess, object, edge, and CSS-cast definitions.
@@ -565,7 +566,12 @@ hover ticks stay silent until a visitor has switched sound on during playback.
 ### Navigation
 
 Plain Archivo links with generous vertical padding and no underline. Hover
-raises text contrast; keyboard focus retains the cyan outline. The header
+raises text contrast; keyboard focus retains the cyan outline. Every shell
+link is a target at least 44px tall: the nameplate, both header links, and
+both contact links. The floor is a hit area, never a layout change: the
+nameplate's two lines stand 40px and the footer's caption-size links 42px,
+so the nameplate centres its lines in the taller target and each contact
+link overhangs its row by a pixel above and below, and no word moves. The header
 carries "The archive" and "About" at every width; "The archive" is the page's
 single visible route to the section of that name, and neither link shows a
 count. Contact
@@ -649,9 +655,14 @@ the hollow bay. The flap closes before the camera moves to reading position.
 sub-lines always belong to its headline. At rest: INSERT TAPE over CHOOSE A
 TAPE / TO PLAY. Previewing: the cassette's name over SELECT THIS TAPE / TO
 PLAY. Loading: LOADING TAPE over the name of the tape going in and nothing
-else, as the native loading screen reads; an invitation never prints while a
-tape is on its way in. A name too long for the lit area is set smaller,
-never compressed, like any print.
+else, as the native loading screen reads. Returning: EJECT, the deck's word
+for the state, led by the key cap's drawn mark, over the name of the tape
+coming out and nothing else, so the tube and the deck's status window read
+the same word for as long as the return lasts. An invitation never prints
+while a tape is in the mechanism, on its way in or out, and a preview made
+meanwhile waits for the tape to land. Reduced motion returns the tape at
+once, so the tube goes straight back to the invitation. A name too long for
+the lit area is set smaller, never compressed, like any print.
 
 **The Touch Rule.** A touch has no hover to confirm with, so on touch the
 preview is a step of its own: the first tap on a cassette lifts and names
@@ -705,7 +716,10 @@ the router's navigation transition, so the mechanism always starts from the
 cassette's exact pose. There is no ambient geometry animation. The scene
 loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
 modeled playback, and disposes generated
-textures and geometries.
+textures and geometries. It loads, plays, and ejects with a clean console:
+the studio module drops one line of three.js output, the THREE.Clock
+deprecation that React Three Fiber's own store raises, matched by its exact
+text, and passes every other message through.
 
 **The Way Back Rule.** Every exit lands focus somewhere the visitor can see.
 After a tape, focus returns to that tape's entry in the archive; after NO
@@ -738,7 +752,8 @@ small control corners. The article is a named Tab stop within the playback
 focus loop, so keyboard users can return from transport controls and resume
 scrolling. Initial focus still announces the title. Missing-tape and unknown-route
 screens use distinct NO SIGNAL messages and matching transport labels, with
-the same eject/Escape exit. That exit is printed on the tube, a step below
+the same eject/Escape exit, on a tube lit as playback's is (Shadow
+Vocabulary). That exit is printed on the tube, a step below
 the reason: PRESS ESC OR EJECT TO RETURN, the drawn eject mark leading its
 word as on the key cap, in both readers. At widths of 600px and below it
 names the deck's key alone, as the native Eject key drops its ESC legend
@@ -794,8 +809,8 @@ radius on the reader's 560px plane, over the black tube, so the screen keeps
 one shape before and after a tape goes in.
 Its main message uses 128px texture type; the two-line selection instruction
 uses 88px so it remains legible at the opening camera scale. Its corners
-carry the transport state (STANDBY, or LOADING while a tape goes in) at the
-top left, CH 01 at the top right, ALYOSHIN ARCHIVE at the bottom left, and
+carry the transport state (STANDBY, LOADING while a tape goes in, or EJECT
+while one returns) at the top left, CH 01 at the top right, ALYOSHIN ARCHIVE at the bottom left, and
 the model mark AV–01 at the bottom right, as on the fallback's idle screen,
 which prints the state and the mark alone. These are texture
 coordinates, and scale with the physical screen rather than HTML font tokens.

@@ -84,6 +84,28 @@ export function capitalsOffset(ctx: CanvasRenderingContext2D, text: string) {
   )
 }
 
+/**
+ * The eject mark of the native key, as a canvas path: a triangle over a bar
+ * on a 14-unit square, the same proportions as the SVG icon.
+ */
+export function drawEjectMark(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  middle: number,
+  size: number,
+) {
+  const unit = size / 14
+  const x = (u: number) => left + u * unit
+  const y = (u: number) => middle + (u - 7) * unit
+  ctx.beginPath()
+  ctx.moveTo(x(7), y(0))
+  ctx.lineTo(x(14), y(9))
+  ctx.lineTo(x(0), y(9))
+  ctx.closePath()
+  ctx.rect(x(0), y(11), size, unit * 3)
+  ctx.fill()
+}
+
 export function makeTexture(
   width: number,
   height: number,

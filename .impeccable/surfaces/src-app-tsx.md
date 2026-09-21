@@ -38,7 +38,10 @@ every viewport. The reader aligns all content to a centered 62ch column, with
 weight-400 prose, semibold taglines, and tube-scaled VT323 metadata. Every
 arrow, play mark, and dot is drawn (SVG or a CSS box), never typed from a
 fallback font; the Escape hint reads at 7.5:1. Scene/transport controls
-provide 44px hit areas. The studio contains a
+provide 44px hit areas, and so does every shell link: the nameplate, both
+header links, and both contact links are at least 44px tall, as hit areas
+that move no word (the footer's caption-size links overhang their row by a
+pixel each way). The studio contains a
 beveled CRT, VCR, speaker, rack of six cassettes (blank shells in unfilled
 slots), loose cassette with reels,
 headphones and stand, display table, and plinth. All geometry and printed
@@ -81,7 +84,9 @@ clicks retain native link navigation.
 Insertion moves the actual cassette into the deck, then the camera faces the
 screen. A skip control completes the transition. Eject runs the same
 mechanism back to the rack, from wherever the tape is, while the camera
-returns to browse; the deck reads EJECT meanwhile. Both are one soft zoom
+returns to browse; the deck and the tube read EJECT meanwhile, the tube
+over the returning tape's name with no invitation (The One Readout Rule in
+`DESIGN.md`). Both are one soft zoom
 (The Soft Zoom Rule in `DESIGN.md`): the studio's box keeps its place on the
 page, the canvas detaches over the viewport transparently and is sized in
 the same commit, the camera keeps the studio where the box had it and grows
@@ -127,7 +132,9 @@ its lower hardware panel, respecting the bottom safe area. There is no
 page-wide playback footer.
 Missing WebGL and lost graphics
 contexts retain the entire archive and reader. Deep links, About, both 404
-states, Escape/eject, and focus return remain supported.
+states, Escape/eject, and focus return remain supported. Every screen state
+has a rule of its own: NO SIGNAL is a lit tube, under playback's bloom and
+cast in the HTML readers and playback's phosphor light on the modeled deck.
 The tube says whose archive is playing: the OSD's top bar reads PLAY, the
 station ident (DANIEL ALYOSHIN, centred, screen-soft), and the tape's
 reading time (1 MIN READ, derived from its copy; the word gives way below
@@ -165,7 +172,10 @@ synthesized, per-visit, and toggled only on the deck (modeled key during
 playback, native reader panel otherwise); browse has no sound control.
 Reader contact links have separate 44px touch targets. No ambient animation or
 sound; the canvas renders on demand. Printed textures redraw after explicit
-Archivo and VT323 loading, with disposed textures excluded.
+Archivo and VT323 loading, with disposed textures excluded. The studio loads,
+plays, and ejects with a clean console: its module drops React Three Fiber's
+THREE.Clock deprecation line by exact text and passes every other three.js
+message through.
 
 Unresolved: real project content and Daniel's About rewrite (Stage 8), full
 Stage 9 hardening, and final-stage deployment. No fabricated project claims.

@@ -392,17 +392,17 @@
       {
         "name": "bloom-rest",
         "value": "0 0 40px 0 rgba(180, 196, 255, 0.1)",
-        "purpose": "Screen-only CSS bloom; preserve the current state-specific value."
+        "purpose": "Screen-only CSS bloom: the HTML tube's base value, beneath every state rule."
       },
       {
         "name": "bloom-play",
         "value": "0 0 40px 0 rgba(180, 196, 255, 0.16)",
-        "purpose": "Screen-only CSS bloom; preserve the current state-specific value."
+        "purpose": "Screen-only CSS bloom for a lit tube of OSD on the black ground: playback and NO SIGNAL, which also share the play cast."
       },
       {
         "name": "bloom-idle",
         "value": "0 0 56px 2px rgba(21, 35, 214, 0.45)",
-        "purpose": "Screen-only CSS bloom; preserve the current state-specific value."
+        "purpose": "Screen-only CSS bloom for the blue tube: idle and ejecting."
       },
       {
         "name": "expanded-reader-surround",
@@ -536,9 +536,9 @@
       "name": "Site navigation",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "0.875rem Archivo links at weight 400 at every width: the archive route (the page’s single visible route to the section of that name) and About with a drawn play mark. No counts; hover raises the colour to high silkscreen.",
+      "description": "0.875rem Archivo links at weight 400 at every width: the archive route (the page’s single visible route to the section of that name) and About with a drawn play mark. No counts; hover raises the colour to high silkscreen. Every shell link is a target at least 44px tall, the nameplate and the footer’s contact links included; the floor is a hit area, so no word moves for it.",
       "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive</a><a href=\"/project/about\">About<svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></nav></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.875rem;}\n.ds-nav a{display:inline-flex;align-items:center;gap:0.5em;text-decoration:none;padding-block:12px;}\n.ds-nav .ds-arrow{flex-shrink:0;width:1em;height:1em;}\n.ds-nav a:hover{color:var(--silk-hi);}\n@media (max-width: 600px){.ds-nav{gap:18px;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.875rem;}\n.ds-nav a{display:inline-flex;align-items:center;gap:0.5em;text-decoration:none;min-height:44px;padding-block:12px;}\n.ds-nav .ds-arrow{flex-shrink:0;width:1em;height:1em;}\n.ds-nav a:hover{color:var(--silk-hi);}\n@media (max-width: 600px){.ds-nav{gap:18px;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Archive entry",
@@ -598,7 +598,7 @@
       },
       {
         "name": "The Drawn Mark Rule",
-        "body": "Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from src/components/Icons.tsx: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed on the modeled EJECT cap ahead of its label at the capitals' height. Every mark takes currentColor and is aria-hidden, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.",
+        "body": "Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from src/components/Icons.tsx: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes currentColor and is aria-hidden, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.",
         "section": "typography"
       },
       {
@@ -628,7 +628,7 @@
       },
       {
         "name": "The One Readout Rule",
-        "body": "The modeled tube says one thing at a time, and its sub-lines always belong to its headline. At rest: INSERT TAPE over CHOOSE A TAPE / TO PLAY. Previewing: the cassette's name over SELECT THIS TAPE / TO PLAY. Loading: LOADING TAPE over the name of the tape going in and nothing else, as the native loading screen reads; an invitation never prints while a tape is on its way in. A name too long for the lit area is set smaller, never compressed, like any print.",
+        "body": "The modeled tube says one thing at a time, and its sub-lines always belong to its headline. At rest: INSERT TAPE over CHOOSE A TAPE / TO PLAY. Previewing: the cassette's name over SELECT THIS TAPE / TO PLAY. Loading: LOADING TAPE over the name of the tape going in and nothing else, as the native loading screen reads. Returning: EJECT, the deck's word for the state, led by the key cap's drawn mark, over the name of the tape coming out and nothing else, so the tube and the deck's status window read the same word for as long as the return lasts. An invitation never prints while a tape is in the mechanism, on its way in or out, and a preview made meanwhile waits for the tape to land. Reduced motion returns the tape at once, so the tube goes straight back to the invitation. A name too long for the lit area is set smaller, never compressed, like any print.",
         "section": "components"
       },
       {

@@ -38,7 +38,10 @@
   box-shadow: var(--bloom-idle);
 }
 
-.playing {
+/* NO SIGNAL is a lit tube, OSD on the black ground: it takes playback's
+   bloom, as its cast on the deck takes playback's cast. */
+.playing,
+.nosignal {
   box-shadow: var(--bloom-play);
 }
 

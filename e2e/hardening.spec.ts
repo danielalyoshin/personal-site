@@ -555,3 +555,94 @@ test.describe('touch input in the studio', () => {
     }
   })
 })
+
+test('every screen state has a class of its own: nothing on stage is classed "undefined"', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const screen = (frame: string) =>
+    page.getByTestId(frame).locator('section[aria-label="CRT display"] > div')
+  const bloom = (frame: string) =>
+    screen(frame).evaluate((el) => getComputedStyle(el).boxShadow)
+  const strays = () =>
+    page.evaluate(
+      () =>
+        [...document.querySelectorAll('[class]')].filter((el) =>
+          /(^|\s)(undefined|null)(\s|$)/.test(el.getAttribute('class') ?? ''),
+        ).length,
+    )
+  await page.goto('/')
+  await ready(page)
+  expect(await strays()).toBe(0)
+  await page.goto('/project/placeholder-alpha')
+  await ready(page)
+  await expect(screen('project-reader')).toBeVisible()
+  expect(await strays()).toBe(0)
+  const playing = await bloom('project-reader')
+  // NO SIGNAL is a lit tube, as its cast on the deck already says: the dead
+  // tape and the dead channel both take playback's bloom, in both readers.
+  for (const path of ['/project/not-a-tape', '/not-a-channel']) {
+    await page.setViewportSize({ width: 1440, height: 1000 })
+    await page.goto(path)
+    await ready(page)
+    await expect(screen('project-reader')).toBeVisible()
+    expect(await strays()).toBe(0)
+    expect(await bloom('project-reader')).toBe(playing)
+    await page.setViewportSize({ width: 390, height: 844 })
+    await expect(screen('native-reader')).toBeVisible()
+    expect(await strays()).toBe(0)
+    expect(await bloom('native-reader')).toBe(playing)
+  }
+})
+
+test('the nameplate and every shell link meet the 44px floor', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  for (const viewport of [
+    { width: 1440, height: 1000 },
+    { width: 1280, height: 720 },
+    { width: 390, height: 844 },
+    { width: 320, height: 640 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+    await ready(page)
+    const links = await page.evaluate(() =>
+      [...document.querySelectorAll('header a, footer a')].map((el) => {
+        const rect = el.getBoundingClientRect()
+        return {
+          name: el.getAttribute('aria-label') ?? el.textContent,
+          width: rect.width,
+          height: rect.height,
+        }
+      }),
+    )
+    expect(links).toHaveLength(5)
+    for (const link of links) {
+      expect(link.width, link.name!).toBeGreaterThanOrEqual(44)
+      expect(link.height, link.name!).toBeGreaterThanOrEqual(44)
+    }
+  }
+})
+
+test('the studio loads without a console warning or error', async ({
+  page,
+}) => {
+  const noise: string[] = []
+  page.on('console', (message) => {
+    if (message.type() === 'warning' || message.type() === 'error')
+      noise.push(`${message.type()}: ${message.text()}`)
+  })
+  page.on('pageerror', (error) => noise.push(`pageerror: ${error.message}`))
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await ready(page)
+  await page
+    .getByRole('link', { name: 'Play tape: Placeholder: Alpha (2026)' })
+    .click()
+  await expect(page.getByTestId('project-reader')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  expect(noise).toEqual([])
+})

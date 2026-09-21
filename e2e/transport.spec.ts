@@ -312,6 +312,116 @@ test('the tube names the tape going in and never invites another while it loads'
     expect(loading).not.toContain(invitation)
 })
 
+test('the tube names the tape coming out, as the deck reads EJECT, and invites again once it lands', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.addInitScript(() => {
+    window.tubePrints = new WeakMap()
+    const { clearRect, fillText } = CanvasRenderingContext2D.prototype
+    CanvasRenderingContext2D.prototype.clearRect = function (...args) {
+      window.tubePrints.set(this.canvas, [])
+      return clearRect.apply(this, args)
+    }
+    CanvasRenderingContext2D.prototype.fillText = function (...args) {
+      window.tubePrints.get(this.canvas)?.push(args[0])
+      return fillText.apply(this, args)
+    }
+  })
+  await page.goto('/project/placeholder-alpha')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  await expect(page.getByTestId('project-reader')).toBeVisible()
+  // Holding the loop keeps the tape from landing between polls; releasing it
+  // lets the return finish.
+  const prints = (loop: 'never' | 'demand') =>
+    page.evaluate(async (loop) => {
+      const module = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        module
+      )) as typeof import('@react-three/fiber')
+      const state = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      state.setFrameloop(loop)
+      if (loop === 'demand') state.invalidate()
+      const found: string[][] = []
+      state.scene.getObjectByName('crt-screen')!.traverse((node) => {
+        const { material } = node as import('three').Mesh
+        const map = (material as import('three').MeshBasicMaterial)?.map
+        if (map?.image instanceof HTMLCanvasElement)
+          found.push(window.tubePrints.get(map.image) ?? [])
+      })
+      return found[0] ?? []
+    }, loop)
+
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  await expect
+    .poll(() => prints('never'))
+    .toEqual(expect.arrayContaining(['EJECT', 'ALPHA']))
+  const leaving = await prints('never')
+  // The corner and the headline both read the deck's word for the state.
+  expect(leaving.filter((print) => print === 'EJECT')).toHaveLength(2)
+  for (const stale of [
+    'STANDBY',
+    'INSERT TAPE',
+    'CHOOSE A TAPE',
+    'SELECT THIS TAPE',
+    'TO PLAY',
+  ])
+    expect(leaving).not.toContain(stale)
+
+  await expect
+    .poll(() => prints('demand'))
+    .toEqual(
+      expect.arrayContaining([
+        'STANDBY',
+        'INSERT TAPE',
+        'CHOOSE A TAPE',
+        'TO PLAY',
+      ]),
+    )
+  expect(await prints('demand')).not.toContain('EJECT')
+})
+
+test('the modeled tube casts playback light on NO SIGNAL as on a tape, and blue at rest', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const light = () =>
+    page.evaluate(async () => {
+      const module = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        module
+      )) as typeof import('@react-three/fiber')
+      const { scene } = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      let colour = ''
+      scene.getObjectByName('crt-screen')!.traverse((node) => {
+        const point = node as import('three').PointLight
+        if (point.isPointLight) colour = point.color.getHexString()
+      })
+      return colour
+    })
+  for (const [path, expected] of [
+    ['/', '4145ff'],
+    ['/project/placeholder-alpha', 'b4c4ff'],
+    ['/project/not-a-tape', 'b4c4ff'],
+    ['/not-a-channel', 'b4c4ff'],
+  ]) {
+    await page.goto(path)
+    await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+      'data-ready',
+      'true',
+    )
+    await expect.poll(light, { message: path }).toBe(expected)
+  }
+})
+
 test('physical playback keys follow the player, remain clickable after resize, and return focus on eject', async ({
   page,
 }) => {

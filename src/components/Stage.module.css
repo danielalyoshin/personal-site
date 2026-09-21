@@ -15,6 +15,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  min-height: 44px;
   text-decoration: none;
   color: var(--silk-hi);
 }
@@ -54,7 +55,15 @@
 .navigation a,
 .footer a {
   text-decoration: none;
+  min-height: 44px;
   padding-block: 12px;
+}
+/* The floor is a hit area, not a layout change: caption-size links would
+   stand 42px, so the target overhangs its row by the difference and the
+   footer's words stay where they were. Nothing to absorb once text
+   preferences make the link taller than the floor. */
+.footer a {
+  margin-block: min(0px, (1.5 * var(--type-caption) + 24px - 44px) / 2);
 }
 .arrow {
   flex-shrink: 0;

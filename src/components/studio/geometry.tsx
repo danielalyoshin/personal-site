@@ -4,6 +4,7 @@ import { ExtrudeGeometry, MathUtils, Shape, type CanvasTexture } from 'three'
 import { MATTE, STUDIO } from './materials'
 import {
   capitalsOffset,
+  drawEjectMark,
   fitType,
   makeTexture,
   useTextureDisposal,
@@ -106,28 +107,6 @@ const PRINT_DENSITY = 1280
 
 /** Drawn marks a print can lead with (The Drawn Mark Rule: never a typed glyph). */
 export type PrintMark = 'eject'
-
-/**
- * The eject mark of the native key, as a canvas path: a triangle over a bar
- * on a 14-unit square, the same proportions as the SVG icon.
- */
-function drawEjectMark(
-  ctx: CanvasRenderingContext2D,
-  left: number,
-  middle: number,
-  size: number,
-) {
-  const unit = size / 14
-  const x = (u: number) => left + u * unit
-  const y = (u: number) => middle + (u - 7) * unit
-  ctx.beginPath()
-  ctx.moveTo(x(7), y(0))
-  ctx.lineTo(x(14), y(9))
-  ctx.lineTo(x(0), y(9))
-  ctx.closePath()
-  ctx.rect(x(0), y(11), size, unit * 3)
-  ctx.fill()
-}
 
 /**
  * One line of printed capitals, set to its plane's proportions and measured

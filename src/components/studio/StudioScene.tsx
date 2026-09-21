@@ -7,6 +7,8 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react'
+// Before the Canvas mounts: R3F's store is what trips the warning it filters.
+import './threeConsole'
 import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import { Group, MathUtils, OrthographicCamera, Vector3 } from 'three'
@@ -17,6 +19,7 @@ import { Solid } from './geometry'
 import { DetailBoxes, Turned, VentPanel } from './ModelDetails'
 import { STUDIO } from './materials'
 import {
+  drawEjectMark,
   makeTexture,
   subscribeTextureUpdates,
   useTextureDisposal,
@@ -339,14 +342,21 @@ function fitTubeType(
 function Screen({
   tape,
   open,
-  invalid,
   preview,
   inserting,
+  ejecting,
+  reduced,
   framing,
   children,
 }: Pick<
   StudioProps,
-  'tape' | 'open' | 'invalid' | 'preview' | 'inserting' | 'children'
+  | 'tape'
+  | 'open'
+  | 'preview'
+  | 'inserting'
+  | 'ejecting'
+  | 'reduced'
+  | 'children'
 > & { framing: RefObject<StudioFraming | null> }) {
   const plane = useRef<Group>(null)
   const content = useRef<HTMLDivElement | null>(null)
@@ -380,9 +390,17 @@ function Screen({
     plane.current.updateWorldMatrix(true, false)
     sizeContent(content.current)
   }, -1)
-  // The tube names one tape at a time: the one going in, else the one under
-  // the pointer.
-  const name = (inserting ? tape : preview)?.vhs.spineLabel
+  // The tube names one tape at a time: the one in the mechanism, going in or
+  // coming out, else the one under the pointer. Reduced motion returns the
+  // tape at once, so there is no return to read out, only a flash of one.
+  const transport = inserting
+    ? 'LOADING'
+    : ejecting && !reduced
+      ? 'EJECT'
+      : 'STANDBY'
+  const name = (
+    transport === 'LOADING' ? tape : transport === 'EJECT' ? ejecting : preview
+  )?.vhs.spineLabel
   const texture = useMemo(
     () =>
       makeTexture(1024, 768, (ctx) => {
@@ -397,7 +415,7 @@ function Screen({
         ctx.fillRect(0, 0, 1024, 768)
         ctx.fillStyle = '#bfc9ff'
         ctx.font = '28px "VT323", monospace'
-        ctx.fillText(inserting ? 'LOADING' : 'STANDBY', 64, 73)
+        ctx.fillText(transport, 64, 73)
         ctx.textAlign = 'right'
         ctx.fillText('CH 01', 960, 73)
         ctx.strokeStyle = '#818cfc'
@@ -410,13 +428,28 @@ function Screen({
         ctx.stroke()
         ctx.fillStyle = '#f0f0ff'
         ctx.textAlign = 'center'
-        const headline = inserting ? 'LOADING TAPE' : (name ?? 'INSERT TAPE')
-        fitTubeType(ctx, headline, 128, 896)
-        ctx.fillText(headline, 512, 410)
+        if (transport === 'EJECT') {
+          // The deck's word for the state, led by the key cap's mark: as
+          // tall as the capitals, half an em before them, centred as a pair.
+          ctx.font = '128px "VT323", monospace'
+          const metrics = ctx.measureText('EJECT')
+          const capitals = metrics.actualBoundingBoxAscent
+          const gap = 128 / 2
+          const left = 512 - (capitals + gap + metrics.width) / 2
+          drawEjectMark(ctx, left, 410 - capitals / 2, capitals)
+          ctx.textAlign = 'left'
+          ctx.fillText('EJECT', left + capitals + gap, 410)
+          ctx.textAlign = 'center'
+        } else {
+          const headline =
+            transport === 'LOADING' ? 'LOADING TAPE' : (name ?? 'INSERT TAPE')
+          fitTubeType(ctx, headline, 128, 896)
+          ctx.fillText(headline, 512, 410)
+        }
         ctx.fillStyle = '#c4ccff'
-        if (inserting) {
-          // A tape on its way in is past inviting: the sub-line names it, as
-          // the native loading screen does, and the invitation stays off.
+        if (transport !== 'STANDBY') {
+          // A tape in the mechanism is past inviting: the sub-line names it,
+          // as the native loading screen does, and the invitation stays off.
           if (name) {
             fitTubeType(ctx, name, 88, 896)
             ctx.fillText(name, 512, 515)
@@ -434,7 +467,7 @@ function Screen({
         ctx.fillStyle = 'rgba(0,0,0,.12)'
         for (let y = 0; y < 768; y += 4) ctx.fillRect(0, y, 1024, 1)
       }),
-    [name, inserting],
+    [name, transport],
   )
   useTextureDisposal(texture)
   return (
@@ -469,7 +502,7 @@ function Screen({
       </group>
       <pointLight
         position={[0, -0.8, 0.6]}
-        color={open && !invalid ? '#b4c4ff' : '#4145ff'}
+        color={open ? '#b4c4ff' : '#4145ff'}
         intensity={3}
         distance={3.3}
         decay={2}
@@ -858,7 +891,7 @@ function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
             />
           ),
         )}
-        <Screen {...props} framing={framing} />
+        <Screen {...props} ejecting={ejecting} framing={framing} />
       </group>
     </>
   )
