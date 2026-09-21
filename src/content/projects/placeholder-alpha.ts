@@ -18,6 +18,8 @@ export const placeholderAlpha: Project = {
     {
       type: 'image',
       src: testPattern,
+      width: 640,
+      height: 480,
       alt: 'SMPTE-style color bars standing in for project footage.',
       caption: 'PLACEHOLDER FOOTAGE — replaced with real media in Stage 8.',
     },

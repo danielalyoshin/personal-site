@@ -174,6 +174,9 @@
 .objectCaption > span {
   display: block;
 }
+.guideArchive {
+  display: none;
+}
 .objectCaption small {
   display: block;
   margin-top: 4px;
@@ -226,7 +229,7 @@
      edge with its ring whole, not flush against it. */
   scroll-margin-block: 24px;
   border: 1px solid var(--seam);
-  border-radius: 3px;
+  border-radius: var(--r-archive);
   text-decoration: none;
   transition:
     background 0.2s,
@@ -293,7 +296,7 @@
   min-height: 80px;
   width: 100%;
   border: 1px dashed var(--seam-lit);
-  border-radius: 3px;
+  border-radius: var(--r-archive);
 }
 .tapeComing .tapeLabel {
   color: var(--silk-dim);
@@ -370,7 +373,7 @@
   background: var(--ink-2);
   padding: 20px;
   border: 1px solid var(--seam-lit);
-  border-radius: 24px;
+  border-radius: var(--r-fallback-monitor);
   width: min(560px, 95%);
   box-shadow: var(--shadow-unit);
 }
@@ -457,6 +460,12 @@
   .sceneCaption {
     gap: 8px;
   }
+  .guideStudio {
+    display: none;
+  }
+  .guideArchive {
+    display: inline;
+  }
   .objectCaption small {
     line-height: 1.5;
   }
@@ -492,7 +501,7 @@
   flex-direction: column;
   padding: 12px 12px 0;
   border: 1px solid var(--seam-lit);
-  border-radius: 18px;
+  border-radius: var(--r-expanded-reader);
   background: var(--ink-2);
   box-shadow: 0 0 0 20px var(--ink-0);
 }
@@ -515,7 +524,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  border-radius: 14px;
+  border-radius: var(--r-screen);
   background: var(--screen-black);
   color: var(--screen-text);
 }

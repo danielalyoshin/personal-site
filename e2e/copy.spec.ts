@@ -75,10 +75,11 @@ test('the About tape has one name wherever it is named', async ({ page }) => {
   // Its entry follows every tape's rule: spine name over caption, and the
   // tape's own title in the accessible name.
   const entry = page.getByRole('link', {
-    name: 'Play tape: About (2026)',
+    name: 'Play tape: 06 ABOUT Meet the maker (2026)',
     exact: true,
   })
-  await expect(entry).toHaveText('06ABOUTMeet the maker')
+  // Its name is the words it shows, between what it does and its year.
+  await expect(entry).toHaveText('Play tape: 06ABOUTMeet the maker (2026)')
   // The guide names it as the entry does, with the same caption.
   await entry.focus()
   const guide = page.getByText('Meet the maker · Select to play')

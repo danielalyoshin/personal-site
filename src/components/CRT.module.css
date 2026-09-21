@@ -23,7 +23,7 @@
 .screen {
   position: relative;
   aspect-ratio: 4 / 3;
-  border-radius: 14px;
+  border-radius: var(--r-screen);
   overflow: hidden;
   background: var(--screen-black);
   transition:
@@ -47,33 +47,37 @@
 /* Diegetic layers — inside the tube only. */
 
 /* Live phosphor grain: a tiny desaturated turbulence tile stepped through
-   four offsets (~5 fps, like a broadcast). Faint enough that prose contrast
-   is untouched; the reduced-motion gate leaves it as a static texture. */
+   four offsets (~5 fps, like a broadcast). The tile is painted once, on a
+   layer one tile larger than the tube, and the layer is what moves: each
+   step is a composite, never a repaint of the reader beneath it. Faint
+   enough that prose contrast is untouched; the reduced-motion gate leaves
+   it as a static texture. */
 .grain {
   position: absolute;
-  inset: 0;
+  inset: -160px 0 0 -160px;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
   opacity: 0.05;
+  will-change: transform;
   animation: grainShift 0.8s steps(1, end) infinite;
 }
 
 @keyframes grainShift {
   0% {
-    background-position: 0 0;
+    transform: translate(0, 0);
   }
   25% {
-    background-position: 80px 48px;
+    transform: translate(80px, 48px);
   }
   50% {
-    background-position: 32px 112px;
+    transform: translate(32px, 112px);
   }
   75% {
-    background-position: 128px 64px;
+    transform: translate(128px, 64px);
   }
   100% {
-    background-position: 0 0;
+    transform: translate(0, 0);
   }
 }
 
@@ -257,6 +261,9 @@
   border: 1px solid var(--seam);
   border-radius: var(--r-control);
   width: 100%;
+  /* The width and height attributes give the ratio; the column gives the
+     size, so the media's place is held before it loads. */
+  height: auto;
 }
 
 .gallery figcaption {
@@ -543,7 +550,7 @@
 .embedded .bezel {
   padding: 0;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--r-screen);
   background: transparent;
   box-shadow: none;
 }

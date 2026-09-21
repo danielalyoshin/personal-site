@@ -22,6 +22,11 @@ async function holdStudioModule(page: Page, fail = false) {
   return { release, requested }
 }
 
+interface FocusSamples {
+  samples: number
+  hidden: string[]
+}
+
 async function ready(page: Page) {
   await expect(page.getByTestId('studio-scene')).toHaveAttribute(
     'data-ready',
@@ -107,9 +112,7 @@ for (const fail of [false, true]) {
       await expect(page).toHaveURL('/')
       if (!fail) {
         await expect(page.locator('canvas')).toBeVisible()
-        await page
-          .getByRole('link', { name: /Play tape: Placeholder: Beta/ })
-          .click()
+        await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
         await expect(page.getByTestId('project-reader')).toBeVisible()
         await expect(
           page.getByRole('heading', { name: /Placeholder: Beta/ }),
@@ -130,6 +133,20 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // Focus must never sit inside hidden content, even for a beat: sample it
+  // through the whole handoff.
+  await page.addInitScript(() => {
+    const seen = { samples: 0, hidden: [] as string[] }
+    Object.assign(window, { focusInHidden: seen })
+    setInterval(() => {
+      const el = document.activeElement
+      seen.samples++
+      if (el && el !== document.body && el.closest('[aria-hidden="true"]'))
+        seen.hidden.push(
+          `${el.tagName} in ${el.closest('[data-handoff]')?.getAttribute('data-handoff')}`,
+        )
+    }, 16)
+  })
   const held = await holdStudioModule(page)
   try {
     await page.goto('/project/placeholder-alpha', {
@@ -144,17 +161,17 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
 
     held.release()
     await ready(page)
-    // The outgoing frame stays on stage for one dissolve, hidden from
-    // assistive tech; the modeled screen behind it already holds focus.
+    // The outgoing frame stays on stage for one dissolve. It is hidden from
+    // assistive tech only once the modeled screen behind it holds focus.
     await expect(native).toHaveAttribute(
       'data-handoff',
       /pending|settled|fading/,
     )
-    await expect(native).toHaveAttribute('aria-hidden', 'true')
     const modeled = page.getByTestId('project-reader')
     await expect(modeled).toBeVisible()
     await expect(modeled.locator('h2')).toBeFocused()
     await expect(native).toHaveAttribute('data-handoff', 'fading')
+    await expect(native).toHaveAttribute('aria-hidden', 'true')
     expect(
       await native.evaluate((el) => ({
         inert: (el as HTMLElement).inert,
@@ -193,6 +210,12 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
       }),
     ).toEqual({ seatedInside: true, flapClosed: true })
     await expect(native).toHaveCount(0)
+    const focus = await page.evaluate(
+      () =>
+        (window as unknown as { focusInHidden: FocusSamples }).focusInHidden,
+    )
+    expect(focus.samples).toBeGreaterThan(20)
+    expect(focus.hidden).toEqual([])
     await expect(
       page.getByRole('button', { name: 'Eject tape', exact: true }),
     ).toHaveCount(1)
@@ -200,7 +223,7 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
     await expect(page).toHaveURL('/')
     await expect(
       page.getByRole('link', {
-        name: 'Play tape: Placeholder: Alpha (2026)',
+        name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
         exact: true,
       }),
     ).toBeFocused()
@@ -217,7 +240,9 @@ test('the HTML archive opens a reader before the graphics module is available', 
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     await held.requested
     await page
-      .getByRole('link', { name: 'Play tape: Placeholder: Alpha (2026)' })
+      .getByRole('link', {
+        name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+      })
       .click()
     const reader = page.getByRole('article', {
       name: 'Placeholder: Alpha details',
@@ -448,9 +473,10 @@ test.describe('touch input in the studio', () => {
           const span = document
             .querySelector('[data-testid="studio-scene"]')!
             .previousElementSibling!.querySelector('span')!
+          // The line on show: the other width's line is in the markup too.
           return [
             span.firstChild!.textContent,
-            span.querySelector('small')!.textContent,
+            span.querySelector('small')!.innerText,
           ]
         })
       const idle = ['Choose a tape to play', 'Pick one from the archive below.']
@@ -639,10 +665,85 @@ test('the studio loads without a console warning or error', async ({
   await page.goto('/')
   await ready(page)
   await page
-    .getByRole('link', { name: 'Play tape: Placeholder: Alpha (2026)' })
+    .getByRole('link', { name: 'Play tape: 01 ALPHA Placeholder tape (2026)' })
     .click()
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
   expect(noise).toEqual([])
+})
+
+test('every link on the page is named by the words it shows', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await ready(page)
+  // What a sighted visitor reads on each link: its text without the parts
+  // set aside for assistive technology, and without drawn marks.
+  const shown = await page.evaluate(() =>
+    [...document.querySelectorAll('a[href]')].map((link) => {
+      const copy = link.cloneNode(true) as HTMLElement
+      copy.querySelectorAll('.srOnly, svg').forEach((el) => el.remove())
+      const words: string[] = []
+      const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT)
+      while (walker.nextNode())
+        if (walker.currentNode.textContent?.trim())
+          words.push(walker.currentNode.textContent.trim())
+      return { href: link.getAttribute('href')!, label: words.join(' ') }
+    }),
+  )
+  expect(shown.length).toBeGreaterThanOrEqual(9)
+  for (const { href, label } of shown) {
+    // Playwright matches a name as a case-insensitive substring: exactly
+    // the label-in-name relation (WCAG 2.5.3).
+    await expect(
+      page
+        .locator(`a[href="${href}"]`)
+        .and(page.getByRole('link', { name: label })),
+      `${href} is named by "${label}"`,
+    ).not.toHaveCount(0)
+  }
+})
+
+test('the canvas keeps its box while the native reader owns playback', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await ready(page)
+  const scene = page.getByTestId('studio-scene')
+  const sizes = async () => {
+    const box = (await scene.boundingBox())!
+    const canvas = (await page.locator('canvas').boundingBox())!
+    return {
+      box: [Math.round(box.width), Math.round(box.height)],
+      canvas: [Math.round(canvas.width), Math.round(canvas.height)],
+    }
+  }
+  const atRest = await sizes()
+  expect(atRest.canvas).toEqual(atRest.box)
+  await page.getByRole('link', { name: /Play tape: 01 ALPHA/ }).click()
+  // The reader covers the studio from the first frame of the insertion to
+  // the eject: a viewport-sized drawing buffer under it would serve nobody.
+  await expect(page.getByTestId('native-reader')).toBeVisible()
+  expect(await sizes()).toEqual(atRest)
+  await expect(scene).not.toHaveAttribute('data-detached', 'true')
+  await page.getByRole('button', { name: 'Skip animation' }).click()
+  await expect(
+    page.getByRole('article', { name: 'Placeholder: Alpha details' }),
+  ).toBeVisible()
+  expect(await sizes()).toEqual(atRest)
+  // The page holds still under the reader all the same.
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).overflow),
+  ).toBe('hidden')
+  await page.getByRole('button', { name: 'Eject tape' }).click()
+  await expect(page).toHaveURL('/')
+  await expect(scene).not.toHaveAttribute('data-detached', 'true')
+  expect(await sizes()).toEqual(atRest)
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.body).overflow))
+    .not.toBe('hidden')
 })

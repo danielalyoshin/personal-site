@@ -11,6 +11,7 @@ import {
   makeTexture,
   useTextureDisposal,
 } from './textures'
+import { token } from './tokens'
 import { PLAYER, slotFlapAngle } from './transport'
 import PlayerButton from './PlayerButton'
 import type { DeckControlsProps } from '../DeckControls'
@@ -82,7 +83,7 @@ function drawSoundMark(
     ctx.arc(x(7.86), y(10), 10 * unit, -0.7754, 0.7754)
     ctx.stroke()
   } else {
-    ctx.strokeStyle = '#ff3b30'
+    ctx.strokeStyle = token('--rec-red')
     ctx.beginPath()
     ctx.moveTo(x(3), y(17))
     ctx.lineTo(x(17), y(3))

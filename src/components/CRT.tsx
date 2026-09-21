@@ -1,6 +1,6 @@
 import type { Ref } from 'react'
 import { readingMinutes } from '../content/readingTime'
-import type { Project } from '../content/types'
+import type { Project, ProjectLink } from '../content/types'
 import { site } from '../content/site'
 import styles from './CRT.module.css'
 import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
@@ -30,6 +30,14 @@ function watchContinuation(article: HTMLElement | null) {
     resized.disconnect()
   }
 }
+
+/**
+ * Placeholder tapes link to example.com until real projects arrive; those
+ * links are never shown. Relative URLs resolve against a stand-in origin, so
+ * the check needs no window and runs wherever the page is rendered.
+ */
+const isReal = (link: ProjectLink) =>
+  new URL(link.url, 'https://site.invalid').hostname !== 'example.com'
 
 interface CRTProps {
   /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
@@ -102,10 +110,27 @@ export default function CRT({
                     <div className={styles.gallery}>
                       {tape.media.map((m, i) => (
                         <figure key={`${m.src}-${i}`}>
+                          {/* The first piece of media is often the tape's
+                              largest paint: it loads at once, the rest as
+                              they are scrolled to. */}
                           {m.type === 'image' ? (
-                            <img src={m.src} alt={m.alt} loading="lazy" />
+                            <img
+                              src={m.src}
+                              width={m.width}
+                              height={m.height}
+                              alt={m.alt}
+                              loading={i === 0 ? 'eager' : 'lazy'}
+                              fetchPriority={i === 0 ? 'high' : 'auto'}
+                            />
                           ) : (
-                            <video src={m.src} controls aria-label={m.alt} />
+                            <video
+                              src={m.src}
+                              width={m.width}
+                              height={m.height}
+                              controls
+                              preload={i === 0 ? 'metadata' : 'none'}
+                              aria-label={m.alt}
+                            />
                           )}
                           {m.caption && <figcaption>{m.caption}</figcaption>}
                         </figure>
@@ -119,38 +144,28 @@ export default function CRT({
                       ))}
                     </ul>
                   )}
-                  {tape.links.some(
-                    (link) =>
-                      new URL(link.url, window.location.origin).hostname !==
-                      'example.com',
-                  ) && (
+                  {tape.links.some(isReal) && (
                     <ul className={styles.links} aria-label="Project links">
-                      {tape.links
-                        .filter(
-                          (link) =>
-                            new URL(link.url, window.location.origin)
-                              .hostname !== 'example.com',
-                        )
-                        .map((l) => (
-                          <li key={l.url}>
-                            <a
-                              href={l.url}
-                              target={
-                                l.url.startsWith('http') ? '_blank' : undefined
-                              }
-                              rel={
-                                l.url.startsWith('http')
-                                  ? 'noreferrer'
-                                  : undefined
-                              }
-                            >
-                              {l.label.toUpperCase()}
-                              {l.url.startsWith('http') && (
-                                <ExternalIcon className={styles.linkIcon} />
-                              )}
-                            </a>
-                          </li>
-                        ))}
+                      {tape.links.filter(isReal).map((l) => (
+                        <li key={l.url}>
+                          <a
+                            href={l.url}
+                            target={
+                              l.url.startsWith('http') ? '_blank' : undefined
+                            }
+                            rel={
+                              l.url.startsWith('http')
+                                ? 'noreferrer'
+                                : undefined
+                            }
+                          >
+                            {l.label.toUpperCase()}
+                            {l.url.startsWith('http') && (
+                              <ExternalIcon className={styles.linkIcon} />
+                            )}
+                          </a>
+                        </li>
+                      ))}
                     </ul>
                   )}
                   <p className={styles.osdEnd} aria-hidden="true">

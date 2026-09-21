@@ -189,7 +189,7 @@ test('a keyboard eject that brings the tape link into view still lands the studi
   const moved = await page.evaluate(() => window.scrollY)
   expect(moved).toBeGreaterThan(0)
   const link = page.getByRole('link', {
-    name: 'Play tape: Placeholder: Alpha (2026)',
+    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
     exact: true,
   })
   await expect(link).toBeFocused()

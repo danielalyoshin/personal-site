@@ -26,13 +26,13 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await expect(page.locator('canvas')).toBeVisible()
   await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
   const alpha = page.getByRole('link', {
-    name: 'Play tape: Placeholder: Alpha (2026)',
+    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
     exact: true,
   })
   await alpha.focus()
   await page.keyboard.press('ArrowRight')
   await expect(
-    page.getByRole('link', { name: /Play tape: Placeholder: Beta/ }),
+    page.getByRole('link', { name: /Play tape: 02 BETA/ }),
   ).toBeFocused()
   await page.keyboard.press('Home')
   await expect(alpha).toBeFocused()
@@ -202,15 +202,20 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await ready(page)
   const guide = page.getByText('Choose a tape to play')
   await expect(guide).toBeInViewport({ ratio: 1 })
-  await expect(guide).toContainText('Pick one in the studio.')
+  // The stylesheet picks the line, so it is right from the first paint.
+  const inStudio = guide.getByText('Pick one in the studio.')
+  const fromArchive = guide.getByText('Pick one from the archive below.')
+  await expect(inStudio).toBeVisible()
+  await expect(fromArchive).toBeHidden()
   await expect(page.locator('canvas')).toBeInViewport({ ratio: 1 })
   await page.setViewportSize({ width: 390, height: 844 })
   // The fitted rack is about 110px across on a phone: the guide points at
   // the archive's entries, which are in reach.
-  await expect(guide).toContainText('Pick one from the archive below.')
+  await expect(fromArchive).toBeVisible()
+  await expect(inStudio).toBeHidden()
   await expect(
     page.getByRole('link', {
-      name: 'Play tape: Placeholder: Alpha (2026)',
+      name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
       exact: true,
     }),
   ).toBeInViewport({ ratio: 1 })
@@ -270,7 +275,7 @@ test('archive works without WebGL and after a graphics context is lost', async (
   await page.reload()
   await ready(page)
   await expect(page.locator('canvas')).toHaveCount(0)
-  await page.getByRole('link', { name: /Play tape: Placeholder: Beta/ }).click()
+  await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
   await expect(
     page.getByRole('heading', { name: /Placeholder: Beta/ }),
   ).toBeVisible()
@@ -443,9 +448,9 @@ test('slots without a project hold blank tapes that are coming soon', async ({
     await expect(entry.locator('a, button, [tabindex]')).toHaveCount(0)
   }
   const gamma = page.getByRole('link', {
-    name: /^Play tape: Placeholder: Gamma/,
+    name: /^Play tape: 03 GAMMA/,
   })
-  const about = page.getByRole('link', { name: /^Play tape: About/ })
+  const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
   await gamma.focus()
   await page.keyboard.press('ArrowRight')
   await expect(about).toBeFocused()

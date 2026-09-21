@@ -384,6 +384,56 @@ Preserve these strengths:
 You can ask me to run these one at a time, all at once, or in any order you prefer.
 Re-run `$impeccable audit` after fixes to see your score improve.
 
+## Remediation addendum — 2026-09-21
+
+The findings and score above record the audit as run; this is not a new
+score. Details and mechanisms are in `PLAN.md`, "Second audit remediation".
+
+| #   | Finding                       | Status                                                                                                           |
+| --- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| 1   | Titles and route metadata     | Closed: titles in the harden pass; per-route title, description, and share tags are written into each drawn page |
+| 2   | Blank until JavaScript runs   | Closed: every route pre-rendered and hydrated; the studio's module waits for first paint and idle                |
+| 3   | Grain repaints at rest        | Closed: the grain steps by transform on its own layer                                                            |
+| 4   | Label in name                 | Closed: links are named by the words they show                                                                   |
+| 5   | Media without intrinsic size  | Closed: required `width` and `height`; eager first image                                                         |
+| 6   | Publishing scaffolding        | Closed, except what needs the site's address (sitemap, canonical), which the build adds once `SITE_URL` is set   |
+| 7   | Focus in hidden content       | Closed: hidden only once the modeled reader holds focus                                                          |
+| 8   | Palette and radius drift      | Closed: one palette read by both renderers, one idle blue, named radii                                           |
+| 9   | 44 px links                   | Closed in the closing polish                                                                                     |
+| 10  | Canvas under the phone reader | Closed: the canvas keeps its box while the native reader owns playback                                           |
+
+Measured again on the same phone profile (390 × 844, 4× CPU, 1.6 Mbps /
+150 ms, cache disabled, real GPU), production build:
+
+| Measure                                   | Audit baseline, re-measured | After    |
+| ----------------------------------------- | --------------------------- | -------- |
+| First contentful paint, home              | 944 ms                      | 508 ms   |
+| Largest contentful paint, home            | 944 ms                      | 508 ms   |
+| First contentful paint, project deep link | 1,012 ms                    | 520 ms   |
+| Largest contentful paint, project         | 1,104 ms                    | 520 ms   |
+| Cumulative layout shift, project          | 0.050                       | 0.022    |
+| Scene ready, home                         | 3,767 ms                    | 3,195 ms |
+| Main thread at rest in playback, per 4 s  | 201 ms                      | 30 ms    |
+| Lighthouse mobile performance, home       | 79–80                       | 89       |
+| Lighthouse mobile LCP, home               | 3.5 s                       | 1.8 s    |
+| Lighthouse mobile total blocking time     | 300–350 ms                  | 400 ms   |
+| Lighthouse mobile SEO                     | 91                          | 100      |
+
+The Lighthouse rows are paired runs on one machine, the old build and the
+new served side by side; they are comparable to each other, not to the
+67/62 above, which came from another session. Blocking time reads higher
+because first paint is earlier, so more of the same startup falls inside
+the window it counts. Lighthouse's `label-content-name-mismatch`,
+`robots-txt`, `unsized-images`, and `lcp-lazy-loaded` checks pass.
+axe-core 4.10.3 (the same tags, with `label-content-name-mismatch` enabled)
+over seven states of the built site, home at 1440 and 390, modeled playback
+of a project and of About, the phone native reader, and both NO SIGNAL
+routes, reports zero violations; the label rule finds nothing to check, as
+no link's name comes from an `aria-label` any more, and the only incompletes
+are the overlay-layer contrast nodes resolved by hand above (OSD white on
+the one idle blue, `#242bd9`, is 8.7:1). Not re-run: axe on the two no-WebGL
+states, and the frame-gap measurements.
+
 ---
 
 # Technical UI audit — 2026-09-15 (historical)

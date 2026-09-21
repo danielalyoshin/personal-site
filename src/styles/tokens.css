@@ -19,8 +19,9 @@
   /* The single interface accent */
   --vfd: #61e8c6;
 
-  /* Inside the screen plane */
-  --crt-blue: #1523d6;
+  /* Inside the screen plane. The modeled tube paints from these same values
+     (studio/tokens.ts), so both renderers share one palette. */
+  --crt-blue: #242bd9;
   --screen-black: #07080c;
   --screen-text: #dfe6ff;
   --screen-dim: #98a3c9;
@@ -30,21 +31,32 @@
   /* The reader's scrollbar thumb: 3.5:1 on screen black, so the article's
      length reads at a glance without competing with its text. */
   --screen-scroll: #5c6683;
+  /* The idle tube's inks on CRT blue: headline, sub-lines, corners, and the
+     drawn cassette's outline. */
+  --tube-ink: #f0f0ff;
+  --tube-ink-soft: #c4ccff;
+  --tube-ink-dim: #bfc9ff;
+  --tube-line: #818cfc;
+  /* A lit tube's light: the blooms and casts below, and the modeled CRT's
+     point light during playback. */
+  --phosphor: #b4c4ff;
 
-  /* The tube's light: bloom and its cast on the deck (One Light Rule). */
-  --bloom-rest: 0 0 40px 0 rgba(180, 196, 255, 0.1);
-  --bloom-play: 0 0 40px 0 rgba(180, 196, 255, 0.16);
-  --bloom-idle: 0 0 56px 2px rgba(21, 35, 214, 0.45);
+  /* The tube's light: bloom and its cast on the deck (One Light Rule). Each
+     is its hue at a strength, so a palette change is made once, above. */
+  --bloom-rest: 0 0 40px 0 color-mix(in srgb, var(--phosphor) 10%, transparent);
+  --bloom-play: 0 0 40px 0 color-mix(in srgb, var(--phosphor) 16%, transparent);
+  --bloom-idle: 0 0 56px 2px
+    color-mix(in srgb, var(--crt-blue) 45%, transparent);
   --cast-idle: radial-gradient(
     50% 100% at 50% 0,
-    rgba(21, 35, 214, 0.34),
-    rgba(21, 35, 214, 0.12) 45%,
+    color-mix(in srgb, var(--crt-blue) 34%, transparent),
+    color-mix(in srgb, var(--crt-blue) 12%, transparent) 45%,
     transparent 78%
   );
   --cast-play: radial-gradient(
     50% 100% at 50% 0,
-    rgba(180, 196, 255, 0.14),
-    rgba(180, 196, 255, 0.05) 45%,
+    color-mix(in srgb, var(--phosphor) 14%, transparent),
+    color-mix(in srgb, var(--phosphor) 5%, transparent) 45%,
     transparent 78%
   );
 
@@ -75,12 +87,14 @@
   --type-screen-meta: clamp(1.0625rem, 4cqi, 1.25rem);
   --type-screen-display: clamp(1.5rem, 9cqi, 2.5rem);
 
-  /* Shape */
+  /* Shape: every radius on the page, named as in DESIGN.md. */
   --r-hairline: 2px;
+  --r-archive: 3px;
   --r-control: 4px;
-  --r-panel: 8px;
-  --r-rack: 12px;
+  --r-screen: 14px;
+  --r-expanded-reader: 18px;
   --r-bezel: 20px;
+  --r-fallback-monitor: 24px;
 
   /* Space (4px base) */
   --sp-xs: 4px;

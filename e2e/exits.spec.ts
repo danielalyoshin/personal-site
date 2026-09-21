@@ -24,7 +24,7 @@ async function clipped(target: Locator) {
 
 const alphaLink = (page: Page) =>
   page.getByRole('link', {
-    name: 'Play tape: Placeholder: Alpha (2026)',
+    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
     exact: true,
   })
 
@@ -56,7 +56,7 @@ test('a keyboard exit lands focus on the tape link, in sight; a pointer exit lea
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await page.getByRole('button', { name: 'Eject tape', exact: true }).click()
   await expect(page).toHaveURL('/')
-  const about = page.getByRole('link', { name: /^Play tape: About/ })
+  const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
   await expect(about).toBeFocused()
   expect(await about.evaluate((el) => el.matches(':focus-visible'))).toBe(false)
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
@@ -105,7 +105,7 @@ test('the exit from NO SIGNAL is printed on the tube and lands on the nameplate'
     await expect(page).toHaveURL('/')
     // No tape played, so there is no link to return to: focus opens the page.
     await expect(
-      page.getByRole('link', { name: 'Daniel Alyoshin home' }),
+      page.getByRole('link', { name: 'Daniel Alyoshin Design engineer home' }),
     ).toBeFocused()
     expect(await page.evaluate(() => window.scrollY)).toBe(0)
   }

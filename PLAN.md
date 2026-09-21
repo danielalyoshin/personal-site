@@ -1126,6 +1126,83 @@ then one bounded verification round.
 - The critique's agreed order (adapt → polish → harden → clarify → polish) is
   complete. Next is Stage 8 content, then the Stage 9 remainder.
 
+#### Second audit remediation (2026-09-21)
+
+Daniel asked for every finding of both audits that still applied. Of the
+2026-09-16 audit's ten, finding 9 (44px links) was closed by the closing
+polish above and finding 1 (route titles) mostly by the harden pass; the
+2026-09-15 audit's one open item (shared screen colours) is finding 8. The
+rest, by finding:
+
+- ✅ **1 and 2, the first frame.** `npm run build` now draws every route
+  ahead of time (`scripts/prerender.mjs`, from `src/entry-server.tsx`): the
+  home page, a flat `project/<slug>.html` per tape with its article in the
+  native reader, and NO SIGNAL as `404.html`, each with its own title,
+  description, and share tags, which closes what finding 1 left (crawlers run
+  no script). `main.tsx` hydrates a page drawn for its own address and
+  renders afresh a page drawn for another (the 404 page answering a dead
+  link). Made hydration-safe: the WebGL probe is a `useSyncExternalStore`
+  hook that assumes graphics until the browser says otherwise, the home
+  title is `site.title` rather than whatever `document.title` was at boot
+  (wrong on a drawn tape page), `CRT.tsx` no longer needs `window` to tell a
+  placeholder link, and the guide's width-dependent line is picked by the
+  stylesheet, so a drawn phone page is right before the app arrives. The
+  studio's module waits for first paint and an idle main thread. Flat files,
+  not `<slug>/index.html`: they answer at the app's own URLs without a
+  trailing-slash redirect on GitHub Pages, Netlify, Cloudflare Pages, and
+  `vite preview`.
+- ✅ **3, grain.** The tile is painted once on a layer one tile larger than
+  the tube and steps by `transform`; at rest during modeled playback the main
+  thread went from 201 ms to 30 ms per 4 s (12 ms with the grain paused).
+- ✅ **4, label in name.** Archive entries and the nameplate are named by the
+  words they show ("Play tape: 01 ALPHA Placeholder tape (2026)", "Daniel
+  Alyoshin Design engineer home"); no `aria-label` replaces a link's words.
+  The Spoken Name Rule; The One Name Rule no longer says the title fills the
+  entry's name.
+- ✅ **5, media.** `ProjectMedia.width` and `height` are required; the first
+  piece loads eagerly at high priority, the rest lazily. The placeholder
+  pattern is 640 × 480 (the audit's 200 × 150 was its drawn size).
+- ✅ **6, scaffolding.** `robots.txt` always; `sitemap.xml`, canonical URLs
+  and `og:url` once `SITE_URL` is set; `color-scheme: dark` and
+  `theme-color`; the favicon is the nameplate's cassette mark, and
+  `npm run render:icons` draws the touch icon from it.
+- ✅ **7, handoff.** The outgoing reader is hidden from assistive technology
+  only once the modeled reader holds focus. The handoff test samples focus
+  every 16 ms and failed on the old timing with the title inside hidden
+  content for the whole of `pending`.
+- ✅ **8, one palette.** One idle blue, the modeled studio's `#242bd9` (the
+  fallback monitor's `#1523d6` is gone); the scene reads the screen's
+  colours from `tokens.css` as it paints (`studio/tokens.ts`); blooms and
+  casts are their hue at a strength; every radius is a named token and the
+  two unused ones are removed. The One Palette Rule.
+- ✅ **10, canvas under the reader.** While the native reader owns playback
+  the canvas keeps its box (281px tall at 390 × 844, where it held an 844px
+  buffer), the page still holds still, and the tape returns to its slot in
+  the box on eject.
+- Measured on the audit's phone profile (390 × 844, 4× CPU, 1.6 Mbps, no
+  cache, real GPU): home first paint 944 → 508 ms; a tape link's 1,012 → 520
+  ms, its LCP 1,104 → 520 ms and layout shift 0.050 → 0.022; the studio is
+  ready no later than before (3.8 → 3.2 s home). Lighthouse mobile, back to
+  back on one machine: performance 79–80 → 89, LCP 3.5 → 1.8 s, SEO 91 →
+  100; blocking time reads about 80 ms higher, since an earlier first paint
+  puts more of the same startup inside the window it counts. A first
+  Lighthouse run scored 68 with 1,750 ms of observed task time against 300
+  in the paired runs; it was discarded as the audit discarded its own.
+- The suite has two projects: `dev`, and `built`, which builds the site and
+  checks the served artifact (`e2e/built.spec.ts`, six tests). Each server
+  is recognised by a file only this project serves, and the ports move with
+  `E2E_PORT` and `E2E_BUILT_PORT`: the trap the closing polish hit, another
+  project's server on 5173, now fails loudly.
+- Docs: `DESIGN.md` (The One Palette Rule, The Spoken Name Rule, The First
+  Frame Rule, tokens, Handoff, grain, media, the canvas under the reader, two
+  Dos), the sidecar, the surface brief, README, an addendum in `AUDIT.md`.
+- Validation: build, lint, format and the design hook clean; new tests for
+  link names, focus through the handoff, the canvas's box, and the built
+  site. 57 e2e green (51 on the dev server, 6 on the built site).
+- Left open: per-tape share cards (every route unfurls with the site's
+  card), and the no-script tape page's Eject key, which needs the app. Both
+  wait on Stage 8 content.
+
 ### Stage 8 — Real content pass
 
 - Replace placeholders with real projects: copywriting, screenshots/recordings,
@@ -1167,8 +1244,16 @@ then one bounded verification round.
 
 - Choose host (GitHub Pages / Vercel / Netlify / Cloudflare Pages) and wire the
   build. No deploy config or CI before this stage.
-- Set `SITE_URL` to the site's address for the release build, so the share
-  card's image URLs in `index.html` are absolute (the build warns without it).
+- Set `SITE_URL` to the site's address for the release build: it makes the
+  share card's image URLs absolute and turns on `sitemap.xml`, canonical
+  URLs, and `og:url` (the build warns without it).
+- The build is a set of static files. The host must serve
+  `project/<slug>.html` at `/project/<slug>` and `404.html` for unknown
+  addresses (defaults on GitHub Pages, Netlify, and Cloudflare Pages; Vercel
+  needs `cleanUrls`). Do not add a single-page fallback to `index.html`: it
+  would answer dead links with the home page. Settle the trailing-slash
+  policy with the host; canonical and sitemap URLs come from one place in
+  `scripts/prerender.mjs`.
 - Nothing is pushed at any stage unless Daniel explicitly asks; pushes go
   directly to `main` when asked.
 

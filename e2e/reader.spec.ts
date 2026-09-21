@@ -87,7 +87,7 @@ test('the modeled reader keeps a real 16px prose floor on common laptops and sho
   // rather than the handoff, and sizes it the same way.
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  await page.getByRole('link', { name: /Play tape: Placeholder: Beta/ }).click()
+  await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
   await expect(page).toHaveURL('/project/placeholder-beta')
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect.poll(async () => (await measure(page)).scale).toBeCloseTo(1, 1)

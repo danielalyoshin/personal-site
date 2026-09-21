@@ -107,8 +107,9 @@ Direct project links and tape selections before graphics are ready use this
 reader immediately at every viewport size. It stays pinned only until the
 scene is ready: on a desktop viewport the modeled studio then takes over in
 one 560ms dissolve, with the tape already seated and the deck live, the
-article continuing at the same scroll depth and focus (The Handoff Rule in
-`DESIGN.md`); on narrow or short viewports the same reader continues under
+article continuing at the same scroll depth and focus, and the outgoing
+reader hidden from assistive technology only once the modeled one holds focus
+(The Handoff Rule in `DESIGN.md`); on narrow or short viewports the same reader continues under
 the viewport rule. If graphics fail, it stays for the visit with focus and
 scroll untouched. Ejecting returns to the studio; a subsequent selection uses
 the normal viewport rule.
@@ -129,13 +130,17 @@ skip mark, at the viewport's lower right during insertion, or inside the
 native loading screen. The playback camera keeps
 both CRT and deck in view. The native reader integrates these actions into
 its lower hardware panel, respecting the bottom safe area. There is no
-page-wide playback footer.
+page-wide playback footer. While the native reader owns playback it covers
+the studio, so the canvas keeps the size of its box instead of taking the
+viewport, and the tape returns to its slot there on eject.
 Missing WebGL and lost graphics
 contexts retain the entire archive and reader. Deep links, About, both 404
 states, Escape/eject, and focus return remain supported. Every screen state
 has a rule of its own: NO SIGNAL is a lit tube, under playback's bloom and
 cast in the HTML readers and playback's phosphor light on the modeled deck.
-The modeled light is the colour of what the tube shows: blue at rest,
+Both tubes paint from one palette in `tokens.css`, which the models read as
+they paint, with one idle blue (The One Palette Rule). The modeled light is
+the colour of what the tube shows: blue at rest,
 through a tape's flight in and its return, phosphor once the reader or NO
 SIGNAL is on the tube.
 The tube says whose archive is playing: the OSD's top bar reads PLAY, the
@@ -153,6 +158,20 @@ reading time from the article's meta line (The True Readout Rule). Both
 Eject keys are named "Eject tape" and declare Escape as a shortcut; the ESC
 legend is not part of the name.
 
+First frame: `npm run build` draws every route ahead of time (the home page,
+each tape as `project/<slug>.html` with its article in the native reader, and
+NO SIGNAL as `404.html`), each file with its own title, description, and
+share tags, plus `robots.txt` and, once `SITE_URL` is set, `sitemap.xml` and
+canonical URLs. The page is readable and correctly named before any script
+runs; the app takes it over where it stands, keeping the served nodes, with a
+silent console, and renders afresh only a page drawn for another address (the
+404 page answering a dead link). The stylesheet picks the guide's line by
+width, and graphics support is assumed until the browser says otherwise, so
+nothing on the drawn page is wrong for the device it arrives on. The studio's
+module is requested only after the page has painted and the main thread is
+idle (The First Frame Rule in `DESIGN.md`). The page declares itself dark
+(`color-scheme`, `theme-color`); the favicon is the nameplate's cassette mark.
+
 Share: every route names itself in the document title ("Placeholder: Alpha —
 Daniel Alyoshin", "About — Daniel Alyoshin", "No signal — Daniel Alyoshin";
 the home title is `index.html`'s). `index.html` carries Open Graph and
@@ -161,6 +180,9 @@ of the studio itself with no copy set on it (`npm run render:card`); the
 build makes its URL absolute from `SITE_URL`, which is a Stage 10 decision.
 
 Accessibility: all tapes are ordinary links; arrows and Home/End move focus.
+Every link is named by the words it shows: an archive entry is "Play tape: 01
+ALPHA Placeholder tape (2026)", the nameplate "Daniel Alyoshin Design engineer
+home" (The Spoken Name Rule in `DESIGN.md`).
 During reading, background regions are inert and aria-hidden; focus remains
 inside the reader and transport. Skip holds focus for the insertion. Every
 exit lands focus in sight (The Way Back Rule in `DESIGN.md`): on the played
@@ -174,7 +196,9 @@ About remains explicit in its archive link's accessible name. Sound is opt-in,
 synthesized, per-visit, and toggled only on the deck (modeled key during
 playback, native reader panel otherwise); browse has no sound control.
 Reader contact links have separate 44px touch targets. No ambient animation or
-sound; the canvas renders on demand. Printed textures redraw after explicit
+sound; the canvas renders on demand, and the tube's grain steps by transform
+on its own layer, so the reader is never repainted at rest. Project media
+declares its pixel size, so its place is held before it loads. Printed textures redraw after explicit
 Archivo and VT323 loading, with disposed textures excluded. The studio loads,
 plays, and ejects with a clean console: its module drops React Three Fiber's
 THREE.Clock deprecation line by exact text and passes every other three.js

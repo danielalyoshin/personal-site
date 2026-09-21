@@ -2,8 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      A dark-only site: the browser paints its own canvas, scrollbars and
+      media controls dark from the first frame, and tints its chrome with the
+      graphite ground (--ink-0).
+    -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0e0f12" />
+    <!-- The nameplate's cassette mark (npm run render:icons for the PNG). -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta
       name="description"
       content="Portfolio of Daniel Alyoshin, design engineer — projects presented as VHS tapes played through a CRT-styled deck."

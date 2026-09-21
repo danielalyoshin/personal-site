@@ -18,6 +18,7 @@ import { isComing } from '../../content/types'
 import { Solid } from './geometry'
 import { DetailBoxes, Turned, VentPanel } from './ModelDetails'
 import { STUDIO } from './materials'
+import { token } from './tokens'
 import {
   drawEjectMark,
   makeTexture,
@@ -318,6 +319,13 @@ function CameraRig({
   return null
 }
 
+/**
+ * The blue tube's light on the deck. Brighter than --crt-blue itself: a
+ * light is multiplied by the surface it lands on, so the screen's own value
+ * would reach the matte graphite as almost nothing.
+ */
+const BLUE_TUBE_LIGHT = '#4145ff'
+
 /** The modeled reader's reference plane: 560 CSS px across the 2.8-unit screen. */
 const READER_WIDTH = 560
 const READER_HEIGHT = 420
@@ -406,19 +414,19 @@ function Screen({
       makeTexture(1024, 768, (ctx) => {
         // The lit area has the reader's corners (14px on its 560px plane),
         // so the tube reads the same before and after a tape goes in.
-        ctx.fillStyle = '#07080c'
+        ctx.fillStyle = token('--screen-black')
         ctx.fillRect(0, 0, 1024, 768)
         ctx.beginPath()
         ctx.roundRect(0, 0, 1024, 768, 26)
         ctx.clip()
-        ctx.fillStyle = '#242bd9'
+        ctx.fillStyle = token('--crt-blue')
         ctx.fillRect(0, 0, 1024, 768)
-        ctx.fillStyle = '#bfc9ff'
+        ctx.fillStyle = token('--tube-ink-dim')
         ctx.font = '28px "VT323", monospace'
         ctx.fillText(transport, 64, 73)
         ctx.textAlign = 'right'
         ctx.fillText('CH 01', 960, 73)
-        ctx.strokeStyle = '#818cfc'
+        ctx.strokeStyle = token('--tube-line')
         ctx.lineWidth = 2
         ctx.strokeRect(448, 212, 128, 80)
         ctx.beginPath()
@@ -426,7 +434,7 @@ function Screen({
         ctx.moveTo(555, 252)
         ctx.arc(538, 252, 16, 0, Math.PI * 2)
         ctx.stroke()
-        ctx.fillStyle = '#f0f0ff'
+        ctx.fillStyle = token('--tube-ink')
         ctx.textAlign = 'center'
         if (transport === 'EJECT') {
           // The deck's word for the state, led by the key cap's mark: as
@@ -446,7 +454,7 @@ function Screen({
           fitTubeType(ctx, headline, 128, 896)
           ctx.fillText(headline, 512, 410)
         }
-        ctx.fillStyle = '#c4ccff'
+        ctx.fillStyle = token('--tube-ink-soft')
         if (transport !== 'STANDBY') {
           // A tape in the mechanism is past inviting: the sub-line names it,
           // as the native loading screen does, and the invitation stays off.
@@ -473,7 +481,7 @@ function Screen({
   return (
     <group name="crt-screen" position={[-1.35, PLAYER.screenY, 1.22]}>
       <Solid size={[2.84, 2.14, 0.055]} bevel={0.02}>
-        <meshBasicMaterial color="#07080c" toneMapped={false} />
+        <meshBasicMaterial color={token('--screen-black')} toneMapped={false} />
       </Solid>
       {(!open || inserting) && (
         <mesh position={[0, 0, 0.031]}>
@@ -502,7 +510,7 @@ function Screen({
       </group>
       <pointLight
         position={[0, -0.8, 0.6]}
-        color={open && !inserting ? '#b4c4ff' : '#4145ff'}
+        color={open && !inserting ? token('--phosphor') : BLUE_TUBE_LIGHT}
         intensity={3}
         distance={3.3}
         decay={2}
@@ -767,7 +775,11 @@ function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
       // Selection also moves the canvas to its full-viewport box, sized in
       // the same commit. Keep the tape at rest until that box has been drawn
       // once, in case the size arrives through the resize observer instead.
-      hold.current = { width: size.width, height: size.height, elapsed: 0 }
+      // Under the native reader the canvas keeps its box, so nothing to wait
+      // for.
+      hold.current = props.playback
+        ? { width: size.width, height: size.height, elapsed: 0 }
+        : null
     }
     previousTape.current = slug
     const step = Math.min(delta, 0.05)

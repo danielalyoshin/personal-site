@@ -48,9 +48,21 @@ WebGL unavailability or context loss falls back to the full HTML archive reader.
 | `src/components/CRT.tsx`                | HTML project reader and CRT effects                         |
 | `src/content/`                          | Typed project content and About tape                        |
 | `src/lib/sound.ts`                      | Opt-in synthesized mechanical cues                          |
+| `src/entry-server.tsx`                  | The routes and their names, for the build to draw           |
+| `scripts/prerender.mjs`                 | Draws every route to static HTML after `vite build`         |
 | `e2e/`                                  | Studio, transport, reader, loading, font, touch regressions |
 
-The scene is lazy-loaded and renders only when needed. Pixel ratio is capped at
+`npm run build` renders every route ahead of time: `index.html`, a
+`project/<slug>.html` per tape with its article in the page, and `404.html`
+(the NO SIGNAL page), each with its own title, description, and share tags,
+plus `robots.txt`. The app hydrates the page it was served. With `SITE_URL`
+set, the build also writes `sitemap.xml`, canonical URLs, and `og:url`. A
+host needs to serve `project/<slug>.html` at `/project/<slug>` and `404.html`
+for unknown addresses, which most static hosts do by default; it needs no
+single-page fallback to `index.html`.
+
+The scene is lazy-loaded once the page has painted and the main thread is
+idle, and renders only when needed. Pixel ratio is capped at
 1.75 in browse and 2 during modeled playback. The 3D dependency chunk is
 approximately 250 KB gzipped; the HTML shell loads separately. See the
 [React Three Fiber rendering guidance](https://r3f.docs.pmnd.rs/advanced/scaling-performance).
@@ -72,13 +84,25 @@ WebGL, and graphics context loss. Hardening cases cover delayed or failed scene
 loading, the deep-link handoff to the modeled screen with carried focus and
 scroll, modified clicks, contact targets, native
 touch gestures with the two-tap cassette preview and its 44px catch, and
-delayed-font texture redraws. The reader case measures the modeled prose at
+delayed-font texture redraws, link names built from visible text, focus
+staying out of hidden content through the handoff, and the canvas keeping
+its box under the native reader. The reader case measures the modeled prose at
 its real drawn size on laptop viewports and the article's continuation cues.
 The exits cases cover where focus lands after every way out (in sight for a
 keyboard, without moving the page for a pointer), Skip's focus, the printed
 NO SIGNAL exit, per-route document titles, the name on the tube from a deep
 link's first second, and the served share tags and card.
-It starts a local server when needed.
+
+The suite has two projects. `dev` runs the interaction specs against the dev
+server. `built` runs `e2e/built.spec.ts` against a fresh production build
+(`npm run build`, then `vite preview`): every route readable and named
+before any script runs, the app taking a drawn page over without replacing
+its nodes or writing to the console, the page correct at phone width with
+scripts off, the studio's module requested only after first paint, and the
+404 page answering a dead link. Playwright starts both servers, recognising
+each by a file only this project serves, so another project's server on the
+same port is refused, not tested by mistake. Move the ports with `E2E_PORT`
+(5173) and `E2E_BUILT_PORT` (4173).
 
 ## Share card
 
@@ -90,8 +114,12 @@ materials, lighting, or idle screen change:
 npm run render:card
 ```
 
-The script starts its own Vite server and drives installed Chrome, as the
-browser suite does. The image URL is written as `%SITE_URL%/social-card.png`;
+The favicon is `public/favicon.svg`, the nameplate's cassette mark; after
+editing it, `npm run render:icons` rasterizes `public/apple-touch-icon.png`
+from the same drawing.
+
+The card script starts its own Vite server and drives installed Chrome, as
+the browser suite does. The image URL is written as `%SITE_URL%/social-card.png`;
 a build fills it from the `SITE_URL` environment variable (or a `.env` file)
 and warns when it is unset, since several crawlers accept only absolute image
 URLs. Locally it resolves to a root-relative path.

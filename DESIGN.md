@@ -12,7 +12,7 @@ colors:
   silkscreen: '#b7bbc6'
   silkscreen-dim: '#868b99'
   vfd-cyan: '#61e8c6'
-  crt-blue: '#1523d6'
+  crt-blue: '#242bd9'
   screen-black: '#07080c'
   screen-text: '#dfe6ff'
   screen-dim: '#98a3c9'
@@ -21,7 +21,10 @@ colors:
   rec-red: '#ff3b30'
   screen-scroll: '#5c6683'
   phosphor: '#b4c4ff'
-  studio-blue: '#242bd9'
+  tube-ink: '#f0f0ff'
+  tube-ink-soft: '#c4ccff'
+  tube-ink-dim: '#bfc9ff'
+  tube-line: '#818cfc'
 typography:
   display:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
@@ -242,9 +245,9 @@ Existing token names are retained; CSS uses `--silk-hi`, `--silk`, `--silk-dim`,
 
 ### Secondary
 
-- **Studio Blue** (`studio-blue`): the modeled CRT's idle and loading texture; authored in `StudioScene.tsx`.
-- **CRT Blue** (`crt-blue`): the HTML fallback's idle screen and idle bloom. Preserve this separate value when documenting either renderer.
-- **Phosphor** (`phosphor`): the modeled screen's playback light and the matching CSS bloom hue.
+- **CRT Blue** (`crt-blue`): the idle tube in both renderers: the modeled CRT's idle, loading, and returning texture, and the HTML fallback's idle screen, bloom, and cast. One value; the fallback once carried a second, slightly different blue.
+- **Tube inks** (`tube-ink`, `tube-ink-soft`, `tube-ink-dim`, `tube-line`): the idle tube's headline, sub-lines, corners, and drawn cassette outline, on CRT blue.
+- **Phosphor** (`phosphor`): a lit tube's light: the CSS play and rest blooms and the play cast, and the modeled point light during playback.
 - **REC Red** (`rec-red`): the recorded indicator inside project playback.
 - **Cassette accents**: content-owned red, yellow, blue, orange, violet, and cyan in the current tape modules. These are label data, not additional global UI accents.
 
@@ -263,6 +266,14 @@ The CRT, deck, speaker, rack, and headphones use these same material roles;
 cassette molding, paper, driver cones, and soft pads retain their own finishes.
 Do not replace these values with page-background tokens. Sidecar tonal ramps
 are panel visualizations; synthesized steps are not additional application tokens.
+
+**The One Palette Rule.** The screen's colours have one source,
+`src/styles/tokens.css`. The models read it as they paint (`studio/tokens.ts`:
+the tube's ground and blue, its inks, the playback light, the status window's
+red slash), and every bloom and cast is its hue at a strength (`color-mix`),
+so a colour changed there changes in both renderers and in every glow. The
+one scene-only value is the blue tube's light, brighter than CRT blue because
+a light is multiplied by the matte surface it lands on.
 
 **The Artifact Color Rule.** Saturated color belongs to cassette labels and screen output. Cassette accents come from project data; small VFD-cyan focus and status marks support interaction without coloring the page chrome.
 
@@ -349,8 +360,9 @@ wherever there is no studio to pick from (no WebGL, lost graphics), it
 reads "Pick one from the archive below.": the fitted rack is about 110px
 across on a phone and the archive's entries are the targets in reach; the
 studio still answers taps (The Touch Rule, under Cassettes and insertion).
-Both lines finish the headline's sentence with the same verb and the same
-noun, the tape; "cassette" is the modeled object's name in this document,
+The stylesheet, not a script, picks the line by width, so a page drawn ahead
+of time is right on the device it arrives on. Both lines finish the
+headline's sentence with the same verb and the same noun, the tape; "cassette" is the modeled object's name in this document,
 never the visitor's. While a tape is previewed the guide shows its spine
 name over its caption and the action: "Placeholder tape · Select to play",
 or "Tap again to play" on a device without hover. Nothing shares the
@@ -400,7 +412,10 @@ with its own scroll area. Its frame is inset 12px vertically and 10px
 horizontally, respecting the bottom safe area. Sound and eject are built into
 a 72px minimum-height deck panel within that frame; skip appears in the loading screen. The CRT's explicit `fullHeight` prop/class applies the stretched
 layout and readable type independently of viewport CSS. The shell's 600px
-breakpoint is separate from this reading decision.
+breakpoint is separate from this reading decision. The native reader covers
+the studio completely, so while it owns playback the canvas keeps the size of
+its box and never takes the viewport; the page holds still beneath all the
+same, and on eject the tape returns to its slot in the box.
 
 Direct project links and selections made before graphics are ready immediately
 open the full-height native reader at every viewport size. That reader stays
@@ -490,7 +505,8 @@ playback camera; both were tried and rejected. A new
 object earns its detail from this list, at the scale of the cassette's, not
 from ornament of its own.
 
-HTML control corners use the small radii above: hairline focus and OSD links,
+Every radius on the page is a token (`--r-*` in `tokens.css`, named as
+above). HTML control corners use the small radii: hairline focus and OSD links,
 slightly rounded playback buttons, and subtly rounded archive entries. The
 embedded screen, native-reader frame, and fallback-monitor
 frame each retain their larger documented radius. Borders are generally 1px;
@@ -591,8 +607,7 @@ anything a visitor reads or hears; the modeled rack and holder are object
 names for this document only. A tape has one short name, its spine name
 (`vhs.spineLabel`: ALPHA, ABOUT), printed on the spine and repeated as
 written by the archive entry, the guide, the idle tube, and both loading
-screens; and one title, which heads the reader, names the document, and
-fills the entry's accessible name ("Play tape: About (2026)"). The About
+screens; and one title, which heads the reader and names the document. The About
 tape follows the same rule as every tape: it is "About" in the header, ABOUT
 on its spine, and "About" on the tube, where the owner's name is already
 printed once, in the ident. A tape's caption ("Placeholder tape", "Meet the
@@ -613,9 +628,15 @@ inset on every side and the accent strip inset to match. Names wrap as
 needed; 12px secondary copy distinguishes "Placeholder tape" from the About
 tape's "Meet the maker", and the guide repeats the same caption while that
 tape is previewed. The playable links are normal Tab stops, with
-arrows and Home/End for direct movement between them; each is named "Play
-tape:" with the tape's title and year. The archive's heading carries no count; nothing on the
+arrows and Home/End for direct movement between them. The archive's heading carries no count; nothing on the
 shell does.
+
+**The Spoken Name Rule.** A link is named by the words it shows, so a name
+read off the page is a name that can be said to it (WCAG 2.5.3). An archive
+entry's name is its visible text between what it does and its year, "Play
+tape: 01 ALPHA Placeholder tape (2026)", the first and last parts set aside
+for assistive technology; the nameplate is "Daniel Alyoshin Design engineer
+home". No link carries an `aria-label` that replaces its words.
 
 **The Blank Slot Rule.** The rack has six slots: five for projects and the
 About tape at the right. A project slot with nothing behind it yet keeps its
@@ -714,7 +735,8 @@ for the return; history back ejects the same way. Reduced motion and the
 fallback reader return the tape at once. Selection and eject commit inside
 the router's navigation transition, so the mechanism always starts from the
 cassette's exact pose. There is no ambient geometry animation. The scene
-loads lazily, renders on demand, caps pixel ratio at 1.75 in browse and 2 in
+loads lazily, and only once the page has painted and the main thread is
+idle, so the words and the archive are in use first; it renders on demand, caps pixel ratio at 1.75 in browse and 2 in
 modeled playback, and disposes generated
 textures and geometries. It loads, plays, and ejects with a clean console:
 the studio module drops one line of three.js output, the THREE.Clock
@@ -748,7 +770,10 @@ mirrors the OSD's fade above while more of the article lies below, and
 lifts (240ms) once its end is in view, so the REC line closes the tape
 uncovered; the reader's thin scrollbar thumb is screen-scroll, 3.5:1 on the
 tube. Both cues serve the modeled and the native reader alike. Project media spans the reading column, with a seam border and
-small control corners. The article is a named Tab stop within the playback
+small control corners. Every piece declares its pixel size in the content
+(`ProjectMedia.width` and `height`, required), so its place is held before
+it loads and nothing beneath it moves; the first loads at once and the rest
+as they are reached. The article is a named Tab stop within the playback
 focus loop, so keyboard users can return from transport controls and resume
 scrolling. Initial focus still announces the title. Missing-tape and unknown-route
 screens use distinct NO SIGNAL messages and matching transport labels, with
@@ -797,8 +822,10 @@ reading PLAY, and the keys live, until the modeled reader is mounted and placed
 on the tube plus one drawn frame; then the native frame dissolves over 560ms
 (`--t-dolly`, `--ease-out`) while the tube's tracking entrance plays through
 it. The modeled article inherits the native reader's scroll depth and keeps
-focus in the article if that is where it was, otherwise on the title. During
-the dissolve the outgoing frame is aria-hidden and inert, then unmounts. An
+focus in the article if that is where it was, otherwise on the title. The
+outgoing frame is hidden from assistive technology only once the modeled
+reader holds focus, never while focus is still inside it; it is inert for
+the dissolve, then unmounts. An
 invalid slug hands off the same way to the modeled NO SIGNAL screen. Reduced
 motion swaps at the same moment. The dissolve stops early if playback closes,
 the viewport drops below the reading breakpoints, or graphics are lost.
@@ -814,7 +841,9 @@ while one returns) at the top left, CH 01 at the top right, ALYOSHIN ARCHIVE at 
 the model mark AV–01 at the bottom right, as on the fallback's idle screen,
 which prints the state and the mark alone. These are texture
 coordinates, and scale with the physical screen rather than HTML font tokens.
-HTML screen effects comprise faint stepped grain (0.8s), scanlines, a vignette,
+HTML screen effects comprise faint stepped grain (0.8s; its tile is painted
+once on a layer one tile larger than the tube, and the layer steps by
+transform, so the reader beneath is never repainted), scanlines, a vignette,
 one tracking entrance (400ms), and the REC blink (1.2s). The fallback idle cursor
 blinks at 1.1s. Every effect stays clipped inside the tube. The global
 reduced-motion gate collapses CSS animation and transitions; sidecar snippets
@@ -830,15 +859,42 @@ stays white. Playback links preserve native modified-click behavior.
 Tags are bracketed uppercase text in screen-soft, wrapping with the existing
 small/medium gaps. They are informational labels, not filled chips or filters.
 
+### Pages drawn ahead of time
+
+**The First Frame Rule.** Every route is readable, and correctly named,
+before any script runs. `npm run build` renders the home page and each tape
+to its own static file (`index.html`, `project/<slug>.html`), and the NO
+SIGNAL page to `404.html`, which a static host serves for any address it has
+no file for. A tape's page carries its article in the native reader, as a
+deep link first shows it, so a shared link paints its words at once and a
+crawler reads them. The app then takes the page over where it stands: the
+served nodes are kept, and the console stays silent. A page drawn for a
+different address than the one asked for (the 404 page, answering a dead
+link) is rendered afresh, so a dead tape and a dead channel still say
+different things. What a server cannot know is left to the browser without
+disturbing the page: the stylesheet picks width-dependent copy, and
+graphics support is assumed until the browser says otherwise.
+
+The build also writes `robots.txt` and, once the site has an address
+(`SITE_URL`), `sitemap.xml`, canonical URLs, and `og:url`. The page declares
+itself dark (`color-scheme`, so native scrollbars and media controls follow)
+and tints browser chrome with the graphite ground (`theme-color`). The
+favicon is the nameplate's cassette mark, drawn heavier for 16px, on the
+graphite ground; `npm run render:icons` rasterizes the touch icon from it.
+
 ### Document titles and share card
 
-Every route names itself. The home title is `index.html`'s static title;
+Every route names itself. The home title is `site.title`, which
+`index.html` repeats for the page as served (the build checks they agree);
 a tape reads "Placeholder: Alpha — Daniel Alyoshin", the About tape "About —
 Daniel Alyoshin", and both missing-route states "No signal — Daniel
 Alyoshin", so tabs, history, bookmarks, and a screen reader's page
 announcement tell tapes apart. `index.html` carries Open Graph and Twitter
 (`summary_large_image`) tags with the home title and the site description.
-Crawlers run no script, so every route unfurls with this one card.
+Crawlers run no script, so each route's file is written with its own title
+and, for a tape, its tagline as the description, in the search, Open Graph,
+and Twitter tags alike; the card image is the site's on every route until
+tapes have cards of their own.
 
 The card's image is the studio itself: `public/social-card.png`, 1200 × 630,
 rendered from the live scene at the browse camera on the graphite ground by
@@ -861,6 +917,8 @@ build has none. The address itself is a Stage 10 decision.
 - Do land focus in sight after every exit, and move the page for a ring only while the chrome is dissolved (The Way Back Rule).
 - Do call a thing by its one name everywhere a visitor meets it, and make a link's words the heading it lands on (The One Name Rule).
 - Do keep the owner's name on the tube in every reading state; identity during playback belongs to the OSD, not to shell chrome pinned over the studio (The Ident Rule).
+- Do keep every route readable and correctly named before any script runs, and boot the studio after the page has painted (The First Frame Rule).
+- Do name a link by the words it shows (The Spoken Name Rule), and take screen colours from the one palette (The One Palette Rule).
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do keep placeholder projects explicitly labeled until Daniel supplies real content.
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.

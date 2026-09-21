@@ -14,13 +14,13 @@ import type { RootState } from '@react-three/fiber'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, playableTapes, shelfTapes } from '../content/projects'
 import { aboutTape } from '../content/about'
-import { site } from '../content/site'
+import { pageTitle } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
 import { useReducedMotion } from '../lib/useReducedMotion'
 import { useMediaQuery } from '../lib/useMediaQuery'
-import { supportsWebGL } from '../lib/supportsWebGL'
+import { useSupportsWebGL } from '../lib/supportsWebGL'
 import CRT from './CRT'
 import DeckControls from './DeckControls'
 import { ExternalIcon, PlayIcon, SkipIcon } from './Icons'
@@ -90,9 +90,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const expandedReader = useMediaQuery(
     '(max-width: 767px), (max-height: 699px)',
   )
-  // At phone widths the fitted rack is about 110px across, so the guide
-  // sends the visitor to the archive's entries; the studio still answers taps.
-  const phone = useMediaQuery('(max-width: 600px)')
   // Without hover, a first tap previews a modeled tape and a second plays it.
   const touchOnly = useMediaQuery('(hover: none)')
   const soundOn = useSoundEnabled()
@@ -102,7 +99,15 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const [preview, setPreview] = useState<Project | null>(null)
   const [skips, setSkips] = useState(0)
   const [ready, setReady] = useState(false)
-  const [flat, setFlat] = useState(() => !supportsWebGL())
+  // No studio: the browser has no WebGL, or the renderer failed or lost its
+  // context during the visit.
+  const webgl = useSupportsWebGL()
+  const [lost, setLost] = useState(false)
+  const flat = !webgl || lost
+  // The studio's module is the page's heaviest download and its boot the
+  // longest task, so it waits for the page to paint and the main thread to
+  // fall idle: the words and the archive are in use first.
+  const [boot, setBoot] = useState(false)
   // A direct link is readable before graphics load: the native reader opens
   // at once and stays pinned until the scene is ready.
   const [nativePlayback, setNativePlayback] = useState(open)
@@ -144,22 +149,21 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     // scene finishes immediately for the former, and there is no scene for
     // the latter. Reopening mid-eject seats the tape again.
     setEjecting(!open && ready && !flat ? deckTape : null)
-    setReturning(!open && ready && !flat)
+    // Only a canvas that left its box has a way back to ease along: under
+    // the native reader it never left.
+    setReturning(!open && ready && !flat && !useNativeReader)
     // An eject mid-insertion reverses from where the tape is; clearing the
     // insertion any earlier would seat it first.
     if (!open) setInsertingSlug(null)
   }
   // Without a scene to ease it back, the canvas rejoins the page at once.
   if (returning && (open || flat)) setReturning(false)
-  const detached = open || returning
-  // index.html's static title is the home title; every other route names
-  // what is in the deck, so tabs, history, and bookmarks tell tapes apart.
-  const [homeTitle] = useState(() => document.title)
-  const pageTitle = invalid
-    ? `No signal — ${site.owner}`
-    : tape
-      ? `${tape.title} — ${site.owner}`
-      : homeTitle
+  // The canvas takes the viewport only for modeled playback. While the native
+  // reader owns playback (phones, short windows, a pinned deep link) it
+  // covers the studio completely, so the canvas stays the size of its box
+  // rather than holding a viewport-sized drawing buffer nobody can see.
+  const detached = (open && !useNativeReader) || returning
+  const title = pageTitle(invalid ? 'nosignal' : tape)
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
   const identityEl = useRef<HTMLAnchorElement>(null)
   const lastTape = useRef<string | null>(null)
@@ -236,7 +240,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     studio.current = state
   }, [])
   const onUnavailable = useCallback(() => {
-    setFlat(true)
+    setLost(true)
     setInsertingSlug(null)
     setEjecting(null)
     setReturning(false)
@@ -315,8 +319,20 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     return () => window.clearTimeout(timer)
   }, [handoff])
   useEffect(() => {
-    document.title = pageTitle
-  }, [pageTitle])
+    document.title = title
+  }, [title])
+  useEffect(() => {
+    if (flat) return
+    if ('requestIdleCallback' in window) {
+      const idle = window.requestIdleCallback(() => setBoot(true), {
+        timeout: 2000,
+      })
+      return () => window.cancelIdleCallback(idle)
+    }
+    // Safari has no idle callback: a beat after the first frames will do.
+    const timer = setTimeout(() => setBoot(true), 200)
+    return () => clearTimeout(timer)
+  }, [flat])
   // The way back lands focus where the visitor left the page: on the link of
   // the tape that played, or, after NO SIGNAL, where no tape did, on the
   // nameplate that opens the page. It runs in the closing commit, before
@@ -356,15 +372,18 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     // A dead link played no tape, so its exit has no link to return to.
     else if (invalid) lastTape.current = null
   }, [tape, invalid])
+  // The page holds still under any reader, and until the studio is back in
+  // its box.
+  const locked = open || returning
   useEffect(() => {
-    if (detached) {
+    if (locked) {
       const previous = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       return () => {
         document.body.style.overflow = previous
       }
     }
-  }, [detached])
+  }, [locked])
   useEffect(() => {
     if (!open) return
     const onKey = (event: KeyboardEvent) => {
@@ -467,6 +486,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       Skip animation
     </button>
   )
+  // The studio's place while its module waits, downloads, and boots.
+  const settingTheScene = (
+    <div className={styles.loading}>
+      <span className={styles.loadingMark}>AV–01</span>
+      <span>Setting the scene…</span>
+    </div>
+  )
   const fallback = (
     <div className={styles.fallback}>
       <div className={styles.fallbackMonitor}>{readerFor(false)}</div>
@@ -494,12 +520,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         inert={open || undefined}
         aria-hidden={open || undefined}
       >
-        <Link
-          to="/"
-          className={styles.identity}
-          aria-label="Daniel Alyoshin home"
-          ref={identityEl}
-        >
+        <Link to="/" className={styles.identity} ref={identityEl}>
           <svg viewBox="0 0 32 24" width="32" height="24" aria-hidden="true">
             <rect
               x="1"
@@ -529,9 +550,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             />
             <path d="M10 8h12M10 16h12" stroke="currentColor" />
           </svg>
+          {/* The link is named by the words it shows, then where it goes:
+              a name a visitor can read off the page and say. */}
           <span>
             <h1>Daniel Alyoshin</h1>
             <span className={styles.role}>Design engineer</span>
+            <span className="srOnly">home</span>
           </span>
         </Link>
         <nav className={styles.navigation} aria-label="Site">
@@ -593,12 +617,25 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             <div className={styles.objectCaption}>
               <span>
                 {preview ? preview.vhs.spineLabel : 'Choose a tape to play'}
+                {/* At phone widths the fitted rack is about 110px across, so
+                    the guide sends the visitor to the archive's entries (the
+                    studio still answers taps). The stylesheet picks the line,
+                    so a page drawn ahead of time is right at any width. */}
                 <small>
-                  {preview
-                    ? `${tapeCaption(preview)} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
-                    : phone || flat
-                      ? 'Pick one from the archive below.'
-                      : 'Pick one in the studio.'}
+                  {preview ? (
+                    `${tapeCaption(preview)} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
+                  ) : flat ? (
+                    'Pick one from the archive below.'
+                  ) : (
+                    <>
+                      <span className={styles.guideStudio}>
+                        Pick one in the studio.
+                      </span>
+                      <span className={styles.guideArchive}>
+                        Pick one from the archive below.
+                      </span>
+                    </>
+                  )}
                 </small>
               </span>
             </div>
@@ -626,40 +663,37 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                   fallback={open && useNativeReader ? null : fallback}
                   onUnavailable={onUnavailable}
                 >
-                  <Suspense
-                    fallback={
-                      <div className={styles.loading}>
-                        <span className={styles.loadingMark}>AV–01</span>
-                        <span>Setting the scene…</span>
-                      </div>
-                    }
-                  >
-                    <StudioScene
-                      tape={tape}
-                      preview={preview}
-                      open={open}
-                      invalid={invalid}
-                      reduced={reduced}
-                      skips={skips}
-                      inserting={loading}
-                      ejecting={ejecting}
-                      returning={returning}
-                      playback={open && !useNativeReader}
-                      box={sceneBox}
-                      deckPortal={deckPortal}
-                      soundOn={soundOn}
-                      onEject={eject}
-                      onSelect={select}
-                      onPreview={previewTape}
-                      onInserted={onInserted}
-                      onEjected={onEjected}
-                      onReturned={onReturned}
-                      onReady={onReady}
-                      onCreated={onCreated}
-                      onUnavailable={onUnavailable}
-                    >
-                      {useNativeReader ? null : readerFor(false)}
-                    </StudioScene>
+                  <Suspense fallback={settingTheScene}>
+                    {boot ? (
+                      <StudioScene
+                        tape={tape}
+                        preview={preview}
+                        open={open}
+                        invalid={invalid}
+                        reduced={reduced}
+                        skips={skips}
+                        inserting={loading}
+                        ejecting={ejecting}
+                        returning={returning}
+                        playback={open && !useNativeReader}
+                        box={sceneBox}
+                        deckPortal={deckPortal}
+                        soundOn={soundOn}
+                        onEject={eject}
+                        onSelect={select}
+                        onPreview={previewTape}
+                        onInserted={onInserted}
+                        onEjected={onEjected}
+                        onReturned={onReturned}
+                        onReady={onReady}
+                        onCreated={onCreated}
+                        onUnavailable={onUnavailable}
+                      >
+                        {useNativeReader ? null : readerFor(false)}
+                      </StudioScene>
+                    ) : (
+                      settingTheScene
+                    )}
                   </Suspense>
                 </SceneBoundary>
               )}
@@ -704,7 +738,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     className={
                       preview?.slug === item.slug ? styles.previewed : ''
                     }
-                    aria-label={`Play tape: ${item.title} (${item.year})`}
                     ref={(el) => {
                       if (el) tapeEls.current.set(item.slug, el)
                       else tapeEls.current.delete(item.slug)
@@ -728,6 +761,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     onPointerLeave={() => previewTape(null)}
                     onKeyDown={(event) => moveTape(event, item)}
                   >
+                    {/* Named by what the entry shows, between what it does
+                        and its year: "Play tape: 01 ALPHA Placeholder tape
+                        (2026)". */}
+                    <span className="srOnly">Play tape: </span>
                     <span className={styles.tapeNumber}>
                       {String(index + 1).padStart(2, '0')}
                     </span>
@@ -735,6 +772,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                       {item.vhs.spineLabel}
                       <small>{tapeCaption(item)}</small>
                     </span>
+                    <span className="srOnly"> ({item.year})</span>
                     <PlayIcon className={styles.playArrow} />
                   </Link>
                 )}
@@ -780,7 +818,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           data-testid="native-reader"
           data-handoff={handoff ?? undefined}
           inert={handoff === 'fading' || undefined}
-          aria-hidden={handoff ? true : undefined}
+          // Hidden only once the modeled reader has taken focus ('settled'):
+          // while it is still mounting, focus lives here, and focus must
+          // never sit inside hidden content.
+          aria-hidden={
+            handoff === 'settled' || handoff === 'fading' || undefined
+          }
           onTransitionEnd={(event) => {
             if (
               event.target === event.currentTarget &&

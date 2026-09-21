@@ -9,6 +9,12 @@ export interface ProjectLink {
 export interface ProjectMedia {
   type: 'image' | 'video'
   src: string
+  /**
+   * The file's own pixel size. Required, so the reader holds the media's
+   * place before it loads and nothing beneath it moves when it arrives.
+   */
+  width: number
+  height: number
   alt: string
   caption?: string
 }

@@ -37,14 +37,11 @@ test('every playable cassette clears the studio and enters the open player befor
   const tapes = await page
     .getByRole('link', { name: /^Play tape:/ })
     .evaluateAll((links) =>
-      links.map((link) => ({
-        href: link.getAttribute('href')!,
-        label: link.getAttribute('aria-label')!,
-      })),
+      links.map((link) => ({ href: link.getAttribute('href')! })),
     )
 
-  for (const { href, label } of tapes) {
-    const link = page.getByRole('link', { name: label, exact: true })
+  for (const { href } of tapes) {
+    const link = page.locator(`#archive a[href="${href}"]`)
     await link.focus()
     await advanceScene(page, 40)
     await link.click()
@@ -185,15 +182,15 @@ test('every playable cassette clears the studio and enters the open player befor
         flapClosed: flap.rotation.x === 0,
       }
     }, href.split('/').at(-1)!)
-    expect(result.collisionFrames, label).toEqual([])
-    expect(result.crossingFrames, label).toBeGreaterThan(4)
-    expect(result.misalignedFrames, label).toBe(0)
-    expect(result.hiddenFrames, label).toBe(0)
-    expect(result.closedFlapFrames, label).toBe(0)
-    expect(result.prematurePlayback, label).toBe(false)
-    expect(result.seatedInside, label).toBe(true)
-    expect(result.occludedByPlayer, label).toBe(true)
-    expect(result.flapClosed, label).toBe(true)
+    expect(result.collisionFrames, href).toEqual([])
+    expect(result.crossingFrames, href).toBeGreaterThan(4)
+    expect(result.misalignedFrames, href).toBe(0)
+    expect(result.hiddenFrames, href).toBe(0)
+    expect(result.closedFlapFrames, href).toBe(0)
+    expect(result.prematurePlayback, href).toBe(false)
+    expect(result.seatedInside, href).toBe(true)
+    expect(result.occludedByPlayer, href).toBe(true)
+    expect(result.flapClosed, href).toBe(true)
     await expect(
       page.getByRole('button', { name: 'Skip animation' }),
     ).toHaveCount(0)
@@ -295,7 +292,7 @@ test('the tube names the tape going in and never invites another while it loads'
       expect.arrayContaining(['INSERT TAPE', 'CHOOSE A TAPE', 'TO PLAY']),
     )
   const alpha = page.getByRole('link', {
-    name: /Play tape: Placeholder: Alpha/,
+    name: /Play tape: 01 ALPHA/,
   })
   await alpha.focus()
   await expect
@@ -446,9 +443,7 @@ test('the modeled tube casts the colour it shows: blue at rest and through the f
       })
       return { colour, loading: prints.includes('LOADING TAPE') }
     }, loop)
-  await page
-    .getByRole('link', { name: /Play tape: Placeholder: Alpha/ })
-    .click()
+  await page.getByRole('link', { name: /Play tape: 01 ALPHA/ }).click()
   await expect.poll(async () => (await flight('never')).loading).toBe(true)
   expect(await flight('never')).toEqual({ colour: '4145ff', loading: true })
   // The reader arrives and the light turns with it.
@@ -467,7 +462,7 @@ test('physical playback keys follow the player, remain clickable after resize, a
     'true',
   )
   const alpha = page.getByRole('link', {
-    name: 'Play tape: Placeholder: Alpha (2026)',
+    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
     exact: true,
   })
   await alpha.click()
@@ -879,7 +874,7 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
   )
   await advanceScene(page, 80)
   const gamma = page.getByRole('link', {
-    name: /^Play tape: Placeholder: Gamma/,
+    name: /^Play tape: 03 GAMMA/,
   })
   await gamma.click()
   await page.getByRole('button', { name: 'Skip animation' }).click()
