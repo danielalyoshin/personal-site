@@ -1108,11 +1108,21 @@ then one bounded verification round.
   the point light's colour at rest, on a tape, and on both 404 routes).
   49 e2e green, build, lint and format clean; mid-return and NO SIGNAL frames
   inspected at 1440 × 900.
-- Noticed, not changed: `CRT.tsx` still carries an `ejecting` screen mode
-  and `.ejecting` rule that `Stage.tsx` never passes (it only sends idle,
-  playing, or nosignal), so the HTML tube's EJECT readout is dead code; and
-  during insertion the modeled light is already phosphor while the tube is
-  still blue.
+- ✅ The two things noticed along the way, fixed the same day at Daniel's
+  request. `CRT.tsx` carried a fourth screen mode, `ejecting` (an EJECT
+  readout and an `.ejecting` rule), left from the July CSS deck, that
+  `Stage.tsx` never passed: a tape returns only in the modeled studio, and
+  the fallback reader returns it at once. The mode, its branch and its
+  selector are gone; the HTML tube has three states. And the modeled light
+  turned to phosphor at the click, 2.4 seconds before the tube stopped being
+  blue: it now follows the tube (`open && !inserting`, the condition that
+  mounts the reader), so it is blue at rest, through the flight and through
+  the return, and turns in the commit the reader arrives. The One Light Rule
+  says so ("changes only when the screen does"). The light test now reads the
+  light from a held frame in which the tube provably shows LOADING TAPE
+  (seen failing first), and the tube-print recorder is one helper for its
+  three tests. 49 e2e green, build, lint and format clean; mid-flight and
+  settled frames inspected at 1440 × 900.
 - The critique's agreed order (adapt → polish → harden → clarify → polish) is
   complete. Next is Stage 8 content, then the Stage 9 remainder.
 

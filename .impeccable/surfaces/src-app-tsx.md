@@ -135,6 +135,9 @@ contexts retain the entire archive and reader. Deep links, About, both 404
 states, Escape/eject, and focus return remain supported. Every screen state
 has a rule of its own: NO SIGNAL is a lit tube, under playback's bloom and
 cast in the HTML readers and playback's phosphor light on the modeled deck.
+The modeled light is the colour of what the tube shows: blue at rest,
+through a tape's flight in and its return, phosphor once the reader or NO
+SIGNAL is on the tube.
 The tube says whose archive is playing: the OSD's top bar reads PLAY, the
 station ident (DANIEL ALYOSHIN, centred, screen-soft), and the tape's
 reading time (1 MIN READ, derived from its copy; the word gives way below

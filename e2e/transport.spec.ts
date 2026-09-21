@@ -240,12 +240,9 @@ test('skip, eject during loading, and reduced motion leave the player usable', a
   await expect(page.locator('article h2')).toBeFocused()
 })
 
-test('the tube names the tape going in and never invites another while it loads', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
-  // Canvas maps cannot be read back as text: record what each is painted
-  // with, starting over whenever a map is cleared for a repaint.
+// Canvas maps cannot be read back as text: record what each is painted with,
+// starting over whenever a map is cleared for a repaint.
+async function recordTubePrints(page: Page) {
   await page.addInitScript(() => {
     window.tubePrints = new WeakMap()
     const { clearRect, fillText } = CanvasRenderingContext2D.prototype
@@ -258,6 +255,13 @@ test('the tube names the tape going in and never invites another while it loads'
       return fillText.apply(this, args)
     }
   })
+}
+
+test('the tube names the tape going in and never invites another while it loads', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await recordTubePrints(page)
   await page.goto('/')
   await expect(page.getByTestId('studio-scene')).toHaveAttribute(
     'data-ready',
@@ -316,18 +320,7 @@ test('the tube names the tape coming out, as the deck reads EJECT, and invites a
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await page.addInitScript(() => {
-    window.tubePrints = new WeakMap()
-    const { clearRect, fillText } = CanvasRenderingContext2D.prototype
-    CanvasRenderingContext2D.prototype.clearRect = function (...args) {
-      window.tubePrints.set(this.canvas, [])
-      return clearRect.apply(this, args)
-    }
-    CanvasRenderingContext2D.prototype.fillText = function (...args) {
-      window.tubePrints.get(this.canvas)?.push(args[0])
-      return fillText.apply(this, args)
-    }
-  })
+  await recordTubePrints(page)
   await page.goto('/project/placeholder-alpha')
   await expect(page.getByTestId('studio-scene')).toHaveAttribute(
     'data-ready',
@@ -387,7 +380,7 @@ test('the tube names the tape coming out, as the deck reads EJECT, and invites a
   expect(await prints('demand')).not.toContain('EJECT')
 })
 
-test('the modeled tube casts playback light on NO SIGNAL as on a tape, and blue at rest', async ({
+test('the modeled tube casts the colour it shows: blue at rest and through the flight, playback light under the reader and NO SIGNAL', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -420,6 +413,48 @@ test('the modeled tube casts playback light on NO SIGNAL as on a tape, and blue 
     )
     await expect.poll(light, { message: path }).toBe(expected)
   }
+
+  // A tape on its way in: the tube is still blue, so its light is. Read both
+  // from one held frame, once the tube is known to show the loading screen.
+  await recordTubePrints(page)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  const flight = (loop: 'never' | 'demand') =>
+    page.evaluate(async (loop) => {
+      const module = '/node_modules/.vite/deps/@react-three_fiber.js'
+      const { _roots } = (await import(
+        module
+      )) as typeof import('@react-three/fiber')
+      const state = _roots
+        .get(document.querySelector('canvas')!)!
+        .store.getState()
+      state.setFrameloop(loop)
+      if (loop === 'demand') state.invalidate()
+      let colour = ''
+      let prints: string[] = []
+      state.scene.getObjectByName('crt-screen')!.traverse((node) => {
+        const point = node as import('three').PointLight
+        if (point.isPointLight) colour = point.color.getHexString()
+        const { material } = node as import('three').Mesh
+        const map = (material as import('three').MeshBasicMaterial)?.map
+        if (map?.image instanceof HTMLCanvasElement)
+          prints = window.tubePrints.get(map.image) ?? []
+      })
+      return { colour, loading: prints.includes('LOADING TAPE') }
+    }, loop)
+  await page
+    .getByRole('link', { name: /Play tape: Placeholder: Alpha/ })
+    .click()
+  await expect.poll(async () => (await flight('never')).loading).toBe(true)
+  expect(await flight('never')).toEqual({ colour: '4145ff', loading: true })
+  // The reader arrives and the light turns with it.
+  await flight('demand')
+  await expect(page.getByTestId('project-reader')).toBeVisible()
+  await expect.poll(light).toBe('b4c4ff')
 })
 
 test('physical playback keys follow the player, remain clickable after resize, and return focus on eject', async ({

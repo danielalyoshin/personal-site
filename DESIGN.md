@@ -427,7 +427,7 @@ fill reveal the objects without making them emit.
 ### Shadow Vocabulary
 
 - **Monitor support** (`--shadow-unit`): the active HTML fallback frame uses the existing ambient drop shadow.
-- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): the HTML tube's states. Every state has a rule of its own: idle and ejecting take the blue idle bloom; playback and NO SIGNAL, both a lit tube of OSD on the black ground, take the play bloom, as both take the play cast on the deck; the rest value is the screen's base beneath them. The modeled CRT supplies its own local point light to the same rule: phosphor whenever playback is open, NO SIGNAL included, and blue over the blue idle tube.
+- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): the HTML tube's states. The HTML tube has three states, idle, playback, and NO SIGNAL, each with a rule of its own: idle takes the blue idle bloom; playback and NO SIGNAL, both a lit tube of OSD on the black ground, take the play bloom, as both take the play cast on the deck; the rest value is the screen's base beneath them. It has no returning state: a tape returns only in the modeled studio, whose tube reads it out (The One Readout Rule). The modeled CRT supplies its own local point light to the same rule, the colour of what the tube shows: blue while the tube is blue, at rest, through a tape's flight in, and through its return, and phosphor from the moment the reader or NO SIGNAL is on it, the light turning in the same commit as the tube.
 - **Native reader surround**: an opaque 20px spread in page-ground color masks the expanded reader's surroundings; it is not a glow.
 
 The token file retains older recess, object, edge, and CSS-cast definitions.
@@ -436,7 +436,7 @@ every screen, embedded or fallback, shares the 14px screen radius. These
 legacy definitions are not the current 3D material system. The sidecar
 lists the shadows used by the active surfaces.
 
-**The One Light Rule.** The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck. Equipment labels, controls, and page chrome never glow.
+**The One Light Rule.** The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck, and changes only when the screen does. Equipment labels, controls, and page chrome never glow.
 
 ## Shapes
 

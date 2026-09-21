@@ -502,7 +502,7 @@ function Screen({
       </group>
       <pointLight
         position={[0, -0.8, 0.6]}
-        color={open ? '#b4c4ff' : '#4145ff'}
+        color={open && !inserting ? '#b4c4ff' : '#4145ff'}
         intensity={3}
         distance={3.3}
         decay={2}

@@ -5,7 +5,7 @@ import { site } from '../content/site'
 import styles from './CRT.module.css'
 import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
 
-export type ScreenMode = 'idle' | 'playing' | 'nosignal' | 'ejecting'
+export type ScreenMode = 'idle' | 'playing' | 'nosignal'
 
 /**
  * Marks the article while more of it lies below the fold, so the fade at
@@ -199,17 +199,8 @@ export default function CRT({
                 STANDBY
               </span>
               <p className={styles.bigOsd} aria-hidden="true">
-                {mode === 'ejecting' ? (
-                  <span className={styles.osdPlay}>
-                    EJECT
-                    <EjectIcon />
-                  </span>
-                ) : (
-                  <>
-                    INSERT TAPE
-                    <span className={styles.cursor} />
-                  </>
-                )}
+                INSERT TAPE
+                <span className={styles.cursor} />
               </p>
               <p className="srOnly">
                 No tape playing. Choose a tape from the archive.

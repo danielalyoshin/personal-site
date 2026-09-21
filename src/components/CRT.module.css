@@ -32,8 +32,7 @@
   box-shadow: var(--bloom-rest);
 }
 
-.idle,
-.ejecting {
+.idle {
   background: var(--crt-blue);
   box-shadow: var(--bloom-idle);
 }
