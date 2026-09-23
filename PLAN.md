@@ -1227,18 +1227,15 @@ rest, by finding:
   kept below it as history. Score: 16/20 (was 13/20), with 1 major, 5 minor,
   and 4 polish issues. axe reports zero violations across nine states;
   Lighthouse (mobile profile, real GPU) scores 67/62 performance and 100
-  accessibility. Open work in fix order: route titles and metadata, build-time
-  pre-rendering with a deferred scene boot, compositor-only CRT grain, label-in-
-  name on seven links, typed media dimensions, robots/sitemap/OG/favicon/social
-  card, the handoff's aria-hidden timing, palette and radius consolidation,
-  44px header and footer links, and the canvas under the phone reader.
-  Content-dependent rechecks after Stage 8: alt text and image optimization on
-  real media, per-project share metadata, one more Lighthouse run.
-  Stage 9 remains open.
-- Lighthouse pass; image optimization; code-splitting if warranted.
-- A11y audit (contrast against the design tokens, alt text, focus order,
-  screen-reader labels for the tape metaphor).
-- Meta/OG tags, social card image, favicon (VHS glyph).
+  accessibility. All ten findings were closed by 2026-09-21 (the harden and
+  closing-polish passes, then "Second audit remediation" above; the addendum
+  in `AUDIT.md` has the re-measured numbers: Lighthouse mobile performance
+  89, SEO 100, axe clean over seven states of the built site).
+- Left of Stage 9, all of it waiting on Stage 8 content: alt text and image
+  optimization on real media, per-tape share cards (every route unfurls with
+  the site's card until then), one more Lighthouse and axe run over the real
+  pages, and a screen-reader session and a physical-device pass, which no
+  audit has done.
 
 ### Stage 10 — Deployment (LAST, per project rules)
 
