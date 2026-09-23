@@ -9,7 +9,7 @@ export const site = {
    * The home route's document title. `index.html` carries the same words for
    * the page as served; the build checks that the two agree.
    */
-  title: 'Daniel Alyoshin — Design Engineer',
+  title: 'Daniel Alyoshin · Forward Deployed Engineer',
 }
 
 /**
@@ -18,6 +18,6 @@ export const site = {
  * the site. One function for the running page and the pre-rendered files.
  */
 export function pageTitle(playing: { title: string } | 'nosignal' | null) {
-  if (playing === 'nosignal') return `No signal — ${site.owner}`
-  return playing ? `${playing.title} — ${site.owner}` : site.title
+  if (playing === 'nosignal') return `No signal · ${site.owner}`
+  return playing ? `${playing.title} · ${site.owner}` : site.title
 }

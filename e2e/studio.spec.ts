@@ -204,7 +204,7 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await expect(guide).toBeInViewport({ ratio: 1 })
   // The stylesheet picks the line, so it is right from the first paint.
   const inStudio = guide.getByText('Pick one in the studio.')
-  const fromArchive = guide.getByText('Pick one from the archive below.')
+  const fromArchive = guide.getByText('Pick one from the projects below.')
   await expect(inStudio).toBeVisible()
   await expect(fromArchive).toBeHidden()
   await expect(page.locator('canvas')).toBeInViewport({ ratio: 1 })
@@ -437,7 +437,7 @@ test('slots without a project hold blank tapes that are coming soon', async ({
 }) => {
   await page.goto('/')
   await ready(page)
-  const entries = page.locator('#archive li')
+  const entries = page.locator('#projects li')
   await expect(entries).toHaveCount(6)
   await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
   // Slots 04 and 05 are read, not played: no link, and outside the tab order.

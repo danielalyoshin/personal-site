@@ -469,7 +469,7 @@ function Screen({
         }
         ctx.textAlign = 'left'
         ctx.font = '24px "VT323", monospace'
-        ctx.fillText('ALYOSHIN ARCHIVE', 64, 698)
+        ctx.fillText('PROJECTS', 64, 698)
         ctx.textAlign = 'right'
         ctx.fillText('AV–01', 960, 698)
         ctx.fillStyle = 'rgba(0,0,0,.12)'
@@ -934,7 +934,7 @@ export default function StudioScene(props: StudioProps) {
       // The renderer's own wrapper opts back into pointer events; on the way
       // back to the page the links underneath must answer the pointer first.
       style={{ pointerEvents: props.returning ? 'none' : 'auto' }}
-      fallback={<p>The tape archive is available below.</p>}
+      fallback={<p>The projects are listed below.</p>}
       onCreated={props.onCreated}
     >
       <SceneContents {...props} phase={phase} />

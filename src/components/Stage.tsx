@@ -14,7 +14,7 @@ import type { RootState } from '@react-three/fiber'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, playableTapes, shelfTapes } from '../content/projects'
 import { aboutTape } from '../content/about'
-import { pageTitle } from '../content/site'
+import { pageTitle, site } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
@@ -56,7 +56,7 @@ function landFocus(el: HTMLElement) {
  * Project tapes say what they are until real projects replace them.
  */
 function tapeCaption(tape: Project) {
-  return tape.slug === aboutTape.slug ? 'Meet the maker' : 'Placeholder tape'
+  return tape.slug === aboutTape.slug ? site.owner : 'Placeholder tape'
 }
 
 /** Keys that only modify another key are never the "any key" that skips. */
@@ -508,12 +508,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       aria-label={open ? 'Tape playback' : undefined}
     >
       <a
-        href="#archive"
+        href="#projects"
         className={styles.skipLink}
         inert={open || undefined}
         aria-hidden={open || undefined}
       >
-        Skip to the archive
+        Skip to projects
       </a>
       <header
         className={styles.header}
@@ -554,12 +554,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               a name a visitor can read off the page and say. */}
           <span>
             <h1>Daniel Alyoshin</h1>
-            <span className={styles.role}>Design engineer</span>
+            <span className={styles.role}>Forward deployed engineer</span>
             <span className="srOnly">home</span>
           </span>
         </Link>
         <nav className={styles.navigation} aria-label="Site">
-          <a href="#archive">The archive</a>
+          <a href="#projects">Projects</a>
           <Link
             to="/project/about"
             onClick={(event) => {
@@ -588,20 +588,15 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           aria-labelledby="intro-title"
         >
           <div>
-            <p className={styles.eyebrow}>One person, both sides of the seam</p>
-            <h2 id="intro-title">
-              Digital work.
-              <br />
-              <span>Physical feeling.</span>
-            </h2>
-          </div>
-          <div className={styles.introAside}>
-            <p>
-              I design interfaces and build them.
-              <br className={styles.desktopBreak} /> This is my little corner of
-              the internet,
-              <br className={styles.desktopBreak} /> one tape at a time.
+            <p className={styles.eyebrow}>
+              Bridging the gap <br className={styles.kickerBreak} />
+              between client and codebase
             </p>
+            <h2 id="intro-title">
+              Real experience.
+              <br />
+              <span>Real solutions.</span>
+            </h2>
           </div>
         </section>
 
@@ -625,14 +620,14 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                   {preview ? (
                     `${tapeCaption(preview)} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
                   ) : flat ? (
-                    'Pick one from the archive below.'
+                    'Pick one from the projects below.'
                   ) : (
                     <>
                       <span className={styles.guideStudio}>
                         Pick one in the studio.
                       </span>
                       <span className={styles.guideArchive}>
-                        Pick one from the archive below.
+                        Pick one from the projects below.
                       </span>
                     </>
                   )}
@@ -706,14 +701,14 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
 
         <section
           className={styles.archive}
-          id="archive"
-          aria-labelledby="archive-title"
+          id="projects"
+          aria-labelledby="projects-title"
           inert={open || undefined}
           aria-hidden={open || undefined}
         >
           <div className={styles.archiveHeading}>
-            <h2 id="archive-title">The archive</h2>
-            <p>Projects are being curated. Explore the placeholders.</p>
+            <h2 id="projects-title">Projects</h2>
+            <p>Check out my works.</p>
           </div>
           <ul className={styles.tapeIndex}>
             {shelfTapes.map((item, index) => (
@@ -787,7 +782,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         inert={open || undefined}
         aria-hidden={open || undefined}
       >
-        <span>Want to talk shop? I’m on GitHub and LinkedIn.</span>
+        <span>Want to chat?</span>
         <span className={styles.footerEdition}>DA / © 2026</span>
         <nav aria-label="Contact">
           <a
@@ -854,9 +849,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       <p className="srOnly" role="status" aria-live="polite">
         {open
           ? invalid
-            ? 'No signal. Eject or press Escape to return to the archive.'
+            ? 'No signal. Eject or press Escape to return to the projects.'
             : `${loading ? 'Loading' : 'Playing'} ${tape?.title}`
-          : 'Studio ready. Choose a tape from the archive.'}
+          : 'Studio ready. Choose a tape from the projects below.'}
       </p>
     </div>
   )

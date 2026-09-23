@@ -304,7 +304,7 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 
 - **Display** (`display`, `display-mobile`, `display-short`): the introductory line at weight 600, capped at 4rem normally, 3.375rem on phones, and 3rem on short desktop viewports; the mobile floor is 2rem. The secondary line uses dim silkscreen.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
-- **Body** (`body`): 1rem at weight 400. Introductory prose uses 1.6 leading and 0.005em tracking, capped at 36ch; the page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
+- **Body** (`body`): 1rem at weight 400. The page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
 - **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, footer statement, the loading note, and the Escape hint are weight 400 with 1.5 leading. The native deck keys and Skip animation are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
 - **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries' numbers, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
@@ -340,8 +340,8 @@ also has optical adjustments documented in its component CSS.
 
 **The One Column Rule.** Every shell edge sits on the container's two edges:
 the nameplate, kicker, display line, guide, archive heading, and footer
-statement on the left; the navigation, introductory aside, archive note, and
-contact links on the right. The cassette mark hangs 16px into the left gutter
+statement on the left; the navigation, archive note, and contact links on
+the right. The cassette mark hangs 16px into the left gutter
 above 1200px so the name stays on the column, and is not drawn below that
 width. The only inboard edges are the archive entries' own 12px insets.
 
@@ -350,14 +350,16 @@ and below, with an 8px gap. Flex list items and full-width links keep each row's
 entries equally tall when a narrow label wraps. The header has an 80px minimum height, becoming 72px on phones
 and on viewports wider than 600px but no taller than 820px. The introduction
 uses 32px top spacing, reduced to 20px on those short desktop viewports and
-16px on phones. At 600px and below, the introduction stacks and the footer wraps.
+16px on phones. The introduction is the kicker and display line alone, with
+no aside. At 600px and below, the kicker breaks after "Bridging the gap" and
+the footer wraps.
 
 The selection guide precedes the canvas, 24px below the introduction. It
 pairs "Choose a tape to play" with a one-line instruction that says where:
 "Pick one in the studio." on a desktop; the instruction hangs 4px beneath,
 and the canvas follows it directly. At widths of 600px and below, and
 wherever there is no studio to pick from (no WebGL, lost graphics), it
-reads "Pick one from the archive below.": the fitted rack is about 110px
+reads "Pick one from the projects below.": the fitted rack is about 110px
 across on a phone and the archive's entries are the targets in reach; the
 studio still answers taps (The Touch Rule, under Cassettes and insertion).
 The stylesheet, not a script, picks the line by width, so a page drawn ahead
@@ -588,21 +590,21 @@ both contact links. The floor is a hit area, never a layout change: the
 nameplate's two lines stand 40px and the footer's caption-size links 42px,
 so the nameplate centres its lines in the taller target and each contact
 link overhangs its row by a pixel above and below, and no word moves. The header
-carries "The archive" and "About" at every width; "The archive" is the page's
+carries "Projects" and "About" at every width; "Projects" is the page's
 single visible route to the section of that name, and neither link shows a
 count. Contact
 links stay in the footer. Internal About and tape links use the drawn play mark; the
 outward arrow is reserved for links that leave the site. Every mark is an
 `aria-hidden` SVG (The Drawn Mark Rule) set 0.5em from its label by flex
 gap, never by a typed space. The introduction
-has no archive shortcut. A focus-revealed skip link, "Skip to the archive",
+has no Projects shortcut. A focus-revealed skip link, "Skip to projects",
 leads to the same section.
 
 **The One Name Rule.** A thing has one name wherever a visitor meets it, and
-a link's words are the heading it lands on. The collection of tapes is **the
-archive**: the header link, the section's heading, the skip link, the phone
-guide ("Pick one from the archive below."), the status messages, and the idle
-tube's ALYOSHIN ARCHIVE. It is never "the tape index" or "the shelf" in
+a link's words are the heading it lands on. The collection of tapes is
+**Projects**: the header link, the section's heading, the skip link, the phone
+guide ("Pick one from the projects below."), the status messages, and the
+idle tube's PROJECTS. It is never "the archive", "the tape index" or "the shelf" in
 anything a visitor reads or hears; the modeled rack and holder are object
 names for this document only. A tape has one short name, its spine name
 (`vhs.spineLabel`: ALPHA, ABOUT), printed on the spine and repeated as
@@ -610,14 +612,14 @@ written by the archive entry, the guide, the idle tube, and both loading
 screens; and one title, which heads the reader and names the document. The About
 tape follows the same rule as every tape: it is "About" in the header, ABOUT
 on its spine, and "About" on the tube, where the owner's name is already
-printed once, in the ident. A tape's caption ("Placeholder tape", "Meet the
-maker", "Blank tape") is the same words in the archive entry and in the
+printed once, in the ident. A tape's caption ("Placeholder tape", "Daniel
+Alyoshin", "Blank tape") is the same words in the archive entry and in the
 guide. The visitor's noun is "tape"; "cassette" names the modeled object in
 this document.
 
 ### The archive
 
-The section a visitor knows as "The archive" (The One Name Rule): six entries
+The section a visitor knows as "Projects" (The One Name Rule): six entries
 in rack order. A linked entry with a numbered label, explicit placeholder caption, play symbol,
 and a thin accent strip supplied by its tape data. Each entry uses a seam border
 and small corners; hover, focus, or modeled-tape preview fills it with ink-2 and
@@ -626,7 +628,7 @@ spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
 needed; 12px secondary copy distinguishes "Placeholder tape" from the About
-tape's "Meet the maker", and the guide repeats the same caption while that
+tape's "Daniel Alyoshin", and the guide repeats the same caption while that
 tape is previewed. The playable links are normal Tab stops, with
 arrows and Home/End for direct movement between them. The archive's heading carries no count; nothing on the
 shell does.
@@ -837,7 +839,7 @@ one shape before and after a tape goes in.
 Its main message uses 128px texture type; the two-line selection instruction
 uses 88px so it remains legible at the opening camera scale. Its corners
 carry the transport state (STANDBY, LOADING while a tape goes in, or EJECT
-while one returns) at the top left, CH 01 at the top right, ALYOSHIN ARCHIVE at the bottom left, and
+while one returns) at the top left, CH 01 at the top right, PROJECTS at the bottom left, and
 the model mark AV–01 at the bottom right, as on the fallback's idle screen,
 which prints the state and the mark alone. These are texture
 coordinates, and scale with the physical screen rather than HTML font tokens.
@@ -886,8 +888,8 @@ graphite ground; `npm run render:icons` rasterizes the touch icon from it.
 
 Every route names itself. The home title is `site.title`, which
 `index.html` repeats for the page as served (the build checks they agree);
-a tape reads "Placeholder: Alpha — Daniel Alyoshin", the About tape "About —
-Daniel Alyoshin", and both missing-route states "No signal — Daniel
+a tape reads "Placeholder: Alpha · Daniel Alyoshin", the About tape "About ·
+Daniel Alyoshin", and both missing-route states "No signal · Daniel
 Alyoshin", so tabs, history, bookmarks, and a screen reader's page
 announcement tell tapes apart. `index.html` carries Open Graph and Twitter
 (`summary_large_image`) tags with the home title and the site description.

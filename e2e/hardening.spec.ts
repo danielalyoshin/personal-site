@@ -479,7 +479,10 @@ test.describe('touch input in the studio', () => {
             span.querySelector('small')!.innerText,
           ]
         })
-      const idle = ['Choose a tape to play', 'Pick one from the archive below.']
+      const idle = [
+        'Choose a tape to play',
+        'Pick one from the projects below.',
+      ]
       // At phone widths the fitted rack is about 110px across, so the guide
       // sends the visitor to the archive's entries. The studio still answers
       // taps.
@@ -553,7 +556,7 @@ test.describe('touch input in the studio', () => {
       await page.touchscreen.tap(slots.about.right + 5, about.y)
       await expect
         .poll(guide)
-        .toEqual(['ABOUT', 'Meet the maker · Tap again to play'])
+        .toEqual(['ABOUT', 'Daniel Alyoshin · Tap again to play'])
       await expect(page).toHaveURL('/')
       // A blank slot swallows its tap, and a tap clear of the rack cancels.
       const blank = centre(slots['coming-1'])
@@ -561,7 +564,7 @@ test.describe('touch input in the studio', () => {
       await page.waitForTimeout(300)
       expect(await guide()).toEqual([
         'ABOUT',
-        'Meet the maker · Tap again to play',
+        'Daniel Alyoshin · Tap again to play',
       ])
       await page.touchscreen.tap(bounds.x + 24, bounds.y + 24)
       await expect.poll(guide).toEqual(idle)

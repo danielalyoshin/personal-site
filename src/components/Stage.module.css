@@ -93,6 +93,12 @@
   text-transform: uppercase;
   margin-bottom: 12px;
 }
+/* The kicker breaks at its phrase only where it would otherwise wrap. */
+@media (min-width: 601px) {
+  .kickerBreak {
+    display: none;
+  }
+}
 .intro h2 {
   font-size: var(--type-display);
   font-weight: 600;
@@ -105,17 +111,6 @@
 }
 .intro h2 span {
   color: var(--silk-dim);
-}
-.introAside {
-  padding-bottom: 4px;
-  max-width: 36ch;
-}
-.introAside p {
-  font-size: var(--type-body);
-  line-height: 1.6;
-  letter-spacing: var(--tracking-body);
-  text-wrap: pretty;
-  color: var(--silk);
 }
 .exhibit {
   position: relative;
@@ -440,12 +435,6 @@
   }
   .intro h2 {
     font-size: clamp(2rem, 1rem + 5.4vw, 3.375rem);
-  }
-  .introAside {
-    margin-top: 12px;
-  }
-  .desktopBreak {
-    display: none;
   }
   .exhibit {
     margin-top: 12px;

@@ -41,7 +41,7 @@ test('every playable cassette clears the studio and enters the open player befor
     )
 
   for (const { href } of tapes) {
-    const link = page.locator(`#archive a[href="${href}"]`)
+    const link = page.locator(`#projects a[href="${href}"]`)
     await link.focus()
     await advanceScene(page, 40)
     await link.click()

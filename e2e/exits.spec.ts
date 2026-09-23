@@ -5,7 +5,7 @@ import type { Locator, Page } from '@playwright/test'
 // that takes focus there is off screen until the page moves.
 test.use({ viewport: { width: 1440, height: 900 } })
 
-const HOME_TITLE = 'Daniel Alyoshin — Design Engineer'
+const HOME_TITLE = 'Daniel Alyoshin · Forward Deployed Engineer'
 
 async function ready(page: Page) {
   await expect(page.getByTestId('studio-scene')).toHaveAttribute(
@@ -105,7 +105,9 @@ test('the exit from NO SIGNAL is printed on the tube and lands on the nameplate'
     await expect(page).toHaveURL('/')
     // No tape played, so there is no link to return to: focus opens the page.
     await expect(
-      page.getByRole('link', { name: 'Daniel Alyoshin Design engineer home' }),
+      page.getByRole('link', {
+        name: 'Daniel Alyoshin Forward deployed engineer home',
+      }),
     ).toBeFocused()
     expect(await page.evaluate(() => window.scrollY)).toBe(0)
   }
@@ -191,16 +193,16 @@ test('every route names itself in the document title', async ({ page }) => {
   await expect(page).toHaveTitle(HOME_TITLE)
   await ready(page)
   await alphaLink(page).click()
-  await expect(page).toHaveTitle('Placeholder: Alpha — Daniel Alyoshin')
+  await expect(page).toHaveTitle('Placeholder: Alpha · Daniel Alyoshin')
   await page.keyboard.press('Escape')
   await expect(page).toHaveTitle(HOME_TITLE)
   await page.goBack()
-  await expect(page).toHaveTitle('Placeholder: Alpha — Daniel Alyoshin')
+  await expect(page).toHaveTitle('Placeholder: Alpha · Daniel Alyoshin')
   await page.goto('/project/about')
-  await expect(page).toHaveTitle('About — Daniel Alyoshin')
+  await expect(page).toHaveTitle('About · Daniel Alyoshin')
   for (const route of ['/project/missing', '/missing-channel']) {
     await page.goto(route)
-    await expect(page).toHaveTitle('No signal — Daniel Alyoshin')
+    await expect(page).toHaveTitle('No signal · Daniel Alyoshin')
   }
   await page.keyboard.press('Escape')
   await expect(page).toHaveTitle(HOME_TITLE)

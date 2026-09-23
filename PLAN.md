@@ -1209,6 +1209,19 @@ rest, by finding:
   per-project label art.
 - Slots without a project hold blank tapes and read "Coming soon…" until one
   lands (blank slots round above); real projects fill them in order.
+- Shell and About copy pass DONE (2026-09-23, Daniel's words, item by item):
+  role is now "Forward deployed engineer" (home title "Daniel Alyoshin ·
+  Forward Deployed Engineer"; tab titles use " · ", not " — "); description
+  "Portfolio of Daniel Alyoshin, forward deployed engineer"; the collection
+  of tapes is renamed "Projects" everywhere (nav, heading, `#projects`, skip
+  link, guide, status messages, the idle tube's bottom-left ident); kicker
+  "Bridging the gap between client and codebase"; headline "Real experience.
+  / Real solutions."; the intro paragraph is cut; the About tape's caption is
+  the owner's name; archive note "Check out my works."; footer "Want to
+  chat?"; About tagline "Forward deployed engineer", new three-paragraph bio
+  (UofT final year, architecture + sales, entertainment and health tech), no
+  tags, REC SEP 2026. Kept: the guide, loader, blank slots, tube, NO SIGNAL,
+  deck, and cassette print. Project tapes remain placeholders.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

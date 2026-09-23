@@ -7,14 +7,14 @@ import type { Project } from './types'
 export const aboutTape: Project = {
   slug: 'about',
   title: 'About',
-  tagline: 'Design engineer — working the seam between design and build.',
+  tagline: 'Forward deployed engineer',
   description: [
-    'I design interfaces and then build them, and I care about the part in the middle where most of the quality lives: the motion, the states, the details that only survive when one person owns both sides.',
-    'This site is the first exhibit — a small 3D studio, with a shelf of tapes, a deck, and a CRT built from simple shapes and considered details. The project tapes around it are placeholders while the real selection is curated; the machine itself is the work for now.',
-    'If you want to talk shop, the links are below.',
+    'I’m in my final year at the University of Toronto, in the Computer Science Specialist program with a focus on software engineering.',
+    'My skills are split between software architecture and sales, so I’m as comfortable planning how a system fits together as I am talking a client through what it will do for them. I’ve worked across entertainment and health tech, and several of my projects are in active use.',
+    'If you want to chat, the links are below.',
   ],
   year: 2026,
-  tags: ['design', 'engineering', 'typescript', 'motion'],
+  tags: [],
   links: [
     { label: 'GitHub', url: 'https://github.com/danielalyoshin' },
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/danielalyoshin/' },
@@ -24,6 +24,6 @@ export const aboutTape: Project = {
     spineLabel: 'ABOUT',
     labelVariant: 'studio',
     accent: '#61e8c6',
-    recorded: 'JUL 2026',
+    recorded: 'SEP 2026',
   },
 }

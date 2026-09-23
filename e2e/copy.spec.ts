@@ -14,7 +14,7 @@ async function ready(page: Page) {
   )
 }
 
-test('the archive has one name: the link, the heading it leads to, the skip link and the tube', async ({
+test('the projects section has one name: the link, the heading it leads to, the skip link and the tube', async ({
   page,
 }) => {
   // Canvas maps cannot be read back as text: record what they are painted with.
@@ -32,20 +32,20 @@ test('the archive has one name: the link, the heading it leads to, the skip link
   const link = page
     .getByRole('navigation', { name: 'Site' })
     .getByRole('link', {
-      name: 'The archive',
+      name: 'Projects',
       exact: true,
     })
-  await expect(link).toHaveAttribute('href', '#archive')
+  await expect(link).toHaveAttribute('href', '#projects')
   // A link's words are the heading it lands on.
   await expect(
-    page.locator('#archive').getByRole('heading', { level: 2 }),
-  ).toHaveText('The archive')
-  await expect(page.getByRole('region', { name: 'The archive' })).toBeVisible()
-  await expect(page.locator('a[href="#archive"]').first()).toHaveText(
-    'Skip to the archive',
+    page.locator('#projects').getByRole('heading', { level: 2 }),
+  ).toHaveText('Projects')
+  await expect(page.getByRole('region', { name: 'Projects' })).toBeVisible()
+  await expect(page.locator('a[href="#projects"]').first()).toHaveText(
+    'Skip to projects',
   )
   await expect(page.getByRole('status')).toHaveText(
-    'Studio ready. Choose a tape from the archive.',
+    'Studio ready. Choose a tape from the projects below.',
   )
   await expect(page.getByText(/tape index|the shelf/i)).toHaveCount(0)
 
@@ -53,12 +53,7 @@ test('the archive has one name: the link, the heading it leads to, the skip link
   // no tape speed, no head count, no stereo claim.
   const printed = await page.evaluate(() => window.printed)
   expect(printed).toEqual(
-    expect.arrayContaining([
-      'ALYOSHIN ARCHIVE',
-      'STANDBY',
-      'AV–01',
-      'AV–01  /  VHS',
-    ]),
+    expect.arrayContaining(['PROJECTS', 'STANDBY', 'AV–01', 'AV–01  /  VHS']),
   )
   for (const print of printed)
     expect(print).not.toMatch(/\b(SP|LP)\b|4 HEAD|STEREO/)
@@ -75,23 +70,23 @@ test('the About tape has one name wherever it is named', async ({ page }) => {
   // Its entry follows every tape's rule: spine name over caption, and the
   // tape's own title in the accessible name.
   const entry = page.getByRole('link', {
-    name: 'Play tape: 06 ABOUT Meet the maker (2026)',
+    name: 'Play tape: 06 ABOUT Daniel Alyoshin (2026)',
     exact: true,
   })
   // Its name is the words it shows, between what it does and its year.
-  await expect(entry).toHaveText('Play tape: 06ABOUTMeet the maker (2026)')
+  await expect(entry).toHaveText('Play tape: 06ABOUTDaniel Alyoshin (2026)')
   // The guide names it as the entry does, with the same caption.
   await entry.focus()
-  const guide = page.getByText('Meet the maker · Select to play')
+  const guide = page.getByText('Daniel Alyoshin · Select to play')
   await expect(guide).toBeVisible()
   await expect(guide.locator('..')).toHaveText(
-    'ABOUTMeet the maker · Select to play',
+    'ABOUTDaniel Alyoshin · Select to play',
   )
   await nav.click()
   await expect(
     page.getByRole('heading', { name: 'About', exact: true, level: 2 }),
   ).toBeFocused()
-  await expect(page).toHaveTitle('About — Daniel Alyoshin')
+  await expect(page).toHaveTitle('About · Daniel Alyoshin')
   await expect(page.getByRole('status')).toHaveText('Playing About')
   // The owner's name is on the tube once, in the ident.
   await expect(
@@ -170,20 +165,21 @@ test('the native Eject key is named for what it does; ESC is its shortcut, not i
   // The modeled key carries the same name and shortcut.
   await page.setViewportSize({ width: 1440, height: 900 })
   await ready(page)
+  // Until the modeled reader takes over, the native deck is still on stage
+  // with its own Eject key.
+  await expect(page.getByTestId('native-reader')).toHaveCount(0)
   const modeled = page.getByRole('button', { name: 'Eject tape', exact: true })
   await expect(modeled).toHaveAttribute('aria-keyshortcuts', 'Escape')
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
 })
 
-test('the footer names the two places it links to', async ({ page }) => {
+test('the footer invites contact beside its two links', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   const footer = page.getByRole('contentinfo')
-  await expect(footer).toContainText(
-    'Want to talk shop? I’m on GitHub and LinkedIn.',
-  )
-  // The sentence is a promise: both links it names are beside it.
+  await expect(footer).toContainText('Want to chat?')
+  // The invitation stands beside both ways to answer it.
   const contact = footer.getByRole('navigation', { name: 'Contact' })
   await expect(contact.getByRole('link')).toHaveCount(2)
   await expect(contact.getByRole('link', { name: 'GitHub' })).toHaveAttribute(
@@ -195,6 +191,6 @@ test('the footer names the two places it links to', async ({ page }) => {
     'https://www.linkedin.com/in/danielalyoshin/',
   )
   await expect(
-    page.getByText('One person, both sides of the seam'),
+    page.getByText('Bridging the gap between client and codebase'),
   ).toBeVisible()
 })

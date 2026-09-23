@@ -204,7 +204,7 @@ export default function CRT({
                 </p>
                 <p className="srOnly">
                   Press the deck's Eject button or Escape to return to the
-                  archive.
+                  projects.
                 </p>
               </div>
             </>
@@ -218,7 +218,7 @@ export default function CRT({
                 <span className={styles.cursor} />
               </p>
               <p className="srOnly">
-                No tape playing. Choose a tape from the archive.
+                No tape playing. Choose a tape from the projects below.
               </p>
               <span className={styles.cornerBR} aria-hidden="true">
                 AV–01

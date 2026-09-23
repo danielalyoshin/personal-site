@@ -25,8 +25,10 @@ test('every route is readable, and named, before any script runs', async ({
   request,
 }) => {
   const home = await (await request.get('/')).text()
-  expect(home).toContain('<title>Daniel Alyoshin — Design Engineer</title>')
-  expect(home).toContain('Digital work.')
+  expect(home).toContain(
+    '<title>Daniel Alyoshin · Forward Deployed Engineer</title>',
+  )
+  expect(home).toContain('Real experience.')
   expect(home).toContain('Choose a tape to play')
   // The archive is links to pages that exist, not handlers waiting for script.
   for (const { path } of tapes) expect(home).toContain(`href="${path}"`)
@@ -36,13 +38,13 @@ test('every route is readable, and named, before any script runs', async ({
     expect(response.status(), path).toBe(200)
     const html = await response.text()
     expect(html).toContain(`data-prerendered="${path}"`)
-    expect(html).toContain(`<title>${title} — Daniel Alyoshin</title>`)
+    expect(html).toContain(`<title>${title} · Daniel Alyoshin</title>`)
     // The tape itself is in the page, and the page unfurls under its name.
     expect(html).toMatch(/<article[^>]*aria-label="[^"]* details"/)
     expect(html).toContain(`>${title}</h2>`)
     for (const tag of ['og:title', 'twitter:title'])
       expect(html).toMatch(
-        new RegExp(`"${tag}"\\s+content="${title} — Daniel Alyoshin"`),
+        new RegExp(`"${tag}"\\s+content="${title} · Daniel Alyoshin"`),
       )
     // One line of its own, said three times: search, Open Graph, Twitter.
     const described = html.match(/name="description"\s+content="([^"]*)"/)?.[1]
@@ -53,7 +55,7 @@ test('every route is readable, and named, before any script runs', async ({
 
   // The page a static host serves for any address it has no file for.
   const missing = await (await request.get('/404.html')).text()
-  expect(missing).toContain('<title>No signal — Daniel Alyoshin</title>')
+  expect(missing).toContain('<title>No signal · Daniel Alyoshin</title>')
   expect(missing).toContain('NO SIGNAL')
   expect(missing).toContain('<meta name="robots" content="noindex" />')
 
@@ -106,7 +108,7 @@ for (const viewport of [
     await expect(page).toHaveURL('/')
     await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
     await expect(page).toHaveURL('/project/placeholder-beta')
-    await expect(page).toHaveTitle(/^Placeholder: Beta, .* — Daniel Alyoshin$/)
+    await expect(page).toHaveTitle(/^Placeholder: Beta, .* · Daniel Alyoshin$/)
     expect(noise).toEqual([])
   })
 
@@ -121,9 +123,11 @@ test('the page is drawn for the width it is served at, before the app arrives', 
   const page = await context.newPage()
   await page.goto('/')
   await expect(
-    page.getByRole('heading', { name: 'Digital work. Physical feeling.' }),
+    page.getByRole('heading', { name: 'Real experience. Real solutions.' }),
   ).toBeVisible()
-  await expect(page.getByText('Pick one from the archive below.')).toBeVisible()
+  await expect(
+    page.getByText('Pick one from the projects below.'),
+  ).toBeVisible()
   await expect(page.getByText('Pick one in the studio.')).toBeHidden()
   await expect(page.getByText('Setting the scene…')).toBeVisible()
   // The archive works as plain links: the tape's page is a real page.
@@ -164,11 +168,13 @@ test('a dead link served the 404 page reads NO SIGNAL for its own address', asyn
   })
   await page.goto('/project/not-a-tape')
   await expect(page.getByText('THIS TAPE DOES NOT EXIST')).toBeVisible()
-  await expect(page).toHaveTitle('No signal — Daniel Alyoshin')
+  await expect(page).toHaveTitle('No signal · Daniel Alyoshin')
   await ready(page)
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
   await expect(
-    page.getByRole('link', { name: 'Daniel Alyoshin Design engineer home' }),
+    page.getByRole('link', {
+      name: 'Daniel Alyoshin Forward deployed engineer home',
+    }),
   ).toBeFocused()
 })
