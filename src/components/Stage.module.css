@@ -75,14 +75,7 @@
   color: var(--silk-hi);
 }
 .intro {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 32px;
-  padding: 32px 0 0;
-}
-.intro > div {
-  min-width: 0;
+  padding-top: 32px;
 }
 .eyebrow {
   color: var(--silk-dim);
@@ -408,6 +401,70 @@
     margin-top: 16px;
   }
 }
+/* Wide, tall windows: the studio takes the first screen under the header,
+   and the introduction and the guide stand in its upper right, over the
+   table behind the rack, rather than in a band above it. The box follows the
+   studio's own proportion: the fitted studio, about 1.77 to 1 with the fit's
+   24px margins, widened just enough that the table's shadow, which falls to
+   the right past the fitted bounds, ends inside the box rather than at its
+   edge. It stops at the fold. The words and the studio still come in reading
+   order: introduction, guide, studio. */
+@media (min-width: 1280px) and (min-height: 700px) {
+  .main {
+    display: grid;
+    grid-template: auto auto 1fr auto / minmax(0, 1fr) max-content;
+    padding-top: 8px;
+  }
+  .intro {
+    grid-area: 1 / 2;
+    position: relative;
+    z-index: 1;
+    padding-top: 24px;
+  }
+  .exhibit {
+    grid-area: 1 / 1 / 4 / -1;
+    display: grid;
+    grid-template: subgrid / subgrid;
+    margin-top: 0;
+  }
+  /* The column is as wide as the display line. The guide wraps within it
+     rather than widening it, so a long caption never moves the headline. */
+  .sceneCaption {
+    grid-area: 2 / 2;
+    z-index: 1;
+    margin-top: 24px;
+    contain: inline-size;
+  }
+  .scene {
+    grid-area: 1 / 1 / -1 / -1;
+    align-self: start;
+    height: auto;
+    aspect-ratio: 1.82;
+    max-height: calc(100svh - 88px);
+  }
+  .archive {
+    grid-area: 4 / 1 / auto / -1;
+  }
+  /* Without a studio, the framed monitor stands on the left, clear of the
+     words. */
+  .fallback {
+    align-items: flex-start;
+  }
+}
+@media (min-width: 1280px) and (min-height: 700px) and (max-height: 820px) {
+  .main {
+    padding-top: 0;
+  }
+  .intro {
+    padding-top: 20px;
+  }
+  .sceneCaption {
+    margin-top: 16px;
+  }
+  .scene {
+    max-height: calc(100svh - 72px);
+  }
+}
 @media (max-width: 1200px) {
   .identity svg {
     display: none;
@@ -427,7 +484,6 @@
     gap: 18px;
   }
   .intro {
-    display: block;
     padding-top: 16px;
   }
   .eyebrow {

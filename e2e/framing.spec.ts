@@ -140,3 +140,124 @@ test('the CRT stays inside the canvas during insertion, playback zoom, resize an
   )
   expect(errors).toEqual([])
 })
+
+/**
+ * How far the words stand from the equipment, in page pixels: the boxes of
+ * the introduction and the guide against the projected monitor, tapes and
+ * headphones. Negative when they overlap.
+ */
+async function wordsClearance(page: Page) {
+  return page.evaluate(async () => {
+    const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const threeModule = '/node_modules/.vite/deps/three.js'
+    const { _roots } = (await import(
+      fiberModule
+    )) as typeof import('@react-three/fiber')
+    const { Mesh, Vector3 } = (await import(
+      threeModule
+    )) as typeof import('three')
+    const canvas = document.querySelector('canvas')!
+    const state = _roots.get(canvas)!.store.getState()
+    state.setFrameloop('never')
+    state.advance(state.clock.elapsedTime + 1 / 60)
+    const { camera, scene, size } = state
+    const origin = canvas.getBoundingClientRect()
+    const point = new Vector3()
+    const project = (named: (name: string) => boolean) => {
+      const box = {
+        left: Infinity,
+        top: Infinity,
+        right: -Infinity,
+        bottom: -Infinity,
+      }
+      scene.traverse((group) => {
+        if (!named(group.name)) return
+        group.traverse((object) => {
+          if (!(object instanceof Mesh) || !object.visible) return
+          const positions = object.geometry.attributes.position
+          for (let i = 0; i < positions.count; i++) {
+            point
+              .fromBufferAttribute(positions, i)
+              .applyMatrix4(object.matrixWorld)
+              .project(camera)
+            const x = origin.left + ((point.x + 1) * size.width) / 2
+            const y = origin.top + ((1 - point.y) * size.height) / 2
+            box.left = Math.min(box.left, x)
+            box.right = Math.max(box.right, x)
+            box.top = Math.min(box.top, y)
+            box.bottom = Math.max(box.bottom, y)
+          }
+        })
+      })
+      return box
+    }
+    const equipment = [
+      project((name) => name === 'crt-monitor'),
+      project((name) => name === 'headphones-and-stand'),
+      project((name) => /^tape-/.test(name)),
+    ]
+    const studio = document.querySelector('[data-testid="studio-scene"]')!
+    const words = [
+      document.getElementById('intro-title')!.closest('section')!,
+      studio.previousElementSibling!,
+    ].map((el) => el.getBoundingClientRect())
+    // The gap between two boxes: the larger of the horizontal and vertical
+    // gaps, negative only when the boxes overlap.
+    let clearance = Infinity
+    for (const a of words)
+      for (const b of equipment)
+        clearance = Math.min(
+          clearance,
+          Math.max(
+            b.left - a.right,
+            a.left - b.right,
+            b.top - a.bottom,
+            a.top - b.bottom,
+          ),
+        )
+    return {
+      clearance,
+      beside: words[0].top >= origin.top,
+      above: words[1].bottom <= origin.top,
+    }
+  })
+}
+
+test('beside the studio, the words never stand over the equipment', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  // The tightest fits the rule covers: the narrowest width, with the tall
+  // display size and with the short one, and a wide, short window.
+  for (const viewport of [
+    { width: 1280, height: 1024 },
+    { width: 1280, height: 700 },
+    { width: 1440, height: 1000 },
+    { width: 1920, height: 700 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+    await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+      'data-ready',
+      'true',
+    )
+    const idle = await wordsClearance(page)
+    expect(idle.beside).toBe(true)
+    expect(idle.clearance).toBeGreaterThanOrEqual(12)
+    // A preview lifts a tape toward the words and gives the guide its
+    // longest line.
+    await page
+      .getByRole('link', { name: /^Play tape: 01 / })
+      .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }))
+    await expect(page.getByText(/· Select to play$/)).toBeVisible()
+    expect((await wordsClearance(page)).clearance).toBeGreaterThanOrEqual(12)
+  }
+  // Narrower, the words stand above the studio instead.
+  await page.setViewportSize({ width: 1279, height: 900 })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  expect((await wordsClearance(page)).above).toBe(true)
+})

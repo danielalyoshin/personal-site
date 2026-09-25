@@ -123,7 +123,13 @@ test('selection and eject zoom the studio softly between its box and the viewpor
     'true',
   )
   // Rest with the archive in view, as a visitor who scrolled to it would.
-  await page.evaluate(() => window.scrollTo(0, 160))
+  // The studio fills the first screen, so the page runs only a little
+  // further: keep whatever scroll the page allows, as long as it moved.
+  const scrolled = await page.evaluate(() => {
+    window.scrollTo(0, 160)
+    return window.scrollY
+  })
+  expect(scrolled).toBeGreaterThan(0)
   const rest = (await sampleFrames(page, 60)).at(-1)!
   expect(rest.detached).toBe(false)
   expect(rest.chromeOpacity).toBe(1)
@@ -160,7 +166,7 @@ test('selection and eject zoom the studio softly between its box and the viewpor
   expect(Math.hypot(landing.x - rest.x, landing.y - rest.y)).toBeLessThan(1.5)
   expect(landing.zoom / rest.zoom).toBeCloseTo(1, 2)
   expect(landing.chromeOpacity).toBe(1)
-  expect(await page.evaluate(() => window.scrollY)).toBe(160)
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled)
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
 })
 
@@ -169,7 +175,8 @@ test('a keyboard eject that brings the tape link into view still lands the studi
 }) => {
   test.setTimeout(90_000)
   await page.emulateMedia({ reducedMotion: 'no-preference' })
-  // The index starts below this viewport, so the restored link is off screen.
+  // The index runs past the foot of this viewport, so the restored link is
+  // not wholly on screen.
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   await expect(page.getByTestId('studio-scene')).toHaveAttribute(

@@ -339,25 +339,51 @@ archive, and footer. The shared spacing primitives use a 4px base; the shell
 also has optical adjustments documented in its component CSS.
 
 **The One Column Rule.** Every shell edge sits on the container's two edges:
-the nameplate, kicker, display line, guide, archive heading, and footer
-statement on the left; the navigation, archive note, and contact links on
-the right. The cassette mark hangs 16px into the left gutter
-above 1200px so the name stays on the column, and is not drawn below that
-width. The only inboard edges are the archive entries' own 12px insets.
+the nameplate, archive heading, and footer statement on the left; the
+navigation, archive note, and contact links on the right. Where the words
+stand above the studio, the kicker, display line, and guide sit on the left
+edge too. Where they stand beside it (The Studio First Rule), they share one
+left edge of their own, set by the widest of them, the display line, which
+ends on the column's right edge under the navigation. The cassette mark
+hangs 16px into the left gutter above 1200px so the name stays on the
+column, and is not drawn below that width. The only other inboard edges are
+the archive entries' own 12px insets.
+
+**The Studio First Rule.** On a window at least 1280px wide and 700px tall,
+the studio takes the first screen under the header, and the introduction
+and the guide stand in its upper right, over the table behind the rack,
+instead of in a band above it. The fitted studio is wider than it is tall,
+and a band of words above it took the height the fit needed, which left the
+studio small and its two sides empty; beside it, the words fill the one
+corner the equipment leaves open, and the studio grows to nearly the
+column's width. Reading order is unchanged: kicker, display line, guide,
+then the studio. The words sit above the canvas and never over equipment:
+at every width and height the rule covers they clear the monitor by 80px or
+more, and the tapes and the headphones by 16px or more with a tape lifted in
+preview (`e2e/framing.spec.ts` holds them 12px clear at the tightest fits). Narrower or shorter windows, where the display line would
+crowd the rack, keep the stacked composition: the words above, the studio
+below.
 
 The archive uses six equal columns, three at 1200px and below, and two at 600px
 and below, with an 8px gap. Flex list items and full-width links keep each row's
 entries equally tall when a narrow label wraps. The header has an 80px minimum height, becoming 72px on phones
 and on viewports wider than 600px but no taller than 820px. The introduction
 uses 32px top spacing, reduced to 20px on those short desktop viewports and
-16px on phones. The introduction is the kicker and display line alone, with
-no aside. At 600px and below, the kicker breaks after "Bridging the gap" and
-the footer wraps.
+16px on phones. Beside the studio, the studio's box starts 8px under the
+header's seam (at the seam on the short viewports) and the introduction's
+spacing is measured from the box's top, so the kicker stands at the same 32px
+or 20px from the seam in both compositions. The introduction is the kicker
+and display line alone, with no aside. At 600px and below, the kicker breaks
+after "Bridging the gap" and the footer wraps.
 
-The selection guide precedes the canvas, 24px below the introduction. It
+The selection guide precedes the canvas, 24px below the introduction (16px
+on the short desktop viewports). It
 pairs "Choose a tape to play" with a one-line instruction that says where:
-"Pick one in the studio." on a desktop; the instruction hangs 4px beneath,
-and the canvas follows it directly. At widths of 600px and below, and
+"Pick one in the studio." on a desktop; the instruction hangs 4px beneath.
+In the stacked composition the canvas follows it directly; beside the
+studio, the guide closes the column of words, directly above the rack it
+points at, and wraps within the display line's width rather than widening
+it, so a long caption never moves the headline. At widths of 600px and below, and
 wherever there is no studio to pick from (no WebGL, lost graphics), it
 reads "Pick one from the projects below.": the fitted rack is about 110px
 across on a phone and the archive's entries are the targets in reach; the
@@ -378,7 +404,19 @@ contact links flush right on the column, mirroring the header. At 600px and
 below the statement takes the first row and the edition and links share the
 second.
 
-The exhibit's default height is
+Beside the words (The Studio First Rule), the exhibit's box follows the
+studio's own proportion, `aspect-ratio: 1.82`. The fitted studio is about
+1.77 wide to 1 tall with the fit's 24px on every side; the box is a little
+wider than that, so the height sets the fit and the table stands about 60px
+inside each column edge. That margin is for the table's shadow, which falls
+to the right past the fitted bounds (the fit does not count it) and must end
+inside the box, never be cut at its edge. Its height is capped at the viewport under the header,
+`calc(100svh - 88px)`, or `calc(100svh - 72px)` up to 820px tall, so on a
+wide, short window the studio ends at the fold and the fit follows the
+height instead. The archive follows the box; where the proportion, not the
+fold, sets the box's height (1280 × 800, 1440 × 1000, 1920 × 1080), its
+heading shares the first screen with the studio.
+In the stacked composition the exhibit's default height is
 `clamp(360px, min(48vw, calc(100svh - 350px)), 680px)` so the opening studio
 has room for readable screen text while adapting to short desktop viewports.
 At 600px and below it uses `clamp(220px, 72vw, 384px)` and extends past the
