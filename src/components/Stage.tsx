@@ -577,7 +577,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         </nav>
       </header>
 
-      <main>
+      <main className={styles.main}>
         <section
           className={styles.intro}
           inert={open || undefined}

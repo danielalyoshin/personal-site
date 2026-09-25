@@ -13,12 +13,17 @@ Direction revised by Daniel on 2026-09-15: convert the existing personal site
 into a clean, artsy, intentional low-poly 3D experience. This supersedes the
 July SVG-only implementation. Normative direction: `DESIGN.md`.
 
-Composition: compact identity header and editorial introduction, selection
-guide above the orthographic 3D exhibit, the six-entry archive, GitHub/LinkedIn footer with the contact links
-flush right. Every shell edge sits on the one column (the cassette mark hangs
-in the gutter above 1200px); the archive entries' 12px insets are the only
-inboard edges, and each entry stacks its number over its name so it has one
-text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
+Composition: compact identity header, then the orthographic 3D exhibit with
+the editorial introduction and selection guide in its empty upper right on
+windows at least 1280px wide and 700px tall (the studio fills the first
+screen and nearly the column's width; The Studio First Rule in `DESIGN.md`), or
+stacked above it on narrower and shorter ones; then the six-entry archive
+and the GitHub/LinkedIn footer with the contact links flush right. Every
+shell edge sits on the one column (the cassette mark hangs in the gutter
+above 1200px), except the words beside the studio, which share one left edge
+set by the display line; the archive entries' 12px insets are the only
+other inboard edges, and each entry stacks its number over its name so it
+has one text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
 clock, caption number, tape count, page-level sound control, or edition
 marks, and the header's "The archive" link is its single visible index route
 at every width. Height-aware desktop framing keeps the studio and its

@@ -882,6 +882,9 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
   await about.click()
   await page.getByRole('button', { name: 'Skip animation' }).click()
   await expect(page.locator('article h2')).toBeFocused()
+  // Skip sits at the viewport's lower right, over the archive once the
+  // page returns: a pointer left there would hover an entry for real.
+  await page.mouse.move(10, 10)
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
   const seated = await ejectRun(page, 'about')
