@@ -84,11 +84,12 @@ test('the modeled reader keeps a real 16px prose floor on common laptops and sho
   })
   await expect.poll(async () => (await measure(page)).continues).toBe(true)
   // A tape chosen from the studio mounts the reader by the selection path
-  // rather than the handoff, and sizes it the same way.
+  // rather than the handoff, and sizes it the same way. The same long
+  // write-up, chosen again, still runs past the native reader's fold below.
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
-  await expect(page).toHaveURL('/project/placeholder-beta')
+  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
+  await expect(page).toHaveURL('/project/superset-d1')
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect.poll(async () => (await measure(page)).scale).toBeCloseTo(1, 1)
   const chosen = await measure(page)

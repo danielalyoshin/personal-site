@@ -24,15 +24,16 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await page.goto('/')
   await ready(page)
   await expect(page.locator('canvas')).toBeVisible()
-  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
+  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(2)
   const d1 = page.getByRole('link', {
     name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
     exact: true,
   })
   await d1.focus()
+  // The next tape that plays is About, past the blank slots between them.
   await page.keyboard.press('ArrowRight')
   await expect(
-    page.getByRole('link', { name: /Play tape: 02 BETA/ }),
+    page.getByRole('link', { name: /^Play tape: 06 ABOUT/ }),
   ).toBeFocused()
   await page.keyboard.press('Home')
   await expect(d1).toBeFocused()
@@ -282,12 +283,17 @@ test('archive works without WebGL and after a graphics context is lost', async (
   await page.reload()
   await ready(page)
   await expect(page.locator('canvas')).toHaveCount(0)
-  await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
+  await page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ }).click()
   await expect(
-    page.getByRole('heading', { name: /Placeholder: Beta/ }),
+    page.getByRole('heading', {
+      name: 'Cloudflare D1 in Apache Superset',
+      exact: true,
+    }),
   ).toBeVisible()
-  // A placeholder's stand-in links are never shown.
-  await expect(page.locator('a[href*="example.com"]')).toHaveCount(0)
+  // A project's own links read in the fallback reader as they do on the tube.
+  await expect(
+    page.getByRole('list', { name: 'Project links' }).getByRole('link').first(),
+  ).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
 })
@@ -391,9 +397,10 @@ test('the pointer preview hands over slot to slot without flicker while cassette
       left = Math.min(left, x)
       right = Math.max(right, x)
     }
+    // Sweep along the middle of the rack, through slot 03's centre.
     const centre = toScreen(
       state.scene
-        .getObjectByName('tape-placeholder-gamma')!
+        .getObjectByName('tape-coming-2')!
         .getWorldPosition(new Vector3()),
     )
     return {
@@ -434,11 +441,11 @@ test('the pointer preview hands over slot to slot without flicker while cassette
   const forward = await sweep(geometry.left, geometry.right)
   const back = await sweep(geometry.right, geometry.left)
   // One handover at each shared edge, and never back to a tape already left.
-  // The two blank slots after Gamma answer no pointer, so the guide reads
-  // idle across them until About.
-  const played = ['SUPERSET D1', 'BETA', 'GAMMA']
-  expect(forward).toEqual([...played, idle, 'ABOUT', idle])
-  expect(back).toEqual(['ABOUT', idle, ...played.reverse(), idle])
+  // The four blank slots between SUPERSET D1 and About answer no pointer, so
+  // the guide reads idle across them; a lifting tape that flickered at its
+  // edge would name itself again.
+  expect(forward).toEqual(['SUPERSET D1', idle, 'ABOUT', idle])
+  expect(back).toEqual(['ABOUT', idle, 'SUPERSET D1', idle])
 })
 
 test('slots without a project hold blank tapes that are coming soon', async ({
@@ -448,26 +455,27 @@ test('slots without a project hold blank tapes that are coming soon', async ({
   await ready(page)
   const entries = page.locator('#projects li')
   await expect(entries).toHaveCount(6)
-  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
-  // Slots 04 and 05 are read, not played: no link, and outside the tab order.
-  for (const slot of [3, 4]) {
+  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(2)
+  // Slots 02 to 05 are read, not played: no link, and outside the tab order.
+  for (const slot of [1, 2, 3, 4]) {
     const entry = entries.nth(slot)
     await expect(entry).toContainText(`0${slot + 1}`)
     await expect(entry).toContainText('Coming soon…')
     await expect(entry.locator('a, button, [tabindex]')).toHaveCount(0)
   }
-  const gamma = page.getByRole('link', {
-    name: /^Play tape: 03 GAMMA/,
+  const d1 = page.getByRole('link', {
+    name: /^Play tape: 01 SUPERSET D1/,
   })
   const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
-  await gamma.focus()
+  await d1.focus()
   await page.keyboard.press('ArrowRight')
   await expect(about).toBeFocused()
   await page.keyboard.press('ArrowLeft')
-  await expect(gamma).toBeFocused()
+  await expect(d1).toBeFocused()
   await page.keyboard.press('Tab')
   await expect(about).toBeFocused()
   await page.keyboard.press('Home')
+  await expect(d1).toBeFocused()
   await page.keyboard.press('End')
   await expect(about).toBeFocused()
   // In the studio a blank slot holds the same shell with nothing printed,
@@ -488,20 +496,27 @@ test('slots without a project hold blank tapes that are coming soon', async ({
       })
       return count
     }
-    const { Vector3 } =
+    const { Raycaster, Vector2, Vector3 } =
       (await import('/node_modules/.vite/deps/three.js')) as typeof import('three')
     const rect = document.querySelector('canvas')!.getBoundingClientRect()
     const centre = state.scene
       .getObjectByName('tape-coming-1')!
       .getWorldPosition(new Vector3())
       .project(state.camera)
+    // Every slot envelope the pointer's ray meets there, nearest first.
+    const ray = new Raycaster()
+    ray.setFromCamera(new Vector2(centre.x, centre.y), state.camera)
     return {
       blankPrints: prints('tape-coming-1'),
-      printedPrints: prints('tape-placeholder-gamma'),
+      printedPrints: prints('tape-superset-d1'),
       targets: state.internal.interaction
         .map((object) => object.name)
         .filter((name) => name.startsWith('pointer-target-'))
         .sort(),
+      throughBlank: ray
+        .intersectObjects(state.internal.interaction, false)
+        .map((hit) => hit.object.name)
+        .filter((name) => name.startsWith('pointer-target-')),
       blankCentre: {
         x: rect.x + ((centre.x + 1) * rect.width) / 2,
         y: rect.y + ((1 - centre.y) * rect.height) / 2,
@@ -514,13 +529,21 @@ test('slots without a project hold blank tapes that are coming soon', async ({
     'pointer-target-about',
     'pointer-target-coming-1',
     'pointer-target-coming-2',
-    'pointer-target-placeholder-beta',
-    'pointer-target-placeholder-gamma',
+    'pointer-target-coming-3',
+    'pointer-target-coming-4',
     'pointer-target-superset-d1',
   ])
-  // The three-quarter camera looks along the rack: a ray through a blank
-  // slot's own centre reaches Gamma's envelope behind it. The blank slot's
-  // target swallows it, so the guide stays idle and a click plays nothing.
+  // The three-quarter camera looks along the rack: a ray through slot 02's
+  // blank tape runs on into SUPERSET D1's envelope behind it in slot 01,
+  // meeting only blank slots on the way, its own among them. They swallow
+  // it, so the guide stays idle and a click plays nothing.
+  const reachesD1 = studio.throughBlank.indexOf('pointer-target-superset-d1')
+  expect(reachesD1).toBeGreaterThan(0)
+  const before = studio.throughBlank.slice(0, reachesD1)
+  expect(before).toContain('pointer-target-coming-1')
+  expect(
+    before.filter((name) => !name.startsWith('pointer-target-coming-')),
+  ).toEqual([])
   // The focused About link is itself a preview; clear it first.
   await about.blur()
   const caption = () =>

@@ -6,11 +6,6 @@ import type { Page } from '@playwright/test'
 
 const tapes = [
   { path: '/project/superset-d1', title: 'Cloudflare D1 in Apache Superset' },
-  {
-    path: '/project/placeholder-beta',
-    title: 'Placeholder: Beta, a Project With a Much Longer Working Title',
-  },
-  { path: '/project/placeholder-gamma', title: 'Placeholder: Gamma' },
   { path: '/project/about', title: 'About' },
 ]
 
@@ -31,7 +26,10 @@ test('every route is readable, and named, before any script runs', async ({
   expect(home).toContain('Real experience.')
   expect(home).toContain('Choose a tape to play')
   // The archive is links to pages that exist, not handlers waiting for script.
-  for (const { path } of tapes) expect(home).toContain(`href="${path}"`)
+  // Every tape is linked, and nothing else on the page leads to a tape.
+  expect(new Set(home.match(/(?<=href=")\/project\/[^"]*/g))).toEqual(
+    new Set(tapes.map(({ path }) => path)),
+  )
 
   for (const { path, title } of tapes) {
     const response = await request.get(path)
@@ -106,9 +104,9 @@ for (const viewport of [
     // Taken over, it plays: eject the tape the link arrived on, pick another.
     await page.keyboard.press('Escape')
     await expect(page).toHaveURL('/')
-    await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
-    await expect(page).toHaveURL('/project/placeholder-beta')
-    await expect(page).toHaveTitle(/^Placeholder: Beta, .* · Daniel Alyoshin$/)
+    await page.getByRole('link', { name: /Play tape: 06 ABOUT/ }).click()
+    await expect(page).toHaveURL('/project/about')
+    await expect(page).toHaveTitle('About · Daniel Alyoshin')
     expect(noise).toEqual([])
   })
 

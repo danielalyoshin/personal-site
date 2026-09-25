@@ -95,7 +95,7 @@ test('cold-cache fonts redraw live labels and the current preview without revivi
     })
 
     await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).focus()
-    await page.getByRole('link', { name: /Play tape: 02 BETA/ }).focus()
+    await page.getByRole('link', { name: /Play tape: 06 ABOUT/ }).focus()
     await expect
       .poll(() => page.evaluate(() => window.studioFontProbe.disposed))
       .toBe(true)

@@ -100,7 +100,7 @@ test('the counter is the reading time of the copy on the tube, and a screen read
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  for (const slug of ['superset-d1', 'placeholder-beta', 'about']) {
+  for (const slug of ['superset-d1', 'about']) {
     await page.goto(`/project/${slug}`)
     await ready(page)
     const tube = page.getByTestId('project-reader')
@@ -130,7 +130,7 @@ test('the counter is the reading time of the copy on the tube, and a screen read
   // On the narrowest phone the counter's word gives way so the number keeps
   // clear of the name: at least two characters of air.
   await page.setViewportSize({ width: 320, height: 740 })
-  await page.goto('/project/placeholder-beta')
+  await page.goto('/project/superset-d1')
   const bar = page
     .getByTestId('native-reader')
     .getByText('Daniel Alyoshin', { exact: true })

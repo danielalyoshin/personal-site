@@ -873,15 +873,18 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
     'true',
   )
   await advanceScene(page, 80)
-  const gamma = page.getByRole('link', {
-    name: /^Play tape: 03 GAMMA/,
+  // About's slot is the far end of the rack from the deck, so its way home
+  // is the longest: along the whole rack, past every other tape standing in
+  // it, blank ones included.
+  const about = page.getByRole('link', {
+    name: /^Play tape: 06 ABOUT/,
   })
-  await gamma.click()
+  await about.click()
   await page.getByRole('button', { name: 'Skip animation' }).click()
   await expect(page.locator('article h2')).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  const seated = await ejectRun(page, 'placeholder-gamma')
+  const seated = await ejectRun(page, 'about')
   expect(seated.collisionFrames).toEqual([])
   // It left through the opening with the flap up, travelled rather than
   // snapped, and settled in its slot with the flap closed behind it.
@@ -891,7 +894,7 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
   expect(seated.landedAt).toBeGreaterThan(60)
   expect(seated.restDistance).toBeLessThan(1e-3)
   expect(seated.flapEnd).toBe(0)
-  await expect(gamma).toBeFocused()
+  await expect(about).toBeFocused()
   await expect(page.getByText('Choose a tape to play')).toBeVisible()
   // Once landed, its slot answers the pointer again.
   await page.evaluate(() => window.scrollTo(0, 0))
@@ -907,7 +910,7 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
       .store.getState()
     const rect = document.querySelector('canvas')!.getBoundingClientRect()
     const point = state.scene
-      .getObjectByName('pointer-target-placeholder-gamma')!
+      .getObjectByName('pointer-target-about')!
       .getWorldPosition(new Vector3())
     point.z += 0.5
     point.project(state.camera)
@@ -924,7 +927,7 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
 
   // Escape mid-insertion: the tape retraces its outward path from where it
   // is, never seating first, with the flap still closed.
-  await gamma.click()
+  await about.click()
   // The click leaves the pointer on the link; once the studio has zoomed
   // back onto the page that would be a real hover and lift the landed tape.
   await page.mouse.move(10, 10)
@@ -948,7 +951,7 @@ test('eject runs the mechanism back to the rack, from seated and from mid-insert
   await advanceScene(page, 30)
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  const early = await ejectRun(page, 'placeholder-gamma')
+  const early = await ejectRun(page, 'about')
   expect(early.start[2]).toBeGreaterThan(1)
   expect(early.collisionFrames).toEqual([])
   expect(early.crossingFrames).toBe(0)

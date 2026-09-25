@@ -261,7 +261,7 @@ test('the OSD bar keeps its three fields apart on the narrowest phone', async ({
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 320, height: 740 })
-  await page.goto('/project/placeholder-beta')
+  await page.goto('/project/superset-d1')
   const bar = page
     .getByTestId('native-reader')
     .getByText('Daniel Alyoshin', { exact: true })

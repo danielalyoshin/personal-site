@@ -615,8 +615,8 @@ tape follows the same rule as every tape: it is "About" in the header, ABOUT
 on its spine, and "About" on the tube, where the owner's name is already
 printed once, in the ident. A tape's caption is the same words in the
 archive entry and in the guide: its `caption`, else its title ("Cloudflare D1
-in Apache Superset", "Placeholder tape", "Daniel Alyoshin"; a blank slot's
-"Blank tape"). The visitor's noun is "tape"; "cassette" names the modeled object in
+in Apache Superset" for a project, "Daniel Alyoshin" for the About tape; a
+blank slot's "Blank tape"). The visitor's noun is "tape"; "cassette" names the modeled object in
 this document.
 
 ### The archive
@@ -630,8 +630,7 @@ spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
 needed; 12px secondary copy carries the tape's caption (a project's title,
-"Placeholder tape" on a placeholder, the About tape's "Daniel Alyoshin"), and
-the guide repeats the same caption while that tape is previewed. The playable links are normal Tab stops, with
+or the About tape's "Daniel Alyoshin"), and the guide repeats the same caption while that tape is previewed. The playable links are normal Tab stops, with
 arrows and Home/End for direct movement between them. The archive's heading carries no count; nothing on the
 shell does.
 
@@ -643,7 +642,8 @@ last parts set aside for assistive technology; the nameplate is "Daniel
 Alyoshin Forward deployed engineer home". No link carries an `aria-label` that replaces its words.
 
 **The Blank Slot Rule.** The rack has six slots: five for projects and the
-About tape at the right. A project slot with nothing behind it yet keeps its
+About tape at the right. One project fills slot 01 today, so slots 02 to 05
+are blank. A project slot with nothing behind it yet keeps its
 place and its number but is drawn as an outline, not a tape: the same 80px
 cell and 12px inset, a 1px dashed seam-lit border, no accent strip, no play
 mark, and dim silkscreen throughout, reading "Coming soon…" over the caption
@@ -924,7 +924,6 @@ build has none. The address itself is a Stage 10 decision.
 - Do keep every route readable and correctly named before any script runs, and boot the studio after the page has painted (The First Frame Rule).
 - Do name a link by the words it shows (The Spoken Name Rule), and take screen colours from the one palette (The One Palette Rule).
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
-- Do keep placeholder projects explicitly labeled until Daniel supplies real content.
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 

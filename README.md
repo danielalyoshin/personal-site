@@ -2,9 +2,8 @@
 
 A personal portfolio as a low-poly 3D studio. Pick a VHS cassette and the camera
 moves toward a CRT to play its project details. The rack's six slots currently
-hold one real project, two explicit placeholders, two blank tapes marked
-"Coming soon…", and the About tape; adding a project to
-`src/content/projects/index.ts` fills the next blank slot.
+hold one project, four blank tapes marked "Coming soon…", and the About tape;
+adding a project to `src/content/projects/index.ts` fills the next blank slot.
 
 ## Develop
 
@@ -169,5 +168,5 @@ upstream files. Hook cache and pending-session state are ignored by Git.
 - `DESIGN.md` — current art direction and design rules
 - `PRODUCT.md` — audience, content, and constraints
 
-Real project content, the full Stage 9 hardening pass, and deployment remain
-future work. Commit and push only when Daniel requests them.
+The rest of the project content, the full Stage 9 hardening pass, and
+deployment remain future work. Commit and push only when Daniel requests them.

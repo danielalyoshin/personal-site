@@ -1,6 +1,6 @@
 import type { Ref } from 'react'
 import { readingMinutes } from '../content/readingTime'
-import type { Project, ProjectLink } from '../content/types'
+import type { Project } from '../content/types'
 import { site } from '../content/site'
 import styles from './CRT.module.css'
 import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
@@ -30,14 +30,6 @@ function watchContinuation(article: HTMLElement | null) {
     resized.disconnect()
   }
 }
-
-/**
- * Placeholder tapes link to example.com until real projects arrive; those
- * links are never shown. Relative URLs resolve against a stand-in origin, so
- * the check needs no window and runs wherever the page is rendered.
- */
-const isReal = (link: ProjectLink) =>
-  new URL(link.url, 'https://site.invalid').hostname !== 'example.com'
 
 interface CRTProps {
   /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
@@ -144,9 +136,9 @@ export default function CRT({
                       ))}
                     </ul>
                   )}
-                  {tape.links.some(isReal) && (
+                  {tape.links.length > 0 && (
                     <ul className={styles.links} aria-label="Project links">
-                      {tape.links.filter(isReal).map((l) => (
+                      {tape.links.map((l) => (
                         <li key={l.url}>
                           <a
                             href={l.url}
