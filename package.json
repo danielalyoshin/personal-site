@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test:e2e": "playwright test",
     "render:card": "node scripts/render-social-card.mjs",
+    "render:diagrams": "node scripts/render-diagrams.mjs",
     "render:icons": "node scripts/render-icons.mjs",
     "test:hooks": "node --test scripts/codex-impeccable-stop.test.mjs"
   },

@@ -51,8 +51,9 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   const links = reader.getByRole('list', { name: 'Project links' })
   await expect(links.getByRole('link')).toHaveText([
     'PYPI',
-    'DRIVER PR',
+    'DIALECT PR',
     'SUPERSET PR',
+    'PACKAGES',
   ])
   await page.keyboard.press('Tab')
   await expect(links.getByRole('link', { name: 'PYPI' })).toBeFocused()
