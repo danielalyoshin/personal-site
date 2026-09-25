@@ -1,16 +1,16 @@
 import type { ComingTape, Project, ShelfTape } from '../types'
 import { isComing } from '../types'
 import { aboutTape } from '../about'
-import { placeholderAlpha } from './placeholder-alpha'
 import { placeholderBeta } from './placeholder-beta'
 import { placeholderGamma } from './placeholder-gamma'
+import { supersetD1 } from './superset-d1'
 
 /** The rack holds this many tapes: the project slots, then About at the right. */
 export const SHELF_SLOTS = 6
 
 /** Project tapes only, shelf order (leftmost first); at most SHELF_SLOTS - 1. */
 export const projects: Project[] = [
-  placeholderAlpha,
+  supersetD1,
   placeholderBeta,
   placeholderGamma,
 ]

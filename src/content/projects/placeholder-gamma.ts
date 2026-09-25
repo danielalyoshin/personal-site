@@ -3,6 +3,7 @@ import type { Project } from '../types'
 export const placeholderGamma: Project = {
   slug: 'placeholder-gamma',
   title: 'Placeholder: Gamma',
+  caption: 'Placeholder tape',
   tagline:
     'A placeholder in the archive. The real project selection is on its way.',
   description: [

@@ -1,3 +1,4 @@
+import { site } from './site'
 import type { Project } from './types'
 
 /**
@@ -7,6 +8,7 @@ import type { Project } from './types'
 export const aboutTape: Project = {
   slug: 'about',
   title: 'About',
+  caption: site.owner,
   tagline: 'Forward deployed engineer',
   description: [
     'I’m in my final year at the University of Toronto, in the Computer Science Specialist program with a focus on software engineering.',

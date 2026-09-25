@@ -4,6 +4,7 @@ import type { Project } from '../types'
 export const placeholderBeta: Project = {
   slug: 'placeholder-beta',
   title: 'Placeholder: Beta, a Project With a Much Longer Working Title',
+  caption: 'Placeholder tape',
   tagline:
     'A placeholder in the archive. The real project selection is on its way.',
   description: [

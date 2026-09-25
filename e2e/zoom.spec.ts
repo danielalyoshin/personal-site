@@ -65,9 +65,7 @@ async function sampleFrames(page: Page, frames: number, act?: string) {
       recorder.__zoomSamples.length = 0
       if (act === 'select')
         document
-          .querySelector<HTMLAnchorElement>(
-            'a[href="/project/placeholder-alpha"]',
-          )!
+          .querySelector<HTMLAnchorElement>('a[href="/project/superset-d1"]')!
           .click()
       if (act === 'eject')
         document
@@ -189,7 +187,7 @@ test('a keyboard eject that brings the tape link into view still lands the studi
   const moved = await page.evaluate(() => window.scrollY)
   expect(moved).toBeGreaterThan(0)
   const link = page.getByRole('link', {
-    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
     exact: true,
   })
   await expect(link).toBeFocused()

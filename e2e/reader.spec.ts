@@ -30,7 +30,7 @@ test('the modeled reader keeps a real 16px prose floor on common laptops and sho
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect(page.getByTestId('native-reader')).toHaveCount(0)
   // Above the reference zoom the reader is its 560px plane, scaled up.

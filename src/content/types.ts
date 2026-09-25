@@ -36,6 +36,11 @@ export interface VhsPresentation {
 export interface Project {
   slug: string
   title: string
+  /**
+   * The line under the tape's name, the same words in the archive entry and
+   * the guide. A project tape's title when left out.
+   */
+  caption?: string
   tagline: string
   /** Paragraphs, rendered on the CRT. */
   description: string[]

@@ -42,12 +42,12 @@ for (const fail of [false, true]) {
     const held = await holdStudioModule(page, fail)
     try {
       // DOMContentLoaded must not wait for the deliberately held dynamic import.
-      await page.goto('/project/placeholder-alpha', {
+      await page.goto('/project/superset-d1', {
         waitUntil: 'domcontentloaded',
       })
       await held.requested
       const reader = page.getByRole('article', {
-        name: 'Placeholder: Alpha details',
+        name: 'Cloudflare D1 in Apache Superset details',
       })
       await expect(reader).toBeVisible()
       await expect(page.getByTestId('studio-scene')).toHaveAttribute(
@@ -94,7 +94,9 @@ for (const fail of [false, true]) {
         // screen at the same depth, with focus still in the article.
         const modeled = page
           .getByTestId('project-reader')
-          .getByRole('article', { name: 'Placeholder: Alpha details' })
+          .getByRole('article', {
+            name: 'Cloudflare D1 in Apache Superset details',
+          })
         await expect(modeled).toBeVisible()
         await expect(page.getByTestId('native-reader')).toHaveCount(0)
         expect(await originalReader.evaluate((el) => el.isConnected)).toBe(
@@ -149,13 +151,15 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
   })
   const held = await holdStudioModule(page)
   try {
-    await page.goto('/project/placeholder-alpha', {
+    await page.goto('/project/superset-d1', {
       waitUntil: 'domcontentloaded',
     })
     await held.requested
     const native = page.getByTestId('native-reader')
     await expect(
-      native.getByRole('article', { name: 'Placeholder: Alpha details' }),
+      native.getByRole('article', {
+        name: 'Cloudflare D1 in Apache Superset details',
+      }),
     ).toBeVisible()
     await expect(native.locator('h2').first()).toBeFocused()
 
@@ -198,7 +202,7 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
         const { scene } = _roots
           .get(document.querySelector('canvas')!)!
           .store.getState()
-        const tape = scene.getObjectByName('tape-placeholder-alpha')!
+        const tape = scene.getObjectByName('tape-superset-d1')!
         const player = scene.getObjectByName('vhs-player')!
         const flap = scene.getObjectByName('player-flap')!
         return {
@@ -223,7 +227,7 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
     await expect(page).toHaveURL('/')
     await expect(
       page.getByRole('link', {
-        name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
         exact: true,
       }),
     ).toBeFocused()
@@ -241,11 +245,11 @@ test('the HTML archive opens a reader before the graphics module is available', 
     await held.requested
     await page
       .getByRole('link', {
-        name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
       })
       .click()
     const reader = page.getByRole('article', {
-      name: 'Placeholder: Alpha details',
+      name: 'Cloudflare D1 in Apache Superset details',
     })
     await expect(reader).toBeVisible()
     await expect(
@@ -258,12 +262,12 @@ test('the HTML archive opens a reader before the graphics module is available', 
     await page.keyboard.press('Escape')
     await expect(page).toHaveURL('/')
     await page.goBack()
-    await expect(page).toHaveURL('/project/placeholder-alpha')
+    await expect(page).toHaveURL('/project/superset-d1')
     await expect(reader).toBeVisible()
     await page.goBack()
     await expect(page).toHaveURL('/')
     await page.goForward()
-    await expect(page).toHaveURL('/project/placeholder-alpha')
+    await expect(page).toHaveURL('/project/superset-d1')
     await expect(reader).toBeVisible()
     const originalReader = (await reader.elementHandle())!
     held.release()
@@ -543,11 +547,14 @@ test.describe('touch input in the studio', () => {
       expect(slots.about.right - slots.about.left).toBeLessThan(44)
       // A touch has no hover to confirm with: the first tap on a cassette
       // previews it and the second plays it (The Touch Rule).
-      const alpha = centre(slots['placeholder-alpha'])
-      await page.touchscreen.tap(alpha.x, alpha.y)
+      const d1 = centre(slots['superset-d1'])
+      await page.touchscreen.tap(d1.x, d1.y)
       await expect
         .poll(guide)
-        .toEqual(['ALPHA', 'Placeholder tape · Tap again to play'])
+        .toEqual([
+          'SUPERSET D1',
+          'Cloudflare D1 in Apache Superset · Tap again to play',
+        ])
       await expect(page).toHaveURL('/')
       // Every slot answers within a 44px catch about its centre: a tap 5px
       // clear of About's target still means About, and the nearest slot
@@ -570,14 +577,19 @@ test.describe('touch input in the studio', () => {
       await expect.poll(guide).toEqual(idle)
       await expect(page).toHaveURL('/')
       // The tape already previewed is the one a tap plays.
-      await page.touchscreen.tap(alpha.x, alpha.y)
+      await page.touchscreen.tap(d1.x, d1.y)
       await expect
         .poll(guide)
-        .toEqual(['ALPHA', 'Placeholder tape · Tap again to play'])
-      await page.touchscreen.tap(alpha.x, alpha.y)
-      await expect(page).toHaveURL('/project/placeholder-alpha')
+        .toEqual([
+          'SUPERSET D1',
+          'Cloudflare D1 in Apache Superset · Tap again to play',
+        ])
+      await page.touchscreen.tap(d1.x, d1.y)
+      await expect(page).toHaveURL('/project/superset-d1')
       await expect(
-        page.getByRole('article', { name: 'Placeholder: Alpha details' }),
+        page.getByRole('article', {
+          name: 'Cloudflare D1 in Apache Superset details',
+        }),
       ).toBeVisible()
     } finally {
       await session.detach()
@@ -603,7 +615,7 @@ test('every screen state has a class of its own: nothing on stage is classed "un
   await page.goto('/')
   await ready(page)
   expect(await strays()).toBe(0)
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   await ready(page)
   await expect(screen('project-reader')).toBeVisible()
   expect(await strays()).toBe(0)
@@ -668,7 +680,9 @@ test('the studio loads without a console warning or error', async ({
   await page.goto('/')
   await ready(page)
   await page
-    .getByRole('link', { name: 'Play tape: 01 ALPHA Placeholder tape (2026)' })
+    .getByRole('link', {
+      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+    })
     .click()
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await page.keyboard.press('Escape')
@@ -727,7 +741,7 @@ test('the canvas keeps its box while the native reader owns playback', async ({
   }
   const atRest = await sizes()
   expect(atRest.canvas).toEqual(atRest.box)
-  await page.getByRole('link', { name: /Play tape: 01 ALPHA/ }).click()
+  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
   // The reader covers the studio from the first frame of the insertion to
   // the eject: a viewport-sized drawing buffer under it would serve nobody.
   await expect(page.getByTestId('native-reader')).toBeVisible()
@@ -735,7 +749,9 @@ test('the canvas keeps its box while the native reader owns playback', async ({
   await expect(scene).not.toHaveAttribute('data-detached', 'true')
   await page.getByRole('button', { name: 'Skip animation' }).click()
   await expect(
-    page.getByRole('article', { name: 'Placeholder: Alpha details' }),
+    page.getByRole('article', {
+      name: 'Cloudflare D1 in Apache Superset details',
+    }),
   ).toBeVisible()
   expect(await sizes()).toEqual(atRest)
   // The page holds still under the reader all the same.

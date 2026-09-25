@@ -291,18 +291,20 @@ test('the tube names the tape going in and never invites another while it loads'
     .toEqual(
       expect.arrayContaining(['INSERT TAPE', 'CHOOSE A TAPE', 'TO PLAY']),
     )
-  const alpha = page.getByRole('link', {
-    name: /Play tape: 01 ALPHA/,
+  const d1 = page.getByRole('link', {
+    name: /Play tape: 01 SUPERSET D1/,
   })
-  await alpha.focus()
+  await d1.focus()
   await expect
     .poll(prints)
-    .toEqual(expect.arrayContaining(['ALPHA', 'SELECT THIS TAPE', 'TO PLAY']))
+    .toEqual(
+      expect.arrayContaining(['SUPERSET D1', 'SELECT THIS TAPE', 'TO PLAY']),
+    )
 
-  await alpha.click()
+  await d1.click()
   await expect
     .poll(() => prints(true))
-    .toEqual(expect.arrayContaining(['LOADING', 'LOADING TAPE', 'ALPHA']))
+    .toEqual(expect.arrayContaining(['LOADING', 'LOADING TAPE', 'SUPERSET D1']))
   const loading = await prints(true)
   for (const invitation of [
     'INSERT TAPE',
@@ -318,7 +320,7 @@ test('the tube names the tape coming out, as the deck reads EJECT, and invites a
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await recordTubePrints(page)
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   await expect(page.getByTestId('studio-scene')).toHaveAttribute(
     'data-ready',
     'true',
@@ -351,7 +353,7 @@ test('the tube names the tape coming out, as the deck reads EJECT, and invites a
   await expect(page).toHaveURL('/')
   await expect
     .poll(() => prints('never'))
-    .toEqual(expect.arrayContaining(['EJECT', 'ALPHA']))
+    .toEqual(expect.arrayContaining(['EJECT', 'SUPERSET D1']))
   const leaving = await prints('never')
   // The corner and the headline both read the deck's word for the state.
   expect(leaving.filter((print) => print === 'EJECT')).toHaveLength(2)
@@ -399,7 +401,7 @@ test('the modeled tube casts the colour it shows: blue at rest and through the f
     })
   for (const [path, expected] of [
     ['/', '4145ff'],
-    ['/project/placeholder-alpha', 'b4c4ff'],
+    ['/project/superset-d1', 'b4c4ff'],
     ['/project/not-a-tape', 'b4c4ff'],
     ['/not-a-channel', 'b4c4ff'],
   ]) {
@@ -443,7 +445,7 @@ test('the modeled tube casts the colour it shows: blue at rest and through the f
       })
       return { colour, loading: prints.includes('LOADING TAPE') }
     }, loop)
-  await page.getByRole('link', { name: /Play tape: 01 ALPHA/ }).click()
+  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
   await expect.poll(async () => (await flight('never')).loading).toBe(true)
   expect(await flight('never')).toEqual({ colour: '4145ff', loading: true })
   // The reader arrives and the light turns with it.
@@ -461,11 +463,11 @@ test('physical playback keys follow the player, remain clickable after resize, a
     'data-ready',
     'true',
   )
-  const alpha = page.getByRole('link', {
-    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+  const d1 = page.getByRole('link', {
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
     exact: true,
   })
-  await alpha.click()
+  await d1.click()
   await expect(page.locator('article h2')).toBeFocused()
   for (const viewport of [
     { width: 1440, height: 1000 },
@@ -572,7 +574,7 @@ test('physical playback keys follow the player, remain clickable after resize, a
   }
   await page.getByRole('button', { name: 'Eject tape', exact: true }).click()
   await expect(page).toHaveURL('/')
-  await expect(alpha).toBeFocused()
+  await expect(d1).toBeFocused()
 })
 
 test('the canvas is sized before the tape moves, and the keys keep one printed label from browse to playback', async ({
@@ -598,7 +600,7 @@ test('the canvas is sized before the tape moves, and the keys keep one printed l
       )) as typeof import('@react-three/fiber')
       const root = _roots.get(document.querySelector('canvas')!)!.store
       const { scene, size, viewport, internal } = root.getState()
-      const tape = scene.getObjectByName('tape-placeholder-alpha')!
+      const tape = scene.getObjectByName('tape-superset-d1')!
       const home = tape.position.clone()
       const labels = () => ({
         sound: !!scene.getObjectByName('player-sound-label'),
@@ -627,9 +629,7 @@ test('the canvas is sized before the tape moves, and the keys keep one printed l
         store: root,
       })
       document
-        .querySelector<HTMLAnchorElement>(
-          'a[href="/project/placeholder-alpha"]',
-        )!
+        .querySelector<HTMLAnchorElement>('a[href="/project/superset-d1"]')!
         .click()
       // Step frames by hand while layout, the resize observer, and React
       // deliver the new box. A canvas re-render restores demand mode, so any

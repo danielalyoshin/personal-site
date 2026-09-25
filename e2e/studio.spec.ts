@@ -25,35 +25,41 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await ready(page)
   await expect(page.locator('canvas')).toBeVisible()
   await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(4)
-  const alpha = page.getByRole('link', {
-    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+  const d1 = page.getByRole('link', {
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
     exact: true,
   })
-  await alpha.focus()
+  await d1.focus()
   await page.keyboard.press('ArrowRight')
   await expect(
     page.getByRole('link', { name: /Play tape: 02 BETA/ }),
   ).toBeFocused()
   await page.keyboard.press('Home')
-  await expect(alpha).toBeFocused()
+  await expect(d1).toBeFocused()
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL('/project/placeholder-alpha')
+  await expect(page).toHaveURL('/project/superset-d1')
   const title = page.getByRole('heading', {
-    name: 'Placeholder: Alpha',
+    name: 'Cloudflare D1 in Apache Superset',
     exact: true,
   })
   await expect(title).toBeFocused()
   await expect(page.getByRole('button', { name: 'Eject tape' })).toBeVisible()
-  await expect(page.locator('a[href*="example.com"]')).toHaveCount(0)
   const reader = page.getByRole('article', {
-    name: 'Placeholder: Alpha details',
+    name: 'Cloudflare D1 in Apache Superset details',
   })
+  // The tape's own links follow its write-up in the reading order.
+  const links = reader.getByRole('list', { name: 'Project links' })
+  await expect(links.getByRole('link')).toHaveText([
+    'PYPI',
+    'DRIVER PR',
+    'SUPERSET PR',
+  ])
   await page.keyboard.press('Tab')
-  await expect(
-    page.getByRole('button', { name: 'Sound effects', exact: true }),
-  ).toBeFocused()
+  await expect(links.getByRole('link', { name: 'PYPI' })).toBeFocused()
   await page.keyboard.press('Shift+Tab')
   await expect(reader).toBeFocused()
+  // Reaching the links scrolled the reader to its end; read from the top.
+  await reader.evaluate((el) => el.scrollTo({ top: 0, behavior: 'instant' }))
   const initialScroll = await reader.evaluate((el) => el.scrollTop)
   await page.keyboard.press('PageDown')
   await expect
@@ -64,7 +70,7 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await expect(reader).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  await expect(alpha).toBeFocused()
+  await expect(d1).toBeFocused()
   await noOverflow(page)
   expect(errors).toEqual([])
 })
@@ -215,7 +221,7 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await expect(inStudio).toBeHidden()
   await expect(
     page.getByRole('link', {
-      name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
       exact: true,
     }),
   ).toBeInViewport({ ratio: 1 })
@@ -231,7 +237,7 @@ test('sound is opt-in, lives on the deck, and resets on a fresh visit', async ({
   await expect(page.getByRole('button', { name: 'Sound effects' })).toHaveCount(
     0,
   )
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   const sound = page.getByRole('button', { name: 'Sound effects', exact: true })
   await expect(sound).toHaveAttribute('aria-pressed', 'false')
   await sound.click()
@@ -279,6 +285,8 @@ test('archive works without WebGL and after a graphics context is lost', async (
   await expect(
     page.getByRole('heading', { name: /Placeholder: Beta/ }),
   ).toBeVisible()
+  // A placeholder's stand-in links are never shown.
+  await expect(page.locator('a[href*="example.com"]')).toHaveCount(0)
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
 })
@@ -427,7 +435,7 @@ test('the pointer preview hands over slot to slot without flicker while cassette
   // One handover at each shared edge, and never back to a tape already left.
   // The two blank slots after Gamma answer no pointer, so the guide reads
   // idle across them until About.
-  const played = ['ALPHA', 'BETA', 'GAMMA']
+  const played = ['SUPERSET D1', 'BETA', 'GAMMA']
   expect(forward).toEqual([...played, idle, 'ABOUT', idle])
   expect(back).toEqual(['ABOUT', idle, ...played.reverse(), idle])
 })
@@ -505,9 +513,9 @@ test('slots without a project hold blank tapes that are coming soon', async ({
     'pointer-target-about',
     'pointer-target-coming-1',
     'pointer-target-coming-2',
-    'pointer-target-placeholder-alpha',
     'pointer-target-placeholder-beta',
     'pointer-target-placeholder-gamma',
+    'pointer-target-superset-d1',
   ])
   // The three-quarter camera looks along the rack: a ray through a blank
   // slot's own centre reaches Gamma's envelope behind it. The blank slot's

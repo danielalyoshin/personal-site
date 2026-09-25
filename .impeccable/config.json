@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "src/components/DeckControls.module.css"
+        ],
+        "createdAt": "2026-09-25T20:45:41.993Z",
+        "reason": "Hardware key: the 3px ink-0 bottom edge is the key's depth and collapses on :active; not an accent stripe (confirmed by Daniel)"
+      }
+    ]
+  }
+}

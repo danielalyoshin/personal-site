@@ -100,7 +100,7 @@ test('the counter is the reading time of the copy on the tube, and a screen read
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  for (const slug of ['placeholder-alpha', 'placeholder-beta', 'about']) {
+  for (const slug of ['superset-d1', 'placeholder-beta', 'about']) {
     await page.goto(`/project/${slug}`)
     await ready(page)
     const tube = page.getByTestId('project-reader')
@@ -153,7 +153,7 @@ test('the native Eject key is named for what it does; ESC is its shortcut, not i
   await page.emulateMedia({ reducedMotion: 'reduce' })
   // A short desktop viewport reads in the native reader, legend showing.
   await page.setViewportSize({ width: 1024, height: 640 })
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   const key = page
     .getByRole('group', { name: 'VHS player controls' })
     .getByRole('button', { name: 'Eject tape', exact: true })

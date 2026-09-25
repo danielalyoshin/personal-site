@@ -366,7 +366,8 @@ The stylesheet, not a script, picks the line by width, so a page drawn ahead
 of time is right on the device it arrives on. Both lines finish the
 headline's sentence with the same verb and the same noun, the tape; "cassette" is the modeled object's name in this document,
 never the visitor's. While a tape is previewed the guide shows its spine
-name over its caption and the action: "Placeholder tape · Select to play",
+name over its caption and the action: "Cloudflare D1 in Apache Superset ·
+Select to play",
 or "Tap again to play" on a device without hover. Nothing shares the
 guide's row: there is no scene metadata line, clock, drag hint, or reset
 above the canvas. The archive follows the canvas with a seam and 16px top
@@ -607,38 +608,39 @@ guide ("Pick one from the projects below."), the status messages, and the
 idle tube's PROJECTS. It is never "the archive", "the tape index" or "the shelf" in
 anything a visitor reads or hears; the modeled rack and holder are object
 names for this document only. A tape has one short name, its spine name
-(`vhs.spineLabel`: ALPHA, ABOUT), printed on the spine and repeated as
+(`vhs.spineLabel`: SUPERSET D1, ABOUT), printed on the spine and repeated as
 written by the archive entry, the guide, the idle tube, and both loading
 screens; and one title, which heads the reader and names the document. The About
 tape follows the same rule as every tape: it is "About" in the header, ABOUT
 on its spine, and "About" on the tube, where the owner's name is already
-printed once, in the ident. A tape's caption ("Placeholder tape", "Daniel
-Alyoshin", "Blank tape") is the same words in the archive entry and in the
-guide. The visitor's noun is "tape"; "cassette" names the modeled object in
+printed once, in the ident. A tape's caption is the same words in the
+archive entry and in the guide: its `caption`, else its title ("Cloudflare D1
+in Apache Superset", "Placeholder tape", "Daniel Alyoshin"; a blank slot's
+"Blank tape"). The visitor's noun is "tape"; "cassette" names the modeled object in
 this document.
 
 ### The archive
 
 The section a visitor knows as "Projects" (The One Name Rule): six entries
-in rack order. A linked entry with a numbered label, explicit placeholder caption, play symbol,
+in rack order. A linked entry with a numbered label, caption, play symbol,
 and a thin accent strip supplied by its tape data. Each entry uses a seam border
 and small corners; hover, focus, or modeled-tape preview fills it with ink-2 and
 strengthens the border. The number sits above the name in the 11px label tier, as on a cassette
 spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
-needed; 12px secondary copy distinguishes "Placeholder tape" from the About
-tape's "Daniel Alyoshin", and the guide repeats the same caption while that
-tape is previewed. The playable links are normal Tab stops, with
+needed; 12px secondary copy carries the tape's caption (a project's title,
+"Placeholder tape" on a placeholder, the About tape's "Daniel Alyoshin"), and
+the guide repeats the same caption while that tape is previewed. The playable links are normal Tab stops, with
 arrows and Home/End for direct movement between them. The archive's heading carries no count; nothing on the
 shell does.
 
 **The Spoken Name Rule.** A link is named by the words it shows, so a name
 read off the page is a name that can be said to it (WCAG 2.5.3). An archive
 entry's name is its visible text between what it does and its year, "Play
-tape: 01 ALPHA Placeholder tape (2026)", the first and last parts set aside
-for assistive technology; the nameplate is "Daniel Alyoshin Design engineer
-home". No link carries an `aria-label` that replaces its words.
+tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)", the first and
+last parts set aside for assistive technology; the nameplate is "Daniel
+Alyoshin Forward deployed engineer home". No link carries an `aria-label` that replaces its words.
 
 **The Blank Slot Rule.** The rack has six slots: five for projects and the
 About tape at the right. A project slot with nothing behind it yet keeps its
@@ -888,7 +890,7 @@ graphite ground; `npm run render:icons` rasterizes the touch icon from it.
 
 Every route names itself. The home title is `site.title`, which
 `index.html` repeats for the page as served (the build checks they agree);
-a tape reads "Placeholder: Alpha · Daniel Alyoshin", the About tape "About ·
+a tape reads "Cloudflare D1 in Apache Superset · Daniel Alyoshin", the About tape "About ·
 Daniel Alyoshin", and both missing-route states "No signal · Daniel
 Alyoshin", so tabs, history, bookmarks, and a screen reader's page
 announcement tell tapes apart. `index.html` carries Open Graph and Twitter

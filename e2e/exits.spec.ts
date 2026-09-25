@@ -22,9 +22,9 @@ async function clipped(target: Locator) {
   })
 }
 
-const alphaLink = (page: Page) =>
+const d1Link = (page: Page) =>
   page.getByRole('link', {
-    name: 'Play tape: 01 ALPHA Placeholder tape (2026)',
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
     exact: true,
   })
 
@@ -32,19 +32,19 @@ test('a keyboard exit lands focus on the tape link, in sight; a pointer exit lea
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   await ready(page)
   await expect(page.getByTestId('project-reader')).toBeVisible()
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  const alpha = alphaLink(page)
-  await expect(alpha).toBeFocused()
+  const d1 = d1Link(page)
+  await expect(d1).toBeFocused()
   // The ring shows, so the link it is on came into view, clear of the edge.
-  expect(await alpha.evaluate((el) => el.matches(':focus-visible'))).toBe(true)
-  expect(await clipped(alpha)).toBe(0)
+  expect(await d1.evaluate((el) => el.matches(':focus-visible'))).toBe(true)
+  expect(await clipped(d1)).toBe(0)
   expect(
-    await alpha.evaluate(
+    await d1.evaluate(
       (el) => window.innerHeight - el.getBoundingClientRect().bottom,
     ),
   ).toBeGreaterThanOrEqual(23)
@@ -77,11 +77,11 @@ test('an exit during the handoff keeps the focus it landed', async ({
     })
     watch.observe(document, { subtree: true, childList: true })
   })
-  await page.goto('/project/placeholder-alpha')
+  await page.goto('/project/superset-d1')
   await expect(page).toHaveURL('/')
   await expect(page.getByTestId('project-reader')).toHaveCount(0)
   // The late title must not take focus back and drop it on the page body.
-  await expect(alphaLink(page)).toBeFocused()
+  await expect(d1Link(page)).toBeFocused()
 })
 
 test('the exit from NO SIGNAL is printed on the tube and lands on the nameplate', async ({
@@ -129,7 +129,7 @@ test('Skip takes focus for the insertion, and only a real key press skips', asyn
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
   await ready(page)
-  await alphaLink(page).focus()
+  await d1Link(page).focus()
   await page.keyboard.press('Enter')
   const skip = page.getByRole('button', { name: 'Skip animation' })
   await expect(skip).toBeFocused()
@@ -192,12 +192,16 @@ test('every route names itself in the document title', async ({ page }) => {
   await page.goto('/')
   await expect(page).toHaveTitle(HOME_TITLE)
   await ready(page)
-  await alphaLink(page).click()
-  await expect(page).toHaveTitle('Placeholder: Alpha · Daniel Alyoshin')
+  await d1Link(page).click()
+  await expect(page).toHaveTitle(
+    'Cloudflare D1 in Apache Superset · Daniel Alyoshin',
+  )
   await page.keyboard.press('Escape')
   await expect(page).toHaveTitle(HOME_TITLE)
   await page.goBack()
-  await expect(page).toHaveTitle('Placeholder: Alpha · Daniel Alyoshin')
+  await expect(page).toHaveTitle(
+    'Cloudflare D1 in Apache Superset · Daniel Alyoshin',
+  )
   await page.goto('/project/about')
   await expect(page).toHaveTitle('About · Daniel Alyoshin')
   for (const route of ['/project/missing', '/missing-channel']) {
@@ -224,7 +228,7 @@ test('the tube carries the name through a deep link, from its first second', asy
     },
   )
   try {
-    await page.goto('/project/placeholder-alpha', {
+    await page.goto('/project/superset-d1', {
       waitUntil: 'domcontentloaded',
     })
     // Before any graphics: the native reader already says whose tape this is.

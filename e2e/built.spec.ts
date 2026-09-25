@@ -5,7 +5,7 @@ import type { Page } from '@playwright/test'
 // (scripts/prerender.mjs), then taken over by the app.
 
 const tapes = [
-  { path: '/project/placeholder-alpha', title: 'Placeholder: Alpha' },
+  { path: '/project/superset-d1', title: 'Cloudflare D1 in Apache Superset' },
   {
     path: '/project/placeholder-beta',
     title: 'Placeholder: Beta, a Project With a Much Longer Working Title',
@@ -93,7 +93,7 @@ for (const viewport of [
       }
       watch()
     })
-    for (const path of ['/', '/project/placeholder-alpha']) {
+    for (const path of ['/', '/project/superset-d1']) {
       await page.goto(path)
       await ready(page)
       expect(
@@ -131,10 +131,13 @@ test('the page is drawn for the width it is served at, before the app arrives', 
   await expect(page.getByText('Pick one in the studio.')).toBeHidden()
   await expect(page.getByText('Setting the scene…')).toBeVisible()
   // The archive works as plain links: the tape's page is a real page.
-  await page.getByRole('link', { name: /Play tape: 01 ALPHA/ }).click()
-  await expect(page).toHaveURL('/project/placeholder-alpha')
+  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
+  await expect(page).toHaveURL('/project/superset-d1')
   await expect(
-    page.getByRole('heading', { name: 'Placeholder: Alpha', exact: true }),
+    page.getByRole('heading', {
+      name: 'Cloudflare D1 in Apache Superset',
+      exact: true,
+    }),
   ).toBeVisible()
   await context.close()
 })

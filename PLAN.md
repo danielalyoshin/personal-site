@@ -1222,6 +1222,17 @@ rest, by finding:
   (UofT final year, architecture + sales, entertainment and health tech), no
   tags, REC SEP 2026. Kept: the guide, loader, blank slots, tube, NO SIGNAL,
   deck, and cassette print. Project tapes remain placeholders.
+- First real project DONE (2026-09-25, from Daniel's summary): "Cloudflare D1
+  in Apache Superset" (`superset-d1`, spine SUPERSET D1, classic label,
+  orange `#ff7a1a`, REC SEP 2026) takes slot 01 in place of the Alpha
+  placeholder, which is deleted with its test-pattern media. Five
+  paragraphs from his facts only, no role (not supplied), no media yet;
+  links to the PyPI release, the driver PR, and the Superset PR. A tape's
+  caption is now data: `caption`, else the title, so the archive entry and
+  guide read "Cloudflare D1 in Apache Superset"; Beta and Gamma keep
+  "Placeholder tape" and About keeps the owner's name, which removes the
+  About slug check from `Stage.tsx`. Beta and Gamma stay until the next
+  real projects replace them.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

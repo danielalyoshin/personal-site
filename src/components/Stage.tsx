@@ -14,7 +14,7 @@ import type { RootState } from '@react-three/fiber'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { findTape, playableTapes, shelfTapes } from '../content/projects'
 import { aboutTape } from '../content/about'
-import { pageTitle, site } from '../content/site'
+import { pageTitle } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
@@ -51,12 +51,9 @@ function landFocus(el: HTMLElement) {
   if (el.matches(':focus-visible')) el.scrollIntoView({ block: 'nearest' })
 }
 
-/**
- * The line under a tape's name, the same words in the guide and the archive.
- * Project tapes say what they are until real projects replace them.
- */
+/** The line under a tape's name, the same words in the guide and the archive. */
 function tapeCaption(tape: Project) {
-  return tape.slug === aboutTape.slug ? site.owner : 'Placeholder tape'
+  return tape.caption ?? tape.title
 }
 
 /** Keys that only modify another key are never the "any key" that skips. */
@@ -757,8 +754,8 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                     onKeyDown={(event) => moveTape(event, item)}
                   >
                     {/* Named by what the entry shows, between what it does
-                        and its year: "Play tape: 01 ALPHA Placeholder tape
-                        (2026)". */}
+                        and its year: "Play tape: 01 SUPERSET D1 Cloudflare
+                        D1 in Apache Superset (2026)". */}
                     <span className="srOnly">Play tape: </span>
                     <span className={styles.tapeNumber}>
                       {String(index + 1).padStart(2, '0')}
