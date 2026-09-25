@@ -114,16 +114,16 @@ for (const fail of [false, true]) {
       await expect(page).toHaveURL('/')
       if (!fail) {
         await expect(page.locator('canvas')).toBeVisible()
-        await page.getByRole('link', { name: /Play tape: 02 BETA/ }).click()
+        await page.getByRole('link', { name: /Play tape: 06 ABOUT/ }).click()
         await expect(page.getByTestId('project-reader')).toBeVisible()
         await expect(
-          page.getByRole('heading', { name: /Placeholder: Beta/ }),
+          page.getByRole('heading', { name: 'About', exact: true, level: 2 }),
         ).toBeVisible()
       } else {
         await expect(page.locator('canvas')).toHaveCount(0)
         await expect(
           page.getByRole('link', { name: /^Play tape:/ }),
-        ).toHaveCount(4)
+        ).toHaveCount(2)
       }
     } finally {
       held.release()
@@ -710,7 +710,9 @@ test('every link on the page is named by the words it shows', async ({
       return { href: link.getAttribute('href')!, label: words.join(' ') }
     }),
   )
-  expect(shown.length).toBeGreaterThanOrEqual(9)
+  // Skip, the nameplate, two header links, every tape that plays, and the
+  // two contact links.
+  expect(shown.length).toBeGreaterThanOrEqual(8)
   for (const { href, label } of shown) {
     // Playwright matches a name as a case-insensitive substring: exactly
     // the label-in-name relation (WCAG 2.5.3).

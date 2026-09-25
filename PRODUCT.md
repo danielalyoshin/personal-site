@@ -75,11 +75,13 @@ accessibility standards.
 
 ## Evidence on Hand
 
-- No real project content yet: the featured-project list is still being
-  selected, and no screenshots, recordings, or copy exist. Placeholder
-  projects stand in until Stage 8 of `PLAN.md`.
+- One real project so far: Cloudflare D1 in Apache Superset. The rest of the
+  featured-project list is still being selected (Stage 8 of `PLAN.md`), and
+  the four project slots still without one hold blank tapes marked "Coming
+  soon…".
 - Future work must not fabricate real-seeming projects, metrics, testimonials,
-  or press. Placeholders must be legible as placeholders.
+  or press. An unfilled slot must read as unfilled: a blank tape, never a
+  stand-in project.
 
 ## Product Principles
 
