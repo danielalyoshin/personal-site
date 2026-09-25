@@ -1,0 +1,270 @@
+<!doctype html>
+<!--
+  Source of superset-d1-diagram.webp, the Cloudflare D1 tape's diagram.
+  `npm run render:diagrams` draws it with the site's own fonts and palette;
+  while `npm run dev` runs it can be previewed at
+  /src/content/projects/media/superset-d1-diagram.html.
+
+  It is drawn at 360px, the width at which its 14px text still reads at
+  11.5px in a 390px phone's reader (296px wide) without being oversized on
+  the desktop tube (459px), and rendered at 3.25× so it stays sharp on both.
+  Orange, the tape's label accent, marks what the tape's work changed; the
+  caption in superset-d1.ts says so.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cloudflare D1 in Apache Superset · diagram source</title>
+    <script type="module">
+      import '@fontsource-variable/archivo/wdth.css'
+      import '/src/styles/tokens.css'
+    </script>
+    <style>
+      :root {
+        /* The tape's label accent (vhs.accent): what this tape changed. */
+        --accent: #ff7a1a;
+        --node: color-mix(in srgb, var(--screen-text) 4%, var(--screen-black));
+        --line: var(--screen-scroll);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      body {
+        background: var(--ink-0);
+        padding: 24px;
+      }
+
+      .diagram {
+        width: 360px;
+        padding: 16px 16px 18px;
+        background: var(--screen-black);
+        color: var(--screen-soft);
+        font-family: var(--font-chassis);
+        font-size: 14px;
+        line-height: 1.4;
+        letter-spacing: var(--tracking-body);
+      }
+
+      .node {
+        border: 1px solid var(--seam-lit);
+        border-radius: var(--r-control);
+        background: var(--node);
+        padding: 10px 13px 11px;
+      }
+
+      .node.changed {
+        border-color: var(--accent);
+      }
+
+      .head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .name {
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.25;
+        color: var(--screen-text);
+      }
+
+      .tag {
+        flex: none;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .note {
+        margin-top: 2px;
+      }
+
+      .head .note {
+        margin: 0;
+      }
+
+      /* What a node holds or adds, under a hairline. */
+      .rows {
+        display: grid;
+        gap: 2px 12px;
+        margin-top: 8px;
+        padding: 7px 0 0;
+        border-top: 1px solid var(--seam);
+        list-style: none;
+      }
+
+      .rows.pairs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .rows b {
+        font-weight: 600;
+        color: var(--screen-text);
+      }
+
+      /* The flow between two nodes: a stem with a drawn head, and what
+         passes along it. */
+      .link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 34px;
+        /* The stem stands on the nodes' text edge (16 + 1 + 13 = 30px). */
+        padding-left: 24px;
+        color: var(--screen-dim);
+      }
+
+      .link svg {
+        flex: none;
+        width: 12px;
+        height: 34px;
+        color: var(--line);
+      }
+
+      .retired {
+        margin-top: 18px;
+        padding-top: 12px;
+        border-top: 1px solid var(--seam);
+      }
+
+      .label {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--screen-dim);
+      }
+
+      .swap {
+        display: grid;
+        grid-template-columns: auto 14px 1fr;
+        align-items: center;
+        gap: 6px 8px;
+      }
+
+      .ghost {
+        justify-self: start;
+        border: 1px dashed var(--line);
+        border-radius: var(--r-control);
+        padding: 1px 7px 2px;
+        color: var(--screen-dim);
+      }
+
+      .swap svg {
+        width: 14px;
+        height: 14px;
+        color: var(--screen-dim);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="diagram" id="diagram">
+      <section class="node changed">
+        <div class="head">
+          <p class="name">Apache Superset 7.0</p>
+          <p class="tag">PR #44505</p>
+        </div>
+        <ul class="rows">
+          <li><b>D1 engine spec</b> · built in</li>
+          <li><b>d1 extra</b> · installs sqlalchemy-d1 0.2.0</li>
+        </ul>
+      </section>
+
+      <div class="link">
+        <svg
+          viewBox="0 0 12 34"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M6 1v30M1.75 26.75 6 31l4.25-4.25" stroke-width="1.5" />
+        </svg>
+        <span>d1://account:token@database</span>
+      </div>
+
+      <section class="node changed">
+        <div class="head">
+          <p class="name">sqlalchemy-d1 0.2.0</p>
+          <p class="tag">Rebuilt</p>
+        </div>
+        <p class="note">Adds what Superset needs</p>
+        <ul class="rows pairs">
+          <li>The d1:// name</li>
+          <li>Date columns</li>
+          <li>Schemas and views</li>
+          <li>Hides _cf_ tables</li>
+        </ul>
+      </section>
+
+      <div class="link">
+        <svg
+          viewBox="0 0 12 34"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M6 1v30M1.75 26.75 6 31l4.25-4.25" stroke-width="1.5" />
+        </svg>
+        <span>builds on</span>
+      </div>
+
+      <section class="node">
+        <p class="name">sqlalchemy-cloudflare-d1</p>
+        <p class="note">Community dialect with its own driver</p>
+      </section>
+
+      <div class="link">
+        <svg
+          viewBox="0 0 12 34"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M6 1v30M1.75 26.75 6 31l4.25-4.25" stroke-width="1.5" />
+        </svg>
+        <span>HTTPS · D1 REST API</span>
+      </div>
+
+      <section class="node">
+        <div class="head">
+          <p class="name">Cloudflare D1</p>
+          <p class="note">Serverless SQLite</p>
+        </div>
+      </section>
+
+      <section class="retired">
+        <p class="label">Retired</p>
+        <div class="swap">
+          <span class="ghost">dbapi-d1</span>
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 8h11.5M9.25 3.75 13.5 8l-4.25 4.25"
+              stroke-width="1.5"
+            />
+          </svg>
+          <span>the community driver</span>
+          <span class="ghost">superset-engine-d1</span>
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 8h11.5M9.25 3.75 13.5 8l-4.25 4.25"
+              stroke-width="1.5"
+            />
+          </svg>
+          <span>Superset’s own spec</span>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
