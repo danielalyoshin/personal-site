@@ -1225,14 +1225,34 @@ rest, by finding:
 - First real project DONE (2026-09-25, from Daniel's summary): "Cloudflare D1
   in Apache Superset" (`superset-d1`, spine SUPERSET D1, classic label,
   orange `#ff7a1a`, REC SEP 2026) takes slot 01 in place of the Alpha
-  placeholder, which is deleted with its test-pattern media. Five
-  paragraphs from his facts only, no role (not supplied), no media yet;
-  links to the PyPI release, the driver PR, and the Superset PR. A tape's
+  placeholder, which is deleted with its test-pattern media. A tape's
   caption is now data: `caption`, else the title, so the archive entry and
-  guide read "Cloudflare D1 in Apache Superset"; Beta and Gamma keep
-  "Placeholder tape" and About keeps the owner's name, which removes the
-  About slug check from `Stage.tsx`. Beta and Gamma stay until the next
-  real projects replace them.
+  guide read "Cloudflare D1 in Apache Superset", and About keeps the
+  owner's name, which removes the About slug check from `Stage.tsx`.
+- Review round DONE (2026-09-25, Daniel's three changes, one agent and
+  branch each, merged into main):
+  - Write-up: shorter (three paragraphs), first person, and it now says
+    Daniel is one of the five people who built the original packages
+    (org page and package author lists) and that this round is his
+    maintainer work. Role "Maintainer"; links PyPI, Dialect PR, Superset
+    PR, Packages (the org). A diagram of how Superset reaches D1 after
+    the change sits in the reader: `media/superset-d1-diagram.webp`
+    (1170 × 1911), rendered from `superset-d1-diagram.html` by
+    `npm run render:diagrams` (needs `cwebp`).
+  - Placeholders removed: Beta and Gamma deleted, with the example.com
+    link filter in `CRT.tsx` that only existed for them. The rack reads
+    01 SUPERSET D1, 02 to 05 blank "Coming soon…", 06 ABOUT. Test
+    coverage lost with them: a long wrapping title, a tape with no links,
+    and pointer preview between two adjacent playable tapes.
+  - Layout: The Studio First Rule (DESIGN.md). At 1280px wide and 700px
+    tall and up, the studio's box starts under the header and the kicker,
+    headline and guide sit in its open upper right; the box keeps the
+    studio's proportion (`aspect-ratio: 1.82`) and never passes the fold.
+    Studio zoom 66 → 96 at 1280x800, 99 → 109 at 1440x1000. Narrower or
+    shorter windows and phones keep the stacked layout. New framing test
+    keeps the words 12px clear of the equipment, previews included.
+  - `.impeccable/config.json` joins `.prettierignore` (its shape belongs
+    to Impeccable's hook-admin script).
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

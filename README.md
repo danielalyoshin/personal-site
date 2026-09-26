@@ -117,6 +117,11 @@ The favicon is `public/favicon.svg`, the nameplate's cassette mark; after
 editing it, `npm run render:icons` rasterizes `public/apple-touch-icon.png`
 from the same drawing.
 
+A project's diagram is an HTML page beside its image in
+`src/content/projects/media/`, drawn in the site's fonts and tokens.
+`npm run render:diagrams` renders every such page to a lossless WebP; it
+needs `cwebp` (`brew install webp`).
+
 The card script starts its own Vite server and drives installed Chrome, as
 the browser suite does. The image URL is written as `%SITE_URL%/social-card.png`;
 a build fills it from the `SITE_URL` environment variable (or a `.env` file)
