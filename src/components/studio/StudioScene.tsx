@@ -47,6 +47,7 @@ import {
 } from './framing'
 import styles from './StudioScene.module.css'
 import type { DeckControlsProps } from '../DeckControls'
+import { setPointing, usePictureSize, usePointing } from '../../lib/pictureSize'
 
 interface StudioProps extends DeckControlsProps {
   tape: Project | null
@@ -78,6 +79,8 @@ interface StudioProps extends DeckControlsProps {
   onReady: () => void
   onCreated: (state: RootState) => void
   onUnavailable: () => void
+  /** Offered while a tape plays on the modeled tube: turn it up to full. */
+  onFullScreen?: () => void
   children: ReactNode
 }
 
@@ -91,6 +94,7 @@ interface Phase {
   open: boolean
   returning: boolean
   inserting: boolean
+  playback: boolean
 }
 
 /** A rectangle in viewport pixels. */
@@ -168,6 +172,7 @@ function CameraRig({
     wasOpen: open,
     wasReturning: returning,
     wasInserting: inserting,
+    wasPlayback: false,
     /** Seconds left to wait for the viewport box after a selection. */
     departing: 0,
     returned: false,
@@ -201,12 +206,19 @@ function CameraRig({
     const { position, target, right, up, canvas, goal } = scratch.current
     const fit = framing.current
     if (!(camera instanceof OrthographicCamera) || !fit) return
-    const { open, returning, inserting } = phase.current
+    const { open, returning, inserting, playback } = phase.current
     // A move that starts from rest begins with an ordinary frame's step, not
     // the whole gap since the last drawn frame: idle time, or a long commit.
     const step = Math.min(delta, state.moving ? 0.05 : 1 / 60)
+    // The tube takes a playing tape back from a reader that covered the
+    // studio (a deep link's, or full screen's): the canvas leaves its box
+    // under that reader, and the studio composes at the tube's own view in
+    // one step, since no one sees it move. Measured then, the picture is
+    // where it will stay.
+    const uncovered = open && state.wasOpen && playback && !state.wasPlayback
     if (
       state.wake ||
+      uncovered ||
       open !== state.wasOpen ||
       returning !== state.wasReturning ||
       inserting !== state.wasInserting
@@ -250,6 +262,7 @@ function CameraRig({
     state.wasOpen = open
     state.wasReturning = returning
     state.wasInserting = inserting
+    state.wasPlayback = playback
 
     const focus = open && !inserting
     const narrow = phoneView(size.width)
@@ -263,7 +276,7 @@ function CameraRig({
       focus ? PLAYER.playbackY : narrow ? 2 : 1.9,
       0,
     )
-    const snap = reduced || !state.initialized || state.skip
+    const snap = reduced || !state.initialized || state.skip || uncovered
     const drift = snap ? 1 : 1 - Math.exp(-step * FRAME_RATE)
     // The way back is one move: the view pulls back at the frame's own rate.
     const factor = returning
@@ -572,23 +585,96 @@ const dialPointer = [
 ]
 
 /**
+ * The knob's turn from its modeled pose for a place on its sweep (0 at the
+ * first tick, 1 at the last), clockwise as it turns up.
+ */
+function dialTurn(fraction: number) {
+  const sweepStart = (Math.PI * 5) / 4
+  return sweepStart - fraction * ((Math.PI * 3) / 2) - dialPointerAngle
+}
+
+/**
  * The monitor's one control: a turned knob in a recessed escutcheon with a
  * raised ring, a molded pointer, and a short arc of tick marks, built from the
  * same 24-sided profiles and merged details as the speaker and fasteners.
  */
-function Dial(props: { position: [number, number, number] }) {
+function Dial({
+  position,
+  portal,
+  reduced,
+  onTurn,
+}: {
+  position: [number, number, number]
+  portal: RefObject<HTMLDivElement | null>
+  reduced: boolean
+  /** While a tape plays on the tube, the knob is its picture size. */
+  onTurn?: () => void
+}) {
+  const knob = useRef<Group>(null)
+  const hovered = usePointing()
+  const size = usePictureSize()
+  // The pointer stands where the size bar does, a tenth of the sweep a
+  // step; with no picture to size it rests where it was modeled.
+  const turn = size ? dialTurn(size.level / 10) : 0
+  const invalidate = useThree((state) => state.invalidate)
+  useEffect(() => invalidate(), [turn, hovered, invalidate])
+  useFrame((_, delta) => {
+    const group = knob.current
+    if (!group) return
+    const angle = group.rotation.z
+    const next = reduced
+      ? turn
+      : MathUtils.lerp(angle, turn, 1 - Math.exp(-Math.min(delta, 0.05) * 9))
+    group.rotation.z = Math.abs(next - turn) < 0.002 ? turn : next
+    if (group.rotation.z !== turn) invalidate()
+  })
   return (
-    <group name="crt-dial" {...props}>
+    <group name="crt-dial" position={position}>
       <Turned profile={dialWell} color={STUDIO.recess} />
       <Turned profile={dialRing} color={STUDIO.face} />
       <DetailBoxes boxes={dialTicks} color={STUDIO.edge} />
-      <Turned profile={dialKnob} color={STUDIO.hardware} roughness={0.76} />
-      <DetailBoxes boxes={dialPointer} color={STUDIO.recess} />
+      <group ref={knob} name="crt-dial-knob">
+        <Turned
+          profile={dialKnob}
+          color={hovered ? STUDIO.hardwareLit : STUDIO.hardware}
+          roughness={0.76}
+        />
+        <DetailBoxes boxes={dialPointer} color={STUDIO.recess} />
+      </group>
+      {/* The knob answers a pointer as the size bar does; keyboards and
+          assistive technology have the bar itself, and F. */}
+      {onTurn && (
+        <Html
+          center
+          position={[0, 0, 0.1]}
+          portal={portal.current ? { current: portal.current } : undefined}
+          zIndexRange={[42, 41]}
+        >
+          <button
+            type="button"
+            className={`${styles.playerKey} ${styles.dialKey}`}
+            tabIndex={-1}
+            aria-hidden="true"
+            title="Full screen (F)"
+            onPointerEnter={() => setPointing(true)}
+            onPointerLeave={() => setPointing(false)}
+            onClick={onTurn}
+          />
+        </Html>
+      )}
     </group>
   )
 }
 
-function Monitor() {
+function Monitor({
+  portal,
+  reduced,
+  onFullScreen,
+}: {
+  portal: RefObject<HTMLDivElement | null>
+  reduced: boolean
+  onFullScreen?: () => void
+}) {
   return (
     <group name="crt-monitor" position={[-1.35, 3.1, 0.15]}>
       {/* The rear shell's floor is level with the bezel's bottom, as on a
@@ -617,7 +703,12 @@ function Monitor() {
         color={STUDIO.recess}
         bevel={0.055}
       />
-      <Dial position={[1.338, -1.142, 0.99]} />
+      <Dial
+        position={[1.338, -1.142, 0.99]}
+        portal={portal}
+        reduced={reduced}
+        onTurn={onFullScreen}
+      />
       <VentPanel
         name="monitor-side-vents"
         width={0.62}
@@ -869,7 +960,11 @@ function SceneContents(props: StudioProps & { phase: RefObject<Phase> }) {
       </mesh>
       <group name="studio-model">
         <Table />
-        <Monitor />
+        <Monitor
+          portal={props.deckPortal}
+          reduced={props.reduced}
+          onFullScreen={props.playback ? props.onFullScreen : undefined}
+        />
         <Player
           tape={props.tape}
           inserting={props.inserting}
@@ -916,12 +1011,14 @@ export default function StudioScene(props: StudioProps) {
     open: props.open,
     returning: props.returning,
     inserting: props.inserting,
+    playback: props.playback,
   })
   useLayoutEffect(() => {
     phase.current = {
       open: props.open,
       returning: props.returning,
       inserting: props.inserting,
+      playback: props.playback,
     }
   })
   return (

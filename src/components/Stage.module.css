@@ -747,3 +747,40 @@
     min-height: 0;
   }
 }
+
+/* Full screen grows out of the tube: the frame opens from the picture's own
+   rectangle to the window's while it fades up over the tube, so the tape
+   reads as the same picture, brought close. Reduced motion takes the window
+   at once. */
+.growing {
+  animation: grow var(--t-dolly) var(--ease-out) both;
+}
+@keyframes grow {
+  from {
+    clip-path: inset(
+      var(--picture-top) var(--picture-right) var(--picture-bottom)
+        var(--picture-left) round var(--r-screen)
+    );
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    clip-path: inset(-24px round var(--r-expanded-reader));
+    opacity: 1;
+  }
+}
+/* And back: the frame closes onto the picture as it dissolves. */
+.toTube {
+  clip-path: inset(-24px round var(--r-expanded-reader));
+}
+.toTube.handoff {
+  clip-path: inset(
+    var(--picture-top, 0) var(--picture-right, 0) var(--picture-bottom, 0)
+      var(--picture-left, 0) round var(--r-screen)
+  );
+  transition:
+    opacity var(--t-dolly) var(--ease-out),
+    clip-path var(--t-dolly) var(--ease-out);
+}

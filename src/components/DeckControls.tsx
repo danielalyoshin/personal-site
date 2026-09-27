@@ -1,6 +1,6 @@
 import { changeSound } from '../lib/sound'
 import styles from './DeckControls.module.css'
-import { EjectIcon, SoundIcon } from './Icons'
+import { CollapseIcon, EjectIcon, SoundIcon } from './Icons'
 
 export interface DeckControlsProps {
   soundOn: boolean
@@ -8,13 +8,30 @@ export interface DeckControlsProps {
 }
 
 /** The same deck actions, fitted to the native reader's hardware frame. */
-export default function DeckControls({ soundOn, onEject }: DeckControlsProps) {
+export default function DeckControls({
+  soundOn,
+  onEject,
+  onExitFullScreen,
+}: DeckControlsProps & {
+  /** Full screen was the visitor's choice: the way back to the tube. */
+  onExitFullScreen?: () => void
+}) {
   return (
     <div
       className={styles.controls}
       role="group"
       aria-label="VHS player controls"
     >
+      {onExitFullScreen && (
+        <button
+          type="button"
+          className={styles.key}
+          aria-keyshortcuts="F"
+          onClick={onExitFullScreen}
+        >
+          <CollapseIcon /> Exit full screen <kbd aria-hidden="true">F</kbd>
+        </button>
+      )}
       <button
         type="button"
         className={styles.key}

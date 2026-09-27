@@ -122,6 +122,16 @@ reader hidden from assistive technology only once the modeled one holds focus
 the viewport rule. If graphics fail, it stays for the visit with focus and
 scroll untouched. Ejecting returns to the studio; a subsequent selection uses
 the normal viewport rule.
+On the modeled tube the set offers its picture at full size in its own
+language (The Picture Size Rule in `DESIGN.md`): an OSD size bar at the
+tube's foot, lit for the picture's true share of the window's width, running
+to FULL SCREEN, with the monitor's dial as its knob. A tape's first scroll
+nudges the dial two steps and back with the bar; the bar, the dial, or F
+light the bar to full and the full-height reader grows out of the picture's
+rectangle, keeping the reading place. Its deck leads with Exit full screen
+(F), which hands the picture back with the deep link's dissolve, the frame
+closing onto the tube. Full screen holds for the visit: later tapes fly in,
+reach the tube, and turn up by themselves.
 The explicit fullHeight prop/class sizes this reader independently of viewport
 CSS. Playback controls are physical keys on the modeled player: sound at the
 left with clearance inside its fascia, and eject at the right. Each cap carries

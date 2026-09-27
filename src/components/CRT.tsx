@@ -1,9 +1,17 @@
-import type { Ref } from 'react'
+import { useCallback, useLayoutEffect, useRef, type Ref } from 'react'
 import { readingMinutes } from '../content/readingTime'
 import type { Project } from '../content/types'
 import { site } from '../content/site'
 import styles from './CRT.module.css'
 import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
+import {
+  getPictureSize,
+  nudgeDial,
+  setPictureSize,
+  setPointing,
+  usePictureSize,
+  usePointing,
+} from '../lib/pictureSize'
 
 export type ScreenMode = 'idle' | 'playing' | 'nosignal'
 
@@ -31,6 +39,106 @@ function watchContinuation(article: HTMLElement | null) {
   }
 }
 
+/** Picture size in tenths of the window's width: never none, never full. */
+function tenths(width: number) {
+  const share = width / document.documentElement.clientWidth
+  return Math.min(9, Math.max(1, Math.round(share * 10)))
+}
+
+/** Frames the picture must hold its width to count as settled. */
+const STILL_FRAMES = 12
+
+/**
+ * Full screen, offered as the set's own picture-size readout at the foot of
+ * the tube: a bar lit for the share of the window's width the picture truly
+ * fills, running to FULL SCREEN. The monitor's dial stands at the same value
+ * (lib/pictureSize). The picture's size follows the camera as it settles
+ * and the window as it changes, so the readout is measured for as long as
+ * it keeps changing, and again on every resize.
+ */
+function SizeReadout({
+  onFullScreen,
+  onSettled,
+}: {
+  onFullScreen: () => void
+  onSettled?: () => void
+}) {
+  const size = usePictureSize()
+  const pointing = usePointing()
+  // Read by the measuring loop, which outlives any one render.
+  const settledRef = useRef(onSettled)
+  useLayoutEffect(() => {
+    settledRef.current = onSettled
+  })
+  const measure = useCallback((el: HTMLButtonElement | null) => {
+    if (!el) return
+    const picture = el.closest('[data-testid="project-reader"]') ?? el
+    let frame = 0
+    let still = 0
+    let width = -1
+    let reported = false
+    const update = () => {
+      const next = picture.getBoundingClientRect().width
+      still = Math.abs(next - width) < 0.5 ? still + 1 : 0
+      width = next
+      const base = tenths(next)
+      const current = getPictureSize()
+      // A dial on its way up keeps its level; one at rest follows the base.
+      setPictureSize({
+        base,
+        level: current && current.level !== current.base ? current.level : base,
+      })
+      if (still < STILL_FRAMES) {
+        frame = window.requestAnimationFrame(update)
+        return
+      }
+      // The camera has come to rest on the tube: a visit reading full
+      // screen turns the picture up now, from where it stands.
+      if (!reported) {
+        reported = true
+        settledRef.current?.()
+      }
+    }
+    const restart = () => {
+      window.cancelAnimationFrame(frame)
+      still = 0
+      frame = window.requestAnimationFrame(update)
+    }
+    restart()
+    window.addEventListener('resize', restart)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('resize', restart)
+      setPictureSize(null)
+    }
+  }, [])
+  return (
+    <button
+      type="button"
+      className={styles.sizeReadout}
+      aria-keyshortcuts="F"
+      data-pointing={pointing || undefined}
+      onClick={onFullScreen}
+      onPointerEnter={() => setPointing(true)}
+      onPointerLeave={() => setPointing(false)}
+      onFocus={() => setPointing(true)}
+      onBlur={() => setPointing(false)}
+      ref={measure}
+    >
+      <span className={styles.sizeWord} aria-hidden="true">
+        Picture size
+      </span>
+      <span className={styles.sizeBar} aria-hidden="true">
+        {Array.from({ length: 10 }, (_, step) => (
+          <span key={step} data-lit={step < (size?.level ?? 0) || undefined} />
+        ))}
+      </span>
+      <span className={styles.sizeAction}>Full screen</span>
+      <kbd aria-hidden="true">F</kbd>
+    </button>
+  )
+}
+
 interface CRTProps {
   /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
   embedded?: boolean
@@ -42,6 +150,10 @@ interface CRTProps {
   /** Receives the playing title element so the stage can move focus into it. */
   onTitleEl: (el: HTMLHeadingElement | null) => void
   crtRef: Ref<HTMLDivElement>
+  /** On the modeled tube: turn the picture up to the full-height reader. */
+  onFullScreen?: () => void
+  /** Called once the tube's picture has come to rest. */
+  onPictureSettled?: () => void
 }
 
 export default function CRT({
@@ -52,7 +164,12 @@ export default function CRT({
   crtRef,
   embedded = false,
   fullHeight = false,
+  onFullScreen,
+  onPictureSettled,
 }: CRTProps) {
+  // The dial nudges once per tape, when the visitor starts to scroll: the
+  // moment the tube's window begins to cost them.
+  const nudged = useRef(false)
   return (
     <div
       className={`${styles.crtUnit} ${embedded ? styles.embedded : ''} ${fullHeight ? styles.fullHeight : ''}`}
@@ -74,10 +191,20 @@ export default function CRT({
                 </span>
               </div>
               <article
-                className={styles.reader}
+                className={`${styles.reader} ${onFullScreen ? styles.readerSized : ''}`}
                 tabIndex={0}
                 aria-label={`${tape.title} details`}
                 ref={watchContinuation}
+                onScroll={(event) => {
+                  if (
+                    onFullScreen &&
+                    !nudged.current &&
+                    event.currentTarget.scrollTop > 24
+                  ) {
+                    nudged.current = true
+                    nudgeDial()
+                  }
+                }}
               >
                 <div className={styles.readerContent}>
                   <h2 tabIndex={-1} ref={onTitleEl} className={styles.title}>
@@ -166,6 +293,12 @@ export default function CRT({
                 </div>
               </article>
               <div className={styles.osdBottom} aria-hidden="true" />
+              {onFullScreen && (
+                <SizeReadout
+                  onFullScreen={onFullScreen}
+                  onSettled={onPictureSettled}
+                />
+              )}
             </div>
           ) : mode === 'nosignal' ? (
             <>

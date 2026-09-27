@@ -20,3 +20,8 @@
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* The dial's hit area: round, as the knob is. */
+.dialKey {
+  border-radius: 50%;
+}

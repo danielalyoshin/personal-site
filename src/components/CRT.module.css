@@ -587,3 +587,84 @@
 .fullHeight .title {
   font-size: clamp(1.5rem, 7.5cqi, 2rem);
 }
+
+/* Full screen, as the set's picture-size readout at the foot of the tube:
+   quiet OSD type, a bar lit for the share of the window the picture fills,
+   and the words for where it runs to. It stands on a deeper version of the
+   continuation fade, which the article scrolls under while more remains;
+   at the end the fade lifts as ever, and the REC line stands clear of it. Pointing at it previews the turn, as pointing at a tape lifts it: the
+   steps it would light show faintly, and the monitor's dial, which moves
+   with the bar (lib/pictureSize), answers the pointer too. */
+.readerSized {
+  padding-bottom: 4.75rem;
+}
+.reader.readerSized + .osdBottom {
+  height: 4.5rem;
+  background: linear-gradient(transparent, var(--screen-black) 45%);
+}
+.sizeReadout {
+  position: absolute;
+  left: 50%;
+  bottom: 0.375rem;
+  z-index: 3;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 1ch;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: var(--r-hairline);
+  background: none;
+  color: var(--osd);
+  font-family: var(--font-osd);
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+.sizeWord,
+.sizeReadout kbd {
+  color: var(--screen-soft);
+  text-shadow: none;
+}
+.sizeReadout kbd {
+  font: inherit;
+}
+.sizeBar {
+  display: inline-flex;
+  gap: 3px;
+  margin-inline: 0.25ch;
+}
+.sizeBar span {
+  width: 0.45em;
+  height: 0.8em;
+  background: currentColor;
+  opacity: 0.25;
+  transition: opacity var(--t-fast);
+}
+.sizeBar span[data-lit] {
+  opacity: 1;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.45);
+}
+.sizeReadout[data-pointing] .sizeBar span:not([data-lit]) {
+  opacity: 0.6;
+}
+.sizeReadout[data-pointing] .sizeAction {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.28em;
+}
+.sizeReadout:focus-visible {
+  outline: 2px solid var(--osd);
+  outline-offset: 0;
+}
+/* A small tube keeps the bar and the words for what it does. */
+@container (max-width: 26rem) {
+  .sizeWord {
+    display: none;
+  }
+}

@@ -317,7 +317,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
-**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, and collapse (Exit full screen). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform, except below
@@ -555,6 +555,8 @@ recessed escutcheon with a raised ring, a molded pointer slot, and seven tick
 marks over its sweep, built from the same 24-sided profiles and merged details
 as the speaker and its fasteners; its top and side vents are shallow chamfered
 plates with actual slots over a dark well, shared with the deck's side vents.
+While a tape plays on the tube the dial is its picture-size knob, and turns
+(The Picture Size Rule); otherwise it rests where it was modeled.
 Each grille uses two draws regardless of its slot count. The bezel's step over
 the rear shell is its parting line, the rear shell's floor is level with the bezel's bottom
 as on a real set, and it stands on four identical low pads in the speaker's
@@ -641,6 +643,10 @@ state. The Escape hint inside Eject is the same size in silkscreen at weight
 part of the key's name: both Eject keys are named "Eject tape" and declare
 Escape through `aria-keyshortcuts`, and the legend is hidden from assistive
 technology, so neither key is ever announced as "Eject tape ESC". The fixed page-wide playback popup is removed in every reading mode.
+When the visitor has turned a desktop tube's picture up to full screen, the
+panel leads with an Exit full screen key in the same family, the drawn
+collapse mark before its words and an F legend after them, declared through
+`aria-keyshortcuts` like Eject's (The Picture Size Rule).
 
 Skip animation is a hardware key of the native deck family, available only
 during insertion: the same uppercase control type, seam-lit border, darker
@@ -663,7 +669,8 @@ is the single toggle, live on the modeled player during playback and in the
 native reader's hardware panel otherwise. Its speaker SVG shows waves when
 enabled and a red slash across the speaker when disabled; `aria-pressed`
 carries the state. Sound is synthesized, default-off on every visit, never persisted, and
-user-triggered: tick, insert, and eject. Because the toggle lives on the deck,
+user-triggered: tick, insert, and eject; the tick also answers the dial as a
+picture is turned up to full screen (The Picture Size Rule). Because the toggle lives on the deck,
 hover ticks stay silent until a visitor has switched sound on during playback.
 
 ### Navigation
@@ -927,6 +934,54 @@ the dissolve, then unmounts. An
 invalid slug hands off the same way to the modeled NO SIGNAL screen. Reduced
 motion swaps at the same moment. The dissolve stops early if playback closes,
 the viewport drops below the reading breakpoints, or graphics are lost.
+Under the reader the canvas leaves its box for the viewport, and the studio
+composes at the tube's own view in one step rather than easing from the
+box's fit, since no one sees it move; the picture is placed where it will
+stay. The same handoff hands a picture back from full screen (The Picture
+Size Rule).
+
+**The Picture Size Rule.** The tube is small for reading, so the set offers
+its picture at full size, in its own language rather than with a page
+control. At the foot of every tape on the modeled tube, on a band of the
+tube's black that the article scrolls under, the OSD prints the picture's
+size: PICTURE SIZE in screen-soft, a bar of ten steps lit for the share of
+the window's width the picture truly fills (measured while the camera
+settles and on every resize, never typed: The True Readout Rule), and FULL
+SCREEN with its F legend. The monitor's dial is the same control: while a
+tape plays on the tube its pointer stands where the bar does, a tenth of its
+sweep a step, and it returns to its modeled pose when there is no picture to
+size (`src/lib/pictureSize.ts` holds the one value both show). The set
+nudges once, at the moment the tube's window starts to cost the visitor: a
+tape's first scroll on the tube turns the dial up two steps and back while
+the bar lights with it, so the knob and the readout are seen to be one
+control. Pointing at either previews the turn, as pointing at a tape lifts
+it: the bar's unlit steps show faintly, FULL SCREEN underlines, and the knob
+lightens as a hovered key does. The bar, the dial, and F all turn the
+picture up the same way: the dial clicks once (the tick, with sound on), the
+bar lights to full a step every 45ms with the dial turning in step, then the
+full-height reader grows out of the picture's own rectangle (a clip opening
+from the tube to the window over 560ms, `--t-dolly`, `--ease-out`, fading up
+over its first 40%) and takes the window, carrying the reading place and
+keeping focus in the article if it was there, else on the title. Its deck
+gains an Exit full screen key, led by the collapse mark with an F legend,
+ahead of Sound and Eject; that key and F hand the picture back with the deep
+link's dissolve (The Handoff Rule), the frame closing onto the tube as it
+fades. Full screen, once chosen, holds for the visit and, like sound, is
+never stored: eject, Escape, and history return to the page as from any
+native reader, and every later tape still flies into the deck and plays on
+the tube, and once the camera is at rest there the set turns its picture up
+by itself, bar and dial together, and it grows. Under reduced motion there
+is no flight to watch, so a later tape opens full screen at once. Exit full
+screen gives the visit back to the tube. It is offered only where the tube
+is the reader, the Studio First look above the reading breakpoints with
+graphics ready, and answers only once nothing is moving: not during an
+insertion or a handoff. F never fires with a modifier, so Command-F still
+finds in the page. The bar is the control for keyboards and assistive
+technology, named "Full screen" with its shortcut declared; the dial's hit
+area is the pointer's alone, out of the tab order and hidden from assistive
+technology. Reduced motion skips the nudge and the steps: the reader takes
+the window at once and hands back with a swap. The five nudges compared on
+2026-09-27 are recorded in `PLAN.md`.
 
 The modeled idle image is a local 1024 × 768 canvas texture with static scanlines.
 Its lit area has the reader's corners, 26 texture pixels for the 14px screen
@@ -1018,6 +1073,7 @@ build has none. The address itself is a Stage 10 decision.
 - Do keep every route readable and correctly named before any script runs, and boot the studio after the page has painted (The First Frame Rule).
 - Do name a link by the words it shows (The Spoken Name Rule), and take screen colours from the one palette (The One Palette Rule).
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
+- Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 

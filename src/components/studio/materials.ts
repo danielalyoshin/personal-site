@@ -6,6 +6,8 @@ export const STUDIO = {
   recess: '#151d27',
   rubber: '#141d27',
   hardware: '#7d8996',
+  /** Hardware under the pointer: the lighter matte a hovered key cap takes. */
+  hardwareLit: '#98a3af',
   tabletop: '#59636f',
 } as const
 

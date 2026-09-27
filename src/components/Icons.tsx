@@ -90,6 +90,25 @@ export function SkipIcon() {
   )
 }
 
+/**
+ * Leaving full screen: four corners turned in on the picture, filled like
+ * the deck's other marks.
+ */
+export function CollapseIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      width="18"
+      height="18"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M2.5 5.5h3v-3H8V8H2.5zM17.5 5.5h-3v-3H12V8h5.5zM2.5 14.5h3v3H8V12H2.5zM17.5 14.5h-3v3H12V12h5.5z" />
+    </svg>
+  )
+}
+
 /** The deck's eject key; a class sizes it to the type it sits in on the OSD. */
 export function EjectIcon(props: SVGProps<SVGSVGElement>) {
   return (

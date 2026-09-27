@@ -1297,6 +1297,46 @@ rest, by finding:
   guide points at the list. Phones on their side under 740px wide (iPhone
   SE, 667px) keep the mobile look with the shorter-side headline.
 
+- Full screen from the tube DONE (2026-09-27, Daniel's ask: the modeled
+  close-up reads worse than the full-height reader, so offer a manual full
+  screen from the 3D view with a creative nudge, not a button in a corner;
+  try several designs and settle on one). The Picture Size Rule in
+  `DESIGN.md`:
+  - Chosen, "picture size": an OSD size bar at the tube's foot, lit for the
+    picture's measured share of the window's width (4 of 10 at 1280 × 800,
+    1440 × 900 and 1920 × 1080), running to FULL SCREEN with an F legend;
+    the monitor's dial is its knob, its pointer standing where the bar does
+    (`src/lib/pictureSize.ts`). The first scroll of a tape turns the dial up
+    two steps and back with the bar. Bar, dial, or F light the bar to full,
+    then the full-height reader grows out of the picture's rectangle (clip
+    and fade, 560ms). Exit full screen (collapse mark, F) leads the reader's
+    deck and hands back with the deep link's dissolve, the frame closing
+    onto the tube. Reading place and focus carry both ways; F ignores
+    modifiers. Daniel's answers the same day: full screen holds for the
+    visit (never stored): later tapes still fly into the deck, and once the
+    camera rests on the tube the set turns the picture up by itself (at once
+    under reduced motion); Exit full screen gives the visit back to the
+    tube. The dial's tick on the turn-up stays (sound on only).
+  - Rejected, each prototyped and captured at 1440 × 900: a boxed OSD
+    "FULL SCREEN F" key at the tube's foot (clear, but a plain button that
+    costs a line of reading); a white OSD notice ("READING? FULL SCREEN F")
+    after the first scroll (covers the text being read); a label-maker strip
+    on the monitor's chin (charming, but letters an object beyond the
+    Signature Print Rule and reads as a label, not a control); viewfinder
+    corner brackets at the tube's corners (the picture as the full-screen
+    mark, but its label ends up in a corner). The prototype diff is kept
+    outside the repository.
+  - Also fixed on the way: when a reader that covered the studio hands the
+    tape back to the tube (a deep link's, or full screen's), the camera now
+    composes at the tube's view in one step instead of easing in from the
+    box's fit under the dissolve (`uncovered` in the camera rig).
+  - `e2e/fullscreen.spec.ts` (eight tests). The playback focus loop now
+    skips buttons outside the tab order (the dial's pointer target).
+  - Validation: build, lint, and format clean; 67 e2e green (61 dev, 6
+    built); screencast filmstrips of the nudge, the turn-up and grow, and
+    the return; captures at 1024 × 768, 1280 × 800, 1366 × 768,
+    1440 × 900, and 1920 × 1080.
+
 ### Stage 9 — Hardening: performance, accessibility, SEO
 
 - Technical UI audit completed on 2026-09-15; findings and reproduction steps

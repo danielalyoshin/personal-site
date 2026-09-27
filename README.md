@@ -25,6 +25,10 @@ labels, and sound are local; no external model or texture service is required.
 - Eject or Escape returns to the archive and restores focus. Choosing a tape
   zooms the studio softly out of its place on the page and eject zooms it
   back in; the page dissolves and returns around it.
+- On the 3D screen, the size bar at the foot of the picture (or the
+  monitor's dial, or F) turns the picture up to a full-screen reader, and
+  later tapes in the visit turn up by themselves once they reach the tube;
+  Exit full screen or F again hands the visit back to the tube.
 - Sound is optional and defaults off each visit.
 - `/project/:slug` opens a tape directly; `/project/about` introduces Daniel.
 
@@ -87,6 +91,11 @@ delayed-font texture redraws, link names built from visible text, focus
 staying out of hidden content through the handoff, and the canvas keeping
 its box under the native reader. The reader case measures the modeled prose at
 its real drawn size on laptop viewports and the article's continuation cues.
+The full-screen cases cover the size bar's true reading, the bar lighting to
+full before the reader grows, the reading place and focus carried both ways,
+F with and without modifiers, the dial's nudge and pointer target, the
+windows where it is not offered, eject from full screen, and full screen
+holding for the visit.
 The exits cases cover where focus lands after every way out (in sight for a
 keyboard, without moving the page for a pointer), Skip's focus, the printed
 NO SIGNAL exit, per-route document titles, the name on the tube from a deep

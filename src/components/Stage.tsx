@@ -18,6 +18,7 @@ import { pageTitle } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
+import { turnUp as turnPictureUp } from '../lib/pictureSize'
 import { useReducedMotion } from '../lib/useReducedMotion'
 import { useMediaQuery } from '../lib/useMediaQuery'
 import { useSupportsWebGL } from '../lib/supportsWebGL'
@@ -40,6 +41,45 @@ type Handoff = 'pending' | 'settled' | 'fading' | null
 const HANDOFF_SETTLE_GUARD_MS = 1500
 /** Unmount the faded native reader even if transitionend never arrives. */
 const HANDOFF_FALLBACK_MS = 900
+
+/**
+ * Full screen, the visitor's choice on a desktop viewport: the tape moves
+ * from the modeled tube to the full-height reader. 'growing' while that
+ * reader opens out of the tube's picture over the still-modeled studio,
+ * 'on' once it holds the window. `from` is the picture's rectangle as
+ * insets of the reader's frame, where the growth starts.
+ */
+interface FullScreen {
+  slug: string
+  phase: 'growing' | 'on'
+  from: { top: number; right: number; bottom: number; left: number } | null
+}
+/** The native reader's inset from the window (`.expandedReader`). */
+const FRAME_INSET = { top: 12, right: 10, bottom: 12, left: 10 }
+
+/** Where the tube's picture stands, as insets of the full-height frame. */
+function pictureInsets(): FullScreen['from'] {
+  const picture = document
+    .querySelector('[data-testid="project-reader"]')
+    ?.getBoundingClientRect()
+  if (!picture || !picture.width) return null
+  const { clientWidth, clientHeight } = document.documentElement
+  return {
+    top: picture.top - FRAME_INSET.top,
+    right: clientWidth - FRAME_INSET.right - picture.right,
+    bottom: clientHeight - FRAME_INSET.bottom - picture.bottom,
+    left: picture.left - FRAME_INSET.left,
+  }
+}
+
+function insetStyle(from: NonNullable<FullScreen['from']>) {
+  return {
+    '--picture-top': `${from.top}px`,
+    '--picture-right': `${from.right}px`,
+    '--picture-bottom': `${from.bottom}px`,
+    '--picture-left': `${from.left}px`,
+  } as CSSProperties
+}
 
 /**
  * Focus that arrives by script after an exit. A focus ring that shows must be
@@ -145,12 +185,35 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     setNativePlayback(false)
     if (open && !expandedReader && !flat) setHandoff('pending')
   }
-  const useNativeReader = expandedReader || nativePlayback || flat
+  // Full screen, once chosen, holds for the visit, like sound never stored:
+  // every later tape seats on the tube and the set turns its picture up by
+  // itself. Exit full screen gives the visit back to the tube.
+  const [bigPicture, setBigPicture] = useState(false)
+  // The state itself belongs to the tape in the deck; another tape, a dead
+  // link, or the way back to the page starts it again.
+  const [fullScreen, setFullScreen] = useState<FullScreen | null>(null)
+  if (fullScreen && fullScreen.slug !== tape?.slug) setFullScreen(null)
+  const enlarged = fullScreen?.phase === 'on'
+  const growing = fullScreen?.phase === 'growing'
+  // The tube hands the picture back with the deep link's dissolve, and the
+  // frame closes onto the picture as it goes.
+  const [toTube, setToTube] = useState(false)
+  if (toTube && !handoff) setToTube(false)
+  const useNativeReader = expandedReader || nativePlayback || flat || enlarged
   // The dissolve stops early if playback closes or the native reader is
   // needed again (a resize below the reading breakpoints, or lost graphics).
   if (handoff && (!open || useNativeReader)) setHandoff(null)
   const [insertingSlug, setInsertingSlug] = useState<string | null>(null)
   const loading = !!tape && insertingSlug === tape.slug && !flat
+  // Full screen is offered where the tube is the reader: a tape on the
+  // modeled screen, or already enlarged from it, once nothing is moving.
+  const studioReads =
+    !!tape && !loading && ready && !flat && !expandedReader && !nativePlayback
+  // The size bar is part of the tube's picture, there through a handoff's
+  // dissolve; it answers once the tube alone holds the tape.
+  const offersFullScreen = studioReads && !fullScreen
+  const canEnterFullScreen = offersFullScreen && !handoff
+  const canExitFullScreen = studioReads && enlarged
   // The tape in the deck, and the one running the mechanism back to its slot
   // once playback closes by eject, Escape, or history. Both are settled on
   // the closing render, so the route and the mechanism land together; the
@@ -195,6 +258,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const studio = useRef<RootState | null>(null)
   const deckPortal = useRef<HTMLDivElement>(null)
   const nativeScreen = useRef<HTMLDivElement>(null)
+  const nativeFrame = useRef<HTMLDivElement>(null)
+  // Where the tube's article stood when its picture was turned up.
+  const readingPlace = useRef<{ depth: number; focused: boolean } | null>(null)
   const wasOpen = useRef(open)
   // Focus returning to the ejected tape's link is not a preview: the tape
   // settles flat in its slot rather than lifting again.
@@ -240,6 +306,18 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             (source.scrollTop / range) *
             (target.scrollHeight - target.clientHeight)
         if (document.activeElement === source) {
+          target.focus({ preventScroll: true })
+          focused = true
+        }
+      } else if (target && readingPlace.current) {
+        // Full screen is the other way across: the tube's reader may be gone
+        // already, so reading continues from the place noted as the picture
+        // was turned up.
+        const place = readingPlace.current
+        readingPlace.current = null
+        target.scrollTop =
+          place.depth * (target.scrollHeight - target.clientHeight)
+        if (place.focused) {
           target.focus({ preventScroll: true })
           focused = true
         }
@@ -297,6 +375,50 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       navigate('/')
     })
   }, [navigate])
+  // Full screen opens the tape's full-height reader out of the tube's picture;
+  // the way back hands the picture to the tube with the deep link's dissolve.
+  const enterFullScreen = useCallback(() => {
+    if (!tape) return
+    const article = document.querySelector<HTMLElement>(
+      '[data-testid="project-reader"] article',
+    )
+    if (article) {
+      const range = article.scrollHeight - article.clientHeight
+      readingPlace.current = {
+        depth: range > 0 ? article.scrollTop / range : 0,
+        focused: document.activeElement === article,
+      }
+    }
+    const from = pictureInsets()
+    setBigPicture(true)
+    setFullScreen({
+      slug: tape.slug,
+      phase: reduced || !from ? 'on' : 'growing',
+      from,
+    })
+  }, [reduced, tape])
+  // The size bar, the dial, and F all turn the picture up the same way: the
+  // bar lights to full and the dial turns with it, then the picture grows.
+  const turning = useRef<(() => void) | null>(null)
+  const turnUp = useCallback(() => {
+    if (turning.current || !canEnterFullScreen) return
+    playSound('tick')
+    turning.current = turnPictureUp(() => {
+      turning.current = null
+      enterFullScreen()
+    })
+  }, [canEnterFullScreen, enterFullScreen])
+  useEffect(() => {
+    if (offersFullScreen || !turning.current) return
+    turning.current()
+    turning.current = null
+  }, [offersFullScreen])
+  const exitFullScreen = useCallback(() => {
+    setBigPicture(false)
+    setFullScreen(null)
+    setToTube(true)
+    setHandoff('pending')
+  }, [])
   const select = useCallback(
     (next: Project) => {
       lastTape.current = next.slug
@@ -306,10 +428,14 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         setEjecting(null)
         setNativePlayback(!ready)
         setInsertingSlug(!reduced && !flat && ready ? next.slug : null)
+        // Reduced motion has no flight to watch: a visit reading full screen
+        // opens the next tape there at once.
+        if (bigPicture && reduced && !flat && ready)
+          setFullScreen({ slug: next.slug, phase: 'on', from: null })
         navigate(`/project/${next.slug}`)
       })
     },
-    [flat, navigate, previewTape, ready, reduced],
+    [bigPicture, flat, navigate, previewTape, ready, reduced],
   )
 
   // The modeled reader advances 'pending' itself once it is placed and has
@@ -339,6 +465,27 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     const timer = window.setTimeout(() => setHandoff(null), HANDOFF_FALLBACK_MS)
     return () => window.clearTimeout(timer)
   }, [handoff])
+  // The frame closes onto the tube's picture as it dissolves: measured once
+  // the modeled reader is placed, before the dissolve's first frame.
+  useLayoutEffect(() => {
+    const el = nativeFrame.current
+    const insets = handoff === 'settled' && toTube && pictureInsets()
+    if (!el || !insets) return
+    for (const [name, value] of Object.entries(insetStyle(insets)))
+      el.style.setProperty(name, value as string)
+  }, [handoff, toTube])
+  // Take the window even if animationend never arrives.
+  useEffect(() => {
+    if (!growing) return
+    const timer = window.setTimeout(
+      () =>
+        setFullScreen((current) =>
+          current ? { ...current, phase: 'on' } : current,
+        ),
+      HANDOFF_FALLBACK_MS,
+    )
+    return () => window.clearTimeout(timer)
+  }, [growing])
   useEffect(() => {
     document.title = title
   }, [title])
@@ -413,11 +560,25 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         eject()
         return
       }
+      // F for full screen, as in a video player, and F again for the tube.
+      // Never with a modifier: Command-F still finds in the page.
+      if (
+        (event.key === 'f' || event.key === 'F') &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        (canEnterFullScreen || canExitFullScreen)
+      ) {
+        event.preventDefault()
+        if (canEnterFullScreen) turnUp()
+        else exitFullScreen()
+        return
+      }
       // Keep focus inside the visible reader and its transport controls.
       if (event.key === 'Tab') {
         const focusable = Array.from(
           stageEl.current?.querySelectorAll<HTMLElement>(
-            'a[href], button:not(:disabled), video[controls], article[tabindex="0"]',
+            'a[href], button:not(:disabled):not([tabindex="-1"]), video[controls], article[tabindex="0"]',
           ) ?? [],
         ).filter(
           (el) => !el.closest('[inert]') && el.getClientRects().length > 0,
@@ -453,7 +614,16 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, eject, loading, skipInsertion])
+  }, [
+    open,
+    eject,
+    loading,
+    skipInsertion,
+    canEnterFullScreen,
+    canExitFullScreen,
+    turnUp,
+    exitFullScreen,
+  ])
 
   // Arrows and Home/End move between the tapes that play; a blank slot has
   // no link to land on and is passed over.
@@ -492,6 +662,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       crtRef={null}
       embedded
       fullHeight={native}
+      onFullScreen={!native && offersFullScreen ? turnUp : undefined}
+      onPictureSettled={
+        !native && bigPicture && canEnterFullScreen ? turnUp : undefined
+      }
     />
   )
   // The same hardware key as the native deck panel, so the one control
@@ -704,6 +878,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                         onReady={onReady}
                         onCreated={onCreated}
                         onUnavailable={onUnavailable}
+                        onFullScreen={offersFullScreen ? turnUp : undefined}
                       >
                         {useNativeReader ? null : readerFor(false)}
                       </StudioScene>
@@ -841,11 +1016,18 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       {loading && !useNativeReader && (
         <div className={styles.transitionTools}>{skipControl}</div>
       )}
-      {open && (useNativeReader || handoff) && (
+      {open && (useNativeReader || handoff || growing) && (
         <div
-          className={`${styles.expandedReader} ${handoff === 'fading' ? styles.handoff : ''}`}
+          className={`${styles.expandedReader} ${handoff === 'fading' ? styles.handoff : ''} ${growing ? styles.growing : ''} ${toTube ? styles.toTube : ''}`}
+          style={
+            fullScreen?.phase === 'growing' && fullScreen.from
+              ? insetStyle(fullScreen.from)
+              : undefined
+          }
+          ref={nativeFrame}
           data-testid="native-reader"
           data-handoff={handoff ?? undefined}
+          data-full-screen={fullScreen?.phase}
           inert={handoff === 'fading' || undefined}
           // Hidden only once the modeled reader has taken focus ('settled'):
           // while it is still mounting, focus lives here, and focus must
@@ -859,6 +1041,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               event.propertyName === 'opacity'
             )
               setHandoff(null)
+          }}
+          onAnimationEnd={(event) => {
+            if (event.target === event.currentTarget && growing)
+              setFullScreen((current) =>
+                current ? { ...current, phase: 'on' } : current,
+              )
           }}
         >
           <div className={styles.nativeScreen} ref={nativeScreen}>
@@ -876,7 +1064,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             <span className={styles.readerDeckLabel}>
               AV–01 <span>/ VHS</span>
             </span>
-            <DeckControls soundOn={soundOn} onEject={eject} />
+            <DeckControls
+              soundOn={soundOn}
+              onEject={eject}
+              onExitFullScreen={canExitFullScreen ? exitFullScreen : undefined}
+            />
           </div>
         </div>
       )}
