@@ -1,15 +1,29 @@
 <!doctype html>
 <!--
-  Source of superset-d1-diagram.webp, the Cloudflare D1 tape's diagram.
-  `npm run render:diagrams` draws it with the site's own fonts and palette;
-  while `npm run dev` runs it can be previewed at
-  /src/content/projects/media/superset-d1-diagram.html.
+  Source of superset-d1-diagram.webp, the Cloudflare D1 tape's diagram:
+  how Superset and the D1 packages work together once sqlalchemy-d1 0.2.0
+  and Superset PR #44505 are in. `npm run render:diagrams` draws it with the
+  site's own fonts and palette; while `npm run dev` runs it can be previewed
+  at /src/content/projects/media/superset-d1-diagram.html.
 
   It is drawn at 360px, the width at which its 14px text still reads at
   11.5px in a 390px phone's reader (296px wide) without being oversized on
   the desktop tube (459px), and rendered at 3.25× so it stays sharp on both.
-  Orange, the tape's label accent, marks what the tape's work changed; the
-  caption in superset-d1.ts says so.
+  It grows down, not across, for the phone's narrow column.
+
+  The drawing is one SVG on a fixed grid, so its wires meet the boxes they
+  join exactly:
+  - boxes span x 16–324 (Superset's parts 28–312), their text 14px inside;
+  - install-time wires (dashed) run down x 42, run-time wires (solid) down
+    x 150, each labelled 12px to its right; the engine spec's query path
+    takes the rail at x 342, leaving from the row that names it, as a
+    rail has no room for a label of its own;
+  - a box's name sits 27px under its top edge and its last line 17px above
+    its bottom edge; a note follows a name by 21px, a hairline by 13px, and
+    rows step 21px, the first 22px under the hairline.
+  Every text was measured in its box at render time; keep new labels as
+  short. Orange, the tape's label accent, marks what the tape's work
+  changed, as the key under the drawing says.
 -->
 <html lang="en">
   <head>
@@ -39,7 +53,7 @@
 
       .diagram {
         width: 360px;
-        padding: 16px 16px 18px;
+        padding-bottom: 18px;
         background: var(--screen-black);
         color: var(--screen-soft);
         font-family: var(--font-chassis);
@@ -48,223 +62,241 @@
         letter-spacing: var(--tracking-body);
       }
 
-      .node {
-        border: 1px solid var(--seam-lit);
-        border-radius: var(--r-control);
-        background: var(--node);
-        padding: 10px 13px 11px;
+      svg {
+        display: block;
+        font-family: var(--font-chassis);
+        letter-spacing: var(--tracking-body);
       }
 
-      .node.changed {
-        border-color: var(--accent);
+      /* Boxes: a part is filled, a boundary only drawn. */
+      .part {
+        fill: var(--node);
+        stroke: var(--seam-lit);
       }
 
-      .head {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 12px;
+      .part.changed {
+        stroke: var(--accent);
+      }
+
+      .boundary {
+        fill: none;
+        stroke: var(--seam-lit);
+      }
+
+      .hair {
+        stroke: var(--seam);
+      }
+
+      text {
+        font-size: 14px;
+        fill: var(--screen-soft);
       }
 
       .name {
         font-size: 17px;
         font-weight: 600;
-        line-height: 1.25;
-        color: var(--screen-text);
+        fill: var(--screen-text);
+      }
+
+      .term {
+        font-weight: 600;
+        fill: var(--screen-text);
       }
 
       .tag {
-        flex: none;
         font-weight: 600;
-        color: var(--accent);
+        fill: var(--accent);
       }
 
-      .note {
-        margin-top: 2px;
+      .quiet,
+      .label {
+        fill: var(--screen-dim);
       }
 
-      .head .note {
-        margin: 0;
+      .end {
+        text-anchor: end;
       }
 
-      /* What a node holds or adds, under a hairline. */
-      .rows {
-        display: grid;
-        gap: 2px 12px;
-        margin-top: 8px;
-        padding: 7px 0 0;
-        border-top: 1px solid var(--seam);
-        list-style: none;
+      /* Wires: what passes between two parts, and when. */
+      .wire,
+      .head {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 1.5;
       }
 
-      .rows.pairs {
-        grid-template-columns: 1fr 1fr;
+      .wire.install {
+        stroke-dasharray: 4 3;
       }
 
-      .rows b {
-        font-weight: 600;
-        color: var(--screen-text);
-      }
-
-      /* The flow between two nodes: a stem with a drawn head, and what
-         passes along it. */
-      .link {
+      .key {
         display: flex;
-        align-items: center;
-        gap: 10px;
-        height: 34px;
-        /* The stem stands on the nodes' text edge (16 + 1 + 13 = 30px). */
-        padding-left: 24px;
-        color: var(--screen-dim);
-      }
-
-      .link svg {
-        flex: none;
-        width: 12px;
-        height: 34px;
-        color: var(--line);
-      }
-
-      .retired {
-        margin-top: 18px;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        margin: 18px 16px 0;
         padding-top: 12px;
         border-top: 1px solid var(--seam);
-      }
-
-      .label {
-        margin-bottom: 8px;
-        font-weight: 600;
         color: var(--screen-dim);
       }
 
-      .swap {
-        display: grid;
-        grid-template-columns: auto 14px 1fr;
+      .key span {
+        display: inline-flex;
         align-items: center;
-        gap: 6px 8px;
+        gap: 6px;
       }
 
-      .ghost {
-        justify-self: start;
-        border: 1px dashed var(--line);
-        border-radius: var(--r-control);
-        padding: 1px 7px 2px;
-        color: var(--screen-dim);
-      }
-
-      .swap svg {
-        width: 14px;
-        height: 14px;
-        color: var(--screen-dim);
+      .key svg {
+        flex: none;
       }
     </style>
   </head>
   <body>
     <div class="diagram" id="diagram">
-      <section class="node changed">
-        <div class="head">
-          <p class="name">Apache Superset 7.0</p>
-          <p class="tag">PR #44505</p>
-        </div>
-        <ul class="rows">
-          <li><b>D1 engine spec</b> · built in</li>
-          <li><b>d1 extra</b> · installs sqlalchemy-d1 0.2.0</li>
-        </ul>
-      </section>
+      <svg
+        width="360"
+        height="735"
+        viewBox="0 0 360 735"
+        role="img"
+        aria-label="How Apache Superset and the D1 packages work together"
+      >
+        <!-- Apache Superset, with its three parts that take part -->
+        <rect
+          class="boundary"
+          x="16.5"
+          y="16.5"
+          width="307"
+          height="301"
+          rx="4"
+        />
+        <text class="name" x="30" y="43">Apache Superset</text>
+        <text class="tag end" x="310" y="43">PR #44505</text>
 
-      <div class="link">
-        <svg
-          viewBox="0 0 12 34"
-          fill="none"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M6 1v30M1.75 26.75 6 31l4.25-4.25" stroke-width="1.5" />
-        </svg>
-        <span>d1://account:token@database</span>
-      </div>
+        <rect
+          class="part changed"
+          x="28.5"
+          y="56.5"
+          width="283"
+          height="141"
+          rx="4"
+        />
+        <text class="name" x="42" y="83">D1 engine spec</text>
+        <text class="quiet end" x="298" y="83">built in</text>
+        <path class="hair" d="M42 96.5h256" />
+        <text x="42" y="118">Picked for d1:// URLs</text>
+        <text x="42" y="139">Fixes DATE filters</text>
+        <text x="42" y="160">Strips leading comments</text>
+        <text x="42" y="181">Runs SQL on the driver</text>
 
-      <section class="node changed">
-        <div class="head">
-          <p class="name">sqlalchemy-d1 0.2.0</p>
-          <p class="tag">Rebuilt</p>
-        </div>
-        <p class="note">Adds what Superset needs</p>
-        <ul class="rows pairs">
-          <li>The d1:// name</li>
-          <li>Date columns</li>
-          <li>Schemas and views</li>
-          <li>Hides _cf_ tables</li>
-        </ul>
-      </section>
+        <rect class="part" x="28.5" y="208.5" width="283" height="43" rx="4" />
+        <text class="name" x="42" y="235">SQLAlchemy</text>
+        <text class="quiet end" x="298" y="235">engine and inspector</text>
 
-      <div class="link">
-        <svg
-          viewBox="0 0 12 34"
-          fill="none"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M6 1v30M1.75 26.75 6 31l4.25-4.25" stroke-width="1.5" />
-        </svg>
-        <span>builds on</span>
-      </div>
+        <rect
+          class="part changed"
+          x="28.5"
+          y="262.5"
+          width="97"
+          height="43"
+          rx="4"
+        />
+        <text class="name" x="42" y="289">d1 extra</text>
 
-      <section class="node">
-        <p class="name">sqlalchemy-cloudflare-d1</p>
-        <p class="note">Community dialect with its own driver</p>
-      </section>
+        <!-- Superset to sqlalchemy-d1: installed by the extra, loaded and
+             inspected by the engine -->
+        <path class="wire install" d="M42 307v62" />
+        <path class="head" d="M37.75 364.75 42 369l4.25-4.25" />
+        <text class="label" x="54" y="350">installs</text>
 
-      <div class="link">
-        <svg
-          viewBox="0 0 12 34"
-          fill="none"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M6 1v30M1.75 26.75 6 31l4.25-4.25" stroke-width="1.5" />
-        </svg>
-        <span>HTTPS · D1 REST API</span>
-      </div>
+        <path class="wire" d="M150 253v116" />
+        <path class="head" d="M145.75 364.75 150 369l4.25-4.25" />
+        <text class="label" x="162" y="340">loads the d1 dialect</text>
+        <text class="label" x="162" y="360">inspects tables and views</text>
 
-      <section class="node">
-        <div class="head">
-          <p class="name">Cloudflare D1</p>
-          <p class="note">Serverless SQLite</p>
-        </div>
-      </section>
+        <!-- sqlalchemy-d1 0.2.0 -->
+        <rect
+          class="part changed"
+          x="16.5"
+          y="372.5"
+          width="307"
+          height="120"
+          rx="4"
+        />
+        <text class="name" x="30" y="399">sqlalchemy-d1 0.2.0</text>
+        <text class="tag end" x="310" y="399">Rebuilt</text>
+        <text x="30" y="420">Adds what Superset needs</text>
+        <path class="hair" d="M30 433.5h280" />
+        <text x="30" y="455">The d1:// name</text>
+        <text x="176" y="455">Date columns</text>
+        <text x="30" y="476">Schemas and views</text>
+        <text x="176" y="476">Hides _cf_ tables</text>
 
-      <section class="retired">
-        <p class="label">Retired</p>
-        <div class="swap">
-          <span class="ghost">dbapi-d1</span>
-          <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              d="M2 8h11.5M9.25 3.75 13.5 8l-4.25 4.25"
-              stroke-width="1.5"
+        <!-- sqlalchemy-d1 to the community package: requires it, and its
+             dialect subclasses the community one -->
+        <path class="wire install" d="M42 494v34" />
+        <path class="head" d="M37.75 523.75 42 528l4.25-4.25" />
+        <text class="label" x="54" y="517">requires</text>
+
+        <path class="wire" d="M150 494v34" />
+        <path class="head" d="M145.75 523.75 150 528l4.25-4.25" />
+        <text class="label" x="162" y="517">subclasses</text>
+
+        <!-- The engine spec runs Superset's SQL on the driver's cursor: the
+             rail leaves from the row that says so and lands on the driver -->
+        <path class="wire" d="M312 176h30v454h-17" />
+        <path class="head" d="M329.25 625.75 325 630l4.25 4.25" />
+
+        <!-- sqlalchemy-cloudflare-d1 -->
+        <rect class="part" x="16.5" y="531.5" width="307" height="120" rx="4" />
+        <text class="name" x="30" y="558">sqlalchemy-cloudflare-d1</text>
+        <text x="30" y="579">Community package</text>
+        <path class="hair" d="M30 592.5h280" />
+        <text x="30" y="614">
+          <tspan class="term">Dialect</tspan>
+          · compiles SQL, reads the URL
+        </text>
+        <text x="30" y="635">
+          <tspan class="term">DB-API driver</tspan>
+          · sends SQL with httpx
+        </text>
+
+        <!-- The driver to D1 -->
+        <path class="wire" d="M150 653v34" />
+        <path class="head" d="M145.75 682.75 150 687l4.25-4.25" />
+        <text class="label" x="162" y="676">HTTPS · REST API /raw</text>
+
+        <!-- Cloudflare D1 -->
+        <rect class="part" x="16.5" y="690.5" width="307" height="43" rx="4" />
+        <text class="name" x="30" y="717">Cloudflare D1</text>
+        <text class="quiet end" x="310" y="717">Serverless SQLite</text>
+      </svg>
+
+      <p class="key">
+        <span>
+          <svg width="24" height="14" viewBox="0 0 24 14" aria-hidden="true">
+            <path class="wire" d="M0 7h24" />
+          </svg>
+          Run time
+        </span>
+        <span>
+          <svg width="24" height="14" viewBox="0 0 24 14" aria-hidden="true">
+            <path class="wire install" d="M0 7h24" />
+          </svg>
+          Install time
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <rect
+              class="part changed"
+              x="0.5"
+              y="0.5"
+              width="13"
+              height="13"
+              rx="2"
             />
           </svg>
-          <span>the community driver</span>
-          <span class="ghost">superset-engine-d1</span>
-          <svg
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              d="M2 8h11.5M9.25 3.75 13.5 8l-4.25 4.25"
-              stroke-width="1.5"
-            />
-          </svg>
-          <span>Superset’s own spec</span>
-        </div>
-      </section>
+          My changes
+        </span>
+      </p>
     </div>
   </body>
 </html>
