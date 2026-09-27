@@ -448,6 +448,95 @@ test('the pointer preview hands over slot to slot without flicker while cassette
   expect(back).toEqual(['ABOUT', idle, 'SUPERSET D1', idle])
 })
 
+test('in the mobile look the blank slots share one cell, met once', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await ready(page)
+  const list = page.locator('#projects ul')
+  // The larger look keeps a cell for every slot, as the rack does.
+  const onePerSlot = `
+    - list:
+      - listitem:
+        - link /^Play tape. 01 SUPERSET D1/
+      - listitem: 02 Coming soon… Blank tape
+      - listitem: 03 Coming soon… Blank tape
+      - listitem: 04 Coming soon… Blank tape
+      - listitem: 05 Coming soon… Blank tape
+      - listitem:
+        - link /^Play tape. 06 ABOUT/
+  `
+  await expect(list).toMatchAriaSnapshot(onePerSlot)
+  const d1 = page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ })
+  const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
+  // Phones, narrow windows, and phones on their side: the stylesheet folds
+  // the run into its first cell, so a screen reader meets it once, as "02
+  // to 05", and nothing of the other three is left in the list.
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 320, height: 740 },
+    { width: 767, height: 1024 },
+    { width: 844, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await expect(list).toMatchAriaSnapshot(`
+      - list:
+        - listitem:
+          - link /^Play tape. 01 SUPERSET D1/
+        - listitem: 02 to 05 Coming soon… Blank tapes
+        - listitem:
+          - link /^Play tape. 06 ABOUT/
+    `)
+    const cells = list.locator('> li').filter({ visible: true })
+    await expect(cells).toHaveCount(3)
+    const run = cells.nth(1)
+    // On the page it reads as the spine numbers do: 02–05.
+    expect(
+      await run
+        .locator('span')
+        .first()
+        .evaluate((el) => {
+          const shown = el.cloneNode(true) as HTMLElement
+          shown.querySelectorAll('.srOnly').forEach((node) => node.remove())
+          return shown.textContent
+        }),
+    ).toBe('02–05')
+    await expect(run.locator('a, button, [tabindex]')).toHaveCount(0)
+    // From the right-hand column the run spans both rows, beside SUPERSET D1
+    // and About, so the grid closes without a hole.
+    const [first, blank, last] = await Promise.all(
+      [0, 1, 2].map(async (i) => (await cells.nth(i).boundingBox())!),
+    )
+    expect(blank.x).toBeGreaterThan(first.x + first.width)
+    expect(last.x).toBeCloseTo(first.x, 0)
+    expect(last.y).toBeGreaterThan(first.y + first.height)
+    expect(blank.y).toBeCloseTo(first.y, 0)
+    expect(blank.y + blank.height).toBeCloseTo(last.y + last.height, 0)
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true)
+    // The arrows and Home/End still move between the tapes that play.
+    await d1.focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(about).toBeFocused()
+    await page.keyboard.press('ArrowLeft')
+    await expect(d1).toBeFocused()
+    await page.keyboard.press('ArrowDown')
+    await expect(about).toBeFocused()
+    await page.keyboard.press('Home')
+    await expect(d1).toBeFocused()
+    await page.keyboard.press('End')
+    await expect(about).toBeFocused()
+    await about.blur()
+  }
+  // Back at the larger look, with no reload: a cell for every slot again.
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await expect(list).toMatchAriaSnapshot(onePerSlot)
+})
+
 test('slots without a project hold blank tapes that are coming soon', async ({
   page,
 }) => {

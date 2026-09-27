@@ -127,6 +127,8 @@ test('the page is drawn for the width it is served at, before the app arrives', 
     page.getByText('Pick one from the projects below.'),
   ).toBeVisible()
   await expect(page.getByText('Pick one in the studio.')).toBeHidden()
+  // The blank slots share one cell on a phone, by the stylesheet alone.
+  await expect(page.locator('#projects').getByRole('listitem')).toHaveCount(3)
   await expect(page.getByText('Setting the scene…')).toBeVisible()
   // The archive works as plain links: the tape's page is a real page.
   await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()

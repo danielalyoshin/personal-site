@@ -74,9 +74,6 @@
 .footer a:hover {
   color: var(--silk-hi);
 }
-.intro {
-  padding-top: 32px;
-}
 .eyebrow {
   color: var(--silk-dim);
   font-size: var(--type-label);
@@ -86,14 +83,17 @@
   text-transform: uppercase;
   margin-bottom: 12px;
 }
-/* The kicker breaks at its phrase only where it would otherwise wrap. */
-@media (min-width: 601px) {
+/* The kicker breaks at its phrase only where it would otherwise wrap on a
+   phone, or cross the monitor beside a narrow studio. */
+.kickerBreak {
+  display: none;
+}
+@media (width <= 600px), (768px <= width < 940px) and (height >= 540px) {
   .kickerBreak {
-    display: none;
+    display: inline;
   }
 }
 .intro h2 {
-  font-size: var(--type-display);
   font-weight: 600;
   font-stretch: 110%;
   line-height: 1.06;
@@ -107,12 +107,11 @@
 }
 .exhibit {
   position: relative;
-  margin-top: 24px;
 }
 /* The studio's place on the page. The box keeps its size for as long as the
-   page exists, so nothing below it moves when the viewport layer detaches. */
+   page exists, so nothing below it moves when the viewport layer detaches.
+   Its height belongs to the look (see the two blocks below). */
 .scene {
-  height: clamp(360px, min(48vw, calc(100svh - 350px)), 680px);
   width: 100%;
   position: relative;
 }
@@ -290,6 +289,11 @@
   color: var(--silk-dim);
   text-transform: none;
 }
+/* The end of the blank run, printed only where the run shares one cell (the
+   mobile look). */
+.blankRange {
+  display: none;
+}
 .footer {
   display: flex;
   align-items: center;
@@ -384,63 +388,86 @@
 .playing .fallbackMonitor {
   width: min(700px, 95vw);
 }
-@media (min-width: 601px) and (max-height: 820px) {
-  .header {
-    min-height: 72px;
-  }
-  .intro {
-    padding-top: 20px;
-  }
-  .eyebrow {
-    margin-bottom: 8px;
-  }
-  .intro h2 {
-    font-size: clamp(2.5rem, 1.5rem + 1.5vw, 3rem);
-  }
-  .exhibit {
-    margin-top: 16px;
-  }
-}
-/* Wide, tall windows: the studio takes the first screen under the header,
-   and the introduction and the guide stand in its upper right, over the
-   table behind the rack, rather than in a band above it. The box follows the
-   studio's own proportion: the fitted studio, about 1.77 to 1 with the fit's
-   24px margins, widened just enough that the table's shadow, which falls to
-   the right past the fitted bounds, ends inside the box rather than at its
-   edge. It stops at the fold. The words and the studio still come in reading
-   order: introduction, guide, studio. */
-@media (min-width: 1280px) and (min-height: 700px) {
+/* The Studio First look, on every window at least 768px wide and 540px tall:
+   the studio takes the first screen under the header, and the introduction
+   and the guide stand in its open upper right, over the table behind the
+   rack, rather than in a band above it. The words and the studio still come
+   in reading order: introduction, guide, studio. Anything smaller takes the
+   mobile look below, never a stacked version of this one.
+
+   The words are fitted to the corner the equipment leaves open. In the
+   camera's fit units about the box's centre (the fitted studio is 10.8 units
+   across and 6.08 tall, plus 24px each side), the monitor's right edge
+   stands 0.51 units right of the centre, and a tape lifted in preview rises
+   to 0.74 units above it at the top of its arc. So:
+   - The display line is never wider than 4.6vw, which keeps the words 28px
+     or more clear of the monitor at every width.
+   - The box follows the studio's proportion, 1.82 (a little wider than the
+     fitted studio, so the table's shadow, which falls to the right past the
+     fitted bounds, ends inside the box), and stops at the fold. Where that
+     leaves the corner too short for the words (narrow windows), the box
+     grows taller, just enough that the words end 12px above the lifted tape:
+     twice the words' height plus twice the lift, which is 12.34vw less the
+     margins' share when the width sets the fit, or, when the height does,
+     2.643 times the words plus the margins' share. */
+@media (width >= 768px) and (height >= 540px) {
   .main {
     display: grid;
     grid-template: auto auto 1fr auto / minmax(0, 1fr) max-content;
     padding-top: 8px;
+    --intro-top: 24px;
+    --kicker-gap: 12px;
+    --guide-gap: 24px;
+    --kicker-lines: 1;
+    --display-floor: 2rem;
+    /* Everything in the column of words but the display line. */
+    --words-rest: calc(
+      var(--intro-top) + var(--kicker-lines) * 1.2 * var(--type-label) +
+        var(--kicker-gap) + var(--guide-gap) + 1.35 * var(--type-functional) +
+        4px + 1.5 * var(--type-caption)
+    );
+    --display: clamp(
+      var(--display-floor),
+      min(var(--type-display), 4.6vw),
+      4rem
+    );
+    --words: calc(var(--words-rest) + 2 * 1.06 * var(--display));
   }
   .intro {
     grid-area: 1 / 2;
     position: relative;
     z-index: 1;
-    padding-top: 24px;
+    padding-top: var(--intro-top);
+  }
+  .eyebrow {
+    margin-bottom: var(--kicker-gap);
+  }
+  .intro h2 {
+    font-size: var(--display);
   }
   .exhibit {
     grid-area: 1 / 1 / 4 / -1;
     display: grid;
     grid-template: subgrid / subgrid;
-    margin-top: 0;
   }
-  /* The column is as wide as the display line. The guide wraps within it
-     rather than widening it, so a long caption never moves the headline. */
+  /* The column is as wide as the widest of the kicker and the display line.
+     The guide wraps within it rather than widening it, so a long caption
+     never moves the headline. */
   .sceneCaption {
     grid-area: 2 / 2;
     z-index: 1;
-    margin-top: 24px;
+    margin-top: var(--guide-gap);
     contain: inline-size;
   }
   .scene {
     grid-area: 1 / 1 / -1 / -1;
     align-self: start;
-    height: auto;
     aspect-ratio: 1.82;
     max-height: calc(100svh - 88px);
+    min-height: min(
+      calc(2 * var(--words) + 17.4px + 12.34vw),
+      calc(2.643 * var(--words) + 16.3px)
+    );
   }
   .archive {
     grid-area: 4 / 1 / auto / -1;
@@ -450,19 +477,40 @@
   .fallback {
     align-items: flex-start;
   }
+  .fallbackMonitor {
+    width: min(560px, 50%);
+  }
 }
-@media (min-width: 1280px) and (min-height: 700px) and (max-height: 820px) {
+/* Short windows: tighter spacing, a studio that ends at the fold, and a
+   display line that also fits the corner a studio at the fold leaves it.
+   With the box's height set by the viewport under the header, the corner
+   above the lifted tape is 37.84% of that height, less the 12px clearance. */
+@media (width >= 768px) and (540px <= height <= 820px) {
+  .header {
+    min-height: 72px;
+  }
   .main {
     padding-top: 0;
-  }
-  .intro {
-    padding-top: 20px;
-  }
-  .sceneCaption {
-    margin-top: 16px;
+    --intro-top: 20px;
+    --kicker-gap: 8px;
+    --guide-gap: 16px;
+    --display: clamp(
+      var(--display-floor),
+      min(1.5rem + 1.5vw, (37.84svh - 33.4px - var(--words-rest)) / 2.12),
+      3rem
+    );
   }
   .scene {
     max-height: calc(100svh - 72px);
+  }
+}
+/* Beside a narrow studio the kicker breaks at its phrase rather than cross
+   the monitor, and the display line keeps a 2.25rem floor, wide enough to
+   carry the guide's longest caption on one line. */
+@media (768px <= width < 940px) and (height >= 540px) {
+  .main {
+    --kicker-lines: 2;
+    --display-floor: 2.25rem;
   }
 }
 @media (max-width: 1200px) {
@@ -473,7 +521,11 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (max-width: 600px) {
+/* The mobile look, wherever the studio's corner cannot hold the words: below
+   768px wide (where the modeled reader also gives way to the native one) or
+   540px tall (phones on their side). The words stand above a full-bleed
+   studio, the guide points at the list, and the blank slots share one cell. */
+@media (width < 768px), (height < 540px) {
   .stage {
     padding: 0 6%;
   }
@@ -490,7 +542,9 @@
     margin-bottom: 8px;
   }
   .intro h2 {
-    font-size: clamp(2rem, 1rem + 5.4vw, 3.375rem);
+    /* The shorter side sets the size: a phone on its side gives more of
+       its first screen to the studio, and portrait phones are unchanged. */
+    font-size: clamp(2rem, 1rem + min(5.4vw, 5.4svh), 3.375rem);
   }
   .exhibit {
     margin-top: 12px;
@@ -498,9 +552,15 @@
   .scene {
     /* Snug to the fitted studio: at phone widths the equipment, not the
        height, sets the zoom, so 72vw leaves only the fit's own margins. */
-    height: clamp(220px, 72vw, 384px);
+    --box-height: clamp(220px, 72vw, 384px);
+    height: var(--box-height);
     width: calc(100% + 12vw);
     margin-left: -6vw;
+  }
+  /* Without a studio, the framed monitor takes its size from the box: its
+     4:3 screen and 20px frame stand 12px inside the box's height. */
+  .fallbackMonitor {
+    width: min(560px, 95%, (var(--box-height) - 64px) * 4 / 3 + 40px);
   }
   .sceneCaption {
     gap: 8px;
@@ -528,6 +588,20 @@
   }
   .tapeIndex a {
     min-height: 80px;
+  }
+  /* The run of blank slots shares one cell, numbered for the run (02–05):
+     its first slot's cell carries the run, and the rest leave the list,
+     for assistive technology too. From the right-hand column the cell spans
+     two rows, so the tape after the run fills the left and the grid closes
+     without a hole. */
+  .tapeIndex .blankRest {
+    display: none;
+  }
+  .blankRange {
+    display: inline;
+  }
+  .tapeIndex .blankSpan {
+    grid-row: span 2;
   }
   .footer {
     flex-wrap: wrap;
@@ -618,10 +692,5 @@
   .playing .fallbackMonitor > div {
     flex: 1;
     min-height: 0;
-  }
-}
-@media (max-width: 600px) {
-  .fallbackMonitor {
-    height: 240px;
   }
 }

@@ -219,6 +219,8 @@ async function wordsClearance(page: Page) {
       clearance,
       beside: words[0].top >= origin.top,
       above: words[1].bottom <= origin.top,
+      // The studio's box ends at or above the fold.
+      inFirstScreen: origin.bottom <= window.innerHeight + 0.5,
     }
   })
 }
@@ -226,14 +228,29 @@ async function wordsClearance(page: Page) {
 test('beside the studio, the words never stand over the equipment', async ({
   page,
 }) => {
+  test.setTimeout(90_000)
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  // The tightest fits the rule covers: the narrowest width, with the tall
-  // display size and with the short one, and a wide, short window.
+  // The rule covers every window at least 768px wide and 540px tall. The
+  // tightest fits: wide windows with the tall display size and with the short
+  // one, wide and short ones where the fold sets the fit, and narrow ones
+  // where the box grows taller than the studio's proportion, down to the
+  // corner of the mobile breakpoint.
   for (const viewport of [
+    { width: 1920, height: 700 },
+    { width: 1440, height: 1000 },
+    { width: 1366, height: 657 },
     { width: 1280, height: 1024 },
     { width: 1280, height: 700 },
-    { width: 1440, height: 1000 },
-    { width: 1920, height: 700 },
+    { width: 1280, height: 600 },
+    { width: 1280, height: 540 },
+    { width: 1024, height: 1366 },
+    { width: 1024, height: 768 },
+    { width: 940, height: 700 },
+    { width: 939, height: 700 },
+    { width: 900, height: 700 },
+    { width: 768, height: 1024 },
+    { width: 768, height: 600 },
+    { width: 768, height: 540 },
   ]) {
     await page.setViewportSize(viewport)
     await page.goto('/')
@@ -242,22 +259,39 @@ test('beside the studio, the words never stand over the equipment', async ({
       'true',
     )
     const idle = await wordsClearance(page)
-    expect(idle.beside).toBe(true)
+    expect(idle.beside, `${viewport.width}×${viewport.height}`).toBe(true)
     expect(idle.clearance).toBeGreaterThanOrEqual(12)
+    // The studio takes the first screen. Only a window both narrow and short
+    // runs the box a little past the fold, so the words keep their room.
+    if (viewport.width >= 940 || viewport.height >= 600)
+      expect(idle.inFirstScreen).toBe(true)
     // A preview lifts a tape toward the words and gives the guide its
-    // longest line.
-    await page
-      .getByRole('link', { name: /^Play tape: 01 / })
-      .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }))
-    await expect(page.getByText(/· Select to play$/)).toBeVisible()
-    expect((await wordsClearance(page)).clearance).toBeGreaterThanOrEqual(12)
+    // longest line: SUPERSET D1 rises nearest the words, About beside them.
+    for (const slot of ['01', '06']) {
+      await page
+        .getByRole('link', { name: new RegExp(`^Play tape: ${slot} `) })
+        .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }))
+      await expect(page.getByText(/· Select to play$/)).toBeVisible()
+      expect(
+        (await wordsClearance(page)).clearance,
+        `${viewport.width}×${viewport.height}, tape ${slot} lifted`,
+      ).toBeGreaterThanOrEqual(12)
+    }
   }
-  // Narrower, the words stand above the studio instead.
-  await page.setViewportSize({ width: 1279, height: 900 })
-  await page.goto('/')
-  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
-    'data-ready',
-    'true',
-  )
-  expect((await wordsClearance(page)).above).toBe(true)
+  // Below 768px wide or 540px tall, the mobile look stands the words above
+  // the studio instead; there is no stacked version of the look above.
+  for (const viewport of [
+    { width: 767, height: 1024 },
+    { width: 1280, height: 539 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+    await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+      'data-ready',
+      'true',
+    )
+    const mobile = await wordsClearance(page)
+    expect(mobile.above).toBe(true)
+    expect(mobile.clearance).toBeGreaterThanOrEqual(12)
+  }
 })

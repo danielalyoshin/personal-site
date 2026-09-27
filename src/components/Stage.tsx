@@ -56,6 +56,30 @@ function tapeCaption(tape: Project) {
   return tape.caption ?? tape.title
 }
 
+/** A slot's number as the spine prints it: 01, 02, and so on. */
+function slotNumber(index: number) {
+  return String(index + 1).padStart(2, '0')
+}
+
+// The blank slots stand together between the projects and About. In the
+// mobile look a run of them shares one cell, numbered for the run (02–05).
+const firstBlank = shelfTapes.findIndex(isComing)
+const lastBlank = shelfTapes.findLastIndex(isComing)
+
+/**
+ * A slot's place in the mobile look's two columns: the run's first cell
+ * stands for all of it, and the rest leave the list. From the right-hand
+ * column that cell spans two rows, so the grid closes without a hole. The
+ * stylesheet applies these, so a page drawn ahead of time is right at any
+ * width.
+ */
+function blankRun(index: number) {
+  if (lastBlank <= firstBlank || index < firstBlank || index > lastBlank)
+    return undefined
+  if (index > firstBlank) return styles.blankRest
+  return index % 2 ? styles.blankSpan : undefined
+}
+
 /** Keys that only modify another key are never the "any key" that skips. */
 const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta'])
 
@@ -709,16 +733,29 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           </div>
           <ul className={styles.tapeIndex}>
             {shelfTapes.map((item, index) => (
-              <li key={shelfKey(item)}>
+              <li key={shelfKey(item)} className={blankRun(index)}>
                 {isComing(item) ? (
                   // A slot still waiting for its project: read, not played.
                   <div className={styles.tapeComing}>
                     <span className={styles.tapeNumber}>
-                      {String(index + 1).padStart(2, '0')}
+                      {slotNumber(index)}
+                      {index === firstBlank && lastBlank > firstBlank && (
+                        <span className={styles.blankRange}>
+                          <span aria-hidden="true">–</span>
+                          <span className="srOnly"> to </span>
+                          {slotNumber(lastBlank)}
+                        </span>
+                      )}
                     </span>
                     <span className={styles.tapeLabel}>
                       Coming soon…
-                      <small>Blank tape</small>
+                      <small>
+                        Blank tape
+                        {/* The folded cell stands for the whole run. */}
+                        {index === firstBlank && lastBlank > firstBlank && (
+                          <span className={styles.blankRange}>s</span>
+                        )}
+                      </small>
                     </span>
                   </div>
                 ) : (
@@ -758,7 +795,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                         D1 in Apache Superset (2026)". */}
                     <span className="srOnly">Play tape: </span>
                     <span className={styles.tapeNumber}>
-                      {String(index + 1).padStart(2, '0')}
+                      {slotNumber(index)}
                     </span>
                     <span className={styles.tapeLabel}>
                       {item.vhs.spineLabel}

@@ -15,13 +15,15 @@ July SVG-only implementation. Normative direction: `DESIGN.md`.
 
 Composition: compact identity header, then the orthographic 3D exhibit with
 the editorial introduction and selection guide in its empty upper right on
-windows at least 1280px wide and 700px tall (the studio fills the first
-screen and nearly the column's width; The Studio First Rule in `DESIGN.md`), or
-stacked above it on narrower and shorter ones; then the six-entry archive
-and the GitHub/LinkedIn footer with the contact links flush right. Every
+every window at least 768px wide and 540px tall (the studio fills the first
+screen and nearly the column's width, and the words are sized to the corner;
+The Studio First Rule in `DESIGN.md`), or, in the mobile look below that,
+stacked above a full-bleed studio, with no stacked desktop stage between the
+two; then the six-entry archive (its blank slots in one cell in the mobile
+look) and the GitHub/LinkedIn footer with the contact links flush right. Every
 shell edge sits on the one column (the cassette mark hangs in the gutter
 above 1200px), except the words beside the studio, which share one left edge
-set by the display line; the archive entries' 12px insets are the only
+set by the widest of them; the archive entries' 12px insets are the only
 other inboard edges, and each entry stacks its number over its name so it
 has one text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
 clock, caption number, tape count, page-level sound control, or edition
