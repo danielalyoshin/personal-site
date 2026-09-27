@@ -302,7 +302,7 @@ functional HTML size is set in rem so text preferences scale it.
 
 The shell renders six sizes and nothing between them; 11px is the floor.
 
-- **Display** (`display`, `display-mobile`, `display-short`): the introductory line at weight 600, capped at 4rem beside the studio, 3rem there on windows no taller than 820px, and 3.375rem in the mobile look, where the shorter side of the screen sets its size so a phone on its side gives more of its first screen to the studio. Beside the studio it also gives way to the corner it stands in (The Studio First Rule): never wider than 4.6vw, and on short windows never taller than the corner above the lifted tape, down to a 2rem floor (2.25rem beside a narrow studio); the mobile look's floor is 2rem too. The secondary line uses dim silkscreen.
+- **Display** (`display`, `display-mobile`, `display-short`): the introductory line at weight 600, capped at 4rem beside the studio, 3rem there on windows no taller than 820px, and 3.375rem in the mobile look, where the shorter side of the screen sets its size so a small phone on its side gives more of its first screen to the studio. Beside the studio it also gives way to the corner it stands in (The Studio First Rule): never wider than 4.6vw, and on short windows never taller than the corner above the lifted tape, down to a 2rem floor (2.25rem beside a narrow studio); the mobile look's floor is 2rem too. The secondary line uses dim silkscreen.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
 - **Body** (`body`): 1rem at weight 400. The page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
@@ -339,17 +339,21 @@ archive, and footer. The shared spacing primitives use a 4px base; the shell
 also has optical adjustments documented in its component CSS.
 
 The page has two looks and nothing between them. Every window at least 768px
-wide and 540px tall gets the Studio First look (The Studio First Rule).
-Anything narrower or shorter gets the mobile look: the words in a band above
-a full-bleed studio, the guide pointing at the list, the list in two
-columns with its blank slots in one cell. The width is the reading
-breakpoint's, where the modeled reader also gives way to the native one;
-below it the corner beside the monitor is too narrow for the display line at
-its 2rem floor. The height is where the corner above the rack, at the fold,
-can no longer hold the words at that floor: phones on their side stand
-below it, laptops with the browser's chrome and toolbars above it. The
-switch is the stylesheet's, so a page drawn ahead of time is right on the
-window it arrives in.
+wide and 540px tall gets the Studio First look (The Studio First Rule), and
+so does a window under 540px tall that is at least 740px wide, a phone on
+its side, with the words beside the studio instead of over it. Anything
+else gets the mobile look: the words in a band above a full-bleed studio,
+the guide pointing at the list, the list in two columns with its blank
+slots in one cell. The width is the reading breakpoint's, where the modeled
+reader also gives way to the native one; below it the corner beside the
+monitor is too narrow for the display line at its 2rem floor. The height is
+where the corner above the rack, at the fold, can no longer hold the words
+at that floor: phones on their side stand below it, laptops with the
+browser's chrome and toolbars above it. Below it the studio and the words
+share the width instead, which needs 740px: phones on their side have it,
+the smallest (an iPhone SE at 667px) do not. The switch is the
+stylesheet's, so a page drawn ahead of time is right on the window it
+arrives in.
 
 **The One Column Rule.** Every shell edge sits on the container's two edges:
 the nameplate, archive heading, and footer statement on the left; the
@@ -386,6 +390,19 @@ clear from the widest window down to the corner of the mobile breakpoint).
 Beside a studio narrower than 940px the kicker breaks after "Bridging the
 gap" rather than cross the monitor, and the display line keeps a 2.25rem
 floor, wide enough for the guide's longest caption on one line.
+
+On a phone on its side (under 540px tall, at least 740px wide) there is no
+room above the rack for the words, so the studio and the words share the
+width instead. The studio's box takes the left column, from the header's
+seam down to the fold, and the words stand at its upper right, 24px clear
+of it, beside the headphones rather than over them, with the kicker broken
+after "Bridging the gap" and the display line near its 2rem floor so the
+studio keeps the width. The box is narrower than 600px there but keeps the
+three-quarter camera, which holds the whole table inside it; the phones'
+closer view is for a canvas that runs to the screen's edges
+(`phoneView` in `studio/framing.ts`). Where there is no hover the guide
+points at the list, as on a phone, since the rack is small at this height;
+a short window with a mouse keeps "Pick one in the studio."
 
 The archive uses six equal columns, three at 1200px and below, and two in
 the mobile look, with an 8px gap. Flex list items and full-width links keep each row's

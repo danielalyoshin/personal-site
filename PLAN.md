@@ -1285,6 +1285,17 @@ rest, by finding:
     Portrait phones are unchanged.
   - CLAUDE.md and AGENTS.md: project tapes hold only real projects; an
     empty slot stays a blank tape.
+- Phones on their side DONE (2026-09-27, Daniel chose the stronger fix):
+  a window under 540px tall and at least 740px wide takes the Studio First
+  look with the words beside the studio. The box holds the left column from
+  the header's seam to the fold, the words stand 24px to its right at the
+  top, the kicker breaks, and the display line sits near its 2rem floor. At
+  844×390 the whole studio (480 × 318 box) and the words fit the first
+  screen; before, only the monitor's top did. `phoneView` in
+  `studio/framing.ts` keeps the three-quarter camera for that narrow box
+  (the close phone view crops the table at a box edge). With no hover the
+  guide points at the list. Phones on their side under 740px wide (iPhone
+  SE, 667px) keep the mobile look with the shorter-side headline.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

@@ -470,14 +470,14 @@ test('in the mobile look the blank slots share one cell, met once', async ({
   await expect(list).toMatchAriaSnapshot(onePerSlot)
   const d1 = page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ })
   const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
-  // Phones, narrow windows, and phones on their side: the stylesheet folds
-  // the run into its first cell, so a screen reader meets it once, as "02
-  // to 05", and nothing of the other three is left in the list.
+  // Phones, narrow windows, and small phones on their side: the stylesheet
+  // folds the run into its first cell, so a screen reader meets it once, as
+  // "02 to 05", and nothing of the other three is left in the list.
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 320, height: 740 },
     { width: 767, height: 1024 },
-    { width: 844, height: 390 },
+    { width: 739, height: 390 },
   ]) {
     await page.setViewportSize(viewport)
     await expect(list).toMatchAriaSnapshot(`
@@ -532,9 +532,15 @@ test('in the mobile look the blank slots share one cell, met once', async ({
     await expect(about).toBeFocused()
     await about.blur()
   }
-  // Back at the larger look, with no reload: a cell for every slot again.
-  await page.setViewportSize({ width: 1440, height: 1000 })
-  await expect(list).toMatchAriaSnapshot(onePerSlot)
+  // Back at the larger look, with no reload: a cell for every slot again,
+  // on a phone on its side as on a desktop.
+  for (const viewport of [
+    { width: 844, height: 390 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await expect(list).toMatchAriaSnapshot(onePerSlot)
+  }
 })
 
 test('slots without a project hold blank tapes that are coming soon', async ({

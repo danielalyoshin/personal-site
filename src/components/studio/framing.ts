@@ -6,6 +6,19 @@ export type StudioFraming = ReturnType<typeof createStudioFraming>
 
 const playbackCamera = new OrthographicCamera()
 
+/** The stylesheet's phone-on-its-side arrangement (Stage.module.css). */
+const SIDEWAYS = '(width >= 740px) and (height < 540px)'
+
+/**
+ * Phones frame the studio closer and more frontal, and let the table run out
+ * of a canvas that runs to the screen's edges. A phone on its side has a
+ * narrow canvas too, but boxed beside the words, so it keeps the
+ * three-quarter view that holds the whole table inside the box.
+ */
+export function phoneView(canvasWidth: number) {
+  return canvasWidth <= 600 && !window.matchMedia(SIDEWAYS).matches
+}
+
 /**
  * The zoom the playback view settles on for a frame of this size: the same
  * fit the rig runs, taken from the camera's playback pose ahead of time. The
@@ -53,7 +66,7 @@ export function createStudioFraming(studio: Object3D) {
     let browseY = 0
     let monitorX = 0
     let monitorY = 0
-    const narrow = width <= 600
+    const narrow = phoneView(width)
     for (const { mesh, playback, furniture } of parts) {
       // The idle screen plane unmounts when the HTML reader takes its place.
       if (!mesh.parent) continue

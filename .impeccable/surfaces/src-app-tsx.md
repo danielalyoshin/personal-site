@@ -17,7 +17,9 @@ Composition: compact identity header, then the orthographic 3D exhibit with
 the editorial introduction and selection guide in its empty upper right on
 every window at least 768px wide and 540px tall (the studio fills the first
 screen and nearly the column's width, and the words are sized to the corner;
-The Studio First Rule in `DESIGN.md`), or, in the mobile look below that,
+The Studio First Rule in `DESIGN.md`), beside its upper right on a phone on
+its side (under 540px tall, at least 740px wide), or, in the mobile look
+below that,
 stacked above a full-bleed studio, with no stacked desktop stage between the
 two; then the six-entry archive (its blank slots in one cell in the mobile
 look) and the GitHub/LinkedIn footer with the contact links flush right. Every

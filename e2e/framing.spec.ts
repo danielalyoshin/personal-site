@@ -230,11 +230,13 @@ test('beside the studio, the words never stand over the equipment', async ({
 }) => {
   test.setTimeout(90_000)
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  // The rule covers every window at least 768px wide and 540px tall. The
-  // tightest fits: wide windows with the tall display size and with the short
-  // one, wide and short ones where the fold sets the fit, and narrow ones
-  // where the box grows taller than the studio's proportion, down to the
-  // corner of the mobile breakpoint.
+  // The rule covers every window at least 768px wide and 540px tall, and
+  // windows under 540px tall but at least 740px wide (phones on their side),
+  // where the words stand beside the studio. The tightest fits: wide windows
+  // with the tall display size and with the short one, wide and short ones
+  // where the fold sets the fit, narrow ones where the box grows taller than
+  // the studio's proportion, down to the corner of the mobile breakpoint,
+  // and phones on their side down to the narrowest.
   for (const viewport of [
     { width: 1920, height: 700 },
     { width: 1440, height: 1000 },
@@ -251,6 +253,11 @@ test('beside the studio, the words never stand over the equipment', async ({
     { width: 768, height: 1024 },
     { width: 768, height: 600 },
     { width: 768, height: 540 },
+    { width: 1280, height: 539 },
+    { width: 1280, height: 500 },
+    { width: 932, height: 430 },
+    { width: 844, height: 390 },
+    { width: 740, height: 360 },
   ]) {
     await page.setViewportSize(viewport)
     await page.goto('/')
@@ -262,8 +269,13 @@ test('beside the studio, the words never stand over the equipment', async ({
     expect(idle.beside, `${viewport.width}×${viewport.height}`).toBe(true)
     expect(idle.clearance).toBeGreaterThanOrEqual(12)
     // The studio takes the first screen. Only a window both narrow and short
-    // runs the box a little past the fold, so the words keep their room.
-    if (viewport.width >= 940 || viewport.height >= 600)
+    // runs the box a little past the fold, so the words keep their room;
+    // beside it, on a phone on its side, the box ends at the fold.
+    if (
+      viewport.width >= 940 ||
+      viewport.height >= 600 ||
+      viewport.height < 540
+    )
       expect(idle.inFirstScreen).toBe(true)
     // A preview lifts a tape toward the words and gives the guide its
     // longest line: SUPERSET D1 rises nearest the words, About beside them.
@@ -278,11 +290,12 @@ test('beside the studio, the words never stand over the equipment', async ({
       ).toBeGreaterThanOrEqual(12)
     }
   }
-  // Below 768px wide or 540px tall, the mobile look stands the words above
-  // the studio instead; there is no stacked version of the look above.
+  // Below 768px wide, or below 740px wide on a short window, the mobile look
+  // stands the words above the studio instead; there is no stacked version
+  // of the look above.
   for (const viewport of [
     { width: 767, height: 1024 },
-    { width: 1280, height: 539 },
+    { width: 739, height: 390 },
   ]) {
     await page.setViewportSize(viewport)
     await page.goto('/')

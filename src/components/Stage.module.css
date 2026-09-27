@@ -84,11 +84,14 @@
   margin-bottom: 12px;
 }
 /* The kicker breaks at its phrase only where it would otherwise wrap on a
-   phone, or cross the monitor beside a narrow studio. */
+   phone, cross the monitor beside a narrow studio, or widen the column of
+   words beside a studio on a phone on its side. */
 .kickerBreak {
   display: none;
 }
-@media (width <= 600px), (768px <= width < 940px) and (height >= 540px) {
+@media (width <= 600px),
+  (768px <= width < 940px) and (height >= 540px),
+  (width >= 740px) and (height < 540px) {
   .kickerBreak {
     display: inline;
   }
@@ -409,8 +412,12 @@
      grows taller, just enough that the words end 12px above the lifted tape:
      twice the words' height plus twice the lift, which is 12.34vw less the
      margins' share when the width sets the fit, or, when the height does,
-     2.643 times the words plus the margins' share. */
-@media (width >= 768px) and (height >= 540px) {
+     2.643 times the words plus the margins' share.
+   A window under 540px tall but at least 740px wide (a phone on its side)
+   takes this look too, with the words beside the studio rather than over
+   it: see the block for it below. */
+@media (width >= 768px) and (height >= 540px),
+  (width >= 740px) and (height < 540px) {
   .main {
     display: grid;
     grid-template: auto auto 1fr auto / minmax(0, 1fr) max-content;
@@ -513,6 +520,50 @@
     --display-floor: 2.25rem;
   }
 }
+/* A phone on its side, or any window under 540px tall and at least 740px
+   wide. Above the rack there is no room for the words at that height, so
+   the studio takes the left of the first screen, down to the fold, and the
+   words stand in its upper right, beside the headphones rather than over
+   them. The display line sits at or near its 2rem floor so the studio keeps
+   the width. The canvas is narrower than 600px on a phone here but keeps
+   the three-quarter view that holds the whole table inside the box
+   (studio/framing.ts): the phones' close view is for a canvas that runs to
+   the screen's edges. Where there is no hover, the guide points at the
+   list, as it does on phones, since the rack is small at this height. */
+@media (width >= 740px) and (height < 540px) {
+  .header {
+    min-height: 72px;
+  }
+  .main {
+    padding-top: 0;
+    column-gap: 24px;
+    --intro-top: 16px;
+    --kicker-gap: 8px;
+    --guide-gap: 16px;
+    --display: clamp(2rem, 1rem + 4svh, 2.75rem);
+  }
+  .scene {
+    grid-column: 1;
+    aspect-ratio: auto;
+    height: calc(100svh - 72px);
+    max-height: none;
+    min-height: 0;
+  }
+  .fallback {
+    align-items: center;
+  }
+  .fallbackMonitor {
+    width: min(560px, 100%, (100svh - 136px) * 4 / 3 + 40px);
+  }
+}
+@media (width >= 740px) and (height < 540px) and (hover: none) {
+  .guideStudio {
+    display: none;
+  }
+  .guideArchive {
+    display: inline;
+  }
+}
 @media (max-width: 1200px) {
   .identity svg {
     display: none;
@@ -521,11 +572,12 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-/* The mobile look, wherever the studio's corner cannot hold the words: below
-   768px wide (where the modeled reader also gives way to the native one) or
-   540px tall (phones on their side). The words stand above a full-bleed
-   studio, the guide points at the list, and the blank slots share one cell. */
-@media (width < 768px), (height < 540px) {
+/* The mobile look, wherever the studio cannot keep the words beside it:
+   below 740px wide, and below 768px wide (where the modeled reader also
+   gives way to the native one) on windows 540px tall or more. The words
+   stand above a full-bleed studio, the guide points at the list, and the
+   blank slots share one cell. */
+@media (width < 740px), (width < 768px) and (height >= 540px) {
   .stage {
     padding: 0 6%;
   }
@@ -542,8 +594,9 @@
     margin-bottom: 8px;
   }
   .intro h2 {
-    /* The shorter side sets the size: a phone on its side gives more of
-       its first screen to the studio, and portrait phones are unchanged. */
+    /* The shorter side sets the size: a small phone on its side gives
+       more of its first screen to the studio, and portrait phones are
+       unchanged. */
     font-size: clamp(2rem, 1rem + min(5.4vw, 5.4svh), 3.375rem);
   }
   .exhibit {

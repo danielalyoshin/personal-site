@@ -41,6 +41,7 @@ import {
 } from './transport'
 import {
   createStudioFraming,
+  phoneView,
   playbackZoom,
   type StudioFraming,
 } from './framing'
@@ -251,7 +252,7 @@ function CameraRig({
     state.wasInserting = inserting
 
     const focus = open && !inserting
-    const narrow = size.width <= 600
+    const narrow = phoneView(size.width)
     position.set(
       focus ? PLAYER.playbackX : narrow ? 3.8 : 5.8,
       focus ? PLAYER.playbackY : narrow ? 5.05 : 5.75,
