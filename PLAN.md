@@ -559,7 +559,8 @@ against WebGL; the July entries below remain a record of the original build.
   related targets); `.impeccable/surfaces/` is excluded from Prettier so the
   tool-written frontmatter stays parseable.
 - Known and intentional: a deep link's programmatic title focus shows the
-  OSD underline (keyboard arrivals need it); phones show the native reader's
+  OSD underline (keyboard arrivals need it; reversed 2026-09-27, see Two
+  fixes under Stage 8); phones show the native reader's
   loading screen for the mechanism's 2.4 seconds unless skipped; the
   THREE.Clock deprecation warning comes from React Three Fiber's clock, not
   project code.
@@ -1336,6 +1337,41 @@ rest, by finding:
     built); screencast filmstrips of the nudge, the turn-up and grow, and
     the return; captures at 1024 × 768, 1280 × 800, 1366 × 768,
     1440 × 900, and 1920 × 1080.
+
+- Two fixes DONE (2026-09-27, Daniel's report):
+  - A jumpy stutter when another tape is hovered while one is ejecting.
+    Cause: React Three Fiber applies its own measurement of the canvas's
+    box on every render of `<Canvas>` (its size check never matches, so it
+    always calls `setSize`), and react-use-measure reports a box change
+    through a resize observer debounced 50ms. The page sizes the renderer
+    in the commit that rejoins the layer to the page, but a hover in the
+    next ~100ms re-rendered the canvas with the viewport's measurement: a
+    frame recorder showed 1440 × 900 drawn inside the 1296 × 712 box for
+    about 70ms, the studio jumping ~110px and back. Fix: the renderer's
+    observer is `RendererBoxObserver` (`src/lib/rendererBox.ts`), which the
+    page asks for a report in the same commit (`measureRendererBox` beside
+    `setSize` in Stage), undebounced; page scroll is no longer tracked
+    (nothing reads the box's page offset while browsing, and undebounced it
+    would render the scene on every scroll event). The same window existed
+    on selection and around full screen; the one fix covers them.
+  - A "weird underline" on a project's title. Cause: the title takes focus
+    by script, and Chrome counts that focus as a keyboard's (`:focus-visible`)
+    before the visitor has done anything (a shared link, a reload, NO
+    SIGNAL) and again at any key pressed while reading (arrows, Space, even
+    Shift), after a mouse choice as much as a keyboard's; a click in the
+    text moved focus and cleared it. Fix: the title draws its underline only
+    for a tape chosen from the keyboard (`keyedTape` in Stage, set when an
+    index link or About is followed with a click of count 0, cleared on
+    close; `data-keyboard` on the title). Titles and NO SIGNAL draw no ring
+    otherwise. This reverses the earlier "known and intentional" deep-link
+    underline: every visitor from a shared link saw it, and a keyboard
+    arrival's first Tab lands on a ringed control.
+  - Tests: `e2e/zoom.spec.ts` hovers the other tape's index entry in the
+    commit the layer rejoins and checks every frame's renderer size against
+    its box (fails without the fix: 1440 × 1000 in 1296 × 712);
+    `e2e/exits.spec.ts` checks the keyboard choice's underline, no underline
+    after a pointer choice plus a key, and none on a shared link or NO
+    SIGNAL.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

@@ -213,11 +213,15 @@
   margin-bottom: 0.5em;
 }
 
-/* Focus cue as OSD emphasis: a clear underline, not a box around a
-   screen-filling heading. */
+/* Focus lands on these headings by script, so the tape is announced and Tab
+   carries on from the reader. They are not controls and draw no ring. */
 .title:focus-visible,
 .bigOsd:focus-visible {
   outline: none;
+}
+/* A tape chosen from the keyboard marks focus on its title as OSD emphasis:
+   a clear underline, not a box around a screen-filling heading. */
+.title[data-keyboard]:focus-visible {
   text-decoration: underline;
   text-decoration-thickness: 3px;
   text-decoration-color: var(--osd);

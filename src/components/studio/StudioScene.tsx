@@ -48,6 +48,7 @@ import {
 import styles from './StudioScene.module.css'
 import type { DeckControlsProps } from '../DeckControls'
 import { setPointing, usePictureSize, usePointing } from '../../lib/pictureSize'
+import { RendererBoxObserver } from '../../lib/rendererBox'
 
 interface StudioProps extends DeckControlsProps {
   tape: Project | null
@@ -1028,6 +1029,13 @@ export default function StudioScene(props: StudioProps) {
       camera={{ position: [8.2, 6.65, 12], zoom: 75, near: 0.1, far: 100 }}
       dpr={props.playback ? [1, 2] : [1, 1.75]}
       frameloop="demand"
+      // The page asks for the box's measurement in the commit that moves it
+      // (lib/rendererBox), so the observer reports at once, never debounced.
+      // Page scroll is not tracked: only the camera rig reads the box's place
+      // on the page, and only while the layer is fixed over the viewport,
+      // where the page sizes it; tracked undebounced, every scroll event
+      // would render the scene.
+      resize={{ debounce: 0, scroll: false, polyfill: RendererBoxObserver }}
       gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
       // The renderer's own wrapper opts back into pointer events; on the way
       // back to the page the links underneath must answer the pointer first.

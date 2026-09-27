@@ -19,6 +19,7 @@ import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
 import { playSound, useSoundEnabled } from '../lib/sound'
 import { turnUp as turnPictureUp } from '../lib/pictureSize'
+import { measureRendererBox } from '../lib/rendererBox'
 import { useReducedMotion } from '../lib/useReducedMotion'
 import { useMediaQuery } from '../lib/useMediaQuery'
 import { useSupportsWebGL } from '../lib/supportsWebGL'
@@ -220,6 +221,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // router commits navigation in a transition, after any state set beside it.
   const [deckTape, setDeckTape] = useState<Project | null>(tape)
   const [ejecting, setEjecting] = useState<Project | null>(null)
+  // A tape chosen from the keyboard, whose title marks the focus that lands
+  // on it. Left to the browser, the mark would also show on a shared link's
+  // first load, before the visitor has done anything, and at any key pressed
+  // while reading, for a mouse as much as for a keyboard.
+  const [keyedTape, setKeyedTape] = useState<string | null>(null)
+  const keyboardChoice = !!tape && keyedTape === tape.slug
   // After playback closes, the camera brings the studio back into its box on
   // the page before the canvas rejoins the page's layout; until then the
   // viewport layer stays detached over the page.
@@ -239,6 +246,8 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     // An eject mid-insertion reverses from where the tape is; clearing the
     // insertion any earlier would seat it first.
     if (!open) setInsertingSlug(null)
+    // History can reopen the tape later; no key chose it then.
+    if (!open) setKeyedTape(null)
   }
   // Without a scene to ease it back, the canvas rejoins the page at once.
   if (returning && (open || flat)) setReturning(false)
@@ -420,12 +429,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     setHandoff('pending')
   }, [])
   const select = useCallback(
-    (next: Project) => {
+    (next: Project, fromKeyboard = false) => {
       lastTape.current = next.slug
       if (reduced || flat || !ready) playSound('insert')
       startTransition(() => {
         previewTape(null)
         setEjecting(null)
+        setKeyedTape(fromKeyboard ? next.slug : null)
         setNativePlayback(!ready)
         setInsertingSlug(!reduced && !flat && ready ? next.slug : null)
         // Reduced motion has no flight to watch: a visit reading full screen
@@ -526,13 +536,16 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // on the page for the whole viewport, or comes back. Size the renderer in
   // the same commit, so the frame that paints the new box is drawn for it;
   // measured through the resize observer, the old drawing would paint once
-  // at the new box's origin first.
+  // at the new box's origin first. The renderer's own measurement is taken
+  // now too, since every render of its canvas applies it again: still the
+  // old box, it would undo this sizing on the next render, such as a hover.
   useLayoutEffect(() => {
     const state = studio.current
     const layer = viewportEl.current
     if (!state || !layer) return
     const rect = layer.getBoundingClientRect()
     state.setSize(rect.width, rect.height, rect.top, rect.left)
+    measureRendererBox()
     state.invalidate()
   }, [detached])
   useEffect(() => {
@@ -659,6 +672,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       tape={tape}
       noSignalReason={notFound ? 'channel' : 'tape'}
       onTitleEl={onTitleEl}
+      keyboardChoice={keyboardChoice}
       crtRef={null}
       embedded
       fullHeight={native}
@@ -766,7 +780,8 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               )
                 return
               event.preventDefault()
-              select(aboutTape)
+              // A link followed from the keyboard clicks with no count.
+              select(aboutTape, event.detail === 0)
             }}
           >
             About
@@ -955,7 +970,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                       )
                         return
                       event.preventDefault()
-                      select(item)
+                      select(item, event.detail === 0)
                     }}
                     onFocus={() => {
                       if (!restoringFocus.current) previewTape(item)

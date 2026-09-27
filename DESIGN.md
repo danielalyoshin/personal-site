@@ -313,7 +313,7 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 
 Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 
-- **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Keyboard focus adds a 3px OSD-white underline offset by 0.28em.
+- **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Focus lands on the title by script and draws no ring; for a tape chosen from the keyboard it adds a 3px OSD-white underline offset by 0.28em. A shared link's first load, and a key pressed while reading a tape chosen by pointer, leave it unmarked, though Chrome counts both as keyboard focus.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
@@ -831,7 +831,10 @@ once. Only once the frame has settled on the box does the canvas rejoin the
 page, again without a visible change, and the tape finishes its return
 there. The scene reads the transport phase from the page's own commit, not
 from its props, which arrive a commit later, so no frame is drawn for the old
-phase in the new box. Focus returns to the
+phase in the new box. The renderer's own measurement of its box is taken in
+that commit too: React Three Fiber applies it again on every render, so a
+stale one would undo the sizing at the next render, such as a hover while
+the tape is still on its way home. Focus returns to the
 corresponding archive link (The Way Back Rule), but that return is not a
 preview, so the tape stays seated until it is hovered or focused again; an
 eject during
@@ -862,6 +865,9 @@ Rule holds to the pixel either way). A press in the studio takes focus onto
 the studio's layer, as a press on a link takes it onto the link, so the
 focus that follows by script (Skip, then the title) is ringed for a
 keyboard and never for a mouse. The layer is no Tab stop and owes no ring.
+The title is marked only for a tape chosen from the keyboard (see Screen
+title), never on a shared link's first load or at a key pressed while
+reading.
 
 ### CRT reader
 

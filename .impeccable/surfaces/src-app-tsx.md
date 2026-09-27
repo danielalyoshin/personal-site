@@ -209,7 +209,7 @@ tape's index entry, or on the nameplate after NO SIGNAL; when the browser
 rings it, the entry is brought into view, 24px clear of the edge, in the
 closing commit while the chrome is still dissolved, and a pointer exit
 leaves the page where it was. A press in the studio takes focus onto the
-studio's layer, so script focus after a mouse selection is never ringed. The named scrollable article is a Tab stop,
+studio's layer, so script focus after a mouse selection is never ringed; the title's underline marks only a tape chosen from the keyboard, never a shared link's arrival or a key pressed while reading. The named scrollable article is a Tab stop,
 allowing return from the transport controls; initial focus announces the title.
 About remains explicit in its archive link's accessible name. Sound is opt-in,
 synthesized, per-visit, and toggled only on the deck (modeled key during

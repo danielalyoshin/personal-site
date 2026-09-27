@@ -149,6 +149,8 @@ interface CRTProps {
   noSignalReason?: 'tape' | 'channel'
   /** Receives the playing title element so the stage can move focus into it. */
   onTitleEl: (el: HTMLHeadingElement | null) => void
+  /** The tape was chosen from the keyboard: the title marks focus on it. */
+  keyboardChoice?: boolean
   crtRef: Ref<HTMLDivElement>
   /** On the modeled tube: turn the picture up to the full-height reader. */
   onFullScreen?: () => void
@@ -161,6 +163,7 @@ export default function CRT({
   tape,
   noSignalReason = 'tape',
   onTitleEl,
+  keyboardChoice = false,
   crtRef,
   embedded = false,
   fullHeight = false,
@@ -207,7 +210,12 @@ export default function CRT({
                 }}
               >
                 <div className={styles.readerContent}>
-                  <h2 tabIndex={-1} ref={onTitleEl} className={styles.title}>
+                  <h2
+                    tabIndex={-1}
+                    ref={onTitleEl}
+                    className={styles.title}
+                    data-keyboard={keyboardChoice || undefined}
+                  >
                     {tape.title}
                   </h2>
                   <p className={styles.meta}>

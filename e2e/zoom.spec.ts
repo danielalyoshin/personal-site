@@ -214,3 +214,79 @@ test('a keyboard eject that brings the tape link into view still lands the studi
   expect(Math.abs(landing.y - (rest.y - moved))).toBeLessThan(1.5)
   expect(landing.zoom / rest.zoom).toBeCloseTo(1, 2)
 })
+
+test('a hover as the studio lands back on the page keeps the renderer in its box', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  await page.locator('a[href="/project/superset-d1"]').click()
+  await expect(
+    page.getByRole('button', { name: 'Eject tape', exact: true }),
+  ).toBeVisible()
+  // Record every frame's renderer size against the layer it draws in. The
+  // moment the layer rejoins the page, hover the other tape's index entry:
+  // the page renders, and with it the canvas, which applies its own
+  // measurement of the box again. Still the viewport's, that measurement
+  // put the old box back for a frame or two, a jump and a jump back.
+  await page.evaluate(async () => {
+    const fiberModule = '/node_modules/.vite/deps/@react-three_fiber.js'
+    const { _roots } = (await import(
+      fiberModule
+    )) as typeof import('@react-three/fiber')
+    const root = _roots.get(document.querySelector('canvas')!)!.store
+    const scene = document.querySelector('[data-testid="studio-scene"]')!
+    const recorder = window as Window & {
+      __landing?: { rejoined: boolean; size: number[]; box: number[] }[]
+    }
+    const frames: NonNullable<typeof recorder.__landing> = []
+    recorder.__landing = frames
+    let rejoined = false
+    root.getState().internal.subscribers.push({
+      ref: {
+        current: (state) => {
+          const box = state.gl.domElement.parentElement!.getBoundingClientRect()
+          frames.push({
+            rejoined,
+            size: [state.size.width, state.size.height],
+            box: [box.width, box.height],
+          })
+        },
+      },
+      priority: 0,
+      store: root,
+    })
+    new MutationObserver((_, watch) => {
+      if (scene.hasAttribute('data-detached')) return
+      watch.disconnect()
+      rejoined = true
+      document
+        .querySelector('#projects a[href="/project/about"]')!
+        .dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
+    }).observe(scene, { attributes: true, attributeFilter: ['data-detached'] })
+  })
+  await page.getByRole('button', { name: 'Eject tape', exact: true }).click()
+  await expect(page.getByTestId('studio-scene')).not.toHaveAttribute(
+    'data-detached',
+  )
+  // The hover landed: the entry is previewed, so the page did render.
+  await expect(page.locator('#projects a[href="/project/about"]')).toHaveClass(
+    /previewed/,
+  )
+  await page.waitForTimeout(400)
+  const landing = await page.evaluate(() =>
+    (
+      window as Window & {
+        __landing?: { rejoined: boolean; size: number[]; box: number[] }[]
+      }
+    ).__landing!.filter((frame) => frame.rejoined),
+  )
+  expect(landing.length).toBeGreaterThan(3)
+  for (const [i, frame] of landing.entries())
+    expect(frame.size, `frame ${i} after the rejoin`).toEqual(frame.box)
+})

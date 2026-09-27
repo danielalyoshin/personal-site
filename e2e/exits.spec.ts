@@ -22,6 +22,11 @@ async function clipped(target: Locator) {
   })
 }
 
+/** The OSD underline that marks focus on a title chosen from the keyboard. */
+function underline(target: Locator) {
+  return target.evaluate((el) => getComputedStyle(el).textDecorationLine)
+}
+
 const d1Link = (page: Page) =>
   page.getByRole('link', {
     name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
@@ -140,7 +145,10 @@ test('Skip takes focus for the insertion, and only a real key press skips', asyn
   // Enter on the focused key is the key's own press.
   await page.keyboard.press('Enter')
   await expect(skip).toHaveCount(0)
-  await expect(page.locator('article h2')).toBeFocused()
+  const title = page.locator('article h2')
+  await expect(title).toBeFocused()
+  // Chosen from the keyboard, the title marks the focus on it.
+  expect(await underline(title)).toBe('underline')
 })
 
 test('a pointer selection in the studio carries no focus ring onto Skip or the title', async ({
@@ -185,6 +193,34 @@ test('a pointer selection in the studio carries no focus ring onto Skip or the t
   const title = page.locator('article h2')
   await expect(title).toBeFocused()
   expect(await title.evaluate((el) => el.matches(':focus-visible'))).toBe(false)
+  // A key pressed while reading turns Chrome's focus heuristic to keyboard,
+  // but the tape was chosen by pointer: the title stays unmarked.
+  await page.keyboard.press('ArrowDown')
+  await expect(title).toBeFocused()
+  expect(await title.evaluate((el) => el.matches(':focus-visible'))).toBe(true)
+  expect(await underline(title)).toBe('none')
+})
+
+test('a shared link lands focus on the title without marking it', async ({
+  page,
+}) => {
+  // Before the visitor has done anything, Chrome counts focus by script as
+  // a keyboard's, for everyone who follows a shared link.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/project/superset-d1')
+  await ready(page)
+  await expect(page.getByTestId('native-reader')).toHaveCount(0)
+  const title = page.getByTestId('project-reader').locator('h2')
+  await expect(title).toBeFocused()
+  expect(await underline(title)).toBe('none')
+  expect(await title.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe(
+    'none',
+  )
+  // Nor does NO SIGNAL's heading, which only a link reaches.
+  await page.goto('/project/missing')
+  const heading = page.getByRole('heading', { name: 'NO SIGNAL' }).first()
+  await expect(heading).toBeFocused()
+  expect(await underline(heading)).toBe('none')
 })
 
 test('every route names itself in the document title', async ({ page }) => {
