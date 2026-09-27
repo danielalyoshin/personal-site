@@ -1253,6 +1253,38 @@ rest, by finding:
     keeps the words 12px clear of the equipment, previews included.
   - `.impeccable/config.json` joins `.prettierignore` (its shape belongs
     to Impeccable's hook-admin script).
+- Second review round DONE (2026-09-27, Daniel's five answers; two agents,
+  their work brought into main uncommitted). It supersedes parts of the
+  round above:
+  - Credit: "one of the people who built" the original packages, and
+    "Today I'm their primary maintainer"; no count, no course. Role
+    "Primary maintainer".
+  - Diagram: now a system diagram (1170 × 2613). A Superset boundary holds
+    the D1 engine spec, SQLAlchemy's engine and inspector, and the `d1`
+    extra; labelled connections show install time (the extra installs
+    sqlalchemy-d1, which requires sqlalchemy-cloudflare-d1) and run time
+    (SQLAlchemy loads the d1 dialect and inspects tables and views,
+    sqlalchemy-d1 subclasses the community dialect, the engine spec runs
+    SQL on the community driver, the driver posts to D1's REST API
+    `/raw`). Each connection was checked in the source. Retired packages
+    are left out.
+  - Layout: the stacked desktop look is gone at every size. The Studio
+    First look applies at 768px wide and 540px tall and up, the mobile
+    look below either. Words and box size scale fluidly and keep 12px
+    clear of the equipment with a tape lifted (framing test at 15 sizes).
+    Narrow, short windows (under about 940 × 580) run the studio up to
+    about 40px past the fold.
+  - Phones: the four blank cells fold into one "02–05 Coming soon…" cell,
+    captioned "Blank tapes" (Daniel's pick), spanning both rows beside
+    SUPERSET D1 and ABOUT; the wider look keeps one "Blank tape" cell per
+    slot. The no-WebGL phone monitor now takes its width from the studio's
+    box (its screen used to spill out at 390px). The mobile headline is
+    sized by the screen's shorter side (`min(5.4vw, 5.4svh)`): a phone on
+    its side drops from 54px to 37px and the studio rises about 35px,
+    though at 844×390 only the monitor's top is in the first screen.
+    Portrait phones are unchanged.
+  - CLAUDE.md and AGENTS.md: project tapes hold only real projects; an
+    empty slot stays a blank tape.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

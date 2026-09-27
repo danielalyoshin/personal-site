@@ -45,7 +45,8 @@ starting work and keep it updated as stages complete or decisions change.
 - Impeccable is installed for Codex at `.agents/skills/impeccable/SKILL.md`.
   Invoke it with `$impeccable <command>`; both agents share the existing
   `PRODUCT.md`, `DESIGN.md`, and `.impeccable/` context. Setup is in `README.md`.
-- Do not invent real projects or personal facts; the project tapes remain
-  explicitly labeled placeholders until Daniel supplies real content.
+- Do not invent real projects or personal facts. Project tapes hold only real
+  projects Daniel has supplied; an empty rack slot stays a blank "Coming soon…"
+  tape, never a stand-in project.
 - Verify interaction changes with `npm run test:e2e` (Playwright, Chrome),
   plus `npm run build`, `npm run lint`, and `npm run format:check`.
