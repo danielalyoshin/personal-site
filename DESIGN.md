@@ -317,7 +317,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
-**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, and collapse (Exit full screen). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, collapse (Exit full screen), and expand (a closer look, the collapse mark's corners turned out). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform, except below
@@ -884,10 +884,16 @@ mirrors the OSD's fade above while more of the article lies below, and
 lifts (240ms) once its end is in view, so the REC line closes the tape
 uncovered; the reader's thin scrollbar thumb is screen-scroll, 3.5:1 on the
 tube. Both cues serve the modeled and the native reader alike. Project media spans the reading column, with a seam border and
-small control corners. Every piece declares its pixel size in the content
-(`ProjectMedia.width` and `height`, required), so its place is held before
-it loads and nothing beneath it moves; the first loads at once and the rest
-as they are reached. The article is a named Tab stop within the playback
+small control corners, in the full-height reader only: the modeled tube
+offers it as a closer look instead (The Closer Look Rule). Every piece
+declares its pixel size in the content (`ProjectMedia.width` and `height`,
+required), so its place is held before it loads and nothing beneath it
+moves; the first loads at once and the rest as they are reached. A picture
+drawn across for the widest column (639px) may carry a drawing laid out
+down for a narrow one (`ProjectMedia.narrow`, with its own pixel size),
+which the reader shows below 640px wide: the D1 diagram is drawn at 640px
+for full screen, where its 14px text reads at its own size and the whole
+of it stands in a 1280 × 800 window, and at 360px for phones. The article is a named Tab stop within the playback
 focus loop, so keyboard users can return from transport controls and resume
 scrolling. Initial focus still announces the title. Missing-tape and unknown-route
 screens use distinct NO SIGNAL messages and matching transport labels, with
@@ -992,6 +998,24 @@ technology. Reduced motion skips the nudge and the steps: the reader takes
 the window at once and hands back with a swap. The five nudges compared on
 2026-09-27 are recorded in `PLAN.md`.
 
+**The Closer Look Rule.** The tube is too small to read a picture from,
+so the modeled reader never shows a tape's media. In its place stands a
+slate the width of the column, at least 8.5rem tall, in the diagram's own
+node fill and seam-lit edge with small control corners: the expand mark at
+1.4em and TAKE A CLOSER LOOK in OSD white with the OSD's glow, over the
+media's caption in dim OSD type. It is one button, named by the words it
+shows. Pointing at it lights its edge white and underlines the action, and
+previews the turn as pointing at the size bar does (the bar's unlit steps
+show and the dial lightens). Pressing it turns the picture up exactly as
+the bar does (The Picture Size Rule): the tick, the bar and the dial to
+full, the reader growing out of the picture. The reader opens on the media,
+its top under the OSD, rather than at the reading place, and focus stays in
+the article. Unlike the bar, the dial, and F, a closer look is for this tape
+alone: it is not held for the visit, so the next tape plays on the tube.
+Exit full screen and F hand it back as from any full screen. Where the tube
+cannot turn up yet (an insertion, a handoff) the slate stands but does not
+answer, as the bar does not.
+
 The modeled idle image is a local 1024 × 768 canvas texture with static scanlines.
 Its lit area has the reader's corners, 26 texture pixels for the 14px screen
 radius on the reader's 560px plane, over the black tube, so the screen keeps
@@ -1083,6 +1107,7 @@ build has none. The address itself is a Stage 10 decision.
 - Do name a link by the words it shows (The Spoken Name Rule), and take screen colours from the one palette (The One Palette Rule).
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
+- Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 

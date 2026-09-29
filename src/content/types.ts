@@ -17,6 +17,13 @@ export interface ProjectMedia {
   height: number
   alt: string
   caption?: string
+  /**
+   * The same image drawn for a narrow reading column (windows under 640px
+   * wide), such as a diagram laid out down rather than across. It shares
+   * the alt text and caption; its pixel size is required for the same
+   * reason.
+   */
+  narrow?: { src: string; width: number; height: number }
 }
 
 /** VHS presentation fields — how the project appears as a physical tape. */

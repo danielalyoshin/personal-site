@@ -260,6 +260,10 @@
   margin: var(--sp-lg) 0;
 }
 
+.gallery picture {
+  display: block;
+}
+
 .gallery img,
 .gallery video {
   border: 1px solid var(--seam);
@@ -277,6 +281,57 @@
   line-height: 1.35;
   color: var(--screen-dim);
   margin-top: var(--sp-xs);
+}
+
+/* A closer look (The Closer Look Rule): a slate in the media's place, in
+   the diagram's own fill and seam, with the expand mark and the action in
+   OSD white over the media's caption. Pointing lights its edge and
+   underlines the action, as FULL SCREEN underlines beside the bar. */
+.closerLook {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.35em;
+  width: 100%;
+  min-height: 8.5rem;
+  margin: var(--sp-lg) 0;
+  padding: var(--sp-md);
+  border: 1px solid var(--seam-lit);
+  border-radius: var(--r-control);
+  background: color-mix(in srgb, var(--screen-text) 4%, var(--screen-black));
+  color: var(--osd);
+  font-family: var(--font-osd);
+  font-size: var(--type-screen-meta);
+  font-weight: 400;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: border-color var(--t-fast);
+}
+.closerMark {
+  width: 1.4em;
+  height: 1.4em;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+}
+.closerAction {
+  text-transform: uppercase;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+}
+.closerCaption {
+  color: var(--screen-dim);
+  text-align: center;
+  text-wrap: balance;
+}
+.closerLook:hover {
+  border-color: var(--osd);
+}
+.closerLook:hover .closerAction {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.28em;
+}
+.closerLook:focus-visible {
+  outline: 2px solid var(--osd);
+  outline-offset: 2px;
 }
 
 .tags {

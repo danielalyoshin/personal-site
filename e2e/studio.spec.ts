@@ -66,16 +66,21 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   const reader = page.getByRole('article', {
     name: 'Cloudflare D1 in Apache Superset details',
   })
-  // The tape's own links follow its write-up in the reading order.
+  // The closer look stands where the write-up's media would, and the tape's
+  // own links follow it in the reading order.
+  const closerLook = reader.getByRole('button', { name: /^Take a closer look/ })
   const links = reader.getByRole('list', { name: 'Project links' })
   await expect(links.getByRole('link')).toHaveText([
     'PYPI',
-    'DIALECT PR',
+    'SOURCE',
     'SUPERSET PR',
-    'PACKAGES',
   ])
   await page.keyboard.press('Tab')
+  await expect(closerLook).toBeFocused()
+  await page.keyboard.press('Tab')
   await expect(links.getByRole('link', { name: 'PYPI' })).toBeFocused()
+  await page.keyboard.press('Shift+Tab')
+  await expect(closerLook).toBeFocused()
   await page.keyboard.press('Shift+Tab')
   await expect(reader).toBeFocused()
   // Reaching the links scrolled the reader to its end; read from the top.

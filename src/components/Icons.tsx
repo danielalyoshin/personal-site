@@ -109,6 +109,25 @@ export function CollapseIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/**
+ * Turning the picture up: the collapse mark's four corners turned out to the
+ * picture's edges.
+ */
+export function ExpandIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      width="18"
+      height="18"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M2.5 8V2.5H8v3H5.5V8zM17.5 8V2.5H12v3h2.5V8zM2.5 12v5.5H8v-3H5.5V12zM17.5 12v5.5H12v-3h2.5V12z" />
+    </svg>
+  )
+}
+
 /** The deck's eject key; a class sizes it to the type it sits in on the OSD. */
 export function EjectIcon(props: SVGProps<SVGSVGElement>) {
   return (

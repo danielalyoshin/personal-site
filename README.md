@@ -127,7 +127,9 @@ editing it, `npm run render:icons` rasterizes `public/apple-touch-icon.png`
 from the same drawing.
 
 A project's diagram is an HTML page beside its image in
-`src/content/projects/media/`, drawn in the site's fonts and tokens.
+`src/content/projects/media/`, drawn in the site's fonts and tokens: one
+drawn across at 640px for the full-height reader and, when it needs one, a
+`-narrow` page drawn down at 360px for phones (`ProjectMedia.narrow`).
 `npm run render:diagrams` renders every such page to a lossless WebP; it
 needs `cwebp` (`brew install webp`).
 

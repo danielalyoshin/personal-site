@@ -3,7 +3,7 @@ import { readingMinutes } from '../content/readingTime'
 import type { Project } from '../content/types'
 import { site } from '../content/site'
 import styles from './CRT.module.css'
-import { EjectIcon, ExternalIcon, PlayIcon } from './Icons'
+import { EjectIcon, ExpandIcon, ExternalIcon, PlayIcon } from './Icons'
 import {
   getPictureSize,
   nudgeDial,
@@ -139,6 +139,39 @@ function SizeReadout({
   )
 }
 
+/** A reading column too narrow for media drawn across: phones. */
+const NARROW_COLUMN = '(max-width: 639px)'
+
+/**
+ * The tube is too small to read a picture from, so where the tape's media
+ * would stand it offers a closer look: a slate in the media's place, the
+ * picture turned up to full screen for this tape alone and opened on the
+ * media. Pointing at it previews the turn, as pointing at the size bar does.
+ */
+function CloserLook({
+  caption,
+  onCloserLook,
+}: {
+  caption?: string
+  onCloserLook: () => void
+}) {
+  return (
+    <button
+      type="button"
+      className={styles.closerLook}
+      onClick={onCloserLook}
+      onPointerEnter={() => setPointing(true)}
+      onPointerLeave={() => setPointing(false)}
+      onFocus={() => setPointing(true)}
+      onBlur={() => setPointing(false)}
+    >
+      <ExpandIcon className={styles.closerMark} />
+      <span className={styles.closerAction}>Take a closer look</span>
+      {caption && <span className={styles.closerCaption}>{caption}</span>}
+    </button>
+  )
+}
+
 interface CRTProps {
   /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
   embedded?: boolean
@@ -156,6 +189,11 @@ interface CRTProps {
   onFullScreen?: () => void
   /** Called once the tube's picture has come to rest. */
   onPictureSettled?: () => void
+  /**
+   * On the modeled tube: the tape's media is offered as a closer look, the
+   * picture turned up for this tape alone, instead of being shown.
+   */
+  onCloserLook?: () => void
 }
 
 export default function CRT({
@@ -169,6 +207,7 @@ export default function CRT({
   fullHeight = false,
   onFullScreen,
   onPictureSettled,
+  onCloserLook,
 }: CRTProps) {
   // The dial nudges once per tape, when the visitor starts to scroll: the
   // moment the tube's window begins to cost them.
@@ -233,37 +272,53 @@ export default function CRT({
                       {para}
                     </p>
                   ))}
-                  {tape.media.length > 0 && (
-                    <div className={styles.gallery}>
-                      {tape.media.map((m, i) => (
-                        <figure key={`${m.src}-${i}`}>
-                          {/* The first piece of media is often the tape's
-                              largest paint: it loads at once, the rest as
-                              they are scrolled to. */}
-                          {m.type === 'image' ? (
-                            <img
-                              src={m.src}
-                              width={m.width}
-                              height={m.height}
-                              alt={m.alt}
-                              loading={i === 0 ? 'eager' : 'lazy'}
-                              fetchPriority={i === 0 ? 'high' : 'auto'}
-                            />
-                          ) : (
-                            <video
-                              src={m.src}
-                              width={m.width}
-                              height={m.height}
-                              controls
-                              preload={i === 0 ? 'metadata' : 'none'}
-                              aria-label={m.alt}
-                            />
-                          )}
-                          {m.caption && <figcaption>{m.caption}</figcaption>}
-                        </figure>
-                      ))}
-                    </div>
-                  )}
+                  {tape.media.length > 0 &&
+                    (onCloserLook ? (
+                      <CloserLook
+                        caption={tape.media[0].caption}
+                        onCloserLook={onCloserLook}
+                      />
+                    ) : (
+                      <div className={styles.gallery}>
+                        {tape.media.map((m, i) => (
+                          <figure key={`${m.src}-${i}`}>
+                            {/* The first piece of media is often the tape's
+                                largest paint: it loads at once, the rest as
+                                they are scrolled to. */}
+                            {m.type === 'image' ? (
+                              <picture>
+                                {m.narrow && (
+                                  <source
+                                    media={NARROW_COLUMN}
+                                    srcSet={m.narrow.src}
+                                    width={m.narrow.width}
+                                    height={m.narrow.height}
+                                  />
+                                )}
+                                <img
+                                  src={m.src}
+                                  width={m.width}
+                                  height={m.height}
+                                  alt={m.alt}
+                                  loading={i === 0 ? 'eager' : 'lazy'}
+                                  fetchPriority={i === 0 ? 'high' : 'auto'}
+                                />
+                              </picture>
+                            ) : (
+                              <video
+                                src={m.src}
+                                width={m.width}
+                                height={m.height}
+                                controls
+                                preload={i === 0 ? 'metadata' : 'none'}
+                                aria-label={m.alt}
+                              />
+                            )}
+                            {m.caption && <figcaption>{m.caption}</figcaption>}
+                          </figure>
+                        ))}
+                      </div>
+                    ))}
                   {tape.tags.length > 0 && (
                     <ul className={styles.tags} aria-label="Tags">
                       {tape.tags.map((t) => (

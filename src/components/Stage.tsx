@@ -268,8 +268,13 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const deckPortal = useRef<HTMLDivElement>(null)
   const nativeScreen = useRef<HTMLDivElement>(null)
   const nativeFrame = useRef<HTMLDivElement>(null)
-  // Where the tube's article stood when its picture was turned up.
-  const readingPlace = useRef<{ depth: number; focused: boolean } | null>(null)
+  // Where the tube's article stood when its picture was turned up, and
+  // whether the turn was a closer look, which opens on the tape's media.
+  const readingPlace = useRef<{
+    depth: number
+    focused: boolean
+    media: boolean
+  } | null>(null)
   const wasOpen = useRef(open)
   // Focus returning to the ejected tape's link is not a preview: the tape
   // settles flat in its slot rather than lifting again.
@@ -324,8 +329,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         // was turned up.
         const place = readingPlace.current
         readingPlace.current = null
-        target.scrollTop =
-          place.depth * (target.scrollHeight - target.clientHeight)
+        const media = place.media && target.querySelector('figure')
+        target.scrollTop = media
+          ? media.offsetTop - parseFloat(getComputedStyle(target).paddingTop)
+          : place.depth * (target.scrollHeight - target.clientHeight)
         if (place.focused) {
           target.focus({ preventScroll: true })
           focused = true
@@ -386,37 +393,55 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   }, [navigate])
   // Full screen opens the tape's full-height reader out of the tube's picture;
   // the way back hands the picture to the tube with the deep link's dissolve.
-  const enterFullScreen = useCallback(() => {
-    if (!tape) return
-    const article = document.querySelector<HTMLElement>(
-      '[data-testid="project-reader"] article',
-    )
-    if (article) {
-      const range = article.scrollHeight - article.clientHeight
-      readingPlace.current = {
-        depth: range > 0 ? article.scrollTop / range : 0,
-        focused: document.activeElement === article,
+  // A closer look opens the same way, on the tape's media, for this tape
+  // alone: the visit goes on reading on the tube.
+  const enterFullScreen = useCallback(
+    (closer: boolean) => {
+      if (!tape) return
+      const article = document.querySelector<HTMLElement>(
+        '[data-testid="project-reader"] article',
+      )
+      if (article) {
+        const range = article.scrollHeight - article.clientHeight
+        readingPlace.current = {
+          depth: range > 0 ? article.scrollTop / range : 0,
+          // Focus on the closer look itself stays in the article.
+          focused: closer
+            ? article.contains(document.activeElement)
+            : document.activeElement === article,
+          media: closer,
+        }
       }
-    }
-    const from = pictureInsets()
-    setBigPicture(true)
-    setFullScreen({
-      slug: tape.slug,
-      phase: reduced || !from ? 'on' : 'growing',
-      from,
-    })
-  }, [reduced, tape])
-  // The size bar, the dial, and F all turn the picture up the same way: the
-  // bar lights to full and the dial turns with it, then the picture grows.
+      const from = pictureInsets()
+      if (!closer) setBigPicture(true)
+      setFullScreen({
+        slug: tape.slug,
+        phase: reduced || !from ? 'on' : 'growing',
+        from,
+      })
+    },
+    [reduced, tape],
+  )
+  // The size bar, the dial, F, and a closer look all turn the picture up the
+  // same way: the bar lights to full and the dial turns with it, then the
+  // picture grows.
   const turning = useRef<(() => void) | null>(null)
-  const turnUp = useCallback(() => {
-    if (turning.current || !canEnterFullScreen) return
-    playSound('tick')
-    turning.current = turnPictureUp(() => {
-      turning.current = null
-      enterFullScreen()
-    })
-  }, [canEnterFullScreen, enterFullScreen])
+  const turnPictureUpFor = useCallback(
+    (closer: boolean) => {
+      if (turning.current || !canEnterFullScreen) return
+      playSound('tick')
+      turning.current = turnPictureUp(() => {
+        turning.current = null
+        enterFullScreen(closer)
+      })
+    },
+    [canEnterFullScreen, enterFullScreen],
+  )
+  const turnUp = useCallback(() => turnPictureUpFor(false), [turnPictureUpFor])
+  const closerLook = useCallback(
+    () => turnPictureUpFor(true),
+    [turnPictureUpFor],
+  )
   useEffect(() => {
     if (offersFullScreen || !turning.current) return
     turning.current()
@@ -680,6 +705,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       onPictureSettled={
         !native && bigPicture && canEnterFullScreen ? turnUp : undefined
       }
+      onCloserLook={native ? undefined : closerLook}
     />
   )
   // The same hardware key as the native deck panel, so the one control

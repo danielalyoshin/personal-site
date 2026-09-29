@@ -9,8 +9,9 @@
  * Run `npm run render:diagrams` after editing a source, then copy the
  * printed size into the tape's `media` entry. It starts its own dev server
  * and drives the installed Chrome, as the e2e suite does. Diagrams are drawn
- * at 3.25×, so a 360px drawing is 1170px across: sharp on a high-density
- * desktop tube, where the reader's column shows it about 590px wide.
+ * at 3.25×, so a 640px drawing is 2080px across and a 360px one (a phone's,
+ * shown at up to about 1.5× in a column just under 640px) is 1170px: both sharp on
+ * a high-density screen.
  *
  * Chrome's capture is a PNG about three times the size it needs to be, and
  * its own WebP encoder is either lossy or larger still, so the capture is

@@ -244,6 +244,66 @@ test('full screen holds for the visit: eject lands on the tape link, and the nex
   await expect(sizeBar(page)).toBeVisible()
 })
 
+test('the tube offers its media as a closer look, which opens full screen on the diagram for this tape alone', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await playOnTube(page)
+  // The tube shows no picture; the slate stands in its place.
+  await expect(tubeArticle(page).locator('img')).toHaveCount(0)
+  const closerLook = tubeArticle(page).getByRole('button', {
+    name: /^Take a closer look/,
+  })
+  await expect(closerLook).toContainText(
+    'How Superset and the D1 packages work together.',
+  )
+
+  await closerLook.focus()
+  await page.keyboard.press('Enter')
+  const reader = page.getByTestId('native-reader')
+  await expect(reader).toHaveAttribute('data-full-screen', 'on')
+  // Focus stays in the article, which opens on the diagram, drawn across
+  // and whole in the window.
+  await expect(fullArticle(page)).toBeFocused()
+  const diagram = fullArticle(page).locator('figure img')
+  await expect(diagram).toHaveJSProperty('complete', true)
+  expect(
+    await diagram.evaluate((img: HTMLImageElement) => img.currentSrc),
+  ).not.toContain('narrow')
+  const [shown, frame] = await Promise.all([
+    diagram.boundingBox(),
+    fullArticle(page).boundingBox(),
+  ])
+  expect(shown!.y).toBeGreaterThanOrEqual(frame!.y)
+  expect(shown!.y + shown!.height).toBeLessThanOrEqual(frame!.y + frame!.height)
+  expect(shown!.width).toBeGreaterThan(600)
+
+  // Nothing is held for the visit: the next tape plays on the tube.
+  await page.keyboard.press('Escape')
+  const d1 = page.locator('#projects a[href="/project/superset-d1"]')
+  await expect(d1).toBeFocused()
+  await d1.press('Enter')
+  await expect(tubeArticle(page)).toBeVisible()
+  await expect(page.getByTestId('native-reader')).toHaveCount(0)
+  await expect(sizeBar(page)).toBeVisible()
+})
+
+test('a narrow reader shows the diagram drawn down', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/project/superset-d1')
+  const diagram = fullArticle(page).locator('figure img')
+  await expect(diagram).toHaveJSProperty('complete', true)
+  expect(
+    await diagram.evaluate((img: HTMLImageElement) => img.currentSrc),
+  ).toContain('narrow')
+  const box = await diagram.boundingBox()
+  // Drawn at 360px wide, down: taller than it is wide.
+  expect(box!.height).toBeGreaterThan(box!.width)
+  await expect(
+    fullArticle(page).getByRole('button', { name: /closer look/i }),
+  ).toHaveCount(0)
+})
+
 test('with motion, a later tape still flies into the deck, then the set turns its picture up once the tube is at rest', async ({
   page,
 }) => {

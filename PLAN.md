@@ -1403,6 +1403,35 @@ rest, by finding:
   a 320px window. The cells are now measured in one layout, and the overflow
   check waits for the settled page. 69 green in a full run; the three
   passed 25 repeats.
+- D1 write-up made general DONE (2026-09-29, Daniel's updated summary: the
+  Superset PR is merged). Daniel asked for a write-up that describes what
+  the project does now and does not need editing on every release. The
+  credit paragraph stays; the other two now say how Superset reaches D1
+  (sqlalchemy-d1 over the community dialect, the `d1` extra, the engine
+  spec and the driver). The write-up and the diagram no longer name
+  versions, dates, the 7.0 ask or the reported driver bugs; the diagram
+  drops its "PR #44505" and "Rebuilt" tags and the "0.2.0" in
+  sqlalchemy-d1's name. Links: PyPI (no version), Source (the
+  sqlalchemy-d1 repository), Superset PR.
+- Closer look DONE (2026-09-29, Daniel's same-day follow-up): the write-up
+  drops its SQLAlchemy 2 / what-it-adds sentence; the diagram's engine spec
+  keeps only "Runs SQL on the driver" (its other three lines and "built
+  in" go) and sqlalchemy-d1 only "Adds what Superset needs". The diagram is
+  now drawn twice: across at 640px (`superset-d1-diagram.html`, 2080 × 1638) for the full-height reader, whose column tops out at 639px, so its
+  text reads at its own 14px and the whole drawing stands in a 1280 × 800
+  full screen (it used to show 1.8× up and 1300px tall), and down at 360px
+  (`superset-d1-diagram-narrow.html`, 1170 × 2184) for windows under
+  640px. `ProjectMedia.narrow` carries the second drawing; the reader
+  picks it with a `<picture>` source. The modeled tube no longer shows
+  media: The Closer Look Rule (DESIGN.md) puts a slate in its place that
+  turns the picture up like the size bar, opens on the diagram, and is not
+  held for the visit. Three indicators were prototyped and captured at
+  1440 × 900: an OSD key in the links' family (clear, but reads as one more
+  link beside PYPI and SOURCE), the slate (chosen: it holds the media's
+  place and says a picture is there, the largest target, in the diagram's
+  own fill and edge), and a divider with the cue at its centre (quiet, but
+  reads as a section break more than a control). The prototype diff is
+  kept outside the repository. Two tests in `fullscreen.spec.ts`.
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 
