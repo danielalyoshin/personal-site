@@ -520,6 +520,21 @@
     --display-floor: 2.25rem;
   }
 }
+/* Narrow and short at once: with the kicker on two lines, the corner the
+   fold leaves is too short for the words at the short-window spacing, and
+   the box would grow past the fold to make room. The words close up
+   instead, and the display line follows the short windows' fit down to
+   2.0625rem, the smallest that still carries the guide's longest caption
+   (259px) on one line. The box ends at the fold and the words keep 12px
+   above a lifted tape. */
+@media (768px <= width < 940px) and (540px <= height < 600px) {
+  .main {
+    --intro-top: 12px;
+    --kicker-gap: 6px;
+    --guide-gap: 12px;
+    --display-floor: 2.0625rem;
+  }
+}
 /* A phone on its side, or any window under 540px tall and at least 740px
    wide. Above the rack there is no room for the words at that height, so
    the studio takes the left of the first screen, down to the fold, and the

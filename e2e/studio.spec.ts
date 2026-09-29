@@ -8,12 +8,30 @@ async function ready(page: Page) {
   )
 }
 
+/**
+ * A desktop deep link opens on the native reader and hands over to the tube.
+ * Until the handoff ends both readers, with their titles and deck keys, are
+ * on the page, so wait for the native one to leave before asking for either.
+ */
+async function onTheTube(page: Page) {
+  await ready(page)
+  await expect(page.getByTestId('native-reader')).toHaveCount(0)
+}
+
+/**
+ * The page never runs wider than the window once laid out. Chrome lays out
+ * the first frame after a resize with viewport units part way updated (the
+ * full-bleed studio box stood 4px past a 320px window), so the check waits
+ * for the settled layout rather than reading that frame.
+ */
 async function noOverflow(page: Page) {
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true)
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    )
+    .toBe(true)
 }
 
 test('3D archive, keyboard navigation, playback and focus restoration', async ({
@@ -82,8 +100,8 @@ test('deep links, browser history and both missing-route states', async ({
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/project/about')
-  await ready(page)
   // A ready desktop scene takes over from the instant native reader.
+  await onTheTube(page)
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect(
     page.getByRole('heading', {
@@ -105,6 +123,7 @@ test('deep links, browser history and both missing-route states', async ({
   ).toBeVisible()
   for (const route of ['/project/missing', '/missing-channel']) {
     await page.goto(route)
+    await onTheTube(page)
     await expect(page.getByRole('heading', { name: 'NO SIGNAL' })).toBeFocused()
     await page.keyboard.press('Escape')
     await expect(page).toHaveURL('/')
@@ -240,11 +259,13 @@ test('sound is opt-in, lives on the deck, and resets on a fresh visit', async ({
     0,
   )
   await page.goto('/project/superset-d1')
+  await onTheTube(page)
   const sound = page.getByRole('button', { name: 'Sound effects', exact: true })
   await expect(sound).toHaveAttribute('aria-pressed', 'false')
   await sound.click()
   await expect(sound).toHaveAttribute('aria-pressed', 'true')
   await page.reload()
+  await onTheTube(page)
   await expect(sound).toHaveAttribute('aria-pressed', 'false')
 })
 
@@ -504,20 +525,21 @@ test('in the mobile look the blank slots share one cell, met once', async ({
     ).toBe('02–05')
     await expect(run.locator('a, button, [tabindex]')).toHaveCount(0)
     // From the right-hand column the run spans both rows, beside SUPERSET D1
-    // and About, so the grid closes without a hole.
-    const [first, blank, last] = await Promise.all(
-      [0, 1, 2].map(async (i) => (await cells.nth(i).boundingBox())!),
+    // and About, so the grid closes without a hole. The cells are measured
+    // together, in one layout: in the first frame after a resize the
+    // headline above still sets its first line at the old size, then moves
+    // the list, and boxes taken one call at a time could straddle it.
+    const [first, blank, last] = await cells.evaluateAll((items) =>
+      items
+        .map((item) => item.getBoundingClientRect())
+        .map(({ x, y, width, height }) => ({ x, y, width, height })),
     )
     expect(blank.x).toBeGreaterThan(first.x + first.width)
     expect(last.x).toBeCloseTo(first.x, 0)
     expect(last.y).toBeGreaterThan(first.y + first.height)
     expect(blank.y).toBeCloseTo(first.y, 0)
     expect(blank.y + blank.height).toBeCloseTo(last.y + last.height, 0)
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= window.innerWidth,
-      ),
-    ).toBe(true)
+    await noOverflow(page)
     // The arrows and Home/End still move between the tapes that play.
     await d1.focus()
     await page.keyboard.press('ArrowRight')

@@ -1274,7 +1274,7 @@ rest, by finding:
     look below either. Words and box size scale fluidly and keep 12px
     clear of the equipment with a tape lifted (framing test at 15 sizes).
     Narrow, short windows (under about 940 × 580) run the studio up to
-    about 40px past the fold.
+    about 40px past the fold (fixed 2026-09-29, see Small windows below).
   - Phones: the four blank cells fold into one "02–05 Coming soon…" cell,
     captioned "Blank tapes" (Daniel's pick), spanning both rows beside
     SUPERSET D1 and ABOUT; the wider look keeps one "Blank tape" cell per
@@ -1373,6 +1373,37 @@ rest, by finding:
     after a pointer choice plus a key, and none on a shared link or NO
     SIGNAL.
 
+- Content closed (2026-09-29, Daniel): no more real projects. The site
+  ships with SUPERSET D1 and About; slots 02 to 05 stay blank "Coming
+  soon…" tapes, as the project rules require. CH 01 on the idle tube stays
+  (the cut offered on 2026-09-17 is declined).
+- Small windows DONE (2026-09-29, Daniel: "would be nice"). Windows under
+  940px wide and under 600px tall ran the studio's box up to 41px past the
+  fold (939 × 540), and from 900px wide the table itself was cut by up to
+  9px: the kicker takes two lines there and the display line held its
+  2.25rem floor, so the words outgrew the corner the fold leaves, and the
+  box's minimum height (words clear of a lifted tape) beat its maximum (the
+  fold). In that band the words now close up (12px under the header, 6px
+  under the kicker, 12px above the guide) and the display line follows the
+  short windows' corner fit down to 2.0625rem, the smallest that keeps the
+  guide's longest caption (259px) on one line. The box ends at the fold at
+  every size measured (768 to 1280 wide, 540 to 800 tall); 939 × 540 now
+  draws exactly as 940 × 540 (studio zoom 69, 6% smaller than before, its
+  base 25px above the fold instead of 9px below it). Clearance above a
+  lifted tape stays 13px or more. The framing test adds 939 × 599,
+  939 × 540 and 900 × 540 and now requires the first screen at every size.
+- Three flaky tests steadied (2026-09-29; each failed about 2 runs in 9
+  under load, at HEAD as well). Two in `studio.spec.ts` queried the page
+  during a deep link's handoff, when both readers and both decks are on it
+  (a strict-mode double match); they now wait for the native reader to
+  leave (`onTheTube`). The phone-grid test measured its three cells in
+  three calls while the first frame after a resize was still settling: in
+  that frame Chrome sets the headline's first line at the old size (57 +
+  39px lines, then 2 × 39px) and lays the full-bleed studio box out 4px past
+  a 320px window. The cells are now measured in one layout, and the overflow
+  check waits for the settled page. 69 green in a full run; the three
+  passed 25 repeats.
+
 ### Stage 9 — Hardening: performance, accessibility, SEO
 
 - Technical UI audit completed on 2026-09-15; findings and reproduction steps
@@ -1394,11 +1425,11 @@ rest, by finding:
   closing-polish passes, then "Second audit remediation" above; the addendum
   in `AUDIT.md` has the re-measured numbers: Lighthouse mobile performance
   89, SEO 100, axe clean over seven states of the built site).
-- Left of Stage 9, all of it waiting on Stage 8 content: alt text and image
-  optimization on real media, per-tape share cards (every route unfurls with
-  the site's card until then), one more Lighthouse and axe run over the real
-  pages, and a screen-reader session and a physical-device pass, which no
-  audit has done.
+- Left of Stage 9, unblocked now that the content is final (2026-09-29):
+  alt text and image optimization on real media, per-tape share cards
+  (every route unfurls with the site's card until then), one more
+  Lighthouse and axe run over the real pages, and a screen-reader session
+  and a physical-device pass, which no audit has done.
 
 ### Stage 10 — Deployment (LAST, per project rules)
 

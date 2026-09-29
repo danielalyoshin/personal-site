@@ -459,9 +459,12 @@ lifted tape's rise above the centre, so the studio sits lower in a taller
 box with the words above its rack (768 × 1024 draws a 692 × 519 box; 1024 ×
 1366 a 922 × 572 one). The archive follows the box; where the proportion,
 not the fold, sets the box's height (1280 × 800, 1440 × 1000, 1920 × 1080),
-its heading shares the first screen with the studio. Only a window both
-narrow and short, under 940px wide and under about 580px tall, runs the box
-past the fold (by up to about 40px), so the words keep their room.
+its heading shares the first screen with the studio. The box never runs
+past the fold: a window both narrow and short (under 940px wide and under
+600px tall, where the kicker takes two lines) closes up its words instead,
+12px under the header, 6px under the kicker and 12px above the guide, with
+the display line fitted to the corner down to 2.0625rem, the smallest that
+keeps the guide's longest caption on one line.
 In the mobile look the box is `clamp(220px, 72vw, 384px)` tall and extends
 past the shell gutters; at phone widths the equipment, not the height, sets
 the zoom, so that height is snug to the fitted studio. The orthographic
