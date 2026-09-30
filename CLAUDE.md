@@ -36,8 +36,9 @@ starting work and keep it updated as stages complete or decisions change.
 
 ## Project rules
 
-- **Deployment is the very last implementation stage.** Do not add deploy
-  configs, CI, or hosting setup before Stage 10 of `PLAN.md`.
+- **Every push to `main` deploys the live site** (https://alyoshin.dev; see
+  Commands and tooling), so a push must be a build that passes the checks
+  under Session guidance.
 - Stack: Vite + React + TypeScript + Three.js / React Three Fiber, static output,
   typed TS content
   modules (no CMS). See `PLAN.md` for rationale before changing this.

@@ -1509,7 +1509,8 @@ rest, by finding:
   states screenshotted before and after: identical except the reader's OSD
   lines. CLAUDE.md and AGENTS.md say the same.
 - Left of Stage 9: a screen-reader session and a physical-device pass,
-  which no audit has done.
+  which no audit has done. Daniel declined both (2026-09-29), with the
+  diagram `srcset` and the 0.088 reduced-motion shift; not planned.
 
 ### Stage 10 — Deployment (LAST, per project rules) ✅ (2026-09-29)
 
