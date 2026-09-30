@@ -1258,8 +1258,7 @@ rest, by finding:
   their work brought into main uncommitted). It supersedes parts of the
   round above:
   - Credit: "one of the people who built" the original packages, and
-    "Today I'm their primary maintainer"; no count, no course. Role
-    "Primary maintainer".
+    "Today I'm their primary maintainer". Role "Primary maintainer".
   - Diagram: now a system diagram (1170 × 2613). A Superset boundary holds
     the D1 engine spec, SQLAlchemy's engine and inspector, and the `d1`
     extra; labelled connections show install time (the extra installs
@@ -1528,6 +1527,42 @@ rest, by finding:
   `scripts/prerender.mjs`.
 - Nothing is pushed at any stage unless Daniel explicitly asks; pushes go
   directly to `main` when asked.
+
+#### Host and address (2026-09-29)
+
+Daniel's decision: GitHub Pages, at his domain `alyoshin.dev`.
+
+- ✅ `.github/workflows/deploy.yml` builds and deploys on every push to
+  `main` (and by hand): `npm ci`, lint, format check, `npm run build`, then
+  `actions/upload-pages-artifact` + `actions/deploy-pages` on Node 24. The
+  browser suite stays local (installed Chrome with WebGL, ~5 minutes).
+- ✅ `SITE_URL=https://alyoshin.dev` lives in `.env.production`, so every
+  production build, local or on Pages, is the one that ships: canonical URLs,
+  `og:url`, absolute share-card images, `sitemap.xml`. `built.spec` checks it.
+- ✅ No `CNAME` file: a workflow-published Pages site ignores it; the domain
+  is set in Settings → Pages. No trailing-slash work needed: Pages serves
+  `project/<slug>.html` at `/project/<slug>`, a trailing-slash address gets
+  `404.html`, and `main.tsx` renders that afresh for the address asked
+  (strips the slash), so the tape still plays. `404.html` is served with a
+  404 status.
+- ✅ Pre-public review (the repo goes public as is, history included):
+  every version of every Markdown file and every commit message read for
+  anything unprofessional; none found. Tidied in the current files: two
+  pasted assistant sign-offs in `AUDIT.md`, `PRODUCT.md` repositioned from
+  design engineer to forward deployed engineer (audience, purpose, stale
+  Stage 8/10 lines), a neutral credit note in this file, and the archive
+  note now reads "Check out my work."
+- ✅ Pre-public review (the repo goes public as is, history included):
+  every version of every Markdown file and every commit message read for
+  anything unprofessional; none found. Tidied in the current files: two
+  pasted assistant sign-offs in `AUDIT.md`, `PRODUCT.md` repositioned from
+  design engineer to forward deployed engineer (audience, purpose, stale
+  Stage 8/10 lines), a neutral credit note in this file, and the archive
+  note now reads "Check out my work."
+- Remaining, on GitHub and at the DNS host: Pages on this repo (a private
+  repo needs a paid plan), source "GitHub Actions", custom domain
+  `alyoshin.dev`, the DNS records listed in the README, then Enforce HTTPS
+  (`.dev` is HSTS-preloaded, so the site is unreachable over plain HTTP).
 
 ---
 

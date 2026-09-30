@@ -944,7 +944,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         >
           <div className={styles.archiveHeading}>
             <h2 id="projects-title">Projects</h2>
-            <p>Check out my works.</p>
+            <p>Check out my work.</p>
           </div>
           <ul className={styles.tapeIndex}>
             {shelfTapes.map((item, index) => (

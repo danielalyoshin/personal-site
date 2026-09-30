@@ -2,12 +2,11 @@ import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
 /**
- * Share-card crawlers want an absolute image URL, and the site's address is
- * not known until it is deployed (Stage 10 of PLAN.md). `%SITE_URL%` in
- * index.html is filled from the SITE_URL environment variable, or a `.env`
- * file, when the page is built: `SITE_URL=https://example.com npm run build`.
- * Unset, it resolves to nothing and the URLs stay root-relative, which is
- * right for local work and wrong for a release, so a build says so.
+ * Share-card crawlers want an absolute image URL. `%SITE_URL%` in index.html
+ * is filled from SITE_URL when the page is built: `.env.production` holds the
+ * site's address, and the environment variable overrides it. The dev server
+ * leaves it empty and the URLs root-relative, which is right for local work
+ * and wrong for a release, so a build without it says so.
  */
 function siteUrl(): Plugin {
   let origin = ''

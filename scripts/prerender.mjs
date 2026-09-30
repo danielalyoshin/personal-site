@@ -12,7 +12,7 @@ import { build, loadEnv } from 'vite'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = resolve(root, 'dist')
 const server = resolve(root, 'dist-ssr')
-// The site's address is a Stage 10 decision (see vite.config.ts).
+// The site's address, from .env.production (see vite.config.ts).
 const origin = (loadEnv('production', root, 'SITE_').SITE_URL ?? '').replace(
   /\/+$/,
   '',

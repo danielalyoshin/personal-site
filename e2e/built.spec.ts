@@ -136,6 +136,35 @@ for (const viewport of [
     expect(noise).toEqual([])
   })
 
+test('the release build is addressed at alyoshin.dev, the address Pages serves it from', async ({
+  request,
+}) => {
+  // .env.production: each page names itself there, share cards load from
+  // there, and the sitemap lists every page the archive links to.
+  const site = 'https://alyoshin.dev'
+  const paths = ['/', ...tapes.map(({ path }) => path)]
+  for (const path of paths) {
+    const html = await (await request.get(path)).text()
+    expect(html).toContain(`<link rel="canonical" href="${site}${path}" />`)
+    expect(html).toContain(
+      `<meta property="og:url" content="${site}${path}" />`,
+    )
+    for (const key of ['og:image', 'twitter:image'])
+      expect(html).toMatch(
+        new RegExp(`"${key}"\\s+content="${site}/social-card`),
+      )
+  }
+  const missing = await (await request.get('/404.html')).text()
+  expect(missing).not.toContain('rel="canonical"')
+  expect(await (await request.get('/robots.txt')).text()).toContain(
+    `\nSitemap: ${site}/sitemap.xml\n`,
+  )
+  const sitemap = await (await request.get('/sitemap.xml')).text()
+  expect(sitemap.match(/(?<=<loc>)[^<]*/g)).toEqual(
+    paths.map((path) => site + path),
+  )
+})
+
 test('the page is drawn for the width it is served at, before the app arrives', async ({
   browser,
 }) => {

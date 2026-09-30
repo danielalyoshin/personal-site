@@ -381,9 +381,6 @@ Preserve these strengths:
    the token scale (8), and a closing review of the completed fixes against
    Midnight Studio.
 
-You can ask me to run these one at a time, all at once, or in any order you prefer.
-Re-run `$impeccable audit` after fixes to see your score improve.
-
 ## Remediation addendum — 2026-09-21
 
 The findings and score above record the audit as run; this is not a new
@@ -820,9 +817,6 @@ home page or future content.
    while scene code loads.
 5. **P3 — `$impeccable polish`:** Consolidate shared screen colors and review
    the completed fixes against Midnight Studio.
-
-You can ask me to run these one at a time, all at once, or in any order you prefer.
-Re-run `$impeccable audit` after fixes to see your score improve.
 
 ## Remediation addendum — 2026-09-15
 

@@ -8,11 +8,12 @@ web
 
 ## Users
 
-Primary: peers in the dev/design community — design engineers, frontend
-developers, and designers — typically arriving through a shared link or social
-post. Their job is to evaluate Daniel's craft, get inspired, and possibly start
-a conversation. A successful visit ends in recognition: the visitor shares the
-site, follows Daniel's work, or reaches out.
+Primary: people weighing Daniel as a forward deployed engineer (engineers,
+hiring teams, and the clients such a role builds for), typically arriving
+through a shared link or social post. Their job is to judge whether he can
+plan a system, build it, and explain it to the people it serves. A successful
+visit ends in a conversation: the visitor reaches out, shares the site, or
+follows Daniel's work.
 
 No other audience is confirmed as a design target.
 
@@ -20,13 +21,14 @@ No other audience is confirmed as a design target.
 
 A personal portfolio site for Daniel Alyoshin. Projects are presented as
 selectable VHS cassettes on a shelf; choosing one "inserts" it into a deck and
-plays its details on a CRT-styled display. The site's purpose is to demonstrate
-design-engineering craft — the site itself is the primary portfolio piece, and
-the featured projects are supporting evidence.
+plays its details on a CRT-styled display. The site's purpose is to show how
+Daniel plans, builds, and explains a system: the site itself is the primary
+portfolio piece, and the featured projects are supporting evidence.
 
 ## Positioning
 
-A design engineer's portfolio where the interface is the proof of skill: an
+A forward deployed engineer's portfolio where the interface is the proof of
+skill: an
 interactive VHS-deck experience executed with modern, crisp web craft rather
 than nostalgic pastiche. The claim a neighboring portfolio could not truthfully
 copy is the fully diegetic physical-media metaphor — browse cassettes, insert a
@@ -54,12 +56,13 @@ accessibility standards.
 - Sound exists (settled 2026-07-22): synthesized mechanical cues only,
   default-off on every visit behind the deck's sound toggle, never
   persisted. Doctrine in `DESIGN.md` § Sound.
-- Deployment is the final stage — no deploy configs, CI, or hosting setup
-  before Stage 10 of `PLAN.md`.
+- Hosting: GitHub Pages at `alyoshin.dev`, published by
+  `.github/workflows/deploy.yml` on every push to `main` (Stage 10 of
+  `PLAN.md`).
 - Terminology is diegetic where it aids the metaphor: tape, deck, insert,
   eject, OSD (on-screen display), tracking, NO SIGNAL (404).
-- No undecided product facts remain; open work is content (Stage 8),
-  hardening (Stage 9), and deployment (Stage 10) per `PLAN.md`.
+- No undecided product facts remain; Stages 0–9 of `PLAN.md` are complete
+  and deployment (Stage 10) is the open work.
 
 ## Brand Commitments
 
@@ -75,10 +78,9 @@ accessibility standards.
 
 ## Evidence on Hand
 
-- One real project so far: Cloudflare D1 in Apache Superset. The rest of the
-  featured-project list is still being selected (Stage 8 of `PLAN.md`), and
-  the four project slots still without one hold blank tapes marked "Coming
-  soon…".
+- One real project: Cloudflare D1 in Apache Superset. The four project slots
+  without one hold blank tapes marked "Coming soon…" until Daniel adds a
+  project.
 - Future work must not fabricate real-seeming projects, metrics, testimonials,
   or press. An unfilled slot must read as unfilled: a blank tape, never a
   stand-in project.
@@ -95,9 +97,9 @@ accessibility standards.
 4. **Accessible parity.** Keyboard, screen-reader, and reduced-motion users
    get the full content and a coherent experience, not a degraded fallback of
    the metaphor.
-5. **Built to be shared.** Peer recognition is the success metric, so deep
-   links, fast loads, and a strong social preview are product features, not
-   polish.
+5. **Built to be shared.** A visitor reaching out or passing the link on is
+   the success metric, so deep links, fast loads, and a strong social preview
+   are product features, not polish.
 
 ## Accessibility & Inclusion
 

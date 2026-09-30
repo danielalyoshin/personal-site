@@ -136,10 +136,31 @@ drawn across at 640px for the full-height reader and, when it needs one, a
 needs `cwebp` (`brew install webp`).
 
 The card script starts its own Vite server and drives installed Chrome, as
-the browser suite does. Image URLs are written as `%SITE_URL%/…`;
-a build fills it from the `SITE_URL` environment variable (or a `.env` file)
-and warns when it is unset, since several crawlers accept only absolute image
-URLs. Locally it resolves to a root-relative path.
+the browser suite does. Image URLs are written as `%SITE_URL%/…`; a build
+fills it from `.env.production` (a `SITE_URL` environment variable overrides
+it), since several crawlers accept only absolute image URLs. The dev server
+leaves it root-relative.
+
+## Deploy
+
+The site is published to GitHub Pages at <https://alyoshin.dev> by
+`.github/workflows/deploy.yml`: every push to `main` runs `npm ci`, lint, the
+format check and `npm run build`, then deploys `dist/`. It can also be run by
+hand from the repository's Actions tab. The browser suite does not run there;
+run it locally before pushing.
+
+The address the build writes (canonical URLs, `og:url`, share-card images,
+`sitemap.xml`) lives in `.env.production`. The custom domain and HTTPS are set
+in the repository's Settings → Pages (source: GitHub Actions), not in a
+`CNAME` file, which a workflow-published site ignores. Pages serves
+`project/<slug>.html` at `/project/<slug>` and `404.html` for any address it
+has no file for, which is what `scripts/prerender.mjs` writes.
+
+DNS for `alyoshin.dev`: `A` records to `185.199.108.153`, `185.199.109.153`,
+`185.199.110.153` and `185.199.111.153`; `AAAA` records to
+`2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153` and
+`2606:50c0:8003::153`; and `www` as a `CNAME` to `danielalyoshin.github.io`,
+which Pages redirects to the apex.
 
 ## Impeccable in Codex
 
