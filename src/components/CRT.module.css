@@ -1,18 +1,7 @@
 .crtUnit {
   position: relative;
   container-type: inline-size;
-  /* Sized so the whole rack (header, shelf, tube, deck, footer) shares the
-     first desktop viewport; playback legibility comes from the dolly. */
-  width: clamp(300px, min(400px, calc((100vh - 640px) * 1.3333 + 38px)), 100%);
-  margin-inline: auto;
-}
-
-.bezel {
-  background: var(--ink-2);
-  border: 1px solid var(--seam);
-  border-radius: var(--r-bezel);
-  padding: 18px;
-  box-shadow: var(--edge-lit), var(--shadow-unit);
+  width: 100%;
 }
 
 /*
@@ -38,7 +27,7 @@
 }
 
 /* NO SIGNAL is a lit tube, OSD on the black ground: it takes playback's
-   bloom, as its cast on the deck takes playback's cast. */
+   bloom. */
 .playing,
 .nosignal {
   box-shadow: var(--bloom-play);
@@ -158,11 +147,12 @@
   align-items: center;
   column-gap: 1ch;
   white-space: nowrap;
-  padding: 0.875rem 5cqi;
+  padding: 0.875rem 5cqi 1.375rem;
+  background: linear-gradient(var(--screen-black) 70%, transparent);
   font-family: var(--font-osd);
-  font-size: var(--type-screen-osd);
+  font-size: var(--type-osd);
   line-height: 1.2;
-  color: var(--osd);
+  color: var(--osd-white);
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
   z-index: 2;
   pointer-events: none;
@@ -172,10 +162,10 @@
   position: absolute;
   inset: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 4rem 9% 2.75rem;
   font-size: var(--type-screen-body);
   font-weight: 400;
-  letter-spacing: var(--tracking-body);
   overflow-wrap: anywhere;
   scrollbar-width: thin;
   scrollbar-color: var(--screen-scroll) transparent;
@@ -206,7 +196,7 @@
 }
 
 .reader:focus-visible {
-  outline: 2px solid var(--osd);
+  outline: 2px solid var(--osd-white);
   outline-offset: -4px;
   border-radius: inherit;
 }
@@ -234,23 +224,26 @@
 .title[data-keyboard]:focus-visible {
   text-decoration: underline;
   text-decoration-thickness: 3px;
-  text-decoration-color: var(--osd);
+  text-decoration-color: var(--osd-white);
   text-underline-offset: 0.28em;
 }
 
 .meta {
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
   color: var(--screen-dim);
   margin-bottom: 1.2em;
 }
 
+/* The prose's tracking is set on the prose itself: the OSD lines among it
+   are VT323 at its own spacing. */
 .tagline {
   font-weight: 600;
   font-size: inherit;
   line-height: 1.5;
+  letter-spacing: var(--tracking-body);
   color: var(--screen-text);
   text-wrap: pretty;
   margin-bottom: 1em;
@@ -259,6 +252,7 @@
 .para {
   font-size: inherit;
   line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
   color: var(--screen-text);
   text-wrap: pretty;
   margin-bottom: 1em;
@@ -286,7 +280,7 @@
 
 .gallery figcaption {
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
   color: var(--screen-dim);
@@ -309,9 +303,9 @@
   border: 1px solid var(--seam-lit);
   border-radius: var(--r-control);
   background: color-mix(in srgb, var(--screen-text) 4%, var(--screen-black));
-  color: var(--osd);
+  color: var(--osd-white);
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
   cursor: pointer;
@@ -332,7 +326,7 @@
   text-wrap: balance;
 }
 .closerLook:hover {
-  border-color: var(--osd);
+  border-color: var(--osd-white);
 }
 .closerLook:hover .closerAction {
   text-decoration: underline;
@@ -340,7 +334,7 @@
   text-underline-offset: 0.28em;
 }
 .closerLook:focus-visible {
-  outline: 2px solid var(--osd);
+  outline: 2px solid var(--osd-white);
   outline-offset: 2px;
 }
 
@@ -349,7 +343,7 @@
   flex-wrap: wrap;
   gap: var(--sp-sm) var(--sp-md);
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
   color: var(--screen-soft);
@@ -371,12 +365,12 @@
   min-width: 44px;
   min-height: 44px;
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
-  color: var(--osd);
+  color: var(--osd-white);
   text-decoration: none;
-  border: 1px solid var(--osd);
+  border: 1px solid var(--osd-white);
   border-radius: var(--r-hairline);
   padding: 6px 14px;
   transition:
@@ -385,17 +379,17 @@
 }
 
 .links a:hover {
-  background: var(--osd);
+  background: var(--osd-white);
   color: var(--screen-black);
 }
 
 .links a:focus-visible {
-  outline-color: var(--osd);
+  outline-color: var(--osd-white);
 }
 
 .osdEnd {
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
   color: var(--screen-dim);
@@ -471,14 +465,14 @@
   justify-content: center;
   gap: var(--sp-md);
   font-family: var(--font-osd);
-  color: var(--osd);
+  color: var(--osd-white);
   text-align: center;
   padding: var(--sp-lg);
   overflow-wrap: anywhere;
 }
 
 .bigOsd {
-  font-size: var(--type-screen-display);
+  font-size: var(--type-osd-display);
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: 0.06em;
@@ -486,7 +480,7 @@
 }
 
 .subOsd {
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   line-height: 1.35;
   color: var(--screen-soft);
 }
@@ -501,7 +495,7 @@
   justify-content: center;
   column-gap: 1ch;
   margin-top: var(--sp-sm);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   line-height: 1.35;
   white-space: nowrap;
 }
@@ -533,7 +527,7 @@
 .cornerTL,
 .cornerBR {
   position: absolute;
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
 }
 
@@ -547,98 +541,11 @@
   right: 20px;
 }
 
-.chin {
-  text-align: center;
-  margin-top: var(--sp-sm);
-  letter-spacing: 0.2em;
-}
-
-/* The screen's light falling on the deck below — the one permitted cast.
-   Anchored at the bezel's lower edge (over the chin label) so the falloff
-   is continuous from where the light physically exits; it must fade out
-   fully before the strip ends. */
-.cast {
-  position: absolute;
-  top: calc(100% - 22px);
-  left: 8%;
-  right: 8%;
-  height: 120px;
-  pointer-events: none;
-  z-index: 2;
-  background: var(--cast-idle);
-  transition: opacity var(--t-med);
-}
-
-.castPlay {
-  background: var(--cast-play);
-}
-
-/* Playing on a small screen: the CRT pins near-fullscreen, still a CRT. */
+/* A narrow window's reader keeps a little more of the tube's width. */
 @media (max-width: 719px) {
-  .crtUnit {
-    width: 100%;
-  }
-
-  :global(.playing-stage) .crtUnit {
-    position: fixed;
-    top: 8px;
-    left: 8px;
-    right: 8px;
-    bottom: 88px;
-    z-index: 30;
-    width: auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  :global(.playing-stage) .bezel {
-    flex: 1;
-    display: flex;
-    padding: 12px;
-  }
-
-  :global(.playing-stage) .screen {
-    aspect-ratio: auto;
-    flex: 1;
-  }
-
-  :global(.playing-stage) .chin,
-  :global(.playing-stage) .cast {
-    display: none;
-  }
-
   .reader {
     padding: 4rem 6% 2.5rem;
   }
-}
-
-/* Native HTML stays crisp and selectable on the actual 3D screen plane. */
-.embedded {
-  width: 100%;
-}
-.embedded .bezel {
-  padding: 0;
-  border: 0;
-  border-radius: var(--r-screen);
-  background: transparent;
-  box-shadow: none;
-}
-.embedded .screen {
-  aspect-ratio: 4 / 3;
-}
-.embedded .chin,
-.embedded .cast {
-  display: none;
-}
-.embedded .osdTop {
-  background: linear-gradient(var(--screen-black) 70%, transparent);
-  padding-bottom: 1.375rem;
-}
-.embedded .reader {
-  overscroll-behavior: contain;
-}
-.embedded .bigOsd {
-  font-weight: 400;
 }
 
 .fullHeight,
@@ -651,10 +558,10 @@
 }
 .fullHeight .reader {
   padding: 4rem 7% 2.5rem;
-  font-size: clamp(1rem, 2.4cqi, 1.125rem);
+  font-size: var(--type-full-height-body);
 }
 .fullHeight .title {
-  font-size: clamp(1.5rem, 7.5cqi, 2rem);
+  font-size: var(--type-full-height-title);
 }
 
 /* Full screen, as the set's picture-size readout at the foot of the tube:
@@ -685,9 +592,9 @@
   border: 0;
   border-radius: var(--r-hairline);
   background: none;
-  color: var(--osd);
+  color: var(--osd-white);
   font-family: var(--font-osd);
-  font-size: var(--type-screen-meta);
+  font-size: var(--type-osd-meta);
   font-weight: 400;
   line-height: 1.35;
   text-transform: uppercase;
@@ -728,7 +635,7 @@
   text-underline-offset: 0.28em;
 }
 .sizeReadout:focus-visible {
-  outline: 2px solid var(--osd);
+  outline: 2px solid var(--osd-white);
   outline-offset: 0;
 }
 /* A small tube keeps the bar and the words for what it does. */

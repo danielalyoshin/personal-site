@@ -18,7 +18,7 @@ body {
   margin: 0;
   min-height: 100%;
   background: var(--ink-0);
-  color: var(--silk);
+  color: var(--silkscreen);
   font-family: var(--font-chassis);
   font-size: var(--type-body);
   line-height: 1.5;
@@ -60,25 +60,14 @@ button {
 
 /* Focus is a crisp VFD outline — never a halo (One Light Rule). */
 :focus-visible {
-  outline: 2px solid var(--vfd);
+  outline: 2px solid var(--vfd-cyan);
   outline-offset: 2px;
   border-radius: var(--r-hairline);
 }
 
 ::selection {
-  background: var(--vfd);
+  background: var(--vfd-cyan);
   color: var(--ink-0);
-}
-
-/* Silkscreen label — the chassis's printed text register. */
-.silkLabel {
-  font-family: var(--font-chassis);
-  font-size: var(--type-label);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--silk-dim);
 }
 
 /* Visually hidden, available to assistive tech. */

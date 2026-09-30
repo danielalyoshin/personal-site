@@ -173,8 +173,7 @@ function CloserLook({
 }
 
 interface CRTProps {
-  /** Screen plane inside the modeled CRT, or the non-WebGL reader. */
-  embedded?: boolean
+  /** The full-height native reader, rather than the tube's 4:3 screen. */
   fullHeight?: boolean
   mode: ScreenMode
   tape: Project | null
@@ -203,7 +202,6 @@ export default function CRT({
   onTitleEl,
   keyboardChoice = false,
   crtRef,
-  embedded = false,
   fullHeight = false,
   onFullScreen,
   onPictureSettled,
@@ -214,7 +212,7 @@ export default function CRT({
   const nudged = useRef(false)
   return (
     <div
-      className={`${styles.crtUnit} ${embedded ? styles.embedded : ''} ${fullHeight ? styles.fullHeight : ''}`}
+      className={`${styles.crtUnit} ${fullHeight ? styles.fullHeight : ''}`}
       ref={crtRef}
     >
       <section aria-label="CRT display" className={styles.bezel}>
@@ -418,13 +416,6 @@ export default function CRT({
           <div className={styles.vignette} aria-hidden="true" />
         </div>
       </section>
-      <p className={`silkLabel ${styles.chin}`} aria-hidden="true">
-        CR-14 · Color Monitor
-      </p>
-      <div
-        className={`${styles.cast} ${mode === 'playing' || mode === 'nosignal' ? styles.castPlay : ''}`}
-        aria-hidden="true"
-      />
     </div>
   )
 }

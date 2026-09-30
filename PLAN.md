@@ -1478,6 +1478,37 @@ rest, by finding:
     motion; its collapsed first keyframe was a one-frame jolt and flash.
   - `.impeccable/design.json` regenerated from DESIGN.md (24 rules, 15 dos,
     9 don'ts, 11 components).
+- ✅ One source of truth for design values (2026-09-29), at Daniel's
+  request after the sidecar refresh found DESIGN.md contradicting itself.
+  DESIGN.md's frontmatter is normative (The Source of Truth Rule);
+  `tokens.css` carries the same values under the same names (the five
+  aliased colours renamed: `--silkscreen-hi`, `--silkscreen`,
+  `--silkscreen-dim`, `--vfd-cyan`, `--osd-white`; `--type-<role>` per
+  typography role, with the display line's four looks and the full-height
+  reader's sizes added as tokens the stylesheets now read); and
+  `e2e/design.spec.ts` fails when the frontmatter and `tokens.css`
+  disagree, when a token goes unused, or when a typography role or
+  component renders differently on the page (a probe set from the
+  frontmatter's values beside each element), or when
+  `.impeccable/design.json` stops matching DESIGN.md (its colour and type
+  keys, every named rule word for word, the Do and Don't lists, and the
+  variables its samples read). Where the two disagreed, the
+  site as Daniel reviewed it won: body leading 1.5 and no tracking; the
+  display floors and caps as rendered, with a new `display-sideways` role;
+  archive entries padded 12px; the tube's reader 4.75rem at its foot for
+  the size bar; components limited to the format's eight properties (the
+  44px floors stay in the prose). One place the site moved instead: OSD
+  lines inside the reader had inherited the prose's tracking as a fixed
+  0.085px, so the same role rendered two ways; the tracking now sits on the
+  tagline and paragraphs, and those VT323 lines are about 2px shorter.
+  Retired as dead: the CRT's unused "unit" look (always overridden by the
+  embedded screen: its frame, the CR-14 chin label, the CSS light cast, a
+  `.playing-stage` layout nothing set) and eleven tokens only it or
+  nothing used (`--ink-1`, `--r-bezel`, `--edge-lit`, `--cast-idle`,
+  `--cast-play`, three legacy shadows, `--ease-mech`, `--sp-xl`,
+  `--sp-xxl`). Seventeen
+  states screenshotted before and after: identical except the reader's OSD
+  lines. CLAUDE.md and AGENTS.md say the same.
 - Left of Stage 9: a screen-reader session and a physical-device pass,
   which no audit has done.
 

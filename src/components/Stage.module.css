@@ -17,7 +17,7 @@
   align-items: center;
   min-height: 44px;
   text-decoration: none;
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
 }
 /* The mark hangs in the gutter so the name sits on the column. */
 .identity svg {
@@ -37,7 +37,7 @@
 .role {
   display: block;
   margin-top: 3px;
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
   font-size: var(--type-caption);
 }
 .navigation {
@@ -72,10 +72,10 @@
 }
 .navigation a:hover,
 .footer a:hover {
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
 }
 .eyebrow {
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
   font-size: var(--type-label);
   font-weight: 600;
   line-height: 1.2;
@@ -103,10 +103,10 @@
   letter-spacing: var(--tracking-display);
   text-wrap: balance;
   overflow-wrap: anywhere;
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
 }
 .intro h2 span {
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
 }
 .exhibit {
   position: relative;
@@ -159,7 +159,7 @@
   font-size: var(--type-functional);
   font-weight: 600;
   line-height: var(--leading-title);
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
 }
 .objectCaption > span {
   display: block;
@@ -170,7 +170,7 @@
 .objectCaption small {
   display: block;
   margin-top: 4px;
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
   font-size: var(--type-caption);
   font-weight: 400;
   line-height: var(--leading-caption);
@@ -191,11 +191,11 @@
   font-size: var(--type-functional);
   font-weight: 600;
   line-height: var(--leading-title);
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
 }
 .archiveHeading p {
   font-size: var(--type-caption);
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
 }
 .tapeIndex {
   display: grid;
@@ -245,14 +245,14 @@
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: var(--tracking-label);
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
 }
 .tapeLabel {
   min-width: 0;
   overflow-wrap: anywhere;
   font-size: var(--type-functional);
   line-height: var(--leading-title);
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
   text-transform: capitalize;
   font-weight: 600;
 }
@@ -260,7 +260,7 @@
   display: block;
   font-size: var(--type-caption);
   line-height: var(--leading-caption);
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
   margin-top: 4px;
   font-weight: 400;
   text-transform: none;
@@ -271,7 +271,7 @@
   align-self: center;
   width: var(--type-caption);
   height: var(--type-caption);
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
 }
 /* A slot with nothing to play yet keeps its place and its number but is
    drawn as an outline, not a tape: a dashed seam, no accent strip, no play
@@ -289,7 +289,7 @@
   border-radius: var(--r-archive);
 }
 .tapeComing .tapeLabel {
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
   text-transform: none;
 }
 /* The end of the blank run, printed only where the run shares one cell (the
@@ -305,13 +305,13 @@
   border-top: 1px solid var(--seam);
   padding: 22px 0 28px;
   font-size: var(--type-caption);
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
 }
 .footer nav {
   display: flex;
   gap: 24px;
   margin-left: auto;
-  color: var(--silk);
+  color: var(--silkscreen);
 }
 .footerEdition {
   font-size: var(--type-label);
@@ -327,7 +327,7 @@
   z-index: 200;
   padding: 12px;
   color: var(--ink-0);
-  background: var(--vfd);
+  background: var(--vfd-cyan);
 }
 .skipLink:focus {
   transform: none;
@@ -341,14 +341,14 @@
   flex-direction: column;
   gap: 16px;
   font-size: var(--type-caption);
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
 }
 .loadingMark {
   font-size: var(--type-mark);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--silk);
+  color: var(--silkscreen);
 }
 .transitionTools {
   position: fixed;
@@ -433,11 +433,7 @@
         var(--kicker-gap) + var(--guide-gap) + 1.35 * var(--type-functional) +
         4px + 1.5 * var(--type-caption)
     );
-    --display: clamp(
-      var(--display-floor),
-      min(var(--type-display), 4.6vw),
-      4rem
-    );
+    --display: max(var(--display-floor), var(--type-display));
     --words: calc(var(--words-rest) + 2 * 1.06 * var(--display));
   }
   .intro {
@@ -501,10 +497,12 @@
     --intro-top: 20px;
     --kicker-gap: 8px;
     --guide-gap: 16px;
-    --display: clamp(
+    --display: max(
       var(--display-floor),
-      min(1.5rem + 1.5vw, (37.84svh - 33.4px - var(--words-rest)) / 2.12),
-      3rem
+      min(
+        var(--type-display-short),
+        (37.84svh - 33.4px - var(--words-rest)) / 2.12
+      )
     );
   }
   .scene {
@@ -555,7 +553,7 @@
     --intro-top: 16px;
     --kicker-gap: 8px;
     --guide-gap: 16px;
-    --display: clamp(2rem, 1rem + 4svh, 2.75rem);
+    --display: var(--type-display-sideways);
   }
   .scene {
     grid-column: 1;
@@ -612,7 +610,7 @@
     /* The shorter side sets the size: a small phone on its side gives
        more of its first screen to the studio, and portrait phones are
        unchanged. */
-    font-size: clamp(2rem, 1rem + min(5.4vw, 5.4svh), 3.375rem);
+    font-size: var(--type-display-mobile);
   }
   .exhibit {
     margin-top: 12px;
@@ -735,7 +733,7 @@
   border-top: 1px solid var(--seam-lit);
 }
 .readerDeckLabel {
-  color: var(--silk);
+  color: var(--silkscreen);
   font-size: var(--type-label);
   font-weight: 600;
   line-height: 1.2;
@@ -743,7 +741,7 @@
   text-transform: uppercase;
 }
 .readerDeckLabel span {
-  color: var(--silk-dim);
+  color: var(--silkscreen-dim);
   font-weight: 400;
 }
 @media (max-width: 600px) {

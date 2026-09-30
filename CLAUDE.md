@@ -23,6 +23,10 @@ starting work and keep it updated as stages complete or decisions change.
   especially The One Light Rule (only the CRT emits; neutral studio fill reveals
   geometry) and The Tube-Scale Rule
   (screen-interior type scales in `cqi` units).
+- DESIGN.md's frontmatter is the source of truth for every design value.
+  `tokens.css` carries the same values under the same names, the stylesheets
+  read them, and `e2e/design.spec.ts` fails when any of the three disagree.
+  Change a value in DESIGN.md first; never only in CSS.
 
 ## Git rules
 

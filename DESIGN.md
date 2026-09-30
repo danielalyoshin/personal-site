@@ -3,7 +3,6 @@ name: 'Daniel Alyoshin — Personal Site'
 description: 'Midnight Studio — clean low-poly AV objects, matte graphite, and a single emitting CRT'
 colors:
   ink-0: '#0e0f12'
-  ink-1: '#16181d'
   ink-2: '#1d2026'
   ink-3: '#262a32'
   seam: '#2e323b'
@@ -28,7 +27,7 @@ colors:
 typography:
   display:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: 'clamp(2.5rem, 1.25rem + 2.8vw, 4rem)'
+    fontSize: 'clamp(2rem, min(1.25rem + 2.8vw, 4.6vw), 4rem)'
     fontWeight: 600
     lineHeight: 1.06
     letterSpacing: '-0.035em'
@@ -40,7 +39,13 @@ typography:
     letterSpacing: '-0.035em'
   display-short:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
-    fontSize: 'clamp(2.5rem, 1.5rem + 1.5vw, 3rem)'
+    fontSize: 'clamp(2rem, 1.5rem + 1.5vw, 3rem)'
+    fontWeight: 600
+    lineHeight: 1.06
+    letterSpacing: '-0.035em'
+  display-sideways:
+    fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
+    fontSize: 'clamp(2rem, 1rem + 4svh, 2.75rem)'
     fontWeight: 600
     lineHeight: 1.06
     letterSpacing: '-0.035em'
@@ -54,8 +59,8 @@ typography:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: '1rem'
     fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: '0.005em'
+    lineHeight: 1.5
+    letterSpacing: 'normal'
   functional-title:
     fontFamily: "'Archivo Variable', Archivo, Arial, system-ui, sans-serif"
     fontSize: '0.875rem'
@@ -133,7 +138,7 @@ typography:
     fontSize: 'clamp(1.0625rem, 4cqi, 1.25rem)'
     fontWeight: 400
     lineHeight: 1.35
-    letterSpacing: '0.005em'
+    letterSpacing: 'normal'
   osd-display:
     fontFamily: "'VT323', ui-monospace, 'Courier New', monospace"
     fontSize: 'clamp(1.5rem, 9cqi, 2.5rem)'
@@ -165,7 +170,6 @@ components:
     textColor: '{colors.silkscreen}'
     typography: '{typography.functional}'
     padding: '12px 0'
-    minHeight: '44px'
   nav-link-hover:
     textColor: '{colors.silkscreen-hi}'
   tape-link:
@@ -173,7 +177,7 @@ components:
     textColor: '{colors.silkscreen-hi}'
     typography: '{typography.functional-title}'
     rounded: '{rounded.archive}'
-    padding: '16px 12px'
+    padding: '12px'
   tape-link-preview:
     backgroundColor: '{colors.ink-2}'
   tape-link-coming:
@@ -181,15 +185,13 @@ components:
     textColor: '{colors.silkscreen-dim}'
     typography: '{typography.functional-title}'
     rounded: '{rounded.archive}'
-    padding: '16px 12px'
+    padding: '12px'
   link-osd:
     backgroundColor: 'transparent'
     textColor: '{colors.osd-white}'
     typography: '{typography.osd-meta}'
     rounded: '{rounded.hairline}'
     padding: '6px 14px'
-    minWidth: '44px'
-    minHeight: '44px'
   link-osd-hover:
     backgroundColor: '{colors.osd-white}'
     textColor: '{colors.screen-black}'
@@ -200,7 +202,7 @@ components:
     backgroundColor: '{colors.screen-black}'
     textColor: '{colors.screen-text}'
     rounded: '{rounded.screen}'
-    padding: '4rem 9% 2.75rem'
+    padding: '4rem 9% 4.75rem'
   crt-reader-full-height:
     backgroundColor: '{colors.screen-black}'
     textColor: '{colors.screen-text}'
@@ -226,18 +228,23 @@ The CRT carries the light and screen typography. Quiet Archivo text and thin sea
 - Real modeled depth with clean full-resolution rendering.
 - Accessible HTML reading and immediate alternatives to motion.
 
-This refresh records the implementation in `src/styles/tokens.css`,
-`src/styles/global.css`, `src/components/Stage.module.css`,
-`src/components/CRT.module.css`, `src/components/Icons.tsx`, and
-`src/components/studio/`.
-Tokens above are normative; the sections below explain their use. The
-composition and surface mode remain in `.impeccable/surfaces/src-app-tsx.md`.
+**The Source of Truth Rule.** The frontmatter above is the design system.
+`src/styles/tokens.css` implements it under the same names (`--<colour>`,
+`--r-<radius>`, `--sp-<step>`, and `--type-<role>` for a typography role's
+size, where roles that share a size share its token), the stylesheets set
+every shared value from those tokens, and `.impeccable/design.json` is
+generated from this file. `e2e/design.spec.ts` holds them together: it fails
+when this file and `tokens.css` disagree, when a token is defined that
+nothing uses, when a typography role or component renders differently from
+what the frontmatter says, and when the sidecar no longer matches this
+file. A change starts here, then `tokens.css`,
+then the sidecar. The sections below explain how each value is used and
+never restate one differently. The composition and surface mode remain in
+`.impeccable/surfaces/src-app-tsx.md`.
 
 ## Colors
 
 Cool graphite and printed silkscreen neutrals frame a vivid CRT and colored tape labels.
-Existing token names are retained; CSS uses `--silk-hi`, `--silk`, `--silk-dim`,
-`--vfd`, and `--osd` for the corresponding silkscreen, VFD-cyan, and OSD-white entries.
 
 ### Primary
 
@@ -245,16 +252,16 @@ Existing token names are retained; CSS uses `--silk-hi`, `--silk`, `--silk-dim`,
 
 ### Secondary
 
-- **CRT Blue** (`crt-blue`): the idle tube in both renderers: the modeled CRT's idle, loading, and returning texture, and the HTML fallback's idle screen, bloom, and cast. One value; the fallback once carried a second, slightly different blue.
+- **CRT Blue** (`crt-blue`): the idle tube in both renderers: the modeled CRT's idle, loading, and returning texture, and the HTML fallback's idle screen and bloom. One value; the fallback once carried a second, slightly different blue.
 - **Tube inks** (`tube-ink`, `tube-ink-soft`, `tube-ink-dim`, `tube-line`): the idle tube's headline, sub-lines, corners, and drawn cassette outline, on CRT blue.
-- **Phosphor** (`phosphor`): a lit tube's light: the CSS play and rest blooms and the play cast, and the modeled point light during playback.
+- **Phosphor** (`phosphor`): a lit tube's light: the CSS play and rest blooms, and the modeled point light during playback.
 - **REC Red** (`rec-red`): the recorded indicator inside project playback.
-- **Cassette accents**: content-owned red, yellow, blue, orange, violet, and cyan in the current tape modules. These are label data, not additional global UI accents.
+- **Cassette accents**: each tape module owns its label accent (`vhs.accent`). They are label data, not additional global UI accents, and not tokens.
 
 ### Neutral
 
 - **Graphite ground** (`ink-0`): the page and playback backdrop.
-- **Graphite layers** (`ink-1`, `ink-2`, `ink-3`): transport strip, control surfaces, tape-preview surfaces, and hover states.
+- **Graphite layers** (`ink-2`, `ink-3`): `ink-2` is the raised surface (the native reader's frame, the fallback monitor, a previewed archive entry); `ink-3` is the deck keys.
 - **Machined seams** (`seam`, `seam-lit`): thin dividers, borders, and emphasized edges.
 - **Silkscreen** (`silkscreen-hi`, `silkscreen`, `silkscreen-dim`): primary identity and controls, general chrome, and secondary labels respectively.
 - **Screen neutrals** (`screen-black`, `screen-text`, `screen-dim`, `screen-soft`, `osd-white`): reading ground, prose, metadata, secondary screen text, and OSD actions.
@@ -270,7 +277,7 @@ are panel visualizations; synthesized steps are not additional application token
 **The One Palette Rule.** The screen's colours have one source,
 `src/styles/tokens.css`. The models read it as they paint (`studio/tokens.ts`:
 the tube's ground and blue, its inks, the playback light, the status window's
-red slash), and every bloom and cast is its hue at a strength (`color-mix`),
+red slash), and every bloom is its hue at a strength (`color-mix`),
 so a colour changed there changes in both renderers and in every glow. The
 one scene-only value is the blue tube's light, brighter than CRT blue because
 a light is multiplied by the matte surface it lands on.
@@ -302,7 +309,7 @@ functional HTML size is set in rem so text preferences scale it.
 
 The shell renders six sizes and nothing between them; 11px is the floor.
 
-- **Display** (`display`, `display-mobile`, `display-short`): the introductory line at weight 600, capped at 4rem beside the studio, 3rem there on windows no taller than 820px, and 3.375rem in the mobile look, where the shorter side of the screen sets its size so a small phone on its side gives more of its first screen to the studio. Beside the studio it also gives way to the corner it stands in (The Studio First Rule): never wider than 4.6vw, and on short windows never taller than the corner above the lifted tape, down to a 2rem floor (2.25rem beside a narrow studio); the mobile look's floor is 2rem too. The secondary line uses dim silkscreen.
+- **Display** (`display`, `display-short`, `display-mobile`, `display-sideways`): the introductory line at weight 600, one role per look, each floored at 2rem. Beside the studio it is capped at 4rem and never wider than 4.6vw; on windows no taller than 820px, at 3rem, and never taller than the corner above the lifted tape; in the mobile look, at 3.375rem, where the shorter side of the screen sets its size so a small phone on its side gives more of its first screen to the studio; and beside the studio on a phone on its side, at 2.75rem, set by the screen's height. The corner is layout, not type, so the stage applies it to the token (The Studio First Rule), as it raises the floor beside a narrow studio: 2.25rem at 768–939px wide, and 2.0625rem when such a window is also under 600px tall. The secondary line uses dim silkscreen.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
 - **Body** (`body`): 1rem at weight 400. The page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
@@ -315,7 +322,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 
 - **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Focus lands on the title by script and draws no ring; for a tape chosen from the keyboard it adds a 3px OSD-white underline offset by 0.28em. A shared link's first load, and a key pressed while reading a tape chosen by pointer, leave it unmarked, though Chrome counts both as keyboard focus.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
-- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
+- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. Every other OSD line keeps VT323's own spacing, inside the reader too: the prose's tracking is set on the tagline and paragraphs, not on the reader, so it never reaches the OSD lines among them. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
 **The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, collapse (Exit full screen), and expand (a closer look, the collapse mark's corners turned out). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
 
@@ -532,14 +539,13 @@ fill reveal the objects without making them emit.
 ### Shadow Vocabulary
 
 - **Monitor support** (`--shadow-unit`): the active HTML fallback frame uses the existing ambient drop shadow.
-- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): the HTML tube's states. The HTML tube has three states, idle, playback, and NO SIGNAL, each with a rule of its own: idle takes the blue idle bloom; playback and NO SIGNAL, both a lit tube of OSD on the black ground, take the play bloom, as both take the play cast on the deck; the rest value is the screen's base beneath them. It has no returning state: a tape returns only in the modeled studio, whose tube reads it out (The One Readout Rule). The modeled CRT supplies its own local point light to the same rule, the colour of what the tube shows: blue while the tube is blue, at rest, through a tape's flight in, and through its return, and phosphor from the moment the reader or NO SIGNAL is on it, the light turning in the same commit as the tube.
+- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): the HTML tube's states. The HTML tube has three states, idle, playback, and NO SIGNAL, each with a rule of its own: idle takes the blue idle bloom; playback and NO SIGNAL, both a lit tube of OSD on the black ground, take the play bloom; the rest value is the screen's base beneath them. It has no returning state: a tape returns only in the modeled studio, whose tube reads it out (The One Readout Rule). The modeled CRT supplies its own local point light to the same rule, the colour of what the tube shows: blue while the tube is blue, at rest, through a tape's flight in, and through its return, and phosphor from the moment the reader or NO SIGNAL is on it, the light turning in the same commit as the tube.
 - **Native reader surround**: an opaque 20px spread in page-ground color masks the expanded reader's surroundings; it is not a glow.
 
-The token file retains older recess, object, edge, and CSS-cast definitions.
-The embedded reader hides the old chin and cast and removes bezel shadows;
-every screen, embedded or fallback, shares the 14px screen radius. These
-legacy definitions are not the current 3D material system. The sidecar
-lists the shadows used by the active surfaces.
+The HTML CRT is the screen alone, with no frame, chin label, or cast of its
+own: the models supply those, and the fallback monitor's frame is its own
+(`--shadow-unit`). Every screen, on the tube or in the fallback, shares the
+14px screen radius. The sidecar lists these shadows.
 
 **The One Light Rule.** The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck, and changes only when the screen does. Equipment labels, controls, and page chrome never glow.
 
@@ -600,8 +606,8 @@ from ornament of its own.
 Every radius on the page is a token (`--r-*` in `tokens.css`, named as
 above). HTML control corners use the small radii: hairline focus and OSD links,
 slightly rounded playback buttons, and subtly rounded archive entries. The
-embedded screen, native-reader frame, and fallback-monitor
-frame each retain their larger documented radius. Borders are generally 1px;
+screen, the native reader's frame, and the fallback monitor's frame each
+take their larger named radius. Borders are generally 1px;
 keyboard focus uses a crisp 2px cyan outline with a 2px offset. The scrollable
 article uses an inset 2px OSD-white outline, offset by -4px, when focused.
 
@@ -1124,6 +1130,7 @@ has none. The address itself is a Stage 10 decision.
 - Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
 - Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).
 - Do give every tape a share card of its own, the studio caught as that tape goes into the deck (The Card Rule).
+- Do change a design value in this file's frontmatter first, then `tokens.css`, and let `e2e/design.spec.ts` prove the site renders it (The Source of Truth Rule).
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 

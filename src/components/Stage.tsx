@@ -699,7 +699,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       onTitleEl={onTitleEl}
       keyboardChoice={keyboardChoice}
       crtRef={null}
-      embedded
       fullHeight={native}
       onFullScreen={!native && offersFullScreen ? turnUp : undefined}
       onPictureSettled={

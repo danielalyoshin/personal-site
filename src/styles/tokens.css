@@ -1,23 +1,25 @@
 /*
  * Midnight Studio — design tokens.
- * Normative source: DESIGN.md. Keep the two in sync.
+ * DESIGN.md's frontmatter is the source; these are its values under the
+ * same names. Change it there first. e2e/design.spec.ts fails when the two
+ * disagree, when a token here goes unused, and when the site renders a
+ * typography role or component differently from the frontmatter.
  */
 :root {
   /* Chassis graphite scale (never pure black) */
   --ink-0: #0e0f12;
-  --ink-1: #16181d;
   --ink-2: #1d2026;
   --ink-3: #262a32;
   --seam: #2e323b;
   --seam-lit: #3a3f4a;
 
   /* Silkscreen (printed chassis text) */
-  --silk-hi: #e9ebf1;
-  --silk: #b7bbc6;
-  --silk-dim: #868b99;
+  --silkscreen-hi: #e9ebf1;
+  --silkscreen: #b7bbc6;
+  --silkscreen-dim: #868b99;
 
   /* The single interface accent */
-  --vfd: #61e8c6;
+  --vfd-cyan: #61e8c6;
 
   /* Inside the screen plane. The modeled tube paints from these same values
      (studio/tokens.ts), so both renderers share one palette. */
@@ -26,7 +28,7 @@
   --screen-text: #dfe6ff;
   --screen-dim: #98a3c9;
   --screen-soft: #aeb8dd;
-  --osd: #ffffff;
+  --osd-white: #ffffff;
   --rec-red: #ff3b30;
   /* The reader's scrollbar thumb: 3.5:1 on screen black, so the article's
      length reads at a glance without competing with its text. */
@@ -37,35 +39,30 @@
   --tube-ink-soft: #c4ccff;
   --tube-ink-dim: #bfc9ff;
   --tube-line: #818cfc;
-  /* A lit tube's light: the blooms and casts below, and the modeled CRT's
-     point light during playback. */
+  /* A lit tube's light: the blooms below, and the modeled CRT's point light
+     during playback. */
   --phosphor: #b4c4ff;
 
-  /* The tube's light: bloom and its cast on the deck (One Light Rule). Each
-     is its hue at a strength, so a palette change is made once, above. */
+  /* The tube's bloom (One Light Rule): each is its hue at a strength, so a
+     palette change is made once, above. */
   --bloom-rest: 0 0 40px 0 color-mix(in srgb, var(--phosphor) 10%, transparent);
   --bloom-play: 0 0 40px 0 color-mix(in srgb, var(--phosphor) 16%, transparent);
   --bloom-idle: 0 0 56px 2px
     color-mix(in srgb, var(--crt-blue) 45%, transparent);
-  --cast-idle: radial-gradient(
-    50% 100% at 50% 0,
-    color-mix(in srgb, var(--crt-blue) 34%, transparent),
-    color-mix(in srgb, var(--crt-blue) 12%, transparent) 45%,
-    transparent 78%
-  );
-  --cast-play: radial-gradient(
-    50% 100% at 50% 0,
-    color-mix(in srgb, var(--phosphor) 14%, transparent),
-    color-mix(in srgb, var(--phosphor) 5%, transparent) 45%,
-    transparent 78%
-  );
 
   /* Type. The shell has six sizes (11px floor) and three Archivo weights:
      400 for reading and quiet actions, 600 for titles, labels, and controls,
      800 for the screen title and cassette spines. VT323 is 400 only. */
   --font-chassis: 'Archivo Variable', Archivo, Arial, system-ui, sans-serif;
   --font-osd: 'VT323', ui-monospace, 'Courier New', monospace;
-  --type-display: clamp(2.5rem, 1.25rem + 2.8vw, 4rem);
+  /* The display line in each look: beside the studio, beside it on a short
+     window, in the mobile look, and beside it on a phone on its side. The
+     stage adds what depends on its layout: a higher floor beside a narrow
+     studio, and the corner a short window leaves the words. */
+  --type-display: clamp(2rem, min(1.25rem + 2.8vw, 4.6vw), 4rem);
+  --type-display-short: clamp(2rem, 1.5rem + 1.5vw, 3rem);
+  --type-display-mobile: clamp(2rem, 1rem + min(5.4vw, 5.4svh), 3.375rem);
+  --type-display-sideways: clamp(2rem, 1rem + 4svh, 2.75rem);
   --type-mark: 2.625rem;
   --type-body: 1rem;
   --type-functional: 0.875rem;
@@ -83,9 +80,11 @@
   /* These resolve on screen descendants, inside the CRT's query container. */
   --type-screen-title: clamp(1.5rem, 5.6cqi, 2rem);
   --type-screen-body: clamp(1rem, 3.1cqi, 1.0625rem);
-  --type-screen-osd: clamp(1.125rem, 4.5cqi, 1.375rem);
-  --type-screen-meta: clamp(1.0625rem, 4cqi, 1.25rem);
-  --type-screen-display: clamp(1.5rem, 9cqi, 2.5rem);
+  --type-full-height-title: clamp(1.5rem, 7.5cqi, 2rem);
+  --type-full-height-body: clamp(1rem, 2.4cqi, 1.125rem);
+  --type-osd: clamp(1.125rem, 4.5cqi, 1.375rem);
+  --type-osd-meta: clamp(1.0625rem, 4cqi, 1.25rem);
+  --type-osd-display: clamp(1.5rem, 9cqi, 2.5rem);
 
   /* Shape: every radius on the page, named as in DESIGN.md. */
   --r-hairline: 2px;
@@ -93,7 +92,6 @@
   --r-control: 4px;
   --r-screen: 14px;
   --r-expanded-reader: 18px;
-  --r-bezel: 20px;
   --r-fallback-monitor: 24px;
 
   /* Space (4px base) */
@@ -101,22 +99,13 @@
   --sp-sm: 8px;
   --sp-md: 16px;
   --sp-lg: 24px;
-  --sp-xl: 40px;
-  --sp-xxl: 64px;
 
   /* Depth: machined, not floaty (One Light Rule: no glow shadows on chassis) */
   --shadow-unit: 0 12px 32px rgba(0, 0, 0, 0.4);
-  --edge-lit: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --shadow-object: 0 3px 8px rgba(0, 0, 0, 0.6);
-  --shadow-recess: inset 0 2px 8px rgba(0, 0, 0, 0.8);
-  --shadow-recess-deep:
-    inset 0 3px 10px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 
   /* Motion */
   --t-fast: 120ms;
   --t-med: 240ms;
   --t-dolly: 560ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-mech: cubic-bezier(0.6, 0, 0.2, 1);
 }

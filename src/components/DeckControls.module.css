@@ -18,7 +18,7 @@
   border-bottom: 3px solid var(--ink-0);
   border-radius: var(--r-archive);
   background: var(--ink-3);
-  color: var(--silk-hi);
+  color: var(--silkscreen-hi);
   font-family: var(--font-chassis);
   font-size: var(--type-caption);
   font-weight: 600;
@@ -28,7 +28,7 @@
 }
 
 .key:hover {
-  border-top-color: var(--silk-dim);
+  border-top-color: var(--silkscreen-dim);
   background: var(--seam);
 }
 
@@ -40,7 +40,7 @@
 /* The Escape hint is a quieter register through weight alone; silk on the
    key's graphite reads at 7.5:1 at rest and 6.7:1 on hover. */
 .key kbd {
-  color: var(--silk);
+  color: var(--silkscreen);
   font: inherit;
   font-weight: 400;
 }
