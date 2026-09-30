@@ -63,7 +63,7 @@ motion.
 - ✅ Codex setup (2026-09-15): installed Impeccable 4.0.2 in
   `.agents/skills/impeccable/`, matching Claude's installed revision
   `d272b9bd5dcfcb52d32482d192d06045ca31c503`. Added project hooks in
-  `.codex/hooks.json` and usage instructions in `README.md`. Both agents share
+  `.codex/hooks.json` and usage instructions (now in `CLAUDE.md` / `AGENTS.md`). Both agents share
   the established product/design context. Codex requires native `/hooks` trust
   review before automatic design checks run.
   Verified Codex discovers the enabled repository skill, existing context loads,
@@ -174,7 +174,7 @@ against WebGL; the July entries below remain a record of the original build.
 - ✅ Lazy-loaded scene, on-demand rendering, capped device pixel ratio, local
   textures, and resource cleanup. Added browser regression coverage.
 - Validation: build, ESLint, formatting, desktop/mobile visual review, and
-  Playwright checks. See `README.md` for commands and current coverage.
+  Playwright checks.
 - No commit, push, deployment config, CI, or hosting changes were made.
 
 #### 3D object and insertion corrections (2026-09-15)
@@ -1511,7 +1511,7 @@ rest, by finding:
 - Left of Stage 9: a screen-reader session and a physical-device pass,
   which no audit has done.
 
-### Stage 10 — Deployment (LAST, per project rules)
+### Stage 10 — Deployment (LAST, per project rules) ✅ (2026-09-29)
 
 - Choose host (GitHub Pages / Vercel / Netlify / Cloudflare Pages) and wire the
   build. No deploy config or CI before this stage.
@@ -1539,6 +1539,9 @@ Daniel's decision: GitHub Pages, at his domain `alyoshin.dev`.
 - ✅ `SITE_URL=https://alyoshin.dev` lives in `.env.production`, so every
   production build, local or on Pages, is the one that ships: canonical URLs,
   `og:url`, absolute share-card images, `sitemap.xml`. `built.spec` checks it.
+- ✅ README removed at Daniel's request; what a session needs from it
+  moved to `CLAUDE.md` / `AGENTS.md` (Commands and tooling) and the DNS
+  records to this entry.
 - ✅ No `CNAME` file: a workflow-published Pages site ignores it; the domain
   is set in Settings → Pages. No trailing-slash work needed: Pages serves
   `project/<slug>.html` at `/project/<slug>`, a trailing-slash address gets
@@ -1559,10 +1562,16 @@ Daniel's decision: GitHub Pages, at his domain `alyoshin.dev`.
   design engineer to forward deployed engineer (audience, purpose, stale
   Stage 8/10 lines), a neutral credit note in this file, and the archive
   note now reads "Check out my work."
-- Remaining, on GitHub and at the DNS host: Pages on this repo (a private
-  repo needs a paid plan), source "GitHub Actions", custom domain
-  `alyoshin.dev`, the DNS records listed in the README, then Enforce HTTPS
-  (`.dev` is HSTS-preloaded, so the site is unreachable over plain HTTP).
+- ✅ Live at <https://alyoshin.dev> (2026-09-29): repo public, Pages source
+  "GitHub Actions", custom domain `alyoshin.dev`, certificate approved and
+  HTTPS enforced. DNS at Squarespace: `A` `@` to `185.199.108.153`,
+  `185.199.109.153`, `185.199.110.153`, `185.199.111.153`; `AAAA` `@` to
+  `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`,
+  `2606:50c0:8003::153`; `CNAME` `www` to `danielalyoshin.github.io`
+  (`csca48` and `randomizer` are Daniel's other Pages sites). Checked live:
+  routes 200, a dead address and a trailing-slash address 404 with the NO
+  SIGNAL page, `www` and `http` 301 to `https://alyoshin.dev/`, sitemap,
+  robots and share cards served, canonical and `og:image` absolute.
 
 ---
 
