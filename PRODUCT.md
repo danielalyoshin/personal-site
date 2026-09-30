@@ -53,9 +53,11 @@ accessibility standards.
   requested this revision on 2026-09-15, superseding the July SVG-only decision.
   Accessible HTML navigation and reading remain usable without WebGL.
 - Every animation must respect `prefers-reduced-motion` (hard requirement).
-- Sound exists (settled 2026-07-22): synthesized mechanical cues only,
-  default-off on every visit behind the deck's sound toggle, never
-  persisted. Doctrine in `DESIGN.md` § Sound.
+- Sound exists: synthesized mechanical cues only. On by default (Daniel,
+  2026-09-30; it was default-off from 2026-07-22), silent until the
+  visitor's first gesture, with a quiet sound key at the page's top right
+  that hands over to the deck's key while a tape plays; a mute is
+  remembered in the browser. Doctrine in `DESIGN.md` § Sound toggle.
 - Hosting: GitHub Pages at `alyoshin.dev`, published by
   `.github/workflows/deploy.yml` on every push to `main` (Stage 10 of
   `PLAN.md`).

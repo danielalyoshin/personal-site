@@ -254,24 +254,197 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await noOverflow(page)
 })
 
-test('sound is opt-in, lives on the deck, and resets on a fresh visit', async ({
+test('sound is on from the start, silent until the first gesture, and a mute is remembered', async ({
+  page,
+}) => {
+  // Count every audio context and every cue started on one.
+  await page.addInitScript(() => {
+    const log = { contexts: 0, cues: 0 }
+    Object.assign(window, { audioLog: log })
+    const Native = window.AudioContext
+    const counted = <T extends AudioScheduledSourceNode>(node: T) => {
+      const start = node.start.bind(node)
+      node.start = (...args: Parameters<T['start']>) => {
+        log.cues++
+        start(...args)
+      }
+      return node
+    }
+    window.AudioContext = class extends Native {
+      constructor(options?: AudioContextOptions) {
+        super(options)
+        log.contexts++
+      }
+      createBufferSource() {
+        return counted(super.createBufferSource())
+      }
+      createOscillator() {
+        return counted(super.createOscillator())
+      }
+    }
+  })
+  const audio = () =>
+    page.evaluate(() => {
+      const { audioLog } = window as unknown as {
+        audioLog: { contexts: number; cues: number }
+      }
+      return { ...audioLog }
+    })
+  await page.goto('/')
+  await ready(page)
+  const sound = page.getByTestId('sound-toggle')
+  await expect(sound).toHaveAccessibleName('Sound effects')
+  await expect(sound).toHaveAttribute('aria-pressed', 'true')
+  // Pointing at tapes is no gesture: nothing starts, and nothing is held to
+  // play all at once later (the loud pop of cues queued on a frozen clock).
+  const tapes = page.locator('#projects a[href^="/project/"]')
+  await tapes.first().hover()
+  await tapes.last().hover()
+  await page.mouse.move(4, 4)
+  expect(await audio()).toEqual({ contexts: 0, cues: 0 })
+  // The first press, on bare page, starts audio and releases nothing.
+  await page.mouse.click(4, 400)
+  await expect.poll(async () => (await audio()).contexts).toBe(1)
+  await page.waitForTimeout(300)
+  expect((await audio()).cues).toBe(0)
+  // From then on a tape answers the pointer with one tick.
+  await tapes.first().hover()
+  await expect.poll(async () => (await audio()).cues).toBe(1)
+  // Off is silent; turning it back on confirms with the tick.
+  await sound.click()
+  await expect(sound).toHaveAttribute('aria-pressed', 'false')
+  await tapes.last().hover()
+  await page.waitForTimeout(300)
+  expect((await audio()).cues).toBe(1)
+  await sound.click()
+  await expect(sound).toHaveAttribute('aria-pressed', 'true')
+  await expect.poll(async () => (await audio()).cues).toBe(2)
+  // Off is remembered on the next visit, and stays silent through its
+  // gestures; on again is the default, so it is simply forgotten.
+  await sound.click()
+  await expect(sound).toHaveAttribute('aria-pressed', 'false')
+  await page.reload()
+  await ready(page)
+  await expect(sound).toHaveAttribute('aria-pressed', 'false')
+  await page.mouse.click(4, 400)
+  await tapes.first().hover()
+  await page.waitForTimeout(300)
+  expect(await audio()).toEqual({ contexts: 0, cues: 0 })
+  await sound.click()
+  await expect(sound).toHaveAttribute('aria-pressed', 'true')
+  await page.reload()
+  await ready(page)
+  await expect(sound).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('one sound key is live at a time, and all show one state', async ({
   page,
 }) => {
   await page.goto('/')
   await ready(page)
-  // Browse has no sound control of its own: the deck key is the only toggle.
-  await expect(page.getByRole('button', { name: 'Sound effects' })).toHaveCount(
-    0,
-  )
+  const corner = page.getByTestId('sound-toggle')
+  const deck = page
+    .getByTestId('studio-scene')
+    .getByRole('button', { name: 'Sound effects', exact: true })
+  await expect(corner).toBeInViewport({ ratio: 1 })
+  // The page's key stands over the tape going in, beside Skip.
+  await page.locator('#projects a[href="/project/superset-d1"]').click()
+  const skip = page.getByRole('button', { name: 'Skip animation' })
+  await expect(skip).toBeVisible()
+  await expect(corner).toBeVisible()
+  // Once the tape is in, the deck's key takes over and the page's is away:
+  // hidden, and out of the focus loop.
+  await skip.click()
+  await expect(page.locator('article h2')).toBeFocused()
+  await expect(corner).toBeHidden()
+  await expect(corner).toHaveAttribute('inert', '')
+  await deck.click()
+  await expect(deck).toHaveAttribute('aria-pressed', 'false')
+  // It comes back with the page, showing what the deck set.
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  await expect(corner).toBeVisible()
+  await expect(corner).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('Tab wraps inside the full-height reader, past the hidden sound key', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/project/superset-d1')
-  await onTheTube(page)
-  const sound = page.getByRole('button', { name: 'Sound effects', exact: true })
-  await expect(sound).toHaveAttribute('aria-pressed', 'false')
-  await sound.click()
-  await expect(sound).toHaveAttribute('aria-pressed', 'true')
-  await page.reload()
-  await onTheTube(page)
-  await expect(sound).toHaveAttribute('aria-pressed', 'false')
+  const reader = page.getByTestId('native-reader')
+  await expect(reader).toBeVisible()
+  const keys = reader.getByRole('group', { name: 'VHS player controls' })
+  await keys.getByRole('button', { name: 'Eject tape' }).focus()
+  await page.keyboard.press('Tab')
+  await expect(reader.locator('article')).toBeFocused()
+  await page.keyboard.press('Shift+Tab')
+  await expect(keys.getByRole('button', { name: 'Eject tape' })).toBeFocused()
+})
+
+test('the sound key ends the header row at every width', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  for (const [width, height] of [
+    [1440, 900],
+    [1280, 800],
+    [1024, 768],
+    [390, 844],
+    [320, 640],
+  ]) {
+    await page.setViewportSize({ width, height })
+    await noOverflow(page)
+    // Chrome's first frame after an emulated resize can hold a rule of the
+    // old width (the links' margin), so measure the frame after.
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    )
+    const row = await page.evaluate(() => {
+      const box = (el: Element) => el.getBoundingClientRect()
+      const key = box(document.querySelector('[data-testid="sound-toggle"]')!)
+      const mark = box(
+        document.querySelector('[data-testid="sound-toggle"] svg')!,
+      )
+      const about = box(document.querySelector('header nav a:last-child')!)
+      const header = box(document.querySelector('header')!)
+      const cassette = box(document.querySelector('header a svg')!)
+      return {
+        keyMiddle: (key.top + key.bottom) / 2,
+        aboutMiddle: (about.top + about.bottom) / 2,
+        keyLeft: key.left,
+        aboutRight: about.right,
+        markRight: mark.right,
+        markMiddle: (mark.left + mark.right) / 2,
+        column: { left: header.left, right: header.right },
+        cassetteMiddle: cassette.width
+          ? (cassette.left + cassette.right) / 2
+          : null,
+        keyRight: key.right,
+        viewport: document.documentElement.clientWidth,
+      }
+    })
+    const at = `${width} × ${height}`
+    expect(Math.abs(row.keyMiddle - row.aboutMiddle), at).toBeLessThan(1)
+    expect(row.keyLeft, at).toBeGreaterThanOrEqual(row.aboutRight)
+    expect(row.keyRight, at).toBeLessThanOrEqual(row.viewport)
+    if (row.cassetteMiddle === null)
+      // The mark ends on the column, after the links.
+      expect(Math.abs(row.markRight - row.column.right), at).toBeLessThan(1)
+    else
+      // The mark mirrors the nameplate's cassette across the page.
+      expect(
+        Math.abs(
+          row.markMiddle -
+            row.column.right -
+            (row.column.left - row.cassetteMiddle),
+        ),
+        at,
+      ).toBeLessThan(1)
+  }
 })
 
 test('archive works without WebGL and after a graphics context is lost', async ({
@@ -690,4 +863,31 @@ test('slots without a project hold blank tapes that are coming soon', async ({
   // A blank slot has no route: a link to one reads NO SIGNAL like any dead tape.
   await page.goto('/project/coming-1')
   await expect(page.getByText('NO SIGNAL').first()).toBeVisible()
+})
+
+test('the REC dot stands centred on the capitals it closes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 600, height: 800 })
+  await page.goto('/project/superset-d1')
+  const line = page.getByTestId('native-reader').getByText(/^REC/)
+  await line.scrollIntoViewIfNeeded()
+  const offset = await line.evaluate(async (el) => {
+    await document.fonts.ready
+    const dot = el.querySelector('span')!.getBoundingClientRect()
+    // The line's baseline, from an empty box set on it, and VT323's
+    // capitals, measured as drawn.
+    const probe = document.createElement('span')
+    probe.style.cssText = 'display: inline-block; vertical-align: baseline'
+    el.prepend(probe)
+    const baseline = probe.getBoundingClientRect().bottom
+    probe.remove()
+    const style = getComputedStyle(el)
+    const context = document.createElement('canvas').getContext('2d')!
+    context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
+    const cap = context.measureText('REC').actualBoundingBoxAscent
+    return (dot.top + dot.bottom) / 2 - (baseline - cap / 2)
+  })
+  expect(Math.abs(offset)).toBeLessThan(0.5)
 })

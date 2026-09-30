@@ -174,12 +174,14 @@ test('the native Eject key is named for what it does; ESC is its shortcut, not i
   await expect(page).toHaveURL('/')
 })
 
-test('the footer invites contact beside its two links', async ({ page }) => {
+test('the footer names Daniel beside the copyright and its two links', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   const footer = page.getByRole('contentinfo')
-  await expect(footer).toContainText('Want to chat?')
-  // The invitation stands beside both ways to answer it.
+  await expect(footer).toContainText('Daniel Alyoshin / © 2026')
+  await expect(footer).not.toContainText('Want to chat?')
   const contact = footer.getByRole('navigation', { name: 'Contact' })
   await expect(contact.getByRole('link')).toHaveCount(2)
   await expect(contact.getByRole('link', { name: 'GitHub' })).toHaveAttribute(

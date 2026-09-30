@@ -5,7 +5,7 @@
   gap: 8px;
 }
 
-/* The hardware key: shared by the native deck panel and Skip animation. */
+/* The hardware key of the native deck panel. */
 .key {
   display: inline-flex;
   align-items: center;

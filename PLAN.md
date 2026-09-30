@@ -1591,6 +1591,51 @@ Daniel's three fixes:
   it. An eject during the insertion eases the studio back into its box. The
   native loading screen is gone.
 
+#### After launch (2026-09-30)
+
+Daniel's three fixes:
+
+- ✅ The REC dot sits centred on the REC line's capitals. VT323's capitals
+  stand 0.56em; the 0.5em dot was raised 0.08em, 0.05em (1px at the
+  reader's size) too high. It now rides 0.03em above the baseline.
+- ✅ The footer no longer asks "Want to chat?"; it reads "Daniel Alyoshin /
+  © 2026" beside the contact links, on one row on a phone while it fits.
+- ✅ Sound is on by default (reverses the 2026-07-22 default-off). No audio
+  context exists before the visitor's first gesture, so cues asked for
+  before it (hover ticks) are dropped, never queued: the frozen-clock pop
+  of 2026-07-22 cannot recur. A cue asked for while the context starts
+  plays only within 250ms (The First Gesture Rule). A new quiet key family
+  (dim silkscreen in the label type on `ink-veil`, no face or edge) carries
+  a page-level sound key pinned at the header row's end for the visit (in
+  the right gutter, mirroring the cassette mark, above 1200px; after the
+  links below), and Skip animation, which moved off the hardware key. The
+  deck's SOUND key and the native reader's stay, sharing the state. Headers
+  under 360px stand 83px, where the role line breaks. Share cards re-rendered
+  (the deck's status window now shows sound on).
+
+Daniel's follow-ups the same day:
+
+- ✅ The old pop reproduced, from a rebuild of the July scheduler (the buggy
+  code was never committed; bug and fix are both in `2dee946`): twelve hover
+  ticks before any gesture all scheduled at 0.01s on the suspended context,
+  and the first cue after the first click released them with the new one,
+  a 0.121 peak against 0.0093 for one tick (13×, about 22 dB). The July
+  note's detail that the click itself released them did not hold in
+  current Chrome; the next cue did. The current site holds no context and
+  plays nothing before the first gesture.
+- ✅ One sound key is live at a time (The One Key Rule): the page's key
+  serves the page and a tape going in, then fades with the page, `inert`,
+  while the deck's key (modeled or the full-height reader's panel) serves the
+  tape. This also fixed a stuck Tab introduced the same day: in the
+  full-height reader the focus loop counted the hidden page key as its first
+  stop, so Tab from Eject went nowhere. The Shift+Tab asymmetry (the title
+  skipping the page key backwards) is gone with it: the key is never in a
+  tape's focus loop.
+- ✅ A mute is remembered in the browser (`localStorage` `sound` = `off`;
+  on removes it). The pre-rendered page shows sound on until the app
+  hydrates, so a returning muted visitor may see the speaker's waves turn to
+  its slash as the page starts.
+
 ---
 
 ## Open decisions (flagged, not blocking)
@@ -1601,7 +1646,9 @@ Daniel's three fixes:
    color arrives only through cassette spines/labels and the CRT. Guardrails:
    matte materials, no neon wash, no glow outside the CRT's controlled cast.
 2. ~~**Sound**~~ — ✅ Settled (2026-07-22, Stage 7 start): **in,
-   default-off** behind the deck's visible sound toggle. Final palette:
+   default-off** behind the deck's visible sound toggle. Revised by Daniel
+   (2026-09-30): **on by default**, silent until the first gesture, with a
+   quiet sound key at the page's top right; a mute is remembered. Final palette:
    insert clunk + eject and UI ticks; transport whirr built then cut on
    review; CRT hum deliberately excluded. Source: synthesized Web Audio,
    no asset files.

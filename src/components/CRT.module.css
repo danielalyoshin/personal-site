@@ -451,7 +451,7 @@
   height: 0.5em;
   border-radius: 50%;
   background: var(--rec-red);
-  vertical-align: 0.08em;
+  vertical-align: 0.03em;
   animation: blink 1.2s steps(2, start) infinite;
 }
 

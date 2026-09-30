@@ -2,16 +2,29 @@ import { useSyncExternalStore } from 'react'
 
 /*
  * AV-01 sound: every effect is synthesized in Web Audio — no asset files.
- * Default-off on every visit; the deck's sound toggle is the only way in,
- * and the choice lasts for the visit only (never persisted — so the page
- * can never hold pre-gesture audio state). Sound is independent of
- * prefers-reduced-motion: nothing here loops, every cue answers a user
- * action and dies out on its own.
+ * On by default, and silent until the visitor's first gesture: no context
+ * exists before it, so no cue can be held for it. Turning sound off is
+ * remembered in this browser; on is the default, so only off is stored.
+ * Sound is independent of prefers-reduced-motion: nothing here loops, every
+ * cue answers a user action and dies out on its own.
  */
 
 export type SoundName = 'tick' | 'insert' | 'eject'
 
-let enabled = false
+const STORED_KEY = 'sound'
+
+/** Storage can be missing or refused (a private window, blocked data). */
+function mutedBefore() {
+  try {
+    return localStorage.getItem(STORED_KEY) === 'off'
+  } catch {
+    return false
+  }
+}
+
+let enabled = typeof window === 'undefined' || !mutedBefore()
+// Whether the page has had a gesture a browser lets start audio.
+let gestured = false
 
 const listeners = new Set<() => void>()
 
@@ -19,9 +32,10 @@ let ctx: AudioContext | null = null
 let master: GainNode | null = null
 let noiseBuf: AudioBuffer | null = null
 
-/** Create/resume lazily — always from inside a user gesture. */
+/** Create/resume lazily, never before the first gesture. */
 function audio(): AudioContext | null {
-  if (typeof window === 'undefined' || !('AudioContext' in window)) return null
+  if (!gestured || typeof window === 'undefined' || !('AudioContext' in window))
+    return null
   if (!ctx) {
     ctx = new AudioContext()
     master = ctx.createGain()
@@ -133,10 +147,14 @@ const RECIPES: Record<SoundName, (ac: AudioContext, t: number) => void> = {
  * A suspended context's clock is frozen: cues scheduled against it queue up
  * at the same timestamp and all fire AT ONCE when the context resumes —
  * summing into one loud pop. So a cue is only ever scheduled on a running
- * context; otherwise we keep just the latest cue and play it once, after
- * resume() actually completes.
+ * context. Before the first gesture there is no context and a cue is simply
+ * not played. After it, a context still starting (or interrupted by the
+ * system) keeps just the latest cue and plays it once resume() completes,
+ * if that is soon enough to still answer what the visitor did.
  */
 let pendingCue: SoundName | null = null
+let pendingSince = 0
+const PENDING_CUE_MS = 250
 
 export function playSound(name: SoundName) {
   if (!enabled) return
@@ -148,12 +166,18 @@ export function playSound(name: SoundName) {
   }
   const firstPending = pendingCue === null
   pendingCue = name
+  pendingSince = performance.now()
   if (firstPending) {
     ac.resume()
       .then(() => {
         const cue = pendingCue
         pendingCue = null
-        if (cue && enabled && ac.state === 'running') {
+        if (
+          cue &&
+          enabled &&
+          ac.state === 'running' &&
+          performance.now() - pendingSince < PENDING_CUE_MS
+        ) {
           RECIPES[cue](ac, ac.currentTime + 0.01)
         }
       })
@@ -163,9 +187,31 @@ export function playSound(name: SoundName) {
   }
 }
 
+/*
+ * Browsers start audio only inside a gesture: a press, a tap's release, or a
+ * key. Each one starts the context (or resumes it after the system paused
+ * it) while sound is on, from the capture phase, so it is running by the
+ * time the gesture's own cue, or the next hover's, is played.
+ */
+function onGesture() {
+  const activation = navigator.userActivation
+  if (activation && !activation.isActive) return
+  gestured = true
+  if (enabled) audio()
+}
+if (typeof window !== 'undefined')
+  for (const type of ['pointerdown', 'pointerup', 'keydown', 'touchend'])
+    window.addEventListener(type, onGesture, { capture: true, passive: true })
+
 export function setSoundEnabled(on: boolean) {
   if (on === enabled) return
   enabled = on
+  try {
+    if (on) localStorage.removeItem(STORED_KEY)
+    else localStorage.setItem(STORED_KEY, 'off')
+  } catch {
+    // Unstored, the choice still holds for this visit.
+  }
   if (on) audio()
   else {
     pendingCue = null
@@ -180,7 +226,7 @@ export function toggleSound(): boolean {
   return enabled
 }
 
-/** All deck controls use the same opt-in confirmation cue. */
+/** Every sound toggle confirms with the same cue when it turns sound on. */
 export function changeSound() {
   if (toggleSound()) playSound('tick')
 }
@@ -196,6 +242,6 @@ export function useSoundEnabled(): boolean {
   return useSyncExternalStore(
     subscribe,
     () => enabled,
-    () => false,
+    () => true,
   )
 }

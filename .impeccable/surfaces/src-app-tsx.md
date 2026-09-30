@@ -22,14 +22,16 @@ its side (under 540px tall, at least 740px wide), or, in the mobile look
 below that,
 stacked above a full-bleed studio, with no stacked desktop stage between the
 two; then the six-entry archive (its blank slots in one cell in the mobile
-look) and the GitHub/LinkedIn footer with the contact links flush right. Every
+look) and the footer, "Daniel Alyoshin / © 2026" with the GitHub/LinkedIn
+contact links flush right. Every
 shell edge sits on the one column (the cassette mark hangs in the gutter
 above 1200px), except the words beside the studio, which share one left edge
 set by the widest of them; the archive entries' 12px insets are the only
 other inboard edges, and each entry stacks its number over its name so it
 has one text edge. Arrows are drawn SVG marks spaced by flex gap, never typed glyphs. The shell carries no scene metadata,
-clock, caption number, tape count, page-level sound control, or edition
-marks, and the header's "The archive" link is its single visible index route
+clock, caption number, or tape count; its one control beyond the links is
+the quiet sound key at the header row's end (in the right gutter, mirroring
+the cassette mark, above 1200px; after the links below), and the header's "The archive" link is its single visible index route
 at every width. Height-aware desktop framing keeps the studio and its
 selection instruction together; phones use a closer, more frontal camera
 that fits every piece of equipment inside a full-bleed canvas snug to the
@@ -144,8 +146,9 @@ off), not on the key. Keys are interactive only after insertion
 ends. Selection sizes the canvas to the viewport in the same commit and eases
 the studio's frame out to it; the studio renders at pixel ratio 2 during
 modeled playback.
-Skip animation is a hardware key of the native deck family, led by a drawn
-skip mark, at the viewport's lower right during insertion on every window.
+Skip animation is a quiet key (dim silkscreen in the label's type on the
+graphite veil, no face or edge), led by a drawn skip mark, at the viewport's
+lower right during insertion on every window, under the page's sound key.
 The playback camera keeps
 both CRT and deck in view. The native reader integrates these actions into
 its lower hardware panel, respecting the bottom safe area. There is no
@@ -213,9 +216,12 @@ closing commit while the chrome is still dissolved, and a pointer exit
 leaves the page where it was. A press in the studio takes focus onto the
 studio's layer, so script focus after a mouse selection is never ringed; the title's underline marks only a tape chosen from the keyboard, never a shared link's arrival or a key pressed while reading. The named scrollable article is a Tab stop,
 allowing return from the transport controls; initial focus announces the title.
-About remains explicit in its archive link's accessible name. Sound is opt-in,
-synthesized, per-visit, and toggled only on the deck (modeled key during
-playback, native reader panel otherwise); browse has no sound control.
+About remains explicit in its archive link's accessible name. Sound is
+synthesized, on by default, silent until the first gesture, and a mute is
+remembered in the browser. One sound key is live at a time: the page's quiet
+key while browsing and while a tape goes in, then the deck's (modeled key
+during playback, native reader panel otherwise), with the page's key faded
+and inert until the tape comes out.
 Reader contact links have separate 44px touch targets. No ambient animation or
 sound; the canvas renders on demand, and the tube's grain steps by transform
 on its own layer, so the reader is never repainted at rest. Project media

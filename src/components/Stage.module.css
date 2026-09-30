@@ -1,10 +1,23 @@
 .stage {
+  /* The header row's height and the page's side margin, shared with the
+     sound key pinned at the row's end. */
+  --header-height: 80px;
+  --page-inset: 5%;
+  /* How far the sound key's mark stands outside the column: in the right
+     gutter, mirroring the nameplate's cassette mark in the left, while the
+     gutter has room for it (see the block at 1200px). */
+  --sound-mark: 33px;
+  /* The quiet keys' right edge: the sound key's, with Skip animation
+     under it, so the mark of one and the words of the other end together. */
+  --quiet-right: calc(
+    max(0px, (100% - 1600px) / 2) + var(--page-inset) - var(--sound-mark) - 22px
+  );
   max-width: 1600px;
   margin: auto;
-  padding: 0 5%;
+  padding: 0 var(--page-inset);
 }
 .header {
-  min-height: 80px;
+  min-height: var(--header-height);
   padding-block: 12px;
   display: flex;
   align-items: center;
@@ -315,6 +328,7 @@
 }
 .footerEdition {
   font-size: var(--type-label);
+  line-height: 1.2;
   font-weight: 600;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
@@ -350,10 +364,76 @@
   letter-spacing: -0.02em;
   color: var(--silkscreen);
 }
+/* The quiet key: the page's own controls over the studio, sound and Skip
+   animation. It is not the deck's, so it has no face or edge of its own:
+   dim silkscreen print, in the label's type, on a ground of the page's ink
+   that only shows where something passes beneath it. Hover lifts the print
+   and lays the graphite of a key under it. */
+.quietKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--r-control);
+  background: var(--ink-veil);
+  color: var(--silkscreen-dim);
+  font-family: var(--font-chassis);
+  font-size: var(--type-label);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition:
+    color var(--t-fast) var(--ease-out),
+    background-color var(--t-fast) var(--ease-out);
+}
+.quietKey svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+.quietKey:hover {
+  color: var(--silkscreen-hi);
+  background: var(--ink-2);
+}
+.quietKey:active {
+  background: var(--ink-3);
+}
+/* Sound, at the end of the header's row and pinned there: over the page as
+   it scrolls, and over the studio while a tape goes in. Once the tape is in,
+   the deck's own sound key takes over and this one fades with the page, and
+   it comes back with the page when the tape comes out. */
+.soundKey {
+  position: fixed;
+  top: calc((var(--header-height) - 1px) / 2 - 22px);
+  right: max(var(--quiet-right), env(safe-area-inset-right, 0px));
+  z-index: 44;
+  transition:
+    color var(--t-fast) var(--ease-out),
+    background-color var(--t-fast) var(--ease-out),
+    opacity var(--t-dolly) var(--ease-out),
+    visibility 0s;
+}
+.away {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--t-dolly) var(--ease-out),
+    visibility 0s linear var(--t-dolly);
+}
 .transitionTools {
   position: fixed;
-  right: max(24px, env(safe-area-inset-right, 0px));
-  bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  right: max(var(--quiet-right), env(safe-area-inset-right, 0px));
+  bottom: max(
+    (var(--header-height) - 1px) / 2 - 22px,
+    env(safe-area-inset-bottom, 0px)
+  );
   z-index: 50;
 }
 .fallback {
@@ -489,8 +569,8 @@
    With the box's height set by the viewport under the header, the corner
    above the lifted tape is 37.84% of that height, less the 12px clearance. */
 @media (width >= 768px) and (540px <= height <= 820px) {
-  .header {
-    min-height: 72px;
+  .stage {
+    --header-height: 72px;
   }
   .main {
     padding-top: 0;
@@ -544,8 +624,8 @@
    the screen's edges. Where there is no hover, the guide points at the
    list, as it does on phones, since the rack is small at this height. */
 @media (width >= 740px) and (height < 540px) {
-  .header {
-    min-height: 72px;
+  .stage {
+    --header-height: 72px;
   }
   .main {
     padding-top: 0;
@@ -577,9 +657,18 @@
     display: inline;
   }
 }
+/* Where the gutters are too narrow for the marks, the cassette leaves the
+   nameplate and the sound key joins the header's links, its mark ending on
+   the column. */
 @media (max-width: 1200px) {
+  .stage {
+    --sound-mark: -8px;
+  }
   .identity svg {
     display: none;
+  }
+  .navigation {
+    margin-right: 56px;
   }
   .tapeIndex {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -592,13 +681,12 @@
    blank slots share one cell. */
 @media (width < 740px), (width < 768px) and (height >= 540px) {
   .stage {
-    padding: 0 6%;
-  }
-  .header {
-    min-height: 72px;
+    --header-height: 72px;
+    --page-inset: 6%;
   }
   .navigation {
     gap: 18px;
+    margin-right: 34px;
   }
   .intro {
     padding-top: 16px;
@@ -673,8 +761,13 @@
     flex-wrap: wrap;
     gap: 18px;
   }
-  .footer > span:first-child {
-    width: 100%;
+}
+/* Below 360px the role line breaks beside the links and the sound key, so
+   the row stands as tall as the nameplate's three lines, and the sound key
+   centres on it with the links. */
+@media (width < 360px) {
+  .stage {
+    --header-height: 83px;
   }
 }
 

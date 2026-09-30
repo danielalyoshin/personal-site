@@ -3,6 +3,7 @@ name: 'Daniel Alyoshin — Personal Site'
 description: 'Midnight Studio — clean low-poly AV objects, matte graphite, and a single emitting CRT'
 colors:
   ink-0: '#0e0f12'
+  ink-veil: '#0e0f12cc'
   ink-2: '#1d2026'
   ink-3: '#262a32'
   seam: '#2e323b'
@@ -166,6 +167,15 @@ components:
     padding: '10px 12px'
   button-transport-hover:
     backgroundColor: '{colors.seam}'
+  button-quiet:
+    backgroundColor: '{colors.ink-veil}'
+    textColor: '{colors.silkscreen-dim}'
+    typography: '{typography.label}'
+    rounded: '{rounded.control}'
+    padding: '0 14px'
+  button-quiet-hover:
+    backgroundColor: '{colors.ink-2}'
+    textColor: '{colors.silkscreen-hi}'
   nav-link:
     textColor: '{colors.silkscreen}'
     typography: '{typography.functional}'
@@ -261,6 +271,7 @@ Cool graphite and printed silkscreen neutrals frame a vivid CRT and colored tape
 ### Neutral
 
 - **Graphite ground** (`ink-0`): the page and playback backdrop.
+- **Graphite veil** (`ink-veil`): the graphite ground at 80%, the quiet keys' ground. It cannot be seen on the bare page or over the studio's backdrop, and holds their print legible where the page or the equipment passes beneath.
 - **Graphite layers** (`ink-2`, `ink-3`): `ink-2` is the raised surface (the native reader's frame, the fallback monitor, a previewed archive entry); `ink-3` is the deck keys.
 - **Machined seams** (`seam`, `seam-lit`): thin dividers, borders, and emphasized edges.
 - **Silkscreen** (`silkscreen-hi`, `silkscreen`, `silkscreen-dim`): primary identity and controls, general chrome, and secondary labels respectively.
@@ -313,8 +324,8 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
 - **Body** (`body`): 1rem at weight 400. The page baseline and skip link inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
-- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, footer statement, the loading note, and the Escape hint are weight 400 with 1.5 leading. The native deck keys and Skip animation are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
-- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries' numbers, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
+- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, contact links, the loading note, and the Escape hint are weight 400 with 1.5 leading. The native deck keys are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
+- **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries' numbers, the footer's name and copyright, the quiet keys (Skip animation), and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
 
 ### Tube ramp
 
@@ -324,7 +335,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. Every other OSD line keeps VT323's own spacing, inside the reader too: the prose's tracking is set on the tagline and paragraphs, not on the reader, so it never reaches the OSD lines among them. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
-**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, collapse (Exit full screen), and expand (a closer look, the collapse mark's corners turned out). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
+**The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, collapse (Exit full screen), and expand (a closer look, the collapse mark's corners turned out). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the keys and in the deck's status window alike. The quiet keys set their marks at 16px, to sit with the label's type. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
 
 Desktop HTML is authored on a 560 × 420 screen and transformed with the camera; computed CSS sizes
 therefore describe the screen plane before its visual transform, except below
@@ -363,7 +374,7 @@ stylesheet's, so a page drawn ahead of time is right on the window it
 arrives in.
 
 **The One Column Rule.** Every shell edge sits on the container's two edges:
-the nameplate, archive heading, and footer statement on the left; the
+the nameplate, archive heading, and footer's name on the left; the
 navigation, archive note, and contact links on the right. In the mobile
 look the kicker, display line, and guide sit on the left edge too. Beside
 the studio (The Studio First Rule) they share one left edge of their own,
@@ -415,7 +426,8 @@ The archive uses six equal columns, three at 1200px and below, and two in
 the mobile look, with an 8px gap. Flex list items and full-width links keep each row's
 entries equally tall when a narrow label wraps. The header has an 80px
 minimum height, becoming 72px in the mobile look and on windows no taller
-than 820px. The introduction's top spacing is 24px from the studio's box,
+than 820px, and 83px below 360px wide, where the role line breaks beside the
+links and the sound key. The introduction's top spacing is 24px from the studio's box,
 which starts 8px under the header's seam, so the kicker stands 32px from
 the seam; on windows no taller than 820px the box starts at the seam and
 the spacing is 20px. In the mobile look it is 16px from the seam. The
@@ -446,10 +458,11 @@ guide's row: there is no scene metadata line, clock, drag hint, or reset
 above the canvas. The archive follows the canvas with a seam and 16px top
 padding. This groups the artifact with its selection surfaces.
 
-The footer sets the statement and the edition mark on the left and the
-contact links flush right on the column, mirroring the header. In the
-mobile look the statement takes the first row and the edition and links
-share the second.
+The footer sets Daniel's name beside the copyright on the left, "Daniel
+Alyoshin / © 2026" in the label's type, and the contact links flush right on
+the column, mirroring the header. It asks nothing of the visitor: the links
+are the way to answer. In the mobile look the two share one row while they
+fit and wrap, the links to the right, where they do not.
 
 Beside the words (The Studio First Rule), the exhibit's box follows the
 studio's own proportion, `aspect-ratio: 1.82`. The fitted studio is about
@@ -504,14 +517,16 @@ faces the modeled screen and HTML occupies its 4:3 plane. At widths up to
 767px **or** heights up to 699px, the native reader fills the available height
 with its own scroll area. Its frame is inset 12px vertically and 10px
 horizontally, respecting the bottom safe area. Sound and eject are built into
-a 72px minimum-height deck panel within that frame. The CRT's explicit `fullHeight` prop/class applies the stretched
+a 72px minimum-height deck panel within that frame, and the page's own sound
+key is away (The One Key Rule). The CRT's explicit `fullHeight` prop/class applies the stretched
 layout and readable type independently of viewport CSS. The mobile look
 shares this breakpoint's width but not its height: a window 540 to 699px
 tall browses in the Studio First look and reads in the native reader. The
 phone's 600px steps (the kicker's break, the camera's closer view, the
 shorter deck labels) are separate from both. A tape chosen there still goes
 in on the studio first, as on every window: the canvas takes the viewport,
-the studio eases out to fill it, Skip animation waits at the lower right,
+the studio eases out to fill it, Skip animation waits at the lower right
+under the sound key,
 and the native reader opens only once the tape is in the deck. It then
 covers the studio completely, so the canvas goes back to the size of its box
 under it rather than keep the viewport; the page holds still beneath all the
@@ -636,7 +651,8 @@ the eject key's Escape shortcut (`aria-keyshortcuts` and a hover title), and
 the crisp cyan keyboard-focus outline, and nothing else: no text, icon, or
 background. Hover/focus lightens the matte
 material and pointer press depresses the cap. Keys become interactive only
-after insertion ends; during insertion the only control is Skip animation.
+after insertion ends; during insertion the controls are the page's quiet
+keys, Skip animation and sound.
 
 The status window is the deck's readout, a two-field print in its dark
 recess: transport state on the left (STANDBY, LOADING, a drawn play mark with
@@ -661,15 +677,38 @@ panel leads with an Exit full screen key in the same family, the drawn
 collapse mark before its words and an F legend after them, declared through
 `aria-keyshortcuts` like Eject's (The Picture Size Rule).
 
-Skip animation is a hardware key of the native deck family, available only
-during insertion: the same uppercase control type, seam-lit border, darker
-bottom edge, and press as the native reader's sound and eject keys, led by
-the drawn skip mark. It sits at the viewport's lower right, over the insertion
-playing in the studio on every window, with a 44px minimum target.
+### Quiet keys
+
+The page's own controls over the studio, sound and Skip animation, are quiet
+keys: they belong to the visit, not to the deck, so they carry none of the
+hardware key's face, seam, or edge. Print in dim silkscreen, set in the
+label's type (0.6875rem, weight 600, 0.12em tracking, uppercase) with its
+mark at 16px, stands on the graphite veil, which cannot be seen on the bare
+page and holds the print legible where content passes beneath. Hover lifts
+the print to bright silkscreen and lays ink-2 under it; a press deepens that
+to ink-3. The target is 44px, with 14px beside the print, and the corners
+are the control radius. Nothing glows, and no key of this family competes
+with the tube: it is the quietest control on the page.
+
+The sound key ends the header's row at the top right. Where the gutter has
+room (above 1200px) its mark hangs there, mirroring the nameplate's cassette
+mark across the page, 33px outside the column; below that, where the
+cassette leaves the nameplate, it joins the links, its mark ending on the
+column the links' own gap after About. It is pinned there, centred on the
+row: over the page as it scrolls, and over the studio while a tape goes in.
+Once the tape is in, the deck's own sound key takes over (The One Key
+Rule), so the page's key fades with the page chrome, leaves the focus loop
+(`inert`), and comes back with the page when the tape comes out.
+
+Skip animation is available only during insertion, led by the drawn skip
+mark. It waits at the viewport's lower right, over the insertion playing in
+the studio on every window, its right edge under the sound key's, so the
+mark of one and the words of the other end together, and as far from the
+bottom as the sound key stands from the top.
 It is HTML, never a modeled key: the deck carries no physical skip, and its
 printed model label stays visible. Skip takes focus for as long as it is on
 stage, so focus never rests on the page body during the flight and a
-keyboard visitor sees the ring on the one control there is. Any key still
+keyboard visitor sees the ring on the control that answers the moment. Any key still
 skips, except the ones that mean something else: Tab, a bare modifier (Shift
 on its way to Shift+Tab), and Enter or Space on a focused key, which is that
 key's own press.
@@ -677,14 +716,37 @@ key's own press.
 ### Sound toggle
 
 The guide carries no tools: the view is authored, so there is no drag hint
-and no reset, and there is no page-level sound control. The deck's SOUND key
-is the single toggle, live on the modeled player during playback and in the
-native reader's hardware panel otherwise. Its speaker SVG shows waves when
-enabled and a red slash across the speaker when disabled; `aria-pressed`
-carries the state. Sound is synthesized, default-off on every visit, never persisted, and
+and no reset. Sound has one state and three keys that show it: the page's
+quiet sound key at the top right, the deck's SOUND key on the modeled
+player, and the full-height reader's hardware panel. All three are named
+"Sound effects", draw the same speaker (waves when on, a red slash across it
+when off), and carry the state in `aria-pressed`; turning sound on confirms
+with the tick.
+
+**The One Key Rule.** One sound key is live at a time. The page's key serves
+the page and a tape going in; once the tape is in, the deck's own key takes
+over, the modeled SOUND key on the tube or the panel key in the full-height
+reader, and the page's key is away (faded, hidden, and `inert`) until the
+tape comes out. The modeled SOUND key is printed on the deck at every
+moment, but it answers only while a tape plays on the tube. Sound is synthesized and
 user-triggered: tick, insert, and eject; the tick also answers the dial as a
-picture is turned up to full screen (The Picture Size Rule). Because the toggle lives on the deck,
-hover ticks stay silent until a visitor has switched sound on during playback.
+picture is turned up to full screen (The Picture Size Rule), and a tape
+answers the pointer with it as it lifts.
+
+**The First Gesture Rule.** Sound is on at the start of every visit, and
+silent until the visitor's first gesture. No audio context exists before a
+press, a tap's release, or a key, so a cue asked for before it (a tape
+lifting under a pointer that has not yet pressed anything) is not played
+and not held: held cues wait on a context's frozen clock and sound all at
+once when it starts, one loud pop. The first gesture starts the context from
+the capture phase, before the gesture's own cue; after that a cue is only
+ever scheduled on a running context, and one asked for while the context is
+still starting (or paused by the system) keeps only the latest, played once
+it runs and only within 250ms. Turning sound off is remembered in this
+browser (`localStorage`, key `sound`, value `off`), so a visitor who muted
+the site finds it muted on their next visit, gestures and all; on is the
+default, so turning it back on removes the entry. Where storage is refused,
+the choice holds for the visit.
 
 ### Navigation
 
@@ -888,7 +950,9 @@ Selectable, scrollable HTML inside the modeled screen, with a complete native
 reader when WebGL is missing, fails, or loses context. Prose uses screen-text;
 metadata uses dim screen text. Playback OSD sits above the reader with a dark
 fade behind it; its play mark is drawn at 0.7em with the OSD's own light, and
-the REC dot closing the article is a blinking 0.5em circle. The article's
+the REC dot closing the article is a blinking 0.5em circle, centred on
+the line's capitals (VT323's stand 0.56em, so the dot rides 0.03em above
+the baseline). The article's
 continuation is visible: a 3.5rem fade to screen black at the tube's foot
 mirrors the OSD's fade above while more of the article lies below, and
 lifts (240ms) once its end is in view, so the REC line closes the tape
@@ -991,8 +1055,7 @@ keeping focus in the article if it was there, else on the title. Its deck
 gains an Exit full screen key, led by the collapse mark with an F legend,
 ahead of Sound and Eject; that key and F hand the picture back with the deep
 link's dissolve (The Handoff Rule), the frame closing onto the tube as it
-fades. Full screen, once chosen, holds for the visit and, like sound, is
-never stored: eject, Escape, and history return to the page as from any
+fades. Full screen, once chosen, holds for the visit and is never stored: eject, Escape, and history return to the page as from any
 native reader, and every later tape still flies into the deck and plays on
 the tube, and once the camera is at rest there the set turns its picture up
 by itself, bar and dial together, and it grows. Under reduced motion there
@@ -1134,6 +1197,7 @@ has none. The address itself is a Stage 10 decision.
 - Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
 - Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).
 - Do give every tape a share card of its own, the studio caught as that tape goes into the deck (The Card Rule).
+- Do start with sound on unless the visitor muted it before, silent until the first gesture, holding no cue for it (The First Gesture Rule), with one sound key live at a time (The One Key Rule).
 - Do change a design value in this file's frontmatter first, then `tokens.css`, and let `e2e/design.spec.ts` prove the site renders it (The Source of Truth Rule).
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.

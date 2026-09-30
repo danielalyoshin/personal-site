@@ -425,6 +425,7 @@ test.describe('the site renders what the frontmatter says', () => {
     const archiveEntry = '#projects a[href="/project/superset-d1"]'
     const entryName = `${archiveEntry} ${cls('tapeLabel')}`
     const blankName = `${cls('tapeComing')} ${cls('tapeLabel')}`
+    const soundKey = '[data-testid="sound-toggle"]'
     expect(
       await measure(page, [
         { role: 'display', selector: '#intro-title' },
@@ -434,6 +435,7 @@ test.describe('the site renders what the frontmatter says', () => {
         { role: 'caption', selector: cls('role') },
         { role: 'label', selector: cls('eyebrow') },
         { component: 'nav-link', selector: `${cls('navigation')} a` },
+        { component: 'button-quiet', selector: soundKey },
         {
           component: 'tape-link',
           selector: archiveEntry,
@@ -460,6 +462,12 @@ test.describe('the site renders what the frontmatter says', () => {
     expect(
       await measure(page, [
         { component: 'tape-link-preview', selector: archiveEntry },
+      ]),
+    ).toEqual([])
+    await hover(page, soundKey)
+    expect(
+      await measure(page, [
+        { component: 'button-quiet-hover', selector: `${soundKey}:hover` },
       ]),
     ).toEqual([])
   })

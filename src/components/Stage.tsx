@@ -17,7 +17,7 @@ import { aboutTape } from '../content/about'
 import { pageTitle } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
 import type { Project } from '../content/types'
-import { playSound, useSoundEnabled } from '../lib/sound'
+import { changeSound, playSound, useSoundEnabled } from '../lib/sound'
 import { turnUp as turnPictureUp } from '../lib/pictureSize'
 import { measureRendererBox } from '../lib/rendererBox'
 import { useReducedMotion } from '../lib/useReducedMotion'
@@ -25,8 +25,7 @@ import { useMediaQuery } from '../lib/useMediaQuery'
 import { useSupportsWebGL } from '../lib/supportsWebGL'
 import CRT from './CRT'
 import DeckControls from './DeckControls'
-import { ExternalIcon, PlayIcon, SkipIcon } from './Icons'
-import keys from './DeckControls.module.css'
+import { ExternalIcon, PlayIcon, SkipIcon, SoundIcon } from './Icons'
 import styles from './Stage.module.css'
 
 const StudioScene = lazy(() => import('./studio/StudioScene'))
@@ -186,7 +185,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     setNativePlayback(false)
     if (open && !expandedReader && !flat) setHandoff('pending')
   }
-  // Full screen, once chosen, holds for the visit, like sound never stored:
+  // Full screen, once chosen, holds for the visit and is never stored:
   // every later tape seats on the tube and the set turns its picture up by
   // itself. Exit full screen gives the visit back to the tube.
   const [bigPicture, setBigPicture] = useState(false)
@@ -264,6 +263,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // completely, so the canvas goes back to its box rather than holding a
   // viewport-sized drawing buffer nobody can see.
   const detached = (open && !useNativeReader) || returning
+  // One sound key is live at a time. Once a tape is in, the deck's own key
+  // takes over, on the modeled player or in the full-height reader's panel,
+  // so the page's steps aside until the tape comes out.
+  const soundKeyAway = open && !loading
   const title = pageTitle(invalid ? 'nosignal' : tape)
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
   const identityEl = useRef<HTMLAnchorElement>(null)
@@ -715,12 +718,12 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       onCloserLook={native ? undefined : closerLook}
     />
   )
-  // The same hardware key as the native deck panel, so the one control
-  // offered during insertion belongs to the same family as sound and eject.
+  // The page's own controls over the studio, sound and Skip animation, are
+  // quiet keys: they are not the deck's, and wait at its edges.
   const skipControl = (
     <button
       type="button"
-      className={keys.key}
+      className={styles.quietKey}
       onClick={skipInsertion}
       ref={onSkipEl}
     >
@@ -826,6 +829,19 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           </Link>
         </nav>
       </header>
+      {/* Sound at the header's end, pinned there over the page and the tape
+          going in. Inert while away, so the playback focus loop passes it. */}
+      <button
+        type="button"
+        className={`${styles.quietKey} ${styles.soundKey} ${soundKeyAway ? styles.away : ''}`}
+        data-testid="sound-toggle"
+        aria-label="Sound effects"
+        aria-pressed={soundOn}
+        onClick={changeSound}
+        inert={soundKeyAway || undefined}
+      >
+        <SoundIcon enabled={soundOn} />
+      </button>
 
       <main className={styles.main}>
         <section
@@ -1043,8 +1059,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         inert={open || undefined}
         aria-hidden={open || undefined}
       >
-        <span>Want to chat?</span>
-        <span className={styles.footerEdition}>DA / © 2026</span>
+        <span className={styles.footerEdition}>Daniel Alyoshin / © 2026</span>
         <nav aria-label="Contact">
           <a
             href="https://github.com/danielalyoshin"

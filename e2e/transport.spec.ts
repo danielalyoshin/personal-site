@@ -480,7 +480,9 @@ test('physical playback keys follow the player, remain clickable after resize, a
       ['Sound effects', 'player-sound'],
       ['Eject tape', 'player-eject'],
     ]) {
-      const button = page.getByRole('button', { name, exact: true })
+      const button = page
+        .getByTestId('studio-scene')
+        .getByRole('button', { name, exact: true })
       // Whole pixels inside the viewport. IntersectionObserver's ratio can
       // read 0.9999998 for a fully visible key: its rect comes through a
       // fractional 3D transform, so the area quotient carries float noise.
@@ -551,14 +553,13 @@ test('physical playback keys follow the player, remain clickable after resize, a
       expect(rect.height).toBeGreaterThanOrEqual(44)
     }
     // Hit testing catches a canvas or reader overlay intercepting these keys.
-    const sound = page.getByRole('button', {
-      name: 'Sound effects',
-      exact: true,
-    })
-    await sound.click()
-    await expect(sound).toHaveAttribute('aria-pressed', 'true')
+    const sound = page
+      .getByTestId('studio-scene')
+      .getByRole('button', { name: 'Sound effects', exact: true })
     await sound.click()
     await expect(sound).toHaveAttribute('aria-pressed', 'false')
+    await sound.click()
+    await expect(sound).toHaveAttribute('aria-pressed', 'true')
     const reader = page.getByRole('article')
     expect(
       await reader.evaluate((el) => {
@@ -645,7 +646,7 @@ test('the canvas is sized before the tape moves, and the keys keep one printed l
         frames,
         viewport: { width: innerWidth, height: innerHeight },
         keysDuringInsertion: document.querySelectorAll(
-          'button[aria-label="Eject tape"], button[aria-label="Sound effects"]',
+          '[data-testid="studio-scene"] :is(button[aria-label="Eject tape"], button[aria-label="Sound effects"])',
         ).length,
         labels: labels(),
       }
@@ -682,7 +683,7 @@ test('the canvas is sized before the tape moves, and the keys keep one printed l
         .store.getState()
       const keys = [
         ...document.querySelectorAll<HTMLButtonElement>(
-          'button[aria-label="Eject tape"], button[aria-label="Sound effects"]',
+          '[data-testid="studio-scene"] :is(button[aria-label="Eject tape"], button[aria-label="Sound effects"])',
         ),
       ]
       return {
@@ -745,8 +746,12 @@ test('the compact player supports skip, sound, and eject on a narrow touch scree
     expect(await skip.evaluate((el) => !!el.closest('[role="group"]'))).toBe(
       false,
     )
+    // The page's sound key stands over the insertion, then steps aside for
+    // the full-height reader, which carries its own.
+    await expect(page.getByTestId('sound-toggle')).toBeInViewport({ ratio: 1 })
     await skip.tap()
     await expect(page.locator('article h2')).toBeFocused()
+    await expect(page.getByTestId('sound-toggle')).toBeHidden()
     const controls = page.getByRole('group', { name: 'VHS player controls' })
     await expect(controls).toBeInViewport({ ratio: 1 })
     for (const button of await controls.getByRole('button').all()) {
@@ -756,7 +761,7 @@ test('the compact player supports skip, sound, and eject on a narrow touch scree
     }
     const sound = controls.getByRole('button', { name: 'Sound effects' })
     await sound.tap()
-    await expect(sound).toHaveAttribute('aria-pressed', 'true')
+    await expect(sound).toHaveAttribute('aria-pressed', 'false')
     await controls.getByRole('button', { name: 'Eject tape' }).tap()
     await expect(page).toHaveURL('/')
     expect(

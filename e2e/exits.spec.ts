@@ -139,8 +139,11 @@ test('Skip takes focus for the insertion, and only a real key press skips', asyn
   const skip = page.getByRole('button', { name: 'Skip animation' })
   await expect(skip).toBeFocused()
   // Shift on its way to Shift+Tab is not "any key": the flight carries on,
-  // and the focus loop holds on the one control there is.
+  // and the focus loop holds on the insertion's two controls, the page's
+  // sound key and Skip.
   await page.keyboard.press('Shift+Tab')
+  await expect(page.getByTestId('sound-toggle')).toBeFocused()
+  await page.keyboard.press('Tab')
   await expect(skip).toBeFocused()
   // Enter on the focused key is the key's own press.
   await page.keyboard.press('Enter')

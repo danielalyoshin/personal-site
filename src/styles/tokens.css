@@ -8,6 +8,7 @@
 :root {
   /* Chassis graphite scale (never pure black) */
   --ink-0: #0e0f12;
+  --ink-veil: #0e0f12cc;
   --ink-2: #1d2026;
   --ink-3: #262a32;
   --seam: #2e323b;
