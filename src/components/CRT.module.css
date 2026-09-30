@@ -130,6 +130,16 @@
   }
 }
 
+/* Reduced motion gets no wobble at all. The global gate only shortens an
+   animation, and a shortened one still paints its first keyframe, the
+   picture 6% high at double brightness, for one frame. Chrome counts that
+   frame as a layout shift (0.085 on a desktop deep link). */
+@media (prefers-reduced-motion: reduce) {
+  .trackIn {
+    animation: none;
+  }
+}
+
 /* OSD chrome floats over the picture; its glow is inside the screen. Three
    fields: transport state, the station ident, the tape's counter. The outer
    columns share the spare width equally, so the ident sits on the tube's

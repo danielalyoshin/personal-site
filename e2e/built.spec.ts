@@ -49,7 +49,33 @@ test('every route is readable, and named, before any script runs', async ({
     expect(described, path).toBeTruthy()
     expect(described).not.toContain('Portfolio of Daniel Alyoshin')
     expect(html.split(`content="${described}"`)).toHaveLength(4)
+    // And a card of its own: this tape going into the deck, said twice.
+    const meta = (key: string) =>
+      html.match(
+        new RegExp(`<meta\\s+(?:property|name)="${key}"\\s+content="([^"]*)"`),
+      )?.[1]
+    const card = meta('og:image')!
+    expect(card).toMatch(
+      new RegExp(`/social-cards/${path.split('/').pop()}\\.png$`),
+    )
+    expect(meta('twitter:image')).toBe(card)
+    expect(meta('og:image:alt')).toContain('LOADING TAPE')
+    expect(meta('twitter:image:alt')).toBe(meta('og:image:alt'))
+    const image = await request.get(new URL(card, 'http://x').pathname)
+    expect(image.headers()['content-type']).toBe('image/png')
+    const png = await image.body()
+    expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1200, 630])
   }
+  // Every tape's card differs from the site's, and from every other tape's.
+  const cards = await Promise.all(
+    [
+      '/social-card.png',
+      ...tapes.map(({ path }) => `/social-cards/${path.split('/').pop()}.png`),
+    ].map(async (url) =>
+      (await (await request.get(url)).body()).toString('base64'),
+    ),
+  )
+  expect(new Set(cards).size).toBe(cards.length)
 
   // The page a static host serves for any address it has no file for.
   const missing = await (await request.get('/404.html')).text()

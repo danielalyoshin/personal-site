@@ -1033,7 +1033,10 @@ transform, so the reader beneath is never repainted), scanlines, a vignette,
 one tracking entrance (400ms), and the REC blink (1.2s). The fallback idle cursor
 blinks at 1.1s. Every effect stays clipped inside the tube. The global
 reduced-motion gate collapses CSS animation and transitions; sidecar snippets
-carry their own equivalent gate because shadow DOM does not inherit it.
+carry their own equivalent gate because shadow DOM does not inherit it. The
+tracking entrance does not play at all under reduced motion: a collapsed
+animation still paints its first keyframe for a frame, and this one's is the
+picture 6% high at double brightness.
 
 ### OSD links and tags
 
@@ -1079,18 +1082,30 @@ announcement tell tapes apart. `index.html` carries Open Graph and Twitter
 (`summary_large_image`) tags with the home title and the site description.
 Crawlers run no script, so each route's file is written with its own title
 and, for a tape, its tagline as the description, in the search, Open Graph,
-and Twitter tags alike; the card image is the site's on every route until
-tapes have cards of their own.
+and Twitter tags alike.
 
-The card's image is the studio itself: `public/social-card.png`, 1200 × 630,
-rendered from the live scene at the browse camera on the graphite ground by
-`npm run render:card` (drawn at twice the size and averaged down). No copy
-is set on the image; its words are the title and description tags, which
-are Daniel's. Re-render it when the models, materials, lighting, or idle
-screen change. Image URLs are written as `%SITE_URL%/social-card.png`: the
-build fills the site's address from the `SITE_URL` environment variable,
-because several crawlers accept only absolute image URLs, and warns when a
-build has none. The address itself is a Stage 10 decision.
+**The Card Rule.** A shared link shows what it opens. Home and the NO
+SIGNAL page unfurl with the site's card, `public/social-card.png`: the
+studio at rest, the tube reading INSERT TAPE. Every tape unfurls with its
+own, `public/social-cards/<slug>.png`: the same studio caught as that tape
+plays, the shell half through the deck's mouth, its slot in the rack empty,
+and the tube reading LOADING TAPE over its spine label. One camera and one
+frame for every card, so the cards read as a set and differ only by the
+tape in the deck; the tube's print still names the tape in a 400px-wide
+unfurl. Each card's alt text says the same: which tape, going in, under
+which words.
+
+The cards are drawn from the live scene at the browse camera on the
+graphite ground by `npm run render:card` (1200 × 630, drawn at twice the
+size and averaged down); a tape's card steps the real insertion frame by
+frame until half the shell is through the mouth. No copy is set on an
+image beyond what the tube and the labels print; the words are the title
+and description tags, which are Daniel's. Re-render after the models,
+materials, lighting, tube screens, or tapes change; the build stops if a
+tape's card is missing. Image URLs are written as `%SITE_URL%/…`: the build
+fills the site's address from the `SITE_URL` environment variable, because
+several crawlers accept only absolute image URLs, and warns when a build
+has none. The address itself is a Stage 10 decision.
 
 ## Do's and Don'ts
 
@@ -1108,6 +1123,7 @@ build has none. The address itself is a Stage 10 decision.
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
 - Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).
+- Do give every tape a share card of its own, the studio caught as that tape goes into the deck (The Card Rule).
 - Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.
 - Do leave an unfilled project slot legible as a blank tape and an outlined "Coming soon…" entry, never as an invented project.
 

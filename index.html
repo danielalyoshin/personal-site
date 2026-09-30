@@ -24,9 +24,11 @@
     -->
     <title>Daniel Alyoshin · Forward Deployed Engineer</title>
     <!--
-      Share cards. Crawlers read this file as served and run no script, so
-      every route unfurls with the site's card. The image is a render of the
-      studio itself (npm run render:card). %SITE_URL% is the site's address,
+      Share cards. Crawlers read the page as served and run no script, so the
+      build writes each route's own tags (scripts/prerender.mjs): a tape's
+      page swaps in its title, tagline and its own card, the tape going into
+      the deck. The images are renders of the studio itself (npm run
+      render:card). %SITE_URL% is the site's address,
       filled in at build time from the SITE_URL environment variable (see
       vite.config.ts): several crawlers only accept an absolute image URL.
     -->

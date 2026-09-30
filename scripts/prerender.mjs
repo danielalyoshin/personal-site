@@ -1,9 +1,10 @@
 // Renders every route to static HTML after `vite build`, so the page is
 // readable before any script runs and each route unfurls, and is indexed,
-// under its own name. Also writes 404.html (the NO SIGNAL page, which static
-// hosts serve for unknown addresses), robots.txt, and, once the site has an
-// address, sitemap.xml and canonical URLs. Run by `npm run build`.
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+// under its own name, a tape's with its own card. Also writes 404.html (the
+// NO SIGNAL page, which static hosts serve for unknown addresses),
+// robots.txt, and, once the site has an address, sitemap.xml and canonical
+// URLs. Run by `npm run build`.
+import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { build, loadEnv } from 'vite'
@@ -81,6 +82,20 @@ try {
         'twitter:description',
       ])
         html = swap(html, meta(key), `$1${escape(page.description)}$2`, key)
+    if (page.card) {
+      // A card the build would link to but not ship unfurls as a broken image.
+      try {
+        await access(resolve(dist, page.card.image.slice(1)))
+      } catch {
+        throw new Error(
+          `prerender: ${page.path} unfurls with ${page.card.image}, which is not in public/. Run npm run render:card.`,
+        )
+      }
+      for (const key of ['og:image', 'twitter:image'])
+        html = swap(html, meta(key), `$1${origin}${page.card.image}$2`, key)
+      for (const key of ['og:image:alt', 'twitter:image:alt'])
+        html = swap(html, meta(key), `$1${escape(page.card.alt)}$2`, key)
+    }
     const head = []
     // A dead link should not be indexed under whatever address it was given.
     if (page.notFound) head.push('<meta name="robots" content="noindex" />')

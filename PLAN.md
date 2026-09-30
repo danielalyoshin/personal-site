@@ -1454,11 +1454,32 @@ rest, by finding:
   closing-polish passes, then "Second audit remediation" above; the addendum
   in `AUDIT.md` has the re-measured numbers: Lighthouse mobile performance
   89, SEO 100, axe clean over seven states of the built site).
-- Left of Stage 9, unblocked now that the content is final (2026-09-29):
-  alt text and image optimization on real media, per-tape share cards
-  (every route unfurls with the site's card until then), one more
-  Lighthouse and axe run over the real pages, and a screen-reader session
-  and a physical-device pass, which no audit has done.
+- ✅ Final checks with the real content (2026-09-29), recorded in
+  `AUDIT.md` ("Final checks with the real content"):
+  - Per-tape share cards (The Card Rule): `npm run render:card` now also
+    draws `public/social-cards/<slug>.png`, the studio caught as that tape
+    goes into the deck, half through the mouth, with the tube reading
+    LOADING TAPE over its name; `scripts/prerender.mjs` gives each tape's
+    page its card and alt text, and stops the build when a card is
+    missing. Three looks were prototyped at 1200 × 630: the tape pulled
+    from the rack with the tube naming it (too close to the home card at
+    thumbnail size, and "select this tape" asks for a click a card cannot
+    take), the tape going in (chosen: the shell in the deck and the gap in
+    the rack read even at 400px wide), and a tighter crop (cut the
+    speaker and headphones, read as a screenshot). The site's own card was
+    re-rendered too: it still showed the removed ALPHA, BETA and GAMMA.
+  - axe over fourteen states: zero violations. Lighthouse 13.5.0: mobile
+    82–87, desktop 97–100, accessibility, best practices and SEO 100 (NO
+    SIGNAL's SEO is its `noindex`).
+  - Media: alt text, sizes and reserved boxes checked; load cost on a slow
+    connection measured. A density `srcset` for diagrams is offered, not
+    done (45 KB saved on 1× screens, 27 KB on 2×, none on 3× phones).
+  - Fixed: the tube's tracking entrance no longer plays under reduced
+    motion; its collapsed first keyframe was a one-frame jolt and flash.
+  - `.impeccable/design.json` regenerated from DESIGN.md (24 rules, 15 dos,
+    9 don'ts, 11 components).
+- Left of Stage 9: a screen-reader session and a physical-device pass,
+  which no audit has done.
 
 ### Stage 10 — Deployment (LAST, per project rules)
 

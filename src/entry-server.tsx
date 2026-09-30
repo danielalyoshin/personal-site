@@ -18,6 +18,11 @@ export interface Page {
   description?: string
   /** The route that answers every address without a page of its own. */
   notFound?: boolean
+  /**
+   * A tape's own share card, drawn by `npm run render:card` as the tape goes
+   * into the deck; home and NO SIGNAL keep the site's card in index.html.
+   */
+  card?: { image: string; alt: string }
 }
 
 export const homeTitle = site.title
@@ -28,6 +33,10 @@ export const pages: Page[] = [
     path: `/project/${tape.slug}`,
     title: pageTitle(tape),
     description: tape.tagline,
+    card: {
+      image: `/social-cards/${tape.slug}.png`,
+      alt: `A low-poly studio on a graphite table: a CRT monitor reading LOADING TAPE, ${tape.vhs.spineLabel}, over a VHS deck with the ${tape.vhs.spineLabel} tape halfway in, beside a rack of cassettes, a speaker, and headphones.`,
+    },
   })),
   { path: '/404', title: pageTitle('nosignal'), notFound: true },
 ]

@@ -115,8 +115,10 @@ same port is refused, not tested by mistake. Move the ports with `E2E_PORT`
 ## Share card
 
 `index.html` carries Open Graph and Twitter tags over `public/social-card.png`,
-a 1200 × 630 render of the studio itself. Re-render it after the models,
-materials, lighting, or idle screen change:
+a 1200 × 630 render of the studio itself, and the build gives each tape's page
+its own card, `public/social-cards/<slug>.png`: the studio as that tape goes
+into the deck. Re-render them all after the models, materials, lighting, tube
+screens, or tapes change (the build stops if a tape has no card):
 
 ```sh
 npm run render:card
@@ -134,7 +136,7 @@ drawn across at 640px for the full-height reader and, when it needs one, a
 needs `cwebp` (`brew install webp`).
 
 The card script starts its own Vite server and drives installed Chrome, as
-the browser suite does. The image URL is written as `%SITE_URL%/social-card.png`;
+the browser suite does. Image URLs are written as `%SITE_URL%/…`;
 a build fills it from the `SITE_URL` environment variable (or a `.env` file)
 and warns when it is unset, since several crawlers accept only absolute image
 URLs. Locally it resolves to a root-relative path.

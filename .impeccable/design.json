@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-16T00:00:36.675Z",
+  "generatedAt": "2026-09-29T23:39:49.000Z",
   "title": "Design System: Daniel Alyoshin — Personal Site",
   "extensions": {
     "colorMeta": {
@@ -8,6 +8,7 @@
         "role": "neutral",
         "displayName": "Graphite ground",
         "canonical": "#0e0f12",
+        "description": "The page and playback backdrop.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -23,6 +24,7 @@
         "role": "neutral",
         "displayName": "Transport graphite",
         "canonical": "#16181d",
+        "description": "Graphite layers (ink-1, ink-2, ink-3): transport strip, control surfaces, tape-preview surfaces, and hover states.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -38,6 +40,7 @@
         "role": "neutral",
         "displayName": "Surface graphite",
         "canonical": "#1d2026",
+        "description": "Graphite layers (ink-1, ink-2, ink-3): transport strip, control surfaces, tape-preview surfaces, and hover states.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -51,8 +54,9 @@
       },
       "ink-3": {
         "role": "neutral",
-        "displayName": "Hover graphite",
+        "displayName": "Control graphite",
         "canonical": "#262a32",
+        "description": "Graphite layers (ink-1, ink-2, ink-3): transport strip, control surfaces, tape-preview surfaces, and hover states.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -68,6 +72,7 @@
         "role": "neutral",
         "displayName": "Machined seam",
         "canonical": "#2e323b",
+        "description": "Thin dividers, borders, and emphasized edges.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -83,6 +88,7 @@
         "role": "neutral",
         "displayName": "Lit seam",
         "canonical": "#3a3f4a",
+        "description": "Thin dividers, borders, and emphasized edges.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -98,6 +104,7 @@
         "role": "neutral",
         "displayName": "High silkscreen",
         "canonical": "#e9ebf1",
+        "description": "Primary identity and controls. CSS: --silk-hi.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -113,6 +120,7 @@
         "role": "neutral",
         "displayName": "Silkscreen",
         "canonical": "#b7bbc6",
+        "description": "General chrome. CSS: --silk.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -128,6 +136,7 @@
         "role": "neutral",
         "displayName": "Dim silkscreen",
         "canonical": "#868b99",
+        "description": "Secondary labels. CSS: --silk-dim.",
         "tonalRamp": [
           "#0e0f12",
           "#16181d",
@@ -143,6 +152,7 @@
         "role": "primary",
         "displayName": "VFD Cyan",
         "canonical": "#61e8c6",
+        "description": "Crisp keyboard focus, text selection, and playback-state text. It is an interface accent, not an emitting display on the deck. CSS: --vfd.",
         "tonalRamp": [
           "oklch(15.000% 0.12830 173.748)",
           "oklch(26.429% 0.12830 173.748)",
@@ -158,6 +168,7 @@
         "role": "secondary",
         "displayName": "CRT Blue",
         "canonical": "#242bd9",
+        "description": "The idle tube in both renderers: the modeled CRT’s idle, loading, and returning texture, and the HTML fallback’s idle screen, bloom, and cast.",
         "tonalRamp": [
           "oklch(15.000% 0.25100 268.533)",
           "oklch(26.429% 0.25100 268.533)",
@@ -167,13 +178,13 @@
           "oklch(72.143% 0.25100 268.533)",
           "oklch(83.571% 0.25100 268.533)",
           "oklch(95.000% 0.25100 268.533)"
-        ],
-        "description": "The idle tube in both renderers: the modeled CRT’s idle, loading, and returning texture, and the HTML fallback’s idle screen, bloom, and cast."
+        ]
       },
       "screen-black": {
         "role": "neutral",
         "displayName": "Screen black",
         "canonical": "#07080c",
+        "description": "The reading ground inside the tube.",
         "tonalRamp": [
           "oklch(15.000% 0.00936 272.537)",
           "oklch(26.429% 0.00936 272.537)",
@@ -189,6 +200,7 @@
         "role": "neutral",
         "displayName": "Screen text",
         "canonical": "#dfe6ff",
+        "description": "Prose inside the tube.",
         "tonalRamp": [
           "oklch(15.000% 0.03478 273.262)",
           "oklch(26.429% 0.03478 273.262)",
@@ -204,6 +216,7 @@
         "role": "neutral",
         "displayName": "Dim screen text",
         "canonical": "#98a3c9",
+        "description": "Metadata inside the tube.",
         "tonalRamp": [
           "oklch(15.000% 0.05678 272.289)",
           "oklch(26.429% 0.05678 272.289)",
@@ -219,6 +232,7 @@
         "role": "neutral",
         "displayName": "Soft screen text",
         "canonical": "#aeb8dd",
+        "description": "Secondary screen text: the station ident, tags, PICTURE SIZE.",
         "tonalRamp": [
           "oklch(15.000% 0.05381 273.239)",
           "oklch(26.429% 0.05381 273.239)",
@@ -234,6 +248,7 @@
         "role": "neutral",
         "displayName": "OSD white",
         "canonical": "#ffffff",
+        "description": "OSD actions. CSS: --osd.",
         "tonalRamp": [
           "oklch(15.000% 0.00000 89.876)",
           "oklch(26.429% 0.00000 89.876)",
@@ -249,6 +264,7 @@
         "role": "secondary",
         "displayName": "REC Red",
         "canonical": "#ff3b30",
+        "description": "The recorded indicator inside project playback, and the muted speaker’s slash on the key and in the deck’s status window.",
         "tonalRamp": [
           "oklch(15.000% 0.23214 28.659)",
           "oklch(26.429% 0.23214 28.659)",
@@ -260,10 +276,27 @@
           "oklch(95.000% 0.23214 28.659)"
         ]
       },
+      "screen-scroll": {
+        "role": "neutral",
+        "displayName": "Screen scrollbar",
+        "canonical": "#5c6683",
+        "description": "The reader’s thin scrollbar thumb, 3.5:1 on the tube.",
+        "tonalRamp": [
+          "oklch(15.000% 0.04775 269.862)",
+          "oklch(26.429% 0.04775 269.862)",
+          "oklch(37.857% 0.04775 269.862)",
+          "oklch(49.286% 0.04775 269.862)",
+          "oklch(60.714% 0.04775 269.862)",
+          "oklch(72.143% 0.04775 269.862)",
+          "oklch(83.571% 0.04775 269.862)",
+          "oklch(95.000% 0.04775 269.862)"
+        ]
+      },
       "phosphor": {
         "role": "secondary",
         "displayName": "Phosphor",
         "canonical": "#b4c4ff",
+        "description": "A lit tube’s light: the CSS play and rest blooms and the play cast, and the modeled point light during playback.",
         "tonalRamp": [
           "oklch(15.000% 0.08500 272.669)",
           "oklch(26.429% 0.08500 272.669)",
@@ -273,22 +306,6 @@
           "oklch(72.143% 0.08500 272.669)",
           "oklch(83.571% 0.08500 272.669)",
           "oklch(95.000% 0.08500 272.669)"
-        ],
-        "description": "A lit tube’s light: the CSS play and rest blooms and the play cast, and the modeled point light during playback."
-      },
-      "screen-scroll": {
-        "role": "neutral",
-        "displayName": "Screen scrollbar",
-        "canonical": "#5c6683",
-        "tonalRamp": [
-          "oklch(15.000% 0.05678 272.289)",
-          "oklch(26.429% 0.05678 272.289)",
-          "oklch(37.857% 0.05678 272.289)",
-          "oklch(49.286% 0.05678 272.289)",
-          "oklch(60.714% 0.05678 272.289)",
-          "oklch(72.143% 0.05678 272.289)",
-          "oklch(83.571% 0.05678 272.289)",
-          "oklch(95.000% 0.05678 272.289)"
         ]
       },
       "tube-ink": {
@@ -359,277 +376,336 @@
     "typographyMeta": {
       "display": {
         "displayName": "Introduction",
-        "purpose": "Archivo introduction at weight 600, 110% stretch, and -0.035em tracking, capped at 4rem; the secondary line is dim silkscreen."
+        "purpose": "The introductory line: Archivo at weight 600, 110% stretch, -0.035em tracking, and 1.06 leading, capped at 4rem beside the studio. Beside the studio it gives way to the corner it stands in (The Studio First Rule): never wider than 4.6vw, and on short windows never taller than the corner above the lifted tape, down to a 2rem floor (2.25rem beside a narrow studio). The secondary line uses dim silkscreen."
       },
       "display-mobile": {
         "displayName": "Mobile introduction",
-        "purpose": "2–3.375rem balanced introduction at widths of 600px and below."
+        "purpose": "The introductory line in the mobile look, 2–3.375rem, where the shorter side of the screen sets its size so a small phone on its side gives more of its first screen to the studio."
       },
       "display-short": {
-        "displayName": "Short desktop introduction",
-        "purpose": "2.5–3rem introduction above 600px width when the viewport is 820px tall or less."
+        "displayName": "Short-window introduction",
+        "purpose": "The introductory line beside the studio on windows no taller than 820px, capped at 3rem and fitted to the corner above the lifted tape."
       },
       "mark": {
         "displayName": "Loading mark",
-        "purpose": "2.625rem AV–01 identifier at weight 600 and -0.02em tracking, shown only while the studio loads."
+        "purpose": "2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "1rem Archivo at weight 400: introductory prose at 1.6 leading and 0.005em tracking in a 36ch aside; the page baseline, skip link, and native loading line inherit 1.5 leading."
+        "purpose": "1rem at weight 400. The page baseline, skip link, and the native reader’s loading line inherit 1rem at 1.5 leading."
       },
       "functional-title": {
         "displayName": "Functional title",
-        "purpose": "0.875rem at weight 600 and 1.35 leading: the nameplate, selection guide, archive heading, and tape names."
+        "purpose": "0.875rem at weight 600 with 1.35 leading: the nameplate, selection guide, archive heading, and tape names."
       },
       "functional": {
         "displayName": "Functional",
-        "purpose": "0.875rem navigation links at weight 400 and 1.5 leading; their state is carried by colour (silkscreen, high on hover)."
+        "purpose": "0.875rem navigation links at weight 400 with 1.5 leading; they rely on colour (silkscreen, high on hover) for their state."
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "0.75rem at weight 400 and 1.5 leading: the role line, guide instruction, archive note, tape captions, footer statement, loading and fallback notes, and the Escape hint. The native deck keys and Skip animation use the control variant."
+        "purpose": "0.75rem at weight 400 with 1.5 leading: the role line, guide instruction, archive note, tape captions, footer statement, the loading note, and the Escape hint."
       },
       "control": {
-        "displayName": "Playback control",
-        "purpose": "Uppercase Archivo hardware labels at weight 600 and 0.1em tracking with 44px minimum hit areas. Native deck keys use 0.75rem; each modeled key cap carries one printed label (0.0715 world units, about 16px at desktop playback zoom) in every state, with an invisible native hit area over it during playback."
+        "displayName": "Hardware control",
+        "purpose": "The caption size’s control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading, for the native deck keys and Skip animation. The modeled SOUND and EJECT key caps print their one label in uppercase Archivo at weight 600 and 0.1em tracking."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "0.6875rem uppercase at weight 600 and 0.12em tracking in dim silkscreen: the introductory kicker, the archive entries' numbers, footer edition, and the native reader’s AV–01 mark. Nothing on the shell is set below this step."
+        "purpose": "0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries’ numbers, the footer edition, and the native reader’s AV–01 model mark. Nothing on the shell is set below this step."
       },
       "screen-title": {
         "displayName": "Screen title",
-        "purpose": "Tube-scaled uppercase Archivo at weight 800 and 110% stretch, 1.5–2rem (5.6cqi) at 1.12 leading; keyboard focus adds a 3px OSD-white underline."
+        "purpose": "Uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping; 1.5–2rem (5.6cqi) on the modeled screen. Focus lands on the title by script and draws no ring; for a tape chosen from the keyboard it adds a 3px OSD-white underline offset by 0.28em."
       },
       "screen-body": {
         "displayName": "Screen prose",
-        "purpose": "Weight-400 tube-scaled prose at 1.65 leading, 1–1.0625rem (3.1cqi); one centered 62ch column aligns all reader content."
+        "purpose": "Weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing, 1–1.0625rem (3.1cqi) on the modeled screen, in one centered column capped at 62ch that aligns titles, prose, media, tags, and links. Long text wraps without horizontal scrolling."
       },
       "screen-tagline": {
         "displayName": "Screen tagline",
-        "purpose": "Weight-600 tube-scaled introduction at 1.5 leading with the same 62ch measure."
+        "purpose": "Weight 600 with 1.5 leading at the screen prose size, in the same 62ch column."
       },
       "full-height-title": {
         "displayName": "Full-height reader title",
-        "purpose": "1.5–2rem (7.5cqi) title in the explicit full-height reader mode."
+        "purpose": "The screen title in the full-height reader: the same 1.5rem floor and 2rem cap, at 7.5cqi."
       },
       "full-height-body": {
         "displayName": "Full-height reader prose",
-        "purpose": "16–18px (2.4cqi) prose in full-height mode, selected at widths up to 767px or heights up to 699px."
+        "purpose": "1–1.125rem (2.4cqi) prose in the full-height native reader, which preserves a 16px prose floor and independent scrolling."
       },
       "full-height-tagline": {
         "displayName": "Full-height reader tagline",
-        "purpose": "Weight-600 16–18px introduction in the full-height reader."
+        "purpose": "Weight 600 with 1.5 leading at the full-height prose size."
       },
       "osd": {
         "displayName": "Playback OSD",
-        "purpose": "Tube-scaled VT323 at weight 400 for PLAY and the reading time, 1.125–1.375rem (4.5cqi) at 1.2 leading; the station ident shares this size in screen-soft, without the glow, on the tube's centre line."
+        "purpose": "VT323 at weight 400 for PLAY, the station ident, and the reading time, 1.125–1.375rem (4.5cqi) with 1.2 leading; the ident is in screen-soft and without the OSD’s glow so the transport state leads."
       },
       "osd-meta": {
         "displayName": "Screen metadata",
-        "purpose": "Tube-scaled VT323 for the year and role line, captions, tags, links, and the REC line, 1.0625–1.25rem (4cqi) at 1.35 leading; NO SIGNAL's printed exit hint (PRESS ESC OR EJECT TO RETURN) uses it in OSD white."
+        "purpose": "VT323 for metadata, captions, tags, links, and the REC line, 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL’s exit hint is set in this size in OSD white."
       },
       "osd-display": {
         "displayName": "Screen message",
-        "purpose": "Large VT323 NO SIGNAL and fallback idle prompts, 1.5–2.5rem (9cqi) with 0.06em tracking."
+        "purpose": "VT323 for NO SIGNAL and the idle message, 1.5–2.5rem (9cqi) with 0.06em tracking."
       }
     },
     "shadows": [
       {
         "name": "shadow-unit",
         "value": "0 12px 32px rgba(0, 0, 0, 0.4)",
-        "purpose": "Ambient drop under the HTML fallback monitor."
+        "purpose": "Monitor support: the active HTML fallback frame uses the existing ambient drop shadow."
       },
       {
         "name": "bloom-rest",
         "value": "0 0 40px 0 color-mix(in srgb, var(--phosphor) 10%, transparent)",
-        "purpose": "Screen-only CSS bloom: the HTML tube's base value, beneath every state rule."
+        "purpose": "Screen bloom: the HTML tube’s base value, beneath its three state rules."
       },
       {
         "name": "bloom-play",
         "value": "0 0 40px 0 color-mix(in srgb, var(--phosphor) 16%, transparent)",
-        "purpose": "Screen-only CSS bloom for a lit tube of OSD on the black ground: playback and NO SIGNAL, which also share the play cast."
+        "purpose": "Screen bloom for a lit tube of OSD on the black ground: playback and NO SIGNAL both take it, as both take the play cast on the deck."
       },
       {
         "name": "bloom-idle",
         "value": "0 0 56px 2px color-mix(in srgb, var(--crt-blue) 45%, transparent)",
-        "purpose": "Screen-only CSS bloom for the blue idle tube."
+        "purpose": "Screen bloom for the blue idle tube."
       },
       {
-        "name": "expanded-reader-surround",
+        "name": "native-reader-surround",
         "value": "0 0 0 20px var(--ink-0)",
-        "purpose": "Opaque page-ground surround for the native reader on narrow or short viewports; not a glow."
+        "purpose": "An opaque 20px spread in page-ground color masks the expanded reader’s surroundings; it is not a glow."
       }
     ],
     "motion": [
       {
         "name": "t-fast",
         "value": "120ms",
-        "purpose": "OSD link background and color feedback."
+        "purpose": "Quick OSD feedback: the OSD links’ inversion, the closer-look slate’s edge, and the size bar’s steps."
       },
       {
         "name": "t-med",
         "value": "240ms",
-        "purpose": "HTML CRT background and bloom transitions."
-      },
-      {
-        "name": "shell-feedback",
-        "value": "200ms",
-        "purpose": "Archive background/border transitions."
-      },
-      {
-        "name": "studio-frame",
-        "value": "1 - exp(-min(delta, 0.05) * 5), about 0.9s to settle",
-        "purpose": "The studio's frame eases between its box on the page and the viewport (The Soft Zoom Rule): the canvas detaches transparently and is sized in the same commit, the studio keeps its place, its frame grows to the viewport on selection and shrinks back into the box after eject before the canvas rejoins the page. No frame shows a jump. Immediate for reduced motion or skip."
+        "purpose": "HTML tube background and bloom transitions, and the continuation fade at the tube’s foot, which lifts once the article’s end is in view."
       },
       {
         "name": "page-dissolve",
         "value": "opacity 560ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "The header, introduction, guide, archive and footer fade to the graphite ground as the studio zooms in, and return as it zooms out; the canvas over the viewport is transparent, never an opaque cover."
+        "purpose": "The page chrome dissolves to the graphite ground as the studio grows to the viewport, and returns as it shrinks back (--t-dolly, --ease-out). The canvas layer over the viewport is transparent, never an opaque cover."
+      },
+      {
+        "name": "studio-frame",
+        "value": "1 - exp(-min(delta, 0.05) * 5), about 0.9s to settle",
+        "purpose": "The studio’s eased frame between its box on the page and the viewport (The Soft Zoom Rule): the canvas detaches over the viewport and is sized in the same commit, grows its frame on selection, and shrinks back into the box on eject before rejoining the page. No frame shows a jump. Immediate for reduced motion or skip."
       },
       {
         "name": "tape-insert",
         "value": "2.4s",
-        "purpose": "Nominal render-driven cassette/flap timeline; capped frame deltas can extend elapsed time. Skippable; reduced motion completes immediately."
+        "purpose": "Nominal render-driven insertion timeline; frame deltas are capped at 0.05s, so slow rendering can lengthen it. The mechanism starts on the frame after the studio starts growing. Skip finishes immediately; reduced motion snaps tape, frame, and camera."
       },
       {
         "name": "tape-eject",
         "value": "1.8s",
-        "purpose": "The insertion timeline run back from wherever the tape is: flap opens, tape leaves the bay, turns, and settles into its slot while the camera pulls back and the studio's frame shrinks into its page box. Reduced motion completes immediately."
+        "purpose": "The same timeline run back, an exit quicker than the entrance: the flap opens, the tape leaves the bay, turns, and settles into its slot along the path it came by, while the view pulls back and the frame shrinks into its box. An eject during insertion reverses from wherever the tape is. Reduced motion and the fallback reader return the tape at once."
       },
       {
         "name": "camera-interpolation",
         "value": "1 - exp(-min(delta, 0.05) * 7)",
-        "purpose": "Camera position, target, and zoom interpolate per frame, onto the screen after insertion and back to browse on eject; the zoom fits the eased studio frame. Immediate for reduced motion or skip."
+        "purpose": "The camera turns onto the screen after insertion, and back on eject, at rate 7 per second, never as a fixed CSS dolly; its zoom fits the eased studio frame. A move from rest begins with an ordinary frame’s step. Immediate for reduced motion or skip."
       },
       {
         "name": "reader-handoff",
         "value": "opacity 560ms cubic-bezier(0.16, 1, 0.3, 1), once the modeled reader is placed plus one drawn frame",
-        "purpose": "A desktop deep link's native reader dissolves onto the modeled screen once the scene is ready, with the tape already seated; the tube's tracking entrance plays through it. Reduced motion swaps at the same moment. The outgoing frame is hidden from assistive technology only once the modeled reader holds focus."
+        "purpose": "A desktop deep link’s native reader dissolves onto the modeled screen once the scene is ready (The Handoff Rule), while the tube’s tracking entrance plays through it; the same dissolve hands a full-screen picture back, the frame closing onto the tube as it fades. Reduced motion swaps at the same moment."
+      },
+      {
+        "name": "picture-size-step",
+        "value": "45ms per step",
+        "purpose": "Turning the picture up (The Picture Size Rule): the dial clicks once, then the size bar lights to full a step every 45ms with the dial turning in step. Skipped under reduced motion."
+      },
+      {
+        "name": "picture-grow",
+        "value": "clip-path 560ms cubic-bezier(0.16, 1, 0.3, 1), fading up over its first 40%",
+        "purpose": "The full-height reader grows out of the picture’s own rectangle, a clip opening from the tube to the window, and takes the window. Reduced motion takes the window at once."
       },
       {
         "name": "grain-step",
         "value": "0.8s steps(1, end) infinite",
-        "purpose": "Faint grain inside the HTML CRT: the tile is painted once on a layer one tile larger than the tube and the layer steps by transform, so the reader is never repainted; static under reduced motion."
+        "purpose": "Faint stepped grain inside the HTML tube: its tile is painted once on a layer one tile larger than the tube, and the layer steps by transform, so the reader beneath is never repainted."
       },
       {
         "name": "tracking-entrance",
         "value": "400ms steps(6, end) 1",
-        "purpose": "One tracking entrance inside the HTML CRT; collapsed under reduced motion."
+        "purpose": "One tracking entrance inside the HTML tube."
       },
       {
         "name": "rec-blink",
         "value": "1.2s steps(2, start) infinite",
-        "purpose": "Recorded dot inside playback; visible under reduced motion."
+        "purpose": "The REC dot closing the article."
       },
       {
         "name": "fallback-cursor",
         "value": "1.1s steps(2, start) infinite",
-        "purpose": "HTML fallback idle cursor; the modeled idle texture has no cursor animation."
+        "purpose": "The fallback idle cursor."
       }
     ],
     "breakpoints": [
       {
-        "name": "archive-three-columns-max",
-        "value": "1200px"
+        "name": "studio-first",
+        "value": "(width >= 768px) and (height >= 540px)",
+        "purpose": "The Studio First look: the studio takes the first screen under the header, and the introduction and guide stand in its open upper right."
       },
       {
-        "name": "short-desktop-height-max",
-        "value": "820px",
-        "purpose": "Compact header and introduction when viewport width is at least 601px."
+        "name": "studio-first-sideways",
+        "value": "(width >= 740px) and (height < 540px)",
+        "purpose": "A phone on its side also gets the Studio First look, with the words beside the studio instead of over it: the studio’s box takes the left column down to the fold, the words stand 24px clear at its upper right."
+      },
+      {
+        "name": "mobile-look",
+        "value": "(width < 740px), (width < 768px) and (height >= 540px)",
+        "purpose": "Anything else: the words in a band above a full-bleed studio, the guide pointing at the list, the list in two columns with its blank slots in one cell, 6% gutters, and a 72px header."
       },
       {
         "name": "native-reader-width-max",
         "value": "767px",
-        "purpose": "Full-height reading when either this width or the 699px height threshold is met."
-      },
-      {
-        "name": "compact-reader-padding-max",
-        "value": "719px"
+        "purpose": "The reading breakpoint: at this width or less (or the 699px height), the full-height native reader replaces the modeled one."
       },
       {
         "name": "native-reader-height-max",
         "value": "699px",
-        "purpose": "Full-height reading when either this height or the 767px width threshold is met."
+        "purpose": "Full-height native reading at this height or less, at any width. A window 540 to 699px tall browses in the Studio First look and reads in the native reader."
       },
       {
-        "name": "mobile-shell-max",
-        "value": "600px"
+        "name": "short-window-height-max",
+        "value": "820px",
+        "purpose": "Beside the studio: a 72px header, the box starting at the seam and capped at calc(100svh - 72px), 20px introduction and 16px guide spacing, and a display line capped at 3rem."
+      },
+      {
+        "name": "narrow-studio",
+        "value": "(768px <= width < 940px) and (height >= 540px)",
+        "purpose": "Beside a studio narrower than 940px the kicker breaks after “Bridging the gap” and the display line keeps a 2.25rem floor."
+      },
+      {
+        "name": "narrow-short",
+        "value": "(768px <= width < 940px) and (540px <= height < 600px)",
+        "purpose": "A window both narrow and short: the words close up (12px under the header, 6px under the kicker, 12px above the guide) and the display line fits the corner down to 2.0625rem."
+      },
+      {
+        "name": "archive-three-columns-max",
+        "value": "1200px",
+        "purpose": "The archive drops from six columns to three, and the nameplate’s cassette mark is not drawn (above it the mark hangs 16px into the left gutter)."
+      },
+      {
+        "name": "narrow-media-column-max",
+        "value": "639px",
+        "purpose": "Below 640px wide the reader shows a picture’s narrow drawing (ProjectMedia.narrow) in place of the one drawn across."
+      },
+      {
+        "name": "phone-max",
+        "value": "600px",
+        "purpose": "The phone’s steps, separate from both looks: the kicker’s break, the camera’s closer view (canvases up to 600px), and the shorter deck labels; the Eject key drops its ESC legend and NO SIGNAL’s exit hint names the deck’s key alone."
+      },
+      {
+        "name": "osd-read-word-container-max",
+        "value": "19.5rem",
+        "purpose": "A container width of the tube, not the viewport: below it the OSD’s reading time drops its word and keeps its number (1 MIN)."
+      },
+      {
+        "name": "osd-read-time-container-max",
+        "value": "15.5rem",
+        "purpose": "A container width of the tube: below it the reading time goes, and the ident keeps the bar."
       }
     ]
   },
   "components": [
     {
-      "name": "Eject tape",
-      "kind": "button",
+      "name": "Native reader deck",
+      "kind": "custom",
       "refersTo": "button-transport",
-      "description": "Native-reader hardware exit with uppercase Archivo and the desktop Escape hint.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><button type=\"button\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"m10 3 7 9H3zM3 14h14v3H3z\"/></svg> Eject tape <kbd>ESC</kbd></button></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: var(--tracking-control);\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk);\n  font: inherit;\n  font-weight: 400;\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n"
-    },
-    {
-      "name": "Skip animation",
-      "kind": "button",
-      "refersTo": "button-transport",
-      "description": "The hardware key of the native deck family, led by a drawn skip mark; the one control during insertion, at the viewport’s lower right for modeled playback or inside the native loading screen. HTML, never a modeled key.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><button type=\"button\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M3 4l9 6-9 6zM14 4h3v12h-3z\"/></svg> Skip animation</button></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: var(--tracking-control);\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk);\n  font: inherit;\n  font-weight: 400;\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n"
+      "description": "The native reader’s lower hardware panel (72px minimum height, under a seam-lit edge) with the AV–01 / VHS model mark and the deck’s keys: 44px minimum targets, 0.75rem uppercase labels at weight 600, small corners, a darker bottom edge, and a pressed state. Exit full screen, led by the drawn collapse mark with an F legend, leads only when the visitor has turned a desktop tube’s picture up to full screen; Sound and Eject follow. Both Eject keys are named “Eject tape” and declare Escape through aria-keyshortcuts; the ESC and F legends are hidden from assistive technology, and the Escape hint reads 7.5:1 on the key and 6.7:1 on hover. The eject key drops its ESC legend at 600px and below.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-frame\"><div class=\"ds-frameScreen\" aria-hidden=\"true\"></div><div class=\"ds-deck\"><span class=\"ds-deckLabel\">AV–01 <span>/ VHS</span></span><div class=\"ds-controls\" role=\"group\" aria-label=\"VHS player controls\"><button type=\"button\" class=\"ds-key\" aria-keyshortcuts=\"F\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M2.5 5.5h3v-3H8V8H2.5zM17.5 5.5h-3v-3H12V8h5.5zM2.5 14.5h3v3H8V12H2.5zM17.5 14.5h-3v3H12V12h5.5z\"/></svg> Exit full screen <kbd aria-hidden=\"true\">F</kbd></button><button type=\"button\" class=\"ds-key\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M3 17 17 3\" stroke=\"var(--rec-red)\"/></svg></button><button type=\"button\" class=\"ds-key\" aria-keyshortcuts=\"Escape\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"m10 3 7 9H3zM3 14h14v3H3z\"/></svg> Eject tape <kbd aria-hidden=\"true\">ESC</kbd></button></div></div></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-frame{display:flex;flex-direction:column;padding:12px 12px 0;border:1px solid var(--seam-lit);border-radius:var(--r-expanded-reader);background:var(--ink-2);}\n.ds-frameScreen{height:56px;border-radius:var(--r-screen);background:var(--screen-black);}\n.ds-deck{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;min-height:72px;margin-top:12px;padding:10px 0;border-top:1px solid var(--seam-lit);}\n.ds-deckLabel{color:var(--silk);font-size:var(--type-label);font-weight:600;line-height:1.2;letter-spacing:var(--tracking-label);text-transform:uppercase;}\n.ds-deckLabel span{color:var(--silk-dim);font-weight:400;}\n@media (max-width: 600px){.ds-deckLabel span{display:none;}}\n.ds-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;}\n.ds-key{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:10px 12px;border:1px solid var(--seam-lit);border-bottom:3px solid var(--ink-0);border-radius:var(--r-archive);background:var(--ink-3);color:var(--silk-hi);font-family:var(--font-chassis);font-size:var(--type-caption);font-weight:600;line-height:1.2;letter-spacing:var(--tracking-control);text-transform:uppercase;}\n.ds-key:hover{border-top-color:var(--silk-dim);background:var(--seam);}\n.ds-key:active{border-bottom-width:1px;transform:translateY(1px);}\n.ds-key kbd{color:var(--silk);font:inherit;font-weight:400;}\n@media (max-width: 600px){.ds-key kbd{display:none;}}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Playback sound",
       "kind": "button",
       "refersTo": "button-transport",
-      "description": "Native-reader sound toggle; off and on states expose aria-pressed. A filled speaker with stroked waves when on and a red slash across it when off. During modeled playback the same toggle is the deck’s printed SOUND key, with the same mark printed in the status window.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-transport\"><div class=\"ds-sound-states\"><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M3 17 17 3\" stroke=\"var(--rec-red)\"/></svg></button><button type=\"button\" aria-label=\"Sound effects\" aria-pressed=\"true\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M12 6a6 6 0 0 1 0 8M15 3a10 10 0 0 1 0 14\"/></svg></button></div></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-transport {\n  display: flex;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 8px;\n}\n\n.ds-transport button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  min-width: 44px;\n  min-height: 44px;\n  padding: 10px 12px;\n  border: 1px solid var(--seam-lit);\n  border-bottom: 3px solid var(--ink-0);\n  border-radius: 3px;\n  background: var(--ink-3);\n  color: var(--silk-hi);\n  font-family: var(--font-chassis);\n  font-size: var(--type-caption);\n  font-weight: 600;\n  line-height: 1.2;\n  letter-spacing: var(--tracking-control);\n  text-transform: uppercase;\n}\n\n.ds-transport button:hover {\n  border-top-color: var(--silk-dim);\n  background: var(--seam);\n}\n\n.ds-transport button:active {\n  border-bottom-width: 1px;\n  transform: translateY(1px);\n}\n\n.ds-transport kbd {\n  color: var(--silk);\n  font: inherit;\n  font-weight: 400;\n}\n\n@media (max-width: 600px) {\n  .ds-transport kbd {\n    display: none;\n  }\n}\n\n.ds-sound-states{display:flex;gap:8px;}"
+      "description": "The deck’s SOUND key, the single sound toggle: a filled speaker with two stroked waves when on and a red slash across it when off; aria-pressed carries the state. Sound is synthesized, default-off on every visit, never persisted, and user-triggered. During modeled playback it is the modeled deck’s printed SOUND key, and the same mark is printed in the status window.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-controls\"><button type=\"button\" class=\"ds-key\" aria-label=\"Sound effects\" aria-pressed=\"false\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M3 17 17 3\" stroke=\"var(--rec-red)\"/></svg></button><button type=\"button\" class=\"ds-key\" aria-label=\"Sound effects\" aria-pressed=\"true\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 4 5 7H2v6h3l4 3z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M12 6a6 6 0 0 1 0 8M15 3a10 10 0 0 1 0 14\"/></svg></button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;}\n.ds-key{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:10px 12px;border:1px solid var(--seam-lit);border-bottom:3px solid var(--ink-0);border-radius:var(--r-archive);background:var(--ink-3);color:var(--silk-hi);font-family:var(--font-chassis);font-size:var(--type-caption);font-weight:600;line-height:1.2;letter-spacing:var(--tracking-control);text-transform:uppercase;}\n.ds-key:hover{border-top-color:var(--silk-dim);background:var(--seam);}\n.ds-key:active{border-bottom-width:1px;transform:translateY(1px);}\n.ds-key kbd{color:var(--silk);font:inherit;font-weight:400;}\n@media (max-width: 600px){.ds-key kbd{display:none;}}\n.ds-controls{justify-content:flex-start;}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "Skip animation",
+      "kind": "button",
+      "refersTo": "button-transport",
+      "description": "A hardware key of the native deck family, available only during insertion and led by the drawn skip mark: at the viewport’s lower right for modeled playback and inside the native loading screen, with a 44px minimum target. It is HTML, never a modeled key. Skip takes focus for as long as it is on stage; any key still skips except Tab, a bare modifier, and Enter or Space on a focused key.",
+      "html": "<div class=\"ds-sample\"><button type=\"button\" class=\"ds-key\"><svg viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M3 4l9 6-9 6zM14 4h3v12h-3z\"/></svg> Skip animation</button></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;}\n.ds-key{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:10px 12px;border:1px solid var(--seam-lit);border-bottom:3px solid var(--ink-0);border-radius:var(--r-archive);background:var(--ink-3);color:var(--silk-hi);font-family:var(--font-chassis);font-size:var(--type-caption);font-weight:600;line-height:1.2;letter-spacing:var(--tracking-control);text-transform:uppercase;}\n.ds-key:hover{border-top-color:var(--silk-dim);background:var(--seam);}\n.ds-key:active{border-bottom-width:1px;transform:translateY(1px);}\n.ds-key kbd{color:var(--silk);font:inherit;font-weight:400;}\n@media (max-width: 600px){.ds-key kbd{display:none;}}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Site navigation",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "0.875rem Archivo links at weight 400 at every width: the archive route (the page’s single visible route to the section of that name) and About with a drawn play mark. No counts; hover raises the colour to high silkscreen. Every shell link is a target at least 44px tall, the nameplate and the footer’s contact links included; the floor is a hit area, so no word moves for it.",
-      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#archive\">The archive</a><a href=\"/project/about\">About<svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></nav></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:0.875rem;}\n.ds-nav a{display:inline-flex;align-items:center;gap:0.5em;text-decoration:none;min-height:44px;padding-block:12px;}\n.ds-nav .ds-arrow{flex-shrink:0;width:1em;height:1em;}\n.ds-nav a:hover{color:var(--silk-hi);}\n@media (max-width: 600px){.ds-nav{gap:18px;}}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+      "description": "Plain 0.875rem Archivo links at weight 400 with generous vertical padding and no underline, at every width: “Projects”, the page’s single visible route to the section of that name, and “About” with the drawn play mark set 0.5em from its label. Neither shows a count. Hover raises text contrast; keyboard focus keeps the cyan outline. Every shell link is a target at least 44px tall, and the floor is a hit area, never a layout change.",
+      "html": "<div class=\"ds-sample\"><nav class=\"ds-nav\" aria-label=\"Site\"><a href=\"#projects\">Projects</a><a href=\"/project/about\">About<svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" stroke=\"none\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></nav></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-nav{display:flex;align-items:center;gap:40px;font-size:var(--type-functional);}\n.ds-nav a{display:inline-flex;align-items:center;gap:0.5em;min-height:44px;padding-block:12px;text-decoration:none;}\n.ds-nav .ds-arrow{flex-shrink:0;width:1em;height:1em;}\n.ds-nav a:hover{color:var(--silk-hi);}\n@media (width < 740px), (width < 768px) and (height >= 540px){.ds-nav{gap:18px;}}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Archive entry",
       "kind": "card",
       "refersTo": "tape-link",
-      "description": "Full-width archive link with 80px minimum height and a 12px inset on every side: the 0.6875rem label-tier number over a wrapping 0.875rem name and 0.75rem placeholder caption on one text edge, with the drawn play mark centred in its own column; flex list items equalize full-grid row heights. Named by the words it shows, between “Play tape:” and its year (The Spoken Name Rule).",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-index\"><a href=\"/project/placeholder-alpha\" style=\"--tape-accent:#ff4554\"><span class=\"ds-sr\">Play tape: </span><span class=\"ds-number\">01</span><span class=\"ds-label\">ALPHA<small>Placeholder tape</small></span><span class=\"ds-sr\"> (2026)</span><svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" width=\"0.75rem\" height=\"0.75rem\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-index a{display:grid;grid-template:auto auto / minmax(0,1fr) auto;gap:4px 8px;align-content:center;width:100%;position:relative;padding:12px;min-height:80px;border:1px solid var(--seam);border-radius:3px;text-decoration:none;transition:background 0.2s,\n    border-color 0.2s;}\n.ds-index a::before{content:'';position:absolute;left:-1px;top:13px;bottom:13px;width:2px;background:var(--tape-accent);}\n.ds-index a:hover,.ds-index a:focus-visible,.ds-index a.ds-previewed{background:var(--ink-2);border-color:var(--seam-lit);}\n.ds-number{font-size:0.6875rem;font-weight:600;line-height:1.2;letter-spacing:0.12em;color:var(--silk-dim);}\n.ds-label{min-width:0;overflow-wrap:anywhere;font-size:0.875rem;line-height:1.35;color:var(--silk-hi);text-transform:capitalize;font-weight:600;}\n.ds-label small{display:block;font-size:0.75rem;line-height:1.5;color:var(--silk-dim);margin-top:4px;font-weight:400;text-transform:none;}\n.ds-index .ds-arrow{grid-column:2;grid-row:1 / -1;align-self:center;width:0.75rem;height:0.75rem;color:var(--silk-dim);}\n.ds-index a{box-sizing:border-box;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}\n.ds-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}"
+      "description": "One of six entries, in rack order, in the section a visitor knows as “Projects”: a full-width link with an 80px minimum height and a 12px inset on every side, the 11px label-tier number over the spine name and its 12px caption on one text edge, the 12px play mark centred in its own column, and a thin accent strip supplied by the tape’s data. Hover, focus, or modeled-tape preview fills it with ink-2 and strengthens the border. Six columns, three at 1200px and below, two in the mobile look, with an 8px gap. Named by its visible text between what it does and its year (The Spoken Name Rule).",
+      "html": "<div class=\"ds-sample\"><ul class=\"ds-index\"><li><a href=\"/project/superset-d1\" style=\"--tape-accent:#ff7a1a\"><span class=\"ds-sr\">Play tape: </span><span class=\"ds-number\">01</span><span class=\"ds-label\">SUPERSET D1<small>Cloudflare D1 in Apache Superset</small></span><span class=\"ds-sr\"> (2026)</span><svg class=\"ds-play\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" stroke=\"none\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg></a></li></ul></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-index{display:grid;grid-template-columns:minmax(0,15rem);gap:8px;}\n.ds-index li{display:flex;}\n.ds-number{font-size:var(--type-label);font-weight:600;line-height:1.2;letter-spacing:var(--tracking-label);color:var(--silk-dim);}\n.ds-label{min-width:0;overflow-wrap:anywhere;font-size:var(--type-functional);font-weight:600;line-height:var(--leading-title);color:var(--silk-hi);text-transform:capitalize;}\n.ds-label small{display:block;margin-top:4px;font-size:var(--type-caption);font-weight:400;line-height:var(--leading-caption);color:var(--silk-dim);text-transform:none;}\n.ds-index a{position:relative;display:grid;grid-template:auto auto / minmax(0,1fr) auto;gap:4px 8px;align-content:center;width:100%;min-height:80px;padding:12px;border:1px solid var(--seam);border-radius:var(--r-archive);text-decoration:none;transition:background 0.2s,border-color 0.2s;}\n.ds-index a::before{content:'';position:absolute;left:-1px;top:13px;bottom:13px;width:2px;background:var(--tape-accent);}\n.ds-index a:hover,.ds-index a:focus-visible,.ds-index a.ds-previewed{background:var(--ink-2);border-color:var(--seam-lit);}\n.ds-play{grid-column:2;grid-row:1 / -1;align-self:center;width:var(--type-caption);height:var(--type-caption);color:var(--silk-dim);}\n.ds-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "Archive entry, blank slot",
       "kind": "card",
       "refersTo": "tape-link-coming",
-      "description": "A project slot with nothing behind it yet (The Blank Slot Rule): the same 80px cell and 12px inset drawn as an outline rather than a tape. A 1px dashed seam-lit border, no accent strip, no play mark, and dim silkscreen reading “Coming soon…” over “Blank tape”. Plain text, not a link: no hover, no focus, and the arrow keys pass over it. Named by the words it shows, between “Play tape:” and its year (The Spoken Name Rule).",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-index\"><div class=\"ds-coming\"><span class=\"ds-number\">04</span><span class=\"ds-label\">Coming soon…<small>Blank tape</small></span></div></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-index .ds-coming{display:grid;grid-template:auto auto / minmax(0,1fr);gap:4px;align-content:center;box-sizing:border-box;width:100%;padding:12px;min-height:80px;border:1px dashed var(--seam-lit);border-radius:3px;}\n.ds-number{font-size:0.6875rem;font-weight:600;line-height:1.2;letter-spacing:0.12em;color:var(--silk-dim);}\n.ds-label{min-width:0;overflow-wrap:anywhere;font-size:0.875rem;line-height:1.35;color:var(--silk-dim);font-weight:600;}\n.ds-label small{display:block;font-size:0.75rem;line-height:1.5;color:var(--silk-dim);margin-top:4px;font-weight:400;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}\n.ds-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}"
+      "description": "A project slot with nothing behind it yet (The Blank Slot Rule): the same 80px cell and 12px inset drawn as an outline, not a tape, with a 1px dashed seam-lit border, no accent strip, no play mark, and dim silkscreen throughout, reading “Coming soon…” over “Blank tape”. Plain text, not a link: it answers no pointer, takes no focus, and the arrow keys pass over it. In the mobile look the run of blank slots shares one cell, numbered for the run (“02–05”) and captioned “Blank tapes”; the stylesheet makes the switch, and this sample shows it at that width.",
+      "html": "<div class=\"ds-sample\"><ul class=\"ds-index\"><li><div class=\"ds-coming\"><span class=\"ds-number\">02<span class=\"ds-blankRange\"><span aria-hidden=\"true\">–</span><span class=\"ds-sr\"> to </span>05</span></span><span class=\"ds-label\">Coming soon…<small>Blank tape<span class=\"ds-blankRange\">s</span></small></span></div></li></ul></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-index{display:grid;grid-template-columns:minmax(0,15rem);gap:8px;}\n.ds-index li{display:flex;}\n.ds-number{font-size:var(--type-label);font-weight:600;line-height:1.2;letter-spacing:var(--tracking-label);color:var(--silk-dim);}\n.ds-label{min-width:0;overflow-wrap:anywhere;font-size:var(--type-functional);font-weight:600;line-height:var(--leading-title);color:var(--silk-hi);text-transform:capitalize;}\n.ds-label small{display:block;margin-top:4px;font-size:var(--type-caption);font-weight:400;line-height:var(--leading-caption);color:var(--silk-dim);text-transform:none;}\n.ds-coming{display:grid;grid-template:auto auto / minmax(0,1fr);gap:4px;align-content:center;width:100%;min-height:80px;padding:12px;border:1px dashed var(--seam-lit);border-radius:var(--r-archive);}\n.ds-coming .ds-label{color:var(--silk-dim);text-transform:none;}\n.ds-blankRange{display:none;}\n@media (width < 740px), (width < 768px) and (height >= 540px){.ds-blankRange{display:inline;}}\n.ds-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "OSD project link",
       "kind": "button",
       "refersTo": "link-osd",
-      "description": "Screen-interior link with a minimum 44px touch target, white inversion on hover, and a white focus ring.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-links\"><a href=\"https://github.com/danielalyoshin\" target=\"_blank\" rel=\"noreferrer\">GITHUB<svg class=\"ds-linkIcon\" viewBox=\"0 0 16 16\" width=\"0.7em\" height=\"0.7em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4.25 11.75 11.5 4.5M6 4.5h5.5V10\"/></svg></a></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-links{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);margin-bottom:var(--sp-lg);}\n.ds-links a{display:inline-flex;align-items:center;justify-content:center;gap:0.4em;min-width:44px;min-height:44px;box-sizing:border-box;font-family:var(--font-osd);font-size:clamp(1.0625rem,4cqi,1.25rem);font-weight:400;line-height:1.35;letter-spacing:0.005em;color:var(--osd);text-decoration:none;border:1px solid var(--osd);border-radius:var(--r-hairline);padding:6px 14px;transition:background var(--t-fast),\n    color var(--t-fast);}\n.ds-links a:hover{background:var(--osd);color:var(--screen-black);}\n.ds-links a:focus-visible{outline-color:var(--osd);}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}\n.ds-sample{container-type:inline-size;}"
+      "description": "A screen link in VT323 with a white 1px border, small corners, and the link-osd padding; a link that leaves the site ends in the drawn outward arrow at 0.7em, spaced 0.4em. Inline flex with a 44px minimum width and height gives separate touch targets. Hover inverts to white with dark text; focus stays white. Playback links preserve native modified-click behavior.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-tube\"><ul class=\"ds-links\" aria-label=\"Project links\"><li><a href=\"https://github.com/sqlalchemy-cf-d1/sqlalchemy-d1\" target=\"_blank\" rel=\"noreferrer\">SOURCE<svg class=\"ds-linkIcon\" viewBox=\"0 0 16 16\" width=\"0.7em\" height=\"0.7em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4.25 11.75 11.5 4.5M6 4.5h5.5V10\"/></svg></a></li></ul></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tube{position:relative;container-type:inline-size;padding:16px;border-radius:var(--r-screen);background:var(--screen-black);}\n.ds-links{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);}\n.ds-links a{display:inline-flex;align-items:center;justify-content:center;gap:0.4em;min-width:44px;min-height:44px;padding:6px 14px;border:1px solid var(--osd);border-radius:var(--r-hairline);font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;color:var(--osd);text-decoration:none;transition:background var(--t-fast),color var(--t-fast);}\n.ds-links a:hover{background:var(--osd);color:var(--screen-black);}\n.ds-links a:focus-visible{outline-color:var(--osd);}\n.ds-linkIcon{width:0.7em;height:0.7em;}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "OSD tags",
       "kind": "chip",
       "refersTo": "tag-osd",
-      "description": "Informational bracketed text; these are not interactive filters.",
-      "html": "<div class=\"ds-sample\"><ul class=\"ds-tags\" aria-label=\"Tags\"><li>[PLACEHOLDER]</li><li>[VHS]</li></ul></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tags{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);font-family:var(--font-osd);font-size:clamp(1.0625rem,4cqi,1.25rem);font-weight:400;line-height:1.35;letter-spacing:0.005em;color:var(--screen-soft);margin:var(--sp-lg) 0 var(--sp-md);}.ds-tags{padding:0;list-style:none;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}\n.ds-sample{container-type:inline-size;}"
+      "description": "Bracketed uppercase VT323 text in screen-soft, wrapping with the small and medium gaps. Informational labels, not filled chips or filters.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-tube\"><ul class=\"ds-tags\" aria-label=\"Tags\"><li>[PYTHON]</li><li>[SQLALCHEMY]</li><li>[CLOUDFLARE-D1]</li><li>[APACHE-SUPERSET]</li></ul></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tube{position:relative;container-type:inline-size;padding:16px;border-radius:var(--r-screen);background:var(--screen-black);}\n.ds-tags{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;color:var(--screen-soft);}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "Picture size readout",
+      "kind": "custom",
+      "refersTo": "crt-reader",
+      "description": "The Picture Size Rule: at the foot of every tape on the modeled tube, on a band of the tube’s black that the article scrolls under, the OSD prints PICTURE SIZE in screen-soft, a bar of ten steps lit for the share of the window’s width the picture truly fills (measured, never typed), and FULL SCREEN with its F legend. It is one button, named “Full screen” with its shortcut declared; the monitor’s dial is the same control for the pointer. Pointing previews the turn: the bar’s unlit steps show faintly and FULL SCREEN underlines. Pressing lights the bar to full a step every 45ms, then the full-height reader grows out of the picture. Offered only where the tube is the reader. The steps are CSS boxes; this sample lights five.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-tube ds-tubeFoot\"><button type=\"button\" class=\"ds-sizeReadout\" aria-keyshortcuts=\"F\"><span class=\"ds-sizeWord\" aria-hidden=\"true\">Picture size</span><span class=\"ds-sizeBar\" aria-hidden=\"true\"><span data-lit></span><span data-lit></span><span data-lit></span><span data-lit></span><span data-lit></span><span></span><span></span><span></span><span></span><span></span></span><span class=\"ds-sizeAction\">Full screen</span><kbd aria-hidden=\"true\">F</kbd></button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tube{position:relative;container-type:inline-size;padding:16px;border-radius:var(--r-screen);background:var(--screen-black);}\n.ds-tubeFoot{display:flex;justify-content:center;}\n.ds-sizeReadout{display:inline-flex;align-items:center;gap:1ch;min-height:44px;padding:6px 12px;border:0;border-radius:var(--r-hairline);background:none;color:var(--osd);font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;text-transform:uppercase;white-space:nowrap;text-shadow:0 0 6px rgba(255,255,255,0.5);}\n.ds-sizeWord,.ds-sizeReadout kbd{color:var(--screen-soft);text-shadow:none;}\n.ds-sizeReadout kbd{font:inherit;}\n.ds-sizeBar{display:inline-flex;gap:3px;margin-inline:0.25ch;}\n.ds-sizeBar span{width:0.45em;height:0.8em;background:currentColor;opacity:0.25;transition:opacity var(--t-fast);}\n.ds-sizeBar span[data-lit]{opacity:1;box-shadow:0 0 5px rgba(255,255,255,0.45);}\n.ds-sizeReadout:hover .ds-sizeBar span:not([data-lit]),.ds-sizeReadout:focus .ds-sizeBar span:not([data-lit]){opacity:0.6;}\n.ds-sizeReadout:hover .ds-sizeAction,.ds-sizeReadout:focus .ds-sizeAction{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:0.28em;}\n.ds-sizeReadout:focus-visible{outline:2px solid var(--osd);outline-offset:0;}\n@container (max-width: 26rem){.ds-sizeWord{display:none;}}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+    },
+    {
+      "name": "Closer look",
+      "kind": "custom",
+      "refersTo": "crt-reader",
+      "description": "The Closer Look Rule: the modeled reader never shows a tape’s media. In its place stands a slate the width of the column, at least 8.5rem tall, in the diagram’s own node fill and a seam-lit edge with small control corners: the expand mark at 1.4em and TAKE A CLOSER LOOK in OSD white with the OSD’s glow, over the media’s caption in dim OSD type. One button, named by the words it shows. Pointing lights its edge white and underlines the action; pressing turns the picture up as the size bar does and opens the reader on the media, for this tape alone.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-tube\"><button type=\"button\" class=\"ds-closerLook\"><svg class=\"ds-closerMark\" viewBox=\"0 0 20 20\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M2.5 8V2.5H8v3H5.5V8zM17.5 8V2.5H12v3h2.5V8zM2.5 12v5.5H8v-3H5.5V12zM17.5 12v5.5H12v-3h2.5V12z\"/></svg><span class=\"ds-closerAction\">Take a closer look</span><span class=\"ds-closerCaption\">How Superset and the D1 packages work together.</span></button></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-tube{position:relative;container-type:inline-size;padding:16px;border-radius:var(--r-screen);background:var(--screen-black);}\n.ds-closerLook{display:grid;justify-items:center;align-content:center;gap:0.35em;width:100%;min-height:8.5rem;padding:var(--sp-md);border:1px solid var(--seam-lit);border-radius:var(--r-control);background:color-mix(in srgb, var(--screen-text) 4%, var(--screen-black));color:var(--osd);font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;transition:border-color var(--t-fast);}\n.ds-closerMark{width:1.4em;height:1.4em;filter:drop-shadow(0 0 6px rgba(255,255,255,0.5));}\n.ds-closerAction{text-transform:uppercase;text-shadow:0 0 6px rgba(255,255,255,0.5);}\n.ds-closerCaption{color:var(--screen-dim);text-align:center;text-wrap:balance;}\n.ds-closerLook:hover{border-color:var(--osd);}\n.ds-closerLook:hover .ds-closerAction{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:0.28em;}\n.ds-closerLook:focus-visible{outline:2px solid var(--osd);outline-offset:2px;}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
     },
     {
       "name": "CRT full-height reader",
       "kind": "custom",
       "refersTo": "crt-reader-full-height",
-      "description": "Explicit full-height mode with 16–18px prose, a 32px title cap, and a focusable article. This 420px-tall preview shares the modeled screen content; the real native frame fills the space above transport. Direct project links and selections before graphics load use this reader immediately; once a desktop scene is ready it dissolves onto the modeled screen, and narrow or short viewports keep it under the viewport rule.",
-      "html": "<div class=\"ds-sample\"><div class=\"ds-crt ds-embedded ds-fullHeight\"><section class=\"ds-bezel\" aria-label=\"CRT display\"><div class=\"ds-screen ds-playing\"><div class=\"ds-track\"><div class=\"ds-osd\" aria-hidden=\"true\"><span class=\"ds-osdPlay\"><svg class=\"ds-osdIcon\" viewBox=\"0 0 16 16\" width=\"0.7em\" height=\"0.7em\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg>PLAY</span><span>SP 0:42</span></div><article class=\"ds-reader\" tabindex=\"0\" aria-label=\"Placeholder: Alpha details\"><div class=\"ds-reader-content\"><h2 tabindex=\"-1\" class=\"ds-title\">Placeholder: Alpha</h2><p class=\"ds-meta\">2026 · PLACEHOLDER</p><p class=\"ds-tagline\">A placeholder tape for the studio.</p><p class=\"ds-para\">Real project content will replace this sample.</p><p class=\"ds-end\" aria-hidden=\"true\">REC <span class=\"ds-rec\"></span> 2026</p></div></article></div><div class=\"ds-grain\" aria-hidden=\"true\"></div><div class=\"ds-scan\" aria-hidden=\"true\"></div><div class=\"ds-vignette\" aria-hidden=\"true\"></div></div></section></div></div>",
-      "css": ".ds-sample{font-family:var(--font-chassis);font-size:1rem;font-weight:400;line-height:1.5;color:var(--silk);}.ds-sample button{font:inherit;cursor:pointer;box-sizing:border-box;}.ds-sample a{color:inherit;}.ds-sample :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-crt {\n  position: relative;\n  container-type: inline-size;\n  /* Sized so the whole rack (header, shelf, tube, deck, footer) shares the\n     first desktop viewport; playback legibility comes from the dolly. */\n  width: clamp(300px, min(400px, calc((100vh - 640px) * 1.3333 + 38px)), 100%);\n  margin-inline: auto;\n}\n\n.ds-bezel {\n  background: var(--ink-2);\n  border: 1px solid var(--seam);\n  border-radius: var(--r-bezel);\n  padding: 18px;\n  box-shadow: var(--edge-lit), var(--shadow-unit);\n}\n\n/*\n * The screen is the page's only light source (One Light Rule): its bloom is\n * the single permitted outward glow, and every retro effect below is clipped\n * to this element.\n */\n.ds-screen {\n  position: relative;\n  aspect-ratio: 4 / 3;\n  border-radius: 14px;\n  overflow: hidden;\n  background: var(--screen-black);\n  transition:\n    box-shadow var(--t-med),\n    background var(--t-med);\n  box-shadow: var(--bloom-rest);\n}\n\n.ds-idle,\n.ds-ejecting {\n  background: var(--crt-blue);\n  box-shadow: var(--bloom-idle);\n}\n\n.ds-playing {\n  box-shadow: var(--bloom-play);\n}\n\n/* Diegetic layers — inside the tube only. */\n\n/* Live phosphor grain: a tiny desaturated turbulence tile stepped through\n   four offsets (~5 fps, like a broadcast). Faint enough that prose contrast\n   is untouched; the reduced-motion gate leaves it as a static texture. */\n.ds-grain {\n  position: absolute;\n  inset: -160px 0 0 -160px;\n  pointer-events: none;\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.ds-w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\");\n  background-size: 160px 160px;\n  opacity: 0.05;\n  will-change: transform;\n  animation: ds-grainShift 0.8s steps(1, end) infinite;\n}\n\n@keyframes ds-grainShift {\n  0% {\n    transform: translate(0, 0);\n  }\n  25% {\n    transform: translate(80px, 48px);\n  }\n  50% {\n    transform: translate(32px, 112px);\n  }\n  75% {\n    transform: translate(128px, 64px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n\n.ds-scan {\n  position: absolute;\n  inset: 0;\n  pointer-events: none;\n  background: repeating-linear-gradient(\n    0deg,\n    rgba(0, 0, 0, 0.17) 0 1px,\n    transparent 1px 3px\n  );\n  opacity: 0.35;\n}\n\n.ds-vignette {\n  position: absolute;\n  inset: 0;\n  pointer-events: none;\n  border-radius: inherit;\n  background: radial-gradient(\n    115% 115% at 50% 50%,\n    transparent 62%,\n    rgba(0, 0, 0, 0.5) 100%\n  );\n}\n\n/* Brief tracking wobble when a tape starts (remounted per slug). */\n.ds-track {\n  position: absolute;\n  inset: 0;\n  animation: ds-track 400ms steps(6, end) 1;\n}\n\n@keyframes ds-track {\n  0% {\n    transform: translateY(-6%);\n    filter: brightness(2.1);\n  }\n  30% {\n    transform: translateY(3%);\n    filter: brightness(1.3);\n  }\n  55% {\n    transform: translateY(-1.5%);\n  }\n  100% {\n    transform: none;\n    filter: none;\n  }\n}\n\n/* OSD chrome floats over the picture; its glow is inside the screen. */\n.ds-osd {\n  position: absolute;\n  top: 0;\n  left: 0;\n  right: 0;\n  display: flex;\n  justify-content: space-between;\n  padding: 0.875rem 5cqi;\n  font-family: var(--font-osd);\n  font-size: clamp(1.125rem, 4.5cqi, 1.375rem);\n  line-height: 1.2;\n  color: var(--osd);\n  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);\n  z-index: 2;\n  pointer-events: none;\n}\n\n.ds-osdPlay {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35em;\n}\n\n.ds-osdIcon {\n  width: 0.7em;\n  height: 0.7em;\n  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));\n}\n\n.ds-linkIcon {\n  width: 0.7em;\n  height: 0.7em;\n}\n\n.ds-reader {\n  position: absolute;\n  inset: 0;\n  overflow-y: auto;\n  padding: 4rem 9% 2.75rem;\n  font-size: clamp(1rem, 3.1cqi, 1.0625rem);\n  font-weight: 400;\n  letter-spacing: 0.005em;\n  overflow-wrap: anywhere;\n  scrollbar-width: thin;\n  scrollbar-color: var(--seam-lit) transparent;\n}\n\n.ds-reader-content {\n  max-width: 62ch;\n  margin-inline: auto;\n}\n\n.ds-reader:focus-visible {\n  outline: 2px solid var(--osd);\n  outline-offset: -4px;\n  border-radius: inherit;\n}\n\n.ds-title {\n  font-weight: 800;\n  font-stretch: 110%;\n  font-size: clamp(1.5rem, 5.6cqi, 2rem);\n  line-height: 1.12;\n  letter-spacing: -0.015em;\n  text-transform: uppercase;\n  text-wrap: balance;\n  color: var(--screen-text);\n  margin-bottom: 0.5em;\n}\n\n/* Focus cue as OSD emphasis: a clear underline, not a box around a\n   screen-filling heading. */\n.ds-title:focus-visible,\n.ds-bigOsd:focus-visible {\n  outline: none;\n  text-decoration: underline;\n  text-decoration-thickness: 3px;\n  text-decoration-color: var(--osd);\n  text-underline-offset: 0.28em;\n}\n\n.ds-meta {\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--screen-dim);\n  margin-bottom: 1.2em;\n}\n\n.ds-tagline {\n  font-weight: 600;\n  font-size: inherit;\n  line-height: 1.5;\n  color: var(--screen-text);\n  text-wrap: pretty;\n  margin-bottom: 1em;\n}\n\n.ds-para {\n  font-size: inherit;\n  line-height: 1.65;\n  color: var(--screen-text);\n  text-wrap: pretty;\n  margin-bottom: 1em;\n}\n\n.ds-gallery {\n  display: grid;\n  gap: var(--sp-md);\n  margin: var(--sp-lg) 0;\n}\n\n.ds-gallery img,\n.ds-gallery video {\n  border: 1px solid var(--seam);\n  border-radius: var(--r-control);\n  width: 100%;\n}\n\n.ds-gallery figcaption {\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--screen-dim);\n  margin-top: var(--sp-xs);\n}\n\n.ds-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--sp-sm) var(--sp-md);\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--screen-soft);\n  margin: var(--sp-lg) 0 var(--sp-md);\n}\n\n.ds-links {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--sp-sm) var(--sp-md);\n  margin-bottom: var(--sp-lg);\n}\n\n.ds-links a {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.4em;\n  min-width: 44px;\n  min-height: 44px;\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--osd);\n  text-decoration: none;\n  border: 1px solid var(--osd);\n  border-radius: var(--r-hairline);\n  padding: 6px 14px;\n  transition:\n    background var(--t-fast),\n    color var(--t-fast);\n}\n\n.ds-links a:hover {\n  background: var(--osd);\n  color: var(--screen-black);\n}\n\n.ds-links a:focus-visible {\n  outline-color: var(--osd);\n}\n\n.ds-end {\n  font-family: var(--font-osd);\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  font-weight: 400;\n  line-height: 1.35;\n  color: var(--screen-dim);\n}\n\n/* REC blinks while a tape plays — the tube's own heartbeat. Solid under\n   the reduced-motion gate. */\n.ds-rec {\n  display: inline-block;\n  width: 0.5em;\n  height: 0.5em;\n  border-radius: 50%;\n  background: var(--rec-red);\n  vertical-align: 0.08em;\n  animation: ds-blink 1.2s steps(2, start) infinite;\n}\n\n/* Idle / NO SIGNAL center stage. */\n.ds-centerScreen {\n  position: absolute;\n  inset: 0;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: var(--sp-md);\n  font-family: var(--font-osd);\n  color: var(--osd);\n  text-align: center;\n  padding: var(--sp-lg);\n  overflow-wrap: anywhere;\n}\n\n.ds-bigOsd {\n  font-size: clamp(1.5rem, 9cqi, 2.5rem);\n  font-weight: 400;\n  line-height: 1.2;\n  letter-spacing: 0.06em;\n  text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);\n}\n\n.ds-subOsd {\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  line-height: 1.35;\n  color: var(--screen-soft);\n}\n\n.ds-cursor {\n  margin-left: 8px;\n  animation: ds-blink 1.1s steps(2, start) infinite;\n}\n\n@keyframes ds-blink {\n  50% {\n    opacity: 0;\n  }\n}\n\n.ds-cornerTL,\n.ds-cornerBR {\n  position: absolute;\n  font-size: clamp(1.0625rem, 4cqi, 1.25rem);\n  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);\n}\n\n.ds-cornerTL {\n  top: 14px;\n  left: 20px;\n}\n\n.ds-cornerBR {\n  bottom: 14px;\n  right: 20px;\n}\n\n.ds-chin {\n  text-align: center;\n  margin-top: var(--sp-sm);\n  letter-spacing: 0.2em;\n}\n\n/* The screen's light falling on the deck below — the one permitted cast.\n   Anchored at the bezel's lower edge (over the chin label) so the falloff\n   is continuous from where the light physically exits; it must fade out\n   fully before the strip ends. */\n.ds-cast {\n  position: absolute;\n  top: calc(100% - 22px);\n  left: 8%;\n  right: 8%;\n  height: 120px;\n  pointer-events: none;\n  z-index: 2;\n  background: var(--cast-idle);\n  transition: opacity var(--t-med);\n}\n\n.ds-castPlay {\n  background: var(--cast-play);\n}\n\n/* Playing on a small screen: the CRT pins near-fullscreen, still a CRT. */\n@media (max-width: 719px) {\n  .ds-crt {\n    width: 100%;\n  }\n\n  :global(.ds-playing-stage) .ds-crt {\n    position: fixed;\n    top: 8px;\n    left: 8px;\n    right: 8px;\n    bottom: 88px;\n    z-index: 30;\n    width: auto;\n    display: flex;\n    flex-direction: column;\n  }\n\n  :global(.ds-playing-stage) .ds-bezel {\n    flex: 1;\n    display: flex;\n    padding: 12px;\n  }\n\n  :global(.ds-playing-stage) .ds-screen {\n    aspect-ratio: auto;\n    flex: 1;\n  }\n\n  :global(.ds-playing-stage) .ds-chin,\n  :global(.ds-playing-stage) .ds-cast {\n    display: none;\n  }\n\n  .ds-reader {\n    padding: 4rem 6% 2.5rem;\n  }\n}\n\n/* Native HTML stays crisp and selectable on the actual 3D screen plane. */\n.ds-embedded {\n  width: 100%;\n}\n.ds-embedded .ds-bezel {\n  padding: 0;\n  border: 0;\n  border-radius: 14px;\n  background: transparent;\n  box-shadow: none;\n}\n.ds-embedded .ds-screen {\n  aspect-ratio: 4 / 3;\n}\n.ds-embedded .ds-chin,\n.ds-embedded .ds-cast {\n  display: none;\n}\n.ds-embedded .ds-osd {\n  background: linear-gradient(var(--screen-black) 70%, transparent);\n  padding-bottom: 1.375rem;\n}\n.ds-embedded .ds-reader {\n  overscroll-behavior: contain;\n}\n.ds-embedded .ds-bigOsd {\n  font-weight: 400;\n}\n\n.ds-fullHeight,\n.ds-fullHeight .ds-bezel,\n.ds-fullHeight .ds-screen {\n  height: 100%;\n}\n.ds-fullHeight .ds-screen {\n  aspect-ratio: auto;\n}\n.ds-fullHeight .ds-reader {\n  padding: 4rem 7% 2.5rem;\n  font-size: clamp(1rem, 2.4cqi, 1.125rem);\n}\n.ds-fullHeight .ds-title {\n  font-size: clamp(1.5rem, 7.5cqi, 2rem);\n}\n\n.ds-crt{container-type:inline-size;width:min(560px,100%);aspect-ratio:4/3;margin-inline:auto;}.ds-embedded .ds-bezel,.ds-embedded .ds-screen{height:100%;width:100%;}.ds-reader h2,.ds-reader p{margin-top:0;}.ds-end{margin-bottom:0;}.ds-crt.ds-fullHeight{height:420px;aspect-ratio:auto;}\n@media(prefers-reduced-motion:reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}}"
+      "description": "The explicit full-height reader (fullHeight): 1–1.125rem prose (2.4cqi), a 1.5–2rem title (7.5cqi), one centered 62ch column, and a focusable article with its own scroll. The OSD’s top bar carries PLAY, the station ident (DANIEL ALYOSHIN, in screen-soft without the glow) on the tube’s centre line, and the tape’s reading time, derived and never typed; the reading time drops its word below 19.5rem of tube and goes below 15.5rem. A 3.5rem fade at the tube’s foot shows the article continues and lifts once its end is in view; the thin scrollbar thumb is screen-scroll. The title’s 3px OSD-white underline marks focus only for a tape chosen from the keyboard. Grain, scanlines, a vignette, one tracking entrance, and the REC blink stay clipped inside the tube. It reads at widths up to 767px or heights up to 699px, for direct links before graphics are ready, without WebGL, and when a desktop tube’s picture is turned up to full screen, where media shows across the column. This 420px-tall preview omits the native frame and its deck.",
+      "html": "<div class=\"ds-sample\"><div class=\"ds-crt ds-embedded ds-fullHeight\"><section class=\"ds-bezel\" aria-label=\"CRT display\"><div class=\"ds-screen ds-playing\"><div class=\"ds-trackIn\"><div class=\"ds-osdTop\" aria-hidden=\"true\"><span class=\"ds-osdPlay\"><svg class=\"ds-osdIcon\" viewBox=\"0 0 16 16\" width=\"1em\" height=\"1em\" fill=\"currentColor\" stroke=\"none\" aria-hidden=\"true\"><path d=\"M4 2.5v11l9-5.5z\"/></svg>PLAY</span><span class=\"ds-osdIdent\">Daniel Alyoshin</span><span class=\"ds-osdReadTime\">1 MIN<span class=\"ds-osdReadWord\"> READ</span></span></div><article class=\"ds-reader\" tabindex=\"0\" aria-label=\"Cloudflare D1 in Apache Superset details\" data-more><div class=\"ds-readerContent\"><h2 tabindex=\"-1\" class=\"ds-title\" data-keyboard>Cloudflare D1 in Apache Superset</h2><p class=\"ds-meta\">2026 · PRIMARY MAINTAINER<span class=\"ds-sr\"> · 1 minute read</span></p><p class=\"ds-tagline\">Maintaining the Cloudflare D1 support I helped build for Apache Superset.</p><p class=\"ds-para\">In 2025 I was one of the people who built the packages that first connected Apache Superset, the open-source data visualization platform, to Cloudflare D1, a serverless SQLite database. Today I’m their primary maintainer.</p><p class=\"ds-para\">Superset connects to D1 through sqlalchemy-d1, a thin layer over sqlalchemy-cloudflare-d1, the maintained community dialect.</p><ul class=\"ds-tags\" aria-label=\"Tags\"><li>[PYTHON]</li><li>[SQLALCHEMY]</li><li>[CLOUDFLARE-D1]</li><li>[APACHE-SUPERSET]</li></ul><ul class=\"ds-links\" aria-label=\"Project links\"><li><a href=\"https://pypi.org/project/sqlalchemy-d1/\" target=\"_blank\" rel=\"noreferrer\">PYPI<svg class=\"ds-linkIcon\" viewBox=\"0 0 16 16\" width=\"0.7em\" height=\"0.7em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4.25 11.75 11.5 4.5M6 4.5h5.5V10\"/></svg></a></li><li><a href=\"https://github.com/sqlalchemy-cf-d1/sqlalchemy-d1\" target=\"_blank\" rel=\"noreferrer\">SOURCE<svg class=\"ds-linkIcon\" viewBox=\"0 0 16 16\" width=\"0.7em\" height=\"0.7em\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M4.25 11.75 11.5 4.5M6 4.5h5.5V10\"/></svg></a></li></ul><p class=\"ds-osdEnd\" aria-hidden=\"true\">REC <span class=\"ds-recDot\"></span> SEP 2026</p></div></article><div class=\"ds-osdBottom\" aria-hidden=\"true\"></div></div><div class=\"ds-grain\" aria-hidden=\"true\"></div><div class=\"ds-scanlines\" aria-hidden=\"true\"></div><div class=\"ds-vignette\" aria-hidden=\"true\"></div></div></section></div></div>",
+      "css": ".ds-sample{font-family:var(--font-chassis);font-size:var(--type-body);font-weight:400;line-height:1.5;color:var(--silk);background:var(--ink-0);padding:16px;}\n:where(.ds-sample) *,:where(.ds-sample) *::before,:where(.ds-sample) *::after{box-sizing:border-box;}\n:where(.ds-sample) :is(h2,p,ul,figure){margin:0;}\n:where(.ds-sample) ul{padding:0;list-style:none;}\n:where(.ds-sample) button{font:inherit;cursor:pointer;}\n:where(.ds-sample) a{color:inherit;}\n:where(.ds-sample) :focus-visible{outline:2px solid var(--vfd);outline-offset:2px;border-radius:var(--r-hairline);}\n.ds-crt{position:relative;container-type:inline-size;width:min(560px,100%);height:420px;margin-inline:auto;}\n.ds-bezel,.ds-screen{height:100%;border-radius:var(--r-screen);}\n/* The screen is the page's only light source (The One Light Rule): its bloom is the one outward glow, and every retro effect is clipped to it. */\n.ds-screen{position:relative;overflow:hidden;background:var(--screen-black);box-shadow:var(--bloom-rest);transition:box-shadow var(--t-med),background var(--t-med);}\n.ds-idle{background:var(--crt-blue);box-shadow:var(--bloom-idle);}\n.ds-playing,.ds-nosignal{box-shadow:var(--bloom-play);}\n.ds-grain{position:absolute;inset:-160px 0 0 -160px;pointer-events:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\");background-size:160px 160px;opacity:0.05;will-change:transform;animation:ds-grainShift 0.8s steps(1, end) infinite;}\n@keyframes ds-grainShift{0%{transform:translate(0,0);}25%{transform:translate(80px,48px);}50%{transform:translate(32px,112px);}75%{transform:translate(128px,64px);}100%{transform:translate(0,0);}}\n.ds-scanlines{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.17) 0 1px,transparent 1px 3px);opacity:0.35;}\n.ds-vignette{position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(115% 115% at 50% 50%,transparent 62%,rgba(0,0,0,0.5) 100%);}\n.ds-trackIn{position:absolute;inset:0;animation:ds-track 400ms steps(6, end) 1;}\n@keyframes ds-track{0%{transform:translateY(-6%);filter:brightness(2.1);}30%{transform:translateY(3%);filter:brightness(1.3);}55%{transform:translateY(-1.5%);}100%{transform:none;filter:none;}}\n.ds-osdTop{position:absolute;top:0;left:0;right:0;z-index:2;display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(max-content,1fr);align-items:center;column-gap:1ch;white-space:nowrap;padding:0.875rem 5cqi 1.375rem;background:linear-gradient(var(--screen-black) 70%,transparent);font-family:var(--font-osd);font-size:var(--type-screen-osd);line-height:1.2;color:var(--osd);text-shadow:0 0 6px rgba(255,255,255,0.5);pointer-events:none;}\n.ds-osdPlay{display:inline-flex;align-items:center;justify-self:start;gap:0.35em;}\n.ds-osdIcon{width:0.7em;height:0.7em;filter:drop-shadow(0 0 6px rgba(255,255,255,0.5));}\n.ds-osdIdent{color:var(--screen-soft);text-transform:uppercase;text-shadow:none;}\n.ds-osdReadTime{justify-self:end;}\n@container (max-width: 19.5rem){.ds-osdReadWord{display:none;}}\n@container (max-width: 15.5rem){.ds-osdReadTime{display:none;}}\n.ds-reader{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding:4rem 7% 2.5rem;font-size:clamp(1rem, 2.4cqi, 1.125rem);font-weight:400;letter-spacing:var(--tracking-body);overflow-wrap:anywhere;scrollbar-width:thin;scrollbar-color:var(--screen-scroll) transparent;}\n.ds-reader:focus-visible{outline:2px solid var(--osd);outline-offset:-4px;border-radius:inherit;}\n.ds-osdBottom{position:absolute;left:0;right:0;bottom:0;z-index:2;height:3.5rem;background:linear-gradient(transparent,var(--screen-black) 70%);pointer-events:none;transition:opacity var(--t-med);}\n.ds-reader:not([data-more]) + .ds-osdBottom{opacity:0;}\n.ds-readerContent{max-width:var(--measure-reader);margin-inline:auto;}\n.ds-title{margin-bottom:0.5em;font-size:clamp(1.5rem, 7.5cqi, 2rem);font-weight:800;font-stretch:110%;line-height:1.12;letter-spacing:-0.015em;text-transform:uppercase;text-wrap:balance;color:var(--screen-text);}\n.ds-title:focus-visible{outline:none;}\n.ds-title[data-keyboard]:focus-visible{text-decoration:underline;text-decoration-thickness:3px;text-decoration-color:var(--osd);text-underline-offset:0.28em;}\n.ds-meta{margin-bottom:1.2em;font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;color:var(--screen-dim);}\n.ds-tagline{margin-bottom:1em;font-weight:600;line-height:1.5;color:var(--screen-text);text-wrap:pretty;}\n.ds-para{margin-bottom:1em;line-height:var(--leading-body);color:var(--screen-text);text-wrap:pretty;}\n.ds-tags{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);margin:var(--sp-lg) 0 var(--sp-md);font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;color:var(--screen-soft);}\n.ds-links{display:flex;flex-wrap:wrap;gap:var(--sp-sm) var(--sp-md);margin-bottom:var(--sp-lg);}\n.ds-links a{display:inline-flex;align-items:center;justify-content:center;gap:0.4em;min-width:44px;min-height:44px;padding:6px 14px;border:1px solid var(--osd);border-radius:var(--r-hairline);font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;color:var(--osd);text-decoration:none;transition:background var(--t-fast),color var(--t-fast);}\n.ds-links a:hover{background:var(--osd);color:var(--screen-black);}\n.ds-links a:focus-visible{outline-color:var(--osd);}\n.ds-linkIcon{width:0.7em;height:0.7em;}\n.ds-osdEnd{font-family:var(--font-osd);font-size:var(--type-screen-meta);font-weight:400;line-height:1.35;color:var(--screen-dim);}\n.ds-recDot{display:inline-block;width:0.5em;height:0.5em;border-radius:50%;background:var(--rec-red);vertical-align:0.08em;animation:ds-blink 1.2s steps(2, start) infinite;}\n@keyframes ds-blink{50%{opacity:0;}}\n.ds-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}\n@media (prefers-reduced-motion: reduce){.ds-sample *,.ds-sample *::before,.ds-sample *::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;}.ds-trackIn{animation:none;}}"
     }
   ],
   "narrative": {
@@ -643,18 +719,18 @@
     ],
     "rules": [
       {
+        "name": "The One Palette Rule",
+        "body": "The screen's colours have one source, `src/styles/tokens.css`. The models read it as they paint (`studio/tokens.ts`: the tube's ground and blue, its inks, the playback light, the status window's red slash), and every bloom and cast is its hue at a strength (`color-mix`), so a colour changed there changes in both renderers and in every glow. The one scene-only value is the blue tube's light, brighter than CRT blue because a light is multiplied by the matte surface it lands on.",
+        "section": "colors"
+      },
+      {
         "name": "The Artifact Color Rule",
         "body": "Saturated color belongs to cassette labels and screen output. Cassette accents come from project data; small VFD-cyan focus and status marks support interaction without coloring the page chrome.",
         "section": "colors"
       },
       {
-        "name": "The One Palette Rule",
-        "body": "The screen's colours have one source, src/styles/tokens.css. The models read it as they paint (studio/tokens.ts: the tube's ground and blue, its inks, the playback light, the status window's red slash), and every bloom and cast is its hue at a strength (color-mix), so a colour changed there changes in both renderers and in every glow. The one scene-only value is the blue tube's light, brighter than CRT blue because a light is multiplied by the matte surface it lands on.",
-        "section": "colors"
-      },
-      {
         "name": "The Drawn Mark Rule",
-        "body": "Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from src/components/Icons.tsx: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, and eject. The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the three deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes currentColor and is aria-hidden, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot and the idle cursor are CSS boxes.",
+        "body": "Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, collapse (Exit full screen), and expand (a closer look, the collapse mark's corners turned out). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the key and in the deck's status window alike. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.",
         "section": "typography"
       },
       {
@@ -664,7 +740,7 @@
       },
       {
         "name": "The Signature Print Rule",
-        "body": "The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line, each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints share the page's weights: 600 for the status window, the AV–01 line, and the key caps; 800 for each spine's number and name. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.",
+        "body": "The models carry four signature prints and nothing else: the deck's status window, the AV–01 model line (AV–01 / VHS, the same mark the native reader's deck carries, with no specification after it), each cassette's spine number and name, and the idle screen. Each working key cap carries its own single label. No other object is lettered: no monitor chin, plinth line, holder number or cheek mark, speaker badge, stand mark, flap legend, or cassette underside. A new object earns geometry, not a nameplate. Every print texture matches its plane's proportions, and type that would overflow its plane is set smaller, never compressed, so glyphs never stretch. Prints share the page's weights: 600 for the status window, the AV–01 line, and the key caps; 800 for each spine's number and name. Prints are transparent decals in the chassis material (roughness 0.82, metalness 0.12, flat shading): only the ink renders, so a label never sits on a differently lit patch. Print canvases carry about 1280 texture pixels per world unit, and the studio renders at pixel ratio 2 during modeled playback so the prints resolve.",
         "section": "typography"
       },
       {
@@ -674,13 +750,38 @@
       },
       {
         "name": "The One Column Rule",
-        "body": "Every shell edge sits on the container's two edges: the nameplate, kicker, display line, guide, archive heading, and footer statement on the left; the navigation, introductory aside, archive note, and contact links on the right. The cassette mark hangs 16px into the left gutter above 1200px so the name stays on the column, and is not drawn below that width. The only inboard edges are the tape index entries' own 12px insets.",
+        "body": "Every shell edge sits on the container's two edges: the nameplate, archive heading, and footer statement on the left; the navigation, archive note, and contact links on the right. In the mobile look the kicker, display line, and guide sit on the left edge too. Beside the studio (The Studio First Rule) they share one left edge of their own, set by the widest of them, the display line (or the kicker on short windows, where the display line gives way first), which ends on the column's right edge under the navigation. The cassette mark hangs 16px into the left gutter above 1200px so the name stays on the column, and is not drawn below that width. The only other inboard edges are the archive entries' own 12px insets.",
+        "section": "layout"
+      },
+      {
+        "name": "The Studio First Rule",
+        "body": "On every window at least 768px wide and 540px tall, the studio takes the first screen under the header, and the introduction and the guide stand in its open upper right, over the table behind the rack, instead of in a band above it. The fitted studio is wider than it is tall, and a band of words above it took the height the fit needed, which left the studio small and its two sides empty; beside it, the words fill the one corner the equipment leaves open, and the studio grows to nearly the column's width. Reading order is unchanged: kicker, display line, guide, then the studio. The words sit above the canvas and never over equipment, and they are sized to the corner rather than the corner to them. Measured from the box's centre in the fit's units, the monitor's right edge stands 0.51 to the right and a tape lifted in preview rises to 0.74 above, so: the display line is never wider than 4.6vw, which keeps the words 28px or more from the monitor (over 100px on wide windows); on short windows it is never taller than the corner the lifted tape leaves under a studio that ends at the fold; and where the studio's proportion would leave the corner too short for the words, the box grows taller than that proportion, just enough for them. The words clear the tapes and the headphones by 14px or more with a tape lifted in preview (`e2e/framing.spec.ts` holds them 12px clear from the widest window down to the corner of the mobile breakpoint). Beside a studio narrower than 940px the kicker breaks after \"Bridging the gap\" rather than cross the monitor, and the display line keeps a 2.25rem floor, wide enough for the guide's longest caption on one line.",
         "section": "layout"
       },
       {
         "name": "The One Light Rule",
         "body": "The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck, and changes only when the screen does. Equipment labels, controls, and page chrome never glow.",
         "section": "elevation"
+      },
+      {
+        "name": "The Same Grammar Rule",
+        "body": "Every object is built from the one vocabulary the strongest pieces established: a dark recess under a lighter raised plane, a fine parting line where two housings meet, 24-sided turned parts, merged ribs and slats for repeated detail, and fitted fasteners where the real object shows them. Every piece of equipment stands on isolating pads in one style, the speaker's: dark, low (about 0.035 units, the speaker's proportion), and tucked under the corners, so from every authored camera they read as a shadow line, not as parts; four under each of the deck, the monitor, the speaker, the holder, and the headphone stand. The table alone stands on its pedestal. A taller bare block under a chassis reads as an unfinished part, and a recessed face that tall reads as a flat black bar from the front-on playback camera; both were tried and rejected. A new object earns its detail from this list, at the scale of the cassette's, not from ornament of its own.",
+        "section": "shapes"
+      },
+      {
+        "name": "The One Name Rule",
+        "body": "A thing has one name wherever a visitor meets it, and a link's words are the heading it lands on. The collection of tapes is **Projects**: the header link, the section's heading, the skip link, the phone guide (\"Pick one from the projects below.\"), the status messages, and the idle tube's PROJECTS. It is never \"the archive\", \"the tape index\" or \"the shelf\" in anything a visitor reads or hears; the modeled rack and holder are object names for this document only. A tape has one short name, its spine name (`vhs.spineLabel`: SUPERSET D1, ABOUT), printed on the spine and repeated as written by the archive entry, the guide, the idle tube, and both loading screens; and one title, which heads the reader and names the document. The About tape follows the same rule as every tape: it is \"About\" in the header, ABOUT on its spine, and \"About\" on the tube, where the owner's name is already printed once, in the ident. A tape's caption is the same words in the archive entry and in the guide: its `caption`, else its title (\"Cloudflare D1 in Apache Superset\" for a project, \"Daniel Alyoshin\" for the About tape; a blank slot's \"Blank tape\"). The visitor's noun is \"tape\"; \"cassette\" names the modeled object in this document.",
+        "section": "components"
+      },
+      {
+        "name": "The Spoken Name Rule",
+        "body": "A link is named by the words it shows, so a name read off the page is a name that can be said to it (WCAG 2.5.3). An archive entry's name is its visible text between what it does and its year, \"Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)\", the first and last parts set aside for assistive technology; the nameplate is \"Daniel Alyoshin Forward deployed engineer home\". No link carries an `aria-label` that replaces its words.",
+        "section": "components"
+      },
+      {
+        "name": "The Blank Slot Rule",
+        "body": "The rack has six slots: five for projects and the About tape at the right. One project fills slot 01 today, so slots 02 to 05 are blank. A project slot with nothing behind it yet keeps its place and its number but is drawn as an outline, not a tape: the same 80px cell and 12px inset, a 1px dashed seam-lit border, no accent strip, no play mark, and dim silkscreen throughout, reading \"Coming soon…\" over the caption \"Blank tape\". It is plain text, not a link: it answers no pointer, takes no focus, and the arrow keys pass over it. The larger look keeps one cell per slot, as the rack does. In the mobile look the run of blank slots shares one cell, numbered for the run as the spines are (\"02–05\") and captioned \"Blank tapes\": the run's first cell prints the run's last number after its own and its caption's plural, and the others leave the page and the list alike, so assistive technology meets the run once, as \"02 to 05 Coming soon… Blank tapes\", in a list of three. From the right-hand column of the two, that cell spans both rows, so the tape after the run takes the left and the grid closes without a hole. The stylesheet makes the switch, so a page drawn ahead of time is right at any width. Adding a project to the content list turns the next blank slot into a playable tape and nothing else changes; the run, its number, and its span follow. A blank slot has no route, so a link to one reads NO SIGNAL like any dead tape.",
+        "section": "components"
       },
       {
         "name": "The One Readout Rule",
@@ -693,34 +794,48 @@
         "section": "components"
       },
       {
-        "name": "The Handoff Rule",
-        "body": "A desktop deep link's native reader hands over to the modeled screen once, when the scene is ready. The studio composes underneath the still-opaque reader with the tape already seated, the flap closed, the deck reading PLAY, and the keys live, until the modeled reader is mounted and placed on the tube plus one drawn frame; then the native frame dissolves over 560ms (--t-dolly, --ease-out) while the tube's tracking entrance plays through it. The modeled article inherits the native reader's scroll depth and keeps focus in the article if that is where it was, otherwise on the title. During the dissolve the outgoing frame is aria-hidden and inert, then unmounts. An invalid slug hands off the same way to the modeled NO SIGNAL screen. Reduced motion swaps at the same moment. The dissolve stops early if playback closes, the viewport drops below the reading breakpoints, or graphics are lost.",
+        "name": "The Soft Zoom Rule",
+        "body": "Choosing a tape and ejecting it are one continuous camera move each way; no frame ever shows the studio jump between its box on the page and the viewport. The studio's box keeps its place in the page throughout, so nothing beneath it moves and the scroll position is kept. On selection the canvas layer detaches from the box over the whole viewport, transparent, and is sized in the same commit, so the first frame it paints is drawn for that box; the camera keeps drawing the studio exactly where the box had it, then grows its frame to the viewport (exponential ease, rate 5 per second, about 0.9 seconds to settle) while the page chrome dissolves over 560ms (`--t-dolly`, `--ease-out`). The tape's mechanism starts on the next frame, so the studio grows as the cassette lifts. One render-driven timeline coordinates the mechanism (nominally 2.4 seconds, with frame deltas capped at 0.05 seconds, so slow rendering can lengthen it). The camera turns onto the screen afterward, at rate 7 per second, never as a fixed 560ms CSS dolly. A move that starts from rest begins with an ordinary frame's step, never the idle gap since the last drawn frame. Skip finishes immediately; reduced motion snaps tape, frame and camera state. Deep links begin seated (The Handoff Rule). Eject runs the same timeline back, nominally 1.8 seconds, an exit quicker than the entrance: the flap opens, the tape leaves the bay, turns, and settles into its slot along the path it came by, while the view pulls back from the screen and the studio's frame shrinks into its box in one move at the frame's rate, as the page chrome returns; the layer over the page is pointer-transparent on the way back, so the archive answers the pointer at once. Only once the frame has settled on the box does the canvas rejoin the page, again without a visible change, and the tape finishes its return there. The scene reads the transport phase from the page's own commit, not from its props, which arrive a commit later, so no frame is drawn for the old phase in the new box. The renderer's own measurement of its box is taken in that commit too: React Three Fiber applies it again on every render, so a stale one would undo the sizing at the next render, such as a hover while the tape is still on its way home. Focus returns to the corresponding archive link (The Way Back Rule), but that return is not a preview, so the tape stays seated until it is hovered or focused again; an eject during insertion reverses from wherever the tape is; the deck reads EJECT for the return; history back ejects the same way. Reduced motion and the fallback reader return the tape at once. Selection and eject commit inside the router's navigation transition, so the mechanism always starts from the cassette's exact pose. There is no ambient geometry animation. The scene loads lazily, and only once the page has painted and the main thread is idle, so the words and the archive are in use first; it renders on demand, caps pixel ratio at 1.75 in browse and 2 in modeled playback, and disposes generated textures and geometries. It loads, plays, and ejects with a clean console: the studio module drops one line of three.js output, the THREE.Clock deprecation that React Three Fiber's own store raises, matched by its exact text, and passes every other message through.",
         "section": "components"
       },
       {
         "name": "The Way Back Rule",
-        "body": "Every exit lands focus somewhere the visitor can see. After a tape, focus returns to that tape's entry in the archive; after NO SIGNAL, where no tape played, it lands on the nameplate that opens the page, which holds the page's first heading. A focus ring that shows must be on screen: when the browser draws the ring (a keyboard exit), the entry is brought into view by the shortest move and stands 24px clear of the viewport's edge; when it draws none (a pointer exit), the page stays exactly where it was. The move happens in the closing commit, before paint, while the page chrome is still fully dissolved, so it is never seen as a scroll: the studio eases back into its box where that now is. A press in the studio takes focus onto the studio's layer, as a press on a link takes it onto the link, so the focus that follows by script (Skip, then the title) is ringed for a keyboard and never for a mouse."
+        "body": "Every exit lands focus somewhere the visitor can see. After a tape, focus returns to that tape's entry in the archive; after NO SIGNAL, where no tape played, it lands on the nameplate that opens the page, which holds the page's first heading. A focus ring that shows must be on screen: when the browser draws the ring (a keyboard exit), the entry is brought into view by the shortest move and stands 24px clear of the viewport's edge; when it draws none (a pointer exit), the page stays exactly where it was. The move happens in the closing commit, before paint, while the page chrome is still fully dissolved, so it is never seen as a scroll: the studio simply eases back into its box where that now is (The Soft Zoom Rule holds to the pixel either way). A press in the studio takes focus onto the studio's layer, as a press on a link takes it onto the link, so the focus that follows by script (Skip, then the title) is ringed for a keyboard and never for a mouse. The layer is no Tab stop and owes no ring. The title is marked only for a tape chosen from the keyboard (see Screen title), never on a shared link's first load or at a key pressed while reading.",
+        "section": "components"
       },
       {
         "name": "The Ident Rule",
-        "body": "The tube says whose archive is playing. The OSD's top bar has three fields: the transport state at the left, the station ident (DANIEL ALYOSHIN) on the tube's centre line, and the tape's reading time at the right (The True Readout Rule); NO SIGNAL carries the ident alone in the same place. It lives in the reader, not the shell, so it is there in a deep link's first second, through the handoff, in the native reader on a phone, and on a dead link, which is often a first visit. The shell's nameplate dissolves with the rest of the page; nothing of the shell is pinned over the studio. The outer fields share the spare width equally so the ident is centred; on a tube too narrow for that they pack to their content, and the reading time gives way in steps, never the name: below 19.5rem it drops its word and keeps its number (1 MIN), which holds two characters of air beside the name on a 320px phone, and below 15.5rem it goes. The name is read from `src/content/site.ts`, the same source that closes every document title."
-      },
-      {
-        "name": "The One Name Rule",
-        "body": "A thing has one name wherever a visitor meets it, and a link's words are the heading it lands on. The collection of tapes is **the archive**: the header link, the section's heading, the skip link, the phone guide (\"Pick one from the archive below.\"), the status messages, and the idle tube's ALYOSHIN ARCHIVE. It is never \"the tape index\" or \"the shelf\" in anything a visitor reads or hears; the modeled rack and holder are object names for this document only. A tape has one short name, its spine name (`vhs.spineLabel`: ALPHA, ABOUT), printed on the spine and repeated as written by the archive entry, the guide, the idle tube, and both loading screens; and one title, which heads the reader and names the document. The About tape follows the same rule as every tape: it is \"About\" in the header, ABOUT on its spine, and \"About\" on the tube, where the owner's name is already printed once, in the ident. A tape's caption (\"Placeholder tape\", \"Meet the maker\", \"Blank tape\") is the same words in the archive entry and in the guide. The visitor's noun is \"tape\"; \"cassette\" names the modeled object in this document."
-      },
-      {
-        "name": "The Spoken Name Rule",
-        "body": "A link is named by the words it shows, so a name read off the page is a name that can be said to it (WCAG 2.5.3). An archive entry's name is its visible text between what it does and its year, \"Play tape: 01 ALPHA Placeholder tape (2026)\", the first and last parts set aside for assistive technology; the nameplate is \"Daniel Alyoshin Design engineer home\". No link carries an aria-label that replaces its words.",
+        "body": "The tube says whose archive is playing. The OSD's top bar has three fields: the transport state at the left, the station ident (DANIEL ALYOSHIN) on the tube's centre line, and the tape's reading time at the right (The True Readout Rule); NO SIGNAL carries the ident alone in the same place. It lives in the reader, not the shell, so it is there in a deep link's first second, through the handoff, in the native reader on a phone, and on a dead link, which is often a first visit. The shell's nameplate dissolves with the rest of the page; nothing of the shell is pinned over the studio. The outer fields share the spare width equally so the ident is centred; on a tube too narrow for that they pack to their content, and the reading time gives way in steps, never the name: below 19.5rem it drops its word and keeps its number (1 MIN), which holds two characters of air beside the name on a 320px phone, and below 15.5rem it goes. The name is read from `src/content/site.ts`, the same source that closes every document title.",
         "section": "components"
       },
       {
         "name": "The True Readout Rule",
-        "body": "Every readout states something true of the site, or it is not printed. The tube's counter is the tape's reading time, 1 MIN READ: whole minutes at 230 words a minute over the title, tagline, paragraphs, and captions, never under one, derived in `src/content/readingTime.ts` and never typed into a tape's content, so it stays true as the copy changes. The OSD bar is decorative to assistive technology, so the article's meta line carries the same fact for a screen reader (\"1 minute read\"). No tape speed (SP, LP), invented runtime, head count, or stereo claim appears on the tube, the deck, or the idle screen. The transport states, the owner's name, the archive's name, the REC date, and NO SIGNAL's reasons are all statements of fact. AV–01 and CH 01 are names, not claims: the machine's, and the home route's, as CHANNEL NOT FOUND names a route that is missing."
+        "body": "Every readout states something true of the site, or it is not printed. The tube's counter is the tape's reading time, 1 MIN READ: whole minutes at 230 words a minute over the title, tagline, paragraphs, and captions, never under one, derived in `src/content/readingTime.ts` and never typed into a tape's content, so it stays true as the copy changes. The OSD bar is decorative to assistive technology, so the article's meta line carries the same fact for a screen reader (\"1 minute read\"). No tape speed (SP, LP), invented runtime, head count, or stereo claim appears on the tube, the deck, or the idle screen. The transport states, the owner's name, the archive's name, the REC date, and NO SIGNAL's reasons are all statements of fact. AV–01 and CH 01 are names, not claims: the machine's, and the home route's, as CHANNEL NOT FOUND names a route that is missing.",
+        "section": "components"
+      },
+      {
+        "name": "The Handoff Rule",
+        "body": "A desktop deep link's native reader hands over to the modeled screen once, when the scene is ready. The studio composes underneath the still-opaque reader with the tape already seated, the flap closed, the deck reading PLAY, and the keys live, until the modeled reader is mounted and placed on the tube plus one drawn frame; then the native frame dissolves over 560ms (`--t-dolly`, `--ease-out`) while the tube's tracking entrance plays through it. The modeled article inherits the native reader's scroll depth and keeps focus in the article if that is where it was, otherwise on the title. The outgoing frame is hidden from assistive technology only once the modeled reader holds focus, never while focus is still inside it; it is inert for the dissolve, then unmounts. An invalid slug hands off the same way to the modeled NO SIGNAL screen. Reduced motion swaps at the same moment. The dissolve stops early if playback closes, the viewport drops below the reading breakpoints, or graphics are lost. Under the reader the canvas leaves its box for the viewport, and the studio composes at the tube's own view in one step rather than easing from the box's fit, since no one sees it move; the picture is placed where it will stay. The same handoff hands a picture back from full screen (The Picture Size Rule).",
+        "section": "components"
+      },
+      {
+        "name": "The Picture Size Rule",
+        "body": "The tube is small for reading, so the set offers its picture at full size, in its own language rather than with a page control. At the foot of every tape on the modeled tube, on a band of the tube's black that the article scrolls under, the OSD prints the picture's size: PICTURE SIZE in screen-soft, a bar of ten steps lit for the share of the window's width the picture truly fills (measured while the camera settles and on every resize, never typed: The True Readout Rule), and FULL SCREEN with its F legend. The monitor's dial is the same control: while a tape plays on the tube its pointer stands where the bar does, a tenth of its sweep a step, and it returns to its modeled pose when there is no picture to size (`src/lib/pictureSize.ts` holds the one value both show). The set nudges once, at the moment the tube's window starts to cost the visitor: a tape's first scroll on the tube turns the dial up two steps and back while the bar lights with it, so the knob and the readout are seen to be one control. Pointing at either previews the turn, as pointing at a tape lifts it: the bar's unlit steps show faintly, FULL SCREEN underlines, and the knob lightens as a hovered key does. The bar, the dial, and F all turn the picture up the same way: the dial clicks once (the tick, with sound on), the bar lights to full a step every 45ms with the dial turning in step, then the full-height reader grows out of the picture's own rectangle (a clip opening from the tube to the window over 560ms, `--t-dolly`, `--ease-out`, fading up over its first 40%) and takes the window, carrying the reading place and keeping focus in the article if it was there, else on the title. Its deck gains an Exit full screen key, led by the collapse mark with an F legend, ahead of Sound and Eject; that key and F hand the picture back with the deep link's dissolve (The Handoff Rule), the frame closing onto the tube as it fades. Full screen, once chosen, holds for the visit and, like sound, is never stored: eject, Escape, and history return to the page as from any native reader, and every later tape still flies into the deck and plays on the tube, and once the camera is at rest there the set turns its picture up by itself, bar and dial together, and it grows. Under reduced motion there is no flight to watch, so a later tape opens full screen at once. Exit full screen gives the visit back to the tube. It is offered only where the tube is the reader, the Studio First look above the reading breakpoints with graphics ready, and answers only once nothing is moving: not during an insertion or a handoff. F never fires with a modifier, so Command-F still finds in the page. The bar is the control for keyboards and assistive technology, named \"Full screen\" with its shortcut declared; the dial's hit area is the pointer's alone, out of the tab order and hidden from assistive technology. Reduced motion skips the nudge and the steps: the reader takes the window at once and hands back with a swap. The five nudges compared on 2026-09-27 are recorded in `PLAN.md`.",
+        "section": "components"
+      },
+      {
+        "name": "The Closer Look Rule",
+        "body": "The tube is too small to read a picture from, so the modeled reader never shows a tape's media. In its place stands a slate the width of the column, at least 8.5rem tall, in the diagram's own node fill and seam-lit edge with small control corners: the expand mark at 1.4em and TAKE A CLOSER LOOK in OSD white with the OSD's glow, over the media's caption in dim OSD type. It is one button, named by the words it shows. Pointing at it lights its edge white and underlines the action, and previews the turn as pointing at the size bar does (the bar's unlit steps show and the dial lightens). Pressing it turns the picture up exactly as the bar does (The Picture Size Rule): the tick, the bar and the dial to full, the reader growing out of the picture. The reader opens on the media, its top under the OSD, rather than at the reading place, and focus stays in the article. Unlike the bar, the dial, and F, a closer look is for this tape alone: it is not held for the visit, so the next tape plays on the tube. Exit full screen and F hand it back as from any full screen. Where the tube cannot turn up yet (an insertion, a handoff) the slate stands but does not answer, as the bar does not.",
+        "section": "components"
       },
       {
         "name": "The First Frame Rule",
-        "body": "Every route is readable, and correctly named, before any script runs. npm run build renders the home page and each tape to its own static file (index.html, project/<slug>.html), and the NO SIGNAL page to 404.html, which a static host serves for any address it has no file for. A tape's page carries its article in the native reader, as a deep link first shows it. The app then takes the page over where it stands: the served nodes are kept, and the console stays silent. A page drawn for a different address than the one asked for is rendered afresh. What a server cannot know is left to the browser without disturbing the page: the stylesheet picks width-dependent copy, and graphics support is assumed until the browser says otherwise.",
+        "body": "Every route is readable, and correctly named, before any script runs. `npm run build` renders the home page and each tape to its own static file (`index.html`, `project/<slug>.html`), and the NO SIGNAL page to `404.html`, which a static host serves for any address it has no file for. A tape's page carries its article in the native reader, as a deep link first shows it, so a shared link paints its words at once and a crawler reads them. The app then takes the page over where it stands: the served nodes are kept, and the console stays silent. A page drawn for a different address than the one asked for (the 404 page, answering a dead link) is rendered afresh, so a dead tape and a dead channel still say different things. What a server cannot know is left to the browser without disturbing the page: the stylesheet picks width-dependent copy, and graphics support is assumed until the browser says otherwise.",
+        "section": "components"
+      },
+      {
+        "name": "The Card Rule",
+        "body": "A shared link shows what it opens. Home and the NO SIGNAL page unfurl with the site's card, `public/social-card.png`: the studio at rest, the tube reading INSERT TAPE. Every tape unfurls with its own, `public/social-cards/<slug>.png`: the same studio caught as that tape plays, the shell half through the deck's mouth, its slot in the rack empty, and the tube reading LOADING TAPE over its spine label. One camera and one frame for every card, so the cards read as a set and differ only by the tape in the deck; the tube's print still names the tape in a 400px-wide unfurl. Each card's alt text says the same: which tape, going in, under which words.",
         "section": "components"
       }
     ],
@@ -729,14 +844,17 @@
       "Do keep every retro effect inside the CRT screen area; its controlled light cast is the only outward glow.",
       "Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.",
       "Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.",
-      "Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.",
-      "Do keep placeholder projects explicitly labeled until Daniel supplies real content.",
-      "Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.",
       "Do land focus in sight after every exit, and move the page for a ring only while the chrome is dissolved (The Way Back Rule).",
       "Do call a thing by its one name everywhere a visitor meets it, and make a link's words the heading it lands on (The One Name Rule).",
       "Do keep the owner's name on the tube in every reading state; identity during playback belongs to the OSD, not to shell chrome pinned over the studio (The Ident Rule).",
       "Do keep every route readable and correctly named before any script runs, and boot the studio after the page has painted (The First Frame Rule).",
-      "Do name a link by the words it shows (The Spoken Name Rule), and take screen colours from the one palette (The One Palette Rule)."
+      "Do name a link by the words it shows (The Spoken Name Rule), and take screen colours from the one palette (The One Palette Rule).",
+      "Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.",
+      "Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).",
+      "Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).",
+      "Do give every tape a share card of its own, the studio caught as that tape goes into the deck (The Card Rule).",
+      "Do let a touch tap preview a cassette before a second tap plays it; hover's confirm step has no touch equivalent, and a slot at the phone fit is narrower than a fingertip.",
+      "Do leave an unfilled project slot legible as a blank tape and an outlined \"Coming soon…\" entry, never as an invented project."
     ],
     "donts": [
       "Don't add grunge, sepia, dirt, wear, photographic textures, or degraded page chrome.",

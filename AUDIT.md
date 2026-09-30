@@ -434,6 +434,81 @@ are the overlay-layer contrast nodes resolved by hand above (OSD white on
 the one idle blue, `#242bd9`, is 8.7:1). Not re-run: axe on the two no-WebGL
 states, and the frame-gap measurements.
 
+## Final checks with the real content — 2026-09-29
+
+Stage 9's last checks, run once the content was final (SUPERSET D1, four
+blank slots, About). Production build, `vite preview`, installed Chrome,
+headed so WebGL used the real GPU.
+
+**Accessibility.** axe-core 4.13.0 (WCAG 2.0/2.1 A and AA, 2.2 AA,
+best-practice, plus `label-content-name-mismatch`) over fourteen states:
+home at 1440 × 900, 390 × 844 and 844 × 390; D1 on the tube, chosen and
+deep-linked, where the closer-look slate stands in for the diagram; the
+closer look opened, full screen on the wide diagram; full screen from the
+size bar at 1280 × 800; the phone reader with the narrow diagram; About on
+the tube and in the phone reader; both NO SIGNAL routes (served as the host
+will, from `404.html`); and the no-WebGL home and reader. **Zero
+violations.** The only incompletes are text axe cannot put a background
+behind (the tube's gradients, the grain layer), resolved by hand from
+computed colours: the lowest is 5.63:1 (dim silkscreen on the page ground,
+the 11–12px kicker and guide); the diagram's caption is 8.02:1, OSD white on
+the idle blue 8.67:1. Every image has its alt text (the diagram's is 959
+characters, the whole drawing in words), its pixel size, and a reserved box.
+
+**Lighthouse 13.5.0**, medians of three mobile runs and two desktop runs:
+
+| Route                | Mobile performance | LCP   | TBT    | CLS   | Desktop | A11y · BP · SEO |
+| -------------------- | ------------------ | ----- | ------ | ----- | ------- | --------------- |
+| Home                 | 85                 | 1.8 s | 545 ms | 0     | 97      | 100 · 100 · 100 |
+| Cloudflare D1        | 87                 | 2.4 s | 400 ms | 0     | 100     | 100 · 100 · 100 |
+| About                | 85                 | 2.0 s | 492 ms | 0.002 |         | 100 · 100 · 100 |
+| NO SIGNAL (404.html) | 82                 | 2.1 s | 632 ms | 0.003 |         | 100 · 100 · 63  |
+
+NO SIGNAL's SEO score is its own `noindex`, as intended. Lighthouse 12.8.2
+on the same build scores home 87–90 (89 on 2026-09-21), so the lower
+13.5 numbers are the new version's model, not a regression. Standing
+findings, all known: three.js in the studio chunk (about 140 KiB unused at
+load), the one 7.8 KB stylesheet as render-blocking, and no source maps.
+New: **image delivery**, an estimated 56 KiB on D1. The diagram is drawn
+at 3.25× for every screen; lossless renders of it measure 18 KB at 1×,
+37 KB at 2× and 64 KB at 3.25×, so a density `srcset` would save 45 KB on
+a 1× desktop and 27 KB on a 2× screen, and nothing on a 3× phone. Offered,
+not done.
+
+**Media on a slow connection** (1.6 Mbps, 150 ms, cache off, 4× CPU;
+medians of three):
+
+- Home and a tape chosen on the tube request no diagram: the tube shows the
+  closer-look slate, not the picture.
+- The closer look opened cold on the tube fetches the 62 KB wide drawing
+  and shows it 0.54 s after the press, in a box already its size: no shift.
+- A deep link draws the diagram in the first screen of the drawn page
+  (194 px of it at 390 × 844, 300–489 px on laptops), so it loads eagerly at
+  high priority, as the 2026-09-16 audit asked. It arrives by 1.36 s beside
+  the app. The price is bandwidth: blocking the image moves the main script
+  from 1.54 s to 1.10 s and the studio's readiness from 3.63 s to 3.19 s on
+  a phone, and the desktop handoff from 3.84 s to 3.39 s. First paint is
+  unchanged (the text, at 0.5 s), and the phone's narrow drawing holds its
+  1170 × 2184 box before it loads (the `<source>` carries its own size).
+
+**Fixed: the tracking entrance under reduced motion.** The global gate
+collapses an animation to 0.01 ms, but a collapsed animation still paints
+its first keyframe, and the tube's entrance starts with the picture 6% high
+at 2.1× brightness. Every tape start painted that frame for visitors who
+asked for no motion, and Chrome reported it as a 0.085 layout shift on a
+desktop deep link. The entrance no longer plays under reduced motion; a
+screencast shows the first presented frame already at rest. A
+PerformanceObserver on an unprobed page still reports about 0.088 before
+first paint under reduced motion on the slow profile, in no presented frame
+and gone whenever geometry is probed; with motion the same page reports
+0.0095, and Lighthouse 0.011. Its source is not found. It sits under the
+0.1 "good" line.
+
+Share cards: every tape now unfurls with its own (The Card Rule), and the
+site's card was re-rendered: it still showed the removed placeholder tapes.
+
+Not performed: a screen-reader session and a pass on physical devices.
+
 ---
 
 # Technical UI audit — 2026-09-15 (historical)
