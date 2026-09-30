@@ -376,3 +376,67 @@ test('Tab keeps its loop on the tube, with the dial’s pointer target out of it
   expect([...stops].some((stop) => /full screen/i.test(stop))).toBe(true)
   expect(stops.has('')).toBe(false)
 })
+
+test('in forced colours the article scrolls under solid strips, and the size bar reads lit, unlit and previewed', async ({
+  page,
+}) => {
+  await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' })
+  await playOnTube(page)
+  const tube = page.getByTestId('project-reader')
+  // Forced colours drop gradient backgrounds: the OSD bar above the
+  // article and the readout's strip below it must stay opaque, or the
+  // article's lines run through their words.
+  const opaque = (el: Element) => {
+    const [, , , alpha = '1'] =
+      getComputedStyle(el).backgroundColor.match(/[\d.]+/g) ?? []
+    return Number(alpha) === 1
+  }
+  await tubeArticle(page).evaluate((el) => {
+    el.scrollTop = (el.scrollHeight - el.clientHeight) / 3
+  })
+  expect(
+    await tube
+      .locator('[aria-hidden="true"]', { hasText: 'PLAY' })
+      .evaluate(opaque),
+  ).toBe(true)
+  expect(await tube.locator('article + div').evaluate(opaque)).toBe(true)
+  // The steps: filled when lit, outlined in the same colour when not, and
+  // filled in a third colour while pointing previews the turn.
+  const steps = () =>
+    sizeBar(page)
+      .locator('span > span')
+      .evaluateAll((spans) =>
+        spans.map((span) => {
+          const style = getComputedStyle(span)
+          return {
+            lit: span.hasAttribute('data-lit'),
+            fill: style.backgroundColor,
+            border:
+              style.borderTopWidth === '0px' ? null : style.borderTopColor,
+            opacity: style.opacity,
+          }
+        }),
+      )
+  const atRest = await steps()
+  const lit = atRest.filter((step) => step.lit)
+  const unlit = atRest.filter((step) => !step.lit)
+  expect(lit.length).toBeGreaterThan(0)
+  expect(unlit.length).toBeGreaterThan(0)
+  const ink = lit[0].fill
+  expect(new Set(lit.map((step) => step.fill))).toEqual(new Set([ink]))
+  for (const step of unlit) {
+    expect(step.fill).not.toBe(ink)
+    expect(step.border).toBe(ink)
+    expect(step.opacity).toBe('1')
+  }
+  const ground = unlit[0].fill
+  await sizeBar(page).hover()
+  await expect
+    .poll(async () => (await steps()).filter((step) => !step.lit)[0].fill)
+    .not.toBe(ground)
+  const previewed = (await steps()).filter((step) => !step.lit)
+  for (const step of previewed) {
+    expect(step.fill).not.toBe(ink)
+    expect(step.opacity).toBe('1')
+  }
+})

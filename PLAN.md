@@ -1636,6 +1636,18 @@ Daniel's follow-ups the same day:
   hydrates, so a returning muted visitor may see the speaker's waves turn to
   its slash as the page starts.
 
+Found in a recorded run through the site the same day:
+
+- ✅ Forced colours (Windows high contrast) drop gradient backgrounds, so
+  the strips the article scrolls under at the top and foot of the picture
+  vanished: its lines ran through the OSD bar and the size readout, on the
+  tube and in the full-height reader. The size bar's steps, painted boxes,
+  took the screen's own ground and disappeared. In forced colours the
+  strips are now solid `Canvas`, and each step is outlined in `CanvasText`,
+  filled when lit, and `GrayText` while pointing previews the turn. Checked
+  in the light and dark high-contrast palettes; normal colours are
+  unchanged. Tested in `fullscreen.spec`.
+
 ---
 
 ## Open decisions (flagged, not blocking)

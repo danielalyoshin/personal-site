@@ -644,3 +644,32 @@
     display: none;
   }
 }
+
+/* Forced colours (Windows high contrast) drop gradient backgrounds, and
+   with them the strips the article scrolls under at the top and foot of
+   the picture: its lines ran through the OSD bar and the size readout.
+   The strips are solid there instead. The bar's steps are painted boxes,
+   which the mode would turn into the screen's own ground, so they take
+   their colours from the system palette themselves: each step outlined,
+   filled when lit, and grey where pointing previews the turn. */
+@media (forced-colors: active) {
+  .osdTop,
+  .osdBottom,
+  .reader.readerSized + .osdBottom {
+    background: Canvas;
+  }
+  .sizeBar span {
+    forced-color-adjust: none;
+    border: 1px solid CanvasText;
+    background: Canvas;
+    opacity: 1;
+  }
+  .sizeBar span[data-lit] {
+    background: CanvasText;
+    box-shadow: none;
+  }
+  .sizeReadout[data-pointing] .sizeBar span:not([data-lit]) {
+    background: GrayText;
+    opacity: 1;
+  }
+}
