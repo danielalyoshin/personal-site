@@ -464,7 +464,7 @@ test('physical playback keys follow the player, remain clickable after resize, a
     'true',
   )
   const d1 = page.getByRole('link', {
-    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     exact: true,
   })
   await d1.click()

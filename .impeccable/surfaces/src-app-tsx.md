@@ -145,13 +145,15 @@ ends. Selection sizes the canvas to the viewport in the same commit and eases
 the studio's frame out to it; the studio renders at pixel ratio 2 during
 modeled playback.
 Skip animation is a hardware key of the native deck family, led by a drawn
-skip mark, at the viewport's lower right during insertion, or inside the
-native loading screen. The playback camera keeps
+skip mark, at the viewport's lower right during insertion on every window.
+The playback camera keeps
 both CRT and deck in view. The native reader integrates these actions into
 its lower hardware panel, respecting the bottom safe area. There is no
-page-wide playback footer. While the native reader owns playback it covers
-the studio, so the canvas keeps the size of its box instead of taking the
-viewport, and the tape returns to its slot there on eject.
+page-wide playback footer. On phones and short windows the insertion still
+plays in the studio over the whole viewport, and the native reader opens once
+the tape is in. While it owns playback it covers the studio, so the canvas
+goes back to the size of its box instead of keeping the viewport, and the
+tape returns to its slot there on eject.
 Missing WebGL and lost graphics
 contexts retain the entire archive and reader. Deep links, About, both 404
 states, Escape/eject, and focus return remain supported. Every screen state

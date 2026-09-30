@@ -34,8 +34,13 @@ const THROUGH = 0.5
 const FIBER = '/node_modules/.vite/deps/@react-three_fiber.js'
 
 // The studio's layer takes the whole frame, over everything else on the
-// page; the rig fits the equipment to whatever box its canvas is given.
+// page but Skip animation, which stands over the insertion on every window
+// and so is hidden; the rig fits the equipment to whatever box its canvas
+// is given.
 const FRAME_CSS = `
+  button:not([data-testid='studio-scene'] button) {
+    visibility: hidden;
+  }
   [data-testid='studio-scene'] > div {
     position: fixed !important;
     inset: 0 !important;

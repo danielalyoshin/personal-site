@@ -227,7 +227,7 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
     await expect(page).toHaveURL('/')
     await expect(
       page.getByRole('link', {
-        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
         exact: true,
       }),
     ).toBeFocused()
@@ -245,7 +245,7 @@ test('the HTML archive opens a reader before the graphics module is available', 
     await held.requested
     await page
       .getByRole('link', {
-        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
       })
       .click()
     const reader = page.getByRole('article', {
@@ -681,7 +681,7 @@ test('the studio loads without a console warning or error', async ({
   await ready(page)
   await page
     .getByRole('link', {
-      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     })
     .click()
   await expect(page.getByTestId('project-reader')).toBeVisible()
@@ -725,7 +725,7 @@ test('every link on the page is named by the words it shows', async ({
   }
 })
 
-test('the canvas keeps its box while the native reader owns playback', async ({
+test('a phone plays the insertion in the studio, then the native reader takes over', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
@@ -743,18 +743,25 @@ test('the canvas keeps its box while the native reader owns playback', async ({
   }
   const atRest = await sizes()
   expect(atRest.canvas).toEqual(atRest.box)
-  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
-  // The reader covers the studio from the first frame of the insertion to
-  // the eject: a viewport-sized drawing buffer under it would serve nobody.
-  await expect(page.getByTestId('native-reader')).toBeVisible()
-  expect(await sizes()).toEqual(atRest)
-  await expect(scene).not.toHaveAttribute('data-detached', 'true')
-  await page.getByRole('button', { name: 'Skip animation' }).click()
+  const tape = page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ })
+  await tape.click()
+  // The insertion plays in the studio, over the whole viewport, as on every
+  // window: no reader covers the flight that Skip offers to cut short.
+  const skip = page.getByRole('button', { name: 'Skip animation' })
+  await expect(skip).toBeVisible()
+  await expect(scene).toHaveAttribute('data-detached', 'true')
+  await expect(page.getByTestId('native-reader')).toHaveCount(0)
+  expect((await sizes()).canvas).toEqual([390, 844])
+  await skip.click()
+  // Once the tape is in, the reader covers the studio until the eject, and
+  // the canvas is back in its box: a viewport-sized drawing buffer under it
+  // would serve nobody.
   await expect(
-    page.getByRole('article', {
+    page.getByTestId('native-reader').getByRole('article', {
       name: 'Cloudflare D1 in Apache Superset details',
     }),
   ).toBeVisible()
+  await expect(scene).not.toHaveAttribute('data-detached', 'true')
   expect(await sizes()).toEqual(atRest)
   // The page holds still under the reader all the same.
   expect(
@@ -767,4 +774,14 @@ test('the canvas keeps its box while the native reader owns playback', async ({
   await expect
     .poll(() => page.evaluate(() => getComputedStyle(document.body).overflow))
     .not.toBe('hidden')
+  // Ejected during the insertion, the studio eases back into its box from
+  // the viewport it had taken, as on desktop, rather than snapping.
+  await tape.click()
+  await expect(skip).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  await expect(scene).toHaveAttribute('data-detached', 'true')
+  await expect(scene).not.toHaveAttribute('data-detached', 'true')
+  expect(await sizes()).toEqual(atRest)
+  await expect(page.getByTestId('native-reader')).toHaveCount(0)
 })

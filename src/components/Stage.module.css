@@ -702,24 +702,6 @@
   flex: 1;
   min-height: 0;
 }
-.readerLoading {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  border-radius: var(--r-screen);
-  background: var(--screen-black);
-  color: var(--screen-text);
-}
-.readerLoading > span + span {
-  color: var(--screen-dim);
-  font-size: var(--type-caption);
-}
-.readerLoading button {
-  margin-top: 8px;
-}
 .readerDeck {
   display: flex;
   align-items: center;

@@ -29,7 +29,7 @@ function underline(target: Locator) {
 
 const d1Link = (page: Page) =>
   page.getByRole('link', {
-    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     exact: true,
   })
 

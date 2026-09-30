@@ -200,12 +200,16 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // frame closes onto the picture as it goes.
   const [toTube, setToTube] = useState(false)
   if (toTube && !handoff) setToTube(false)
-  const useNativeReader = expandedReader || nativePlayback || flat || enlarged
+  const [insertingSlug, setInsertingSlug] = useState<string | null>(null)
+  const loading = !!tape && insertingSlug === tape.slug && !flat
+  // Phones and short windows read on the native reader, but only once the
+  // tape is in the deck: the insertion plays in the studio, as it does on
+  // every other window.
+  const useNativeReader =
+    (expandedReader && !loading) || nativePlayback || flat || enlarged
   // The dissolve stops early if playback closes or the native reader is
   // needed again (a resize below the reading breakpoints, or lost graphics).
   if (handoff && (!open || useNativeReader)) setHandoff(null)
-  const [insertingSlug, setInsertingSlug] = useState<string | null>(null)
-  const loading = !!tape && insertingSlug === tape.slug && !flat
   // Full screen is offered where the tube is the reader: a tape on the
   // modeled screen, or already enlarged from it, once nothing is moving.
   const studioReads =
@@ -241,8 +245,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
     // the latter. Reopening mid-eject seats the tape again.
     setEjecting(!open && ready && !flat ? deckTape : null)
     // Only a canvas that left its box has a way back to ease along: under
-    // the native reader it never left.
-    setReturning(!open && ready && !flat && !useNativeReader)
+    // the native reader it never left, but a tape still going in had taken
+    // it out on every window.
+    setReturning(
+      !open && ready && !flat && (!useNativeReader || !!insertingSlug),
+    )
     // An eject mid-insertion reverses from where the tape is; clearing the
     // insertion any earlier would seat it first.
     if (!open) setInsertingSlug(null)
@@ -251,10 +258,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   }
   // Without a scene to ease it back, the canvas rejoins the page at once.
   if (returning && (open || flat)) setReturning(false)
-  // The canvas takes the viewport only for modeled playback. While the native
-  // reader owns playback (phones, short windows, a pinned deep link) it
-  // covers the studio completely, so the canvas stays the size of its box
-  // rather than holding a viewport-sized drawing buffer nobody can see.
+  // The canvas takes the viewport only for the insertion and modeled
+  // playback. While the native reader owns playback (phones and short
+  // windows once the tape is in, a pinned deep link) it covers the studio
+  // completely, so the canvas goes back to its box rather than holding a
+  // viewport-sized drawing buffer nobody can see.
   const detached = (open && !useNativeReader) || returning
   const title = pageTitle(invalid ? 'nosignal' : tape)
   const tapeEls = useRef(new Map<string, HTMLAnchorElement>())
@@ -782,7 +790,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               stroke="currentColor"
               strokeWidth="1.5"
             />
-            <path d="M10 8h12M10 16h12" stroke="currentColor" />
+            <path
+              d="M10 8h12M10 16h12"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
           </svg>
           {/* The link is named by the words it shows, then where it goes:
               a name a visitor can read off the page and say. */}
@@ -1007,7 +1019,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                   >
                     {/* Named by what the entry shows, between what it does
                         and its year: "Play tape: 01 SUPERSET D1 Cloudflare
-                        D1 in Apache Superset (2026)". */}
+                        D1 in Apache Superset (2025)". */}
                     <span className="srOnly">Play tape: </span>
                     <span className={styles.tapeNumber}>
                       {slotNumber(index)}
@@ -1090,15 +1102,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           }}
         >
           <div className={styles.nativeScreen} ref={nativeScreen}>
-            {loading ? (
-              <div className={styles.readerLoading}>
-                <span>Loading tape</span>
-                <span>{tape?.vhs.spineLabel}</span>
-                {skipControl}
-              </div>
-            ) : (
-              readerFor(true)
-            )}
+            {readerFor(true)}
           </div>
           <div className={styles.readerDeck}>
             <span className={styles.readerDeckLabel}>

@@ -13,7 +13,7 @@ export const supersetD1: Project = {
     'Superset connects to D1 through sqlalchemy-d1, a thin layer over sqlalchemy-cloudflare-d1, the maintained community dialect.',
     'Superset installs it through its d1 extra. Superset’s built-in D1 engine spec runs queries on the community driver, which sends them to D1 over HTTPS.',
   ],
-  year: 2026,
+  year: 2025,
   role: 'Primary maintainer',
   tags: ['python', 'sqlalchemy', 'cloudflare-d1', 'apache-superset'],
   links: [

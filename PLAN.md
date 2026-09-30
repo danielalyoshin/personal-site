@@ -561,7 +561,8 @@ against WebGL; the July entries below remain a record of the original build.
 - Known and intentional: a deep link's programmatic title focus shows the
   OSD underline (keyboard arrivals need it; reversed 2026-09-27, see Two
   fixes under Stage 8); phones show the native reader's
-  loading screen for the mechanism's 2.4 seconds unless skipped; the
+  loading screen for the mechanism's 2.4 seconds unless skipped (reversed
+  2026-09-29: the insertion plays in the studio first, see Stage 10); the
   THREE.Clock deprecation warning comes from React Three Fiber's clock, not
   project code.
 - Validation: production build, ESLint, formatting, 23 Chrome tests, and the
@@ -1573,6 +1574,22 @@ Daniel's decision: GitHub Pages, at his domain `alyoshin.dev`.
   routes 200, a dead address and a trailing-slash address 404 with the NO
   SIGNAL page, `www` and `http` 301 to `https://alyoshin.dev/`, sitemap,
   robots and share cards served, canonical and `og:image` absolute.
+
+#### After launch (2026-09-29)
+
+Daniel's three fixes:
+
+- ✅ The D1 tape's year is 2025; its REC line stays SEP 2026.
+- ✅ The nameplate's cassette mark draws its two tape lines at the shell
+  and reels' 1.5 stroke; they were at SVG's default 1.
+- ✅ Phones and short windows no longer open the native reader the moment a
+  tape is chosen. Its loading screen (LOADING TAPE, the spine label, and
+  Skip) covered the insertion it offered to skip. The insertion now plays in
+  the studio as on every other window: the canvas takes the viewport, the
+  studio eases out to fill it, Skip waits at the lower right, and the native
+  reader opens once the tape is in, with the canvas back in its box under
+  it. An eject during the insertion eases the studio back into its box. The
+  native loading screen is gone.
 
 ---
 

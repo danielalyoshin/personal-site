@@ -44,7 +44,7 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await expect(page.locator('canvas')).toBeVisible()
   await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(2)
   const d1 = page.getByRole('link', {
-    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     exact: true,
   })
   await d1.focus()
@@ -247,7 +247,7 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await expect(inStudio).toBeHidden()
   await expect(
     page.getByRole('link', {
-      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)',
+      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
       exact: true,
     }),
   ).toBeInViewport({ ratio: 1 })

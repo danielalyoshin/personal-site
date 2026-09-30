@@ -311,7 +311,7 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 
 - **Display** (`display`, `display-short`, `display-mobile`, `display-sideways`): the introductory line at weight 600, one role per look, each floored at 2rem. Beside the studio it is capped at 4rem and never wider than 4.6vw; on windows no taller than 820px, at 3rem, and never taller than the corner above the lifted tape; in the mobile look, at 3.375rem, where the shorter side of the screen sets its size so a small phone on its side gives more of its first screen to the studio; and beside the studio on a phone on its side, at 2.75rem, set by the screen's height. The corner is layout, not type, so the stage applies it to the token (The Studio First Rule), as it raises the floor beside a narrow studio: 2.25rem at 768–939px wide, and 2.0625rem when such a window is also under 600px tall. The secondary line uses dim silkscreen.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
-- **Body** (`body`): 1rem at weight 400. The page baseline, skip link, and the native reader's loading line inherit 1rem at 1.5 leading.
+- **Body** (`body`): 1rem at weight 400. The page baseline and skip link inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
 - **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, footer statement, the loading note, and the Escape hint are weight 400 with 1.5 leading. The native deck keys and Skip animation are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
 - **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries' numbers, the footer edition, and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
@@ -504,15 +504,19 @@ faces the modeled screen and HTML occupies its 4:3 plane. At widths up to
 767px **or** heights up to 699px, the native reader fills the available height
 with its own scroll area. Its frame is inset 12px vertically and 10px
 horizontally, respecting the bottom safe area. Sound and eject are built into
-a 72px minimum-height deck panel within that frame; skip appears in the loading screen. The CRT's explicit `fullHeight` prop/class applies the stretched
+a 72px minimum-height deck panel within that frame. The CRT's explicit `fullHeight` prop/class applies the stretched
 layout and readable type independently of viewport CSS. The mobile look
 shares this breakpoint's width but not its height: a window 540 to 699px
 tall browses in the Studio First look and reads in the native reader. The
 phone's 600px steps (the kicker's break, the camera's closer view, the
-shorter deck labels) are separate from both. The native reader covers
-the studio completely, so while it owns playback the canvas keeps the size of
-its box and never takes the viewport; the page holds still beneath all the
-same, and on eject the tape returns to its slot in the box.
+shorter deck labels) are separate from both. A tape chosen there still goes
+in on the studio first, as on every window: the canvas takes the viewport,
+the studio eases out to fill it, Skip animation waits at the lower right,
+and the native reader opens only once the tape is in the deck. It then
+covers the studio completely, so the canvas goes back to the size of its box
+under it rather than keep the viewport; the page holds still beneath all the
+same, and on eject the tape returns to its slot in the box. An eject during
+the insertion eases the studio back into its box, as on desktop.
 
 Direct project links and selections made before graphics are ready immediately
 open the full-height native reader at every viewport size. That reader stays
@@ -660,8 +664,8 @@ collapse mark before its words and an F legend after them, declared through
 Skip animation is a hardware key of the native deck family, available only
 during insertion: the same uppercase control type, seam-lit border, darker
 bottom edge, and press as the native reader's sound and eject keys, led by
-the drawn skip mark. It sits at the viewport's lower right for modeled
-playback and inside the native loading screen, with a 44px minimum target.
+the drawn skip mark. It sits at the viewport's lower right, over the insertion
+playing in the studio on every window, with a 44px minimum target.
 It is HTML, never a modeled key: the deck carries no physical skip, and its
 printed model label stays visible. Skip takes focus for as long as it is on
 stage, so focus never rests on the page body during the flight and a
@@ -709,8 +713,8 @@ idle tube's PROJECTS. It is never "the archive", "the tape index" or "the shelf"
 anything a visitor reads or hears; the modeled rack and holder are object
 names for this document only. A tape has one short name, its spine name
 (`vhs.spineLabel`: SUPERSET D1, ABOUT), printed on the spine and repeated as
-written by the archive entry, the guide, the idle tube, and both loading
-screens; and one title, which heads the reader and names the document. The About
+written by the archive entry, the guide, the idle tube, and the loading
+tube; and one title, which heads the reader and names the document. The About
 tape follows the same rule as every tape: it is "About" in the header, ABOUT
 on its spine, and "About" on the tube, where the owner's name is already
 printed once, in the ident. A tape's caption is the same words in the
@@ -737,7 +741,7 @@ shell does.
 **The Spoken Name Rule.** A link is named by the words it shows, so a name
 read off the page is a name that can be said to it (WCAG 2.5.3). An archive
 entry's name is its visible text between what it does and its year, "Play
-tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2026)", the first and
+tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)", the first and
 last parts set aside for assistive technology; the nameplate is "Daniel
 Alyoshin Forward deployed engineer home". No link carries an `aria-label` that replaces its words.
 
@@ -790,7 +794,7 @@ the hollow bay. The flap closes before the camera moves to reading position.
 sub-lines always belong to its headline. At rest: INSERT TAPE over CHOOSE A
 TAPE / TO PLAY. Previewing: the cassette's name over SELECT THIS TAPE / TO
 PLAY. Loading: LOADING TAPE over the name of the tape going in and nothing
-else, as the native loading screen reads. Returning: EJECT, the deck's word
+else. Returning: EJECT, the deck's word
 for the state, led by the key cap's drawn mark, over the name of the tape
 coming out and nothing else, so the tube and the deck's status window read
 the same word for as long as the return lasts. An invitation never prints
