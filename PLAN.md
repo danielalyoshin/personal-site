@@ -1702,6 +1702,25 @@ they are not seeing the full experience and why.
   tapes (clear, but loses the studio). The prototype diffs are kept outside
   the repository.
 
+#### The sidecar kept with the site (2026-10-04)
+
+- ✅ Impeccable's `document`, run by Daniel as a sidecar-only refresh
+  (DESIGN.md kept). Impeccable called the sidecar stale by file times
+  alone: `npm run format` writes it a few seconds before DESIGN.md. Its real
+  drift came from the site: the REC dot's sample still sat at 0.08em, the
+  forced-colours rules were in no sample, and two samples dated the D1 tape 2026.
+- ✅ The rule, in CLAUDE.md and AGENTS.md: the sidecar is derived and is
+  updated in the same change as what it copies, DESIGN.md for its narrative
+  and token names, the site's CSS and `src/content` for its samples, motion,
+  and breakpoints.
+- ✅ `e2e/design.spec.ts` plays the site through the moments the samples
+  draw (the page, a tape going in, the tape on the tube, its picture at
+  full screen) and fails on any word, accessible name, link, or tape accent
+  in a sample that the site does not say. Each line is checked whole, so a
+  year must be its own tape's. Errors planted in six samples all failed it.
+- ✅ DESIGN.md describes the forced-colours treatment, at Daniel's request:
+  The Forced Colours Rule (Colors), copied to the sidecar.
+
 ---
 
 ## Open decisions (flagged, not blocking)

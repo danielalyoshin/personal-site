@@ -579,3 +579,111 @@ test.describe('the site renders what the frontmatter says', () => {
     ).toEqual([])
   })
 })
+
+// The sidecar's samples are copies of the site, words and all: its copy, a
+// tape's content, the names assistive technology hears, where links go, and
+// a tape's accent. Each must be something the site says in one of the
+// moments the samples draw (the page, a tape going in, the tape on the tube,
+// and its picture at full screen), so words changed on the site and not in a
+// sample fail here. Each line of a sample is checked whole as well as word
+// by word, so a word stands in its context: an entry's year must be its own
+// tape's, not another's. Case and spacing are set aside: the site's capitals
+// are its CSS.
+
+declare global {
+  interface Window {
+    sayings: (root: ParentNode) => { text: string[]; attributes: string[] }
+  }
+}
+
+const plain = (words: string) => words.replace(/\s+/g, ' ').trim().toLowerCase()
+const squash = (words: string) => words.replace(/\s+/g, '').toLowerCase()
+
+test("every word in the sidecar's samples is one the site says", async ({
+  page,
+}) => {
+  const { components } = JSON.parse(read('.impeccable/design.json')) as {
+    components: { name: string; html: string }[]
+  }
+  await page.addInitScript(() => {
+    window.sayings = (root) => {
+      const text: string[] = []
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+      for (let node = walker.nextNode(); node; node = walker.nextNode())
+        if (!node.parentElement?.closest('script, style'))
+          text.push(node.textContent ?? '')
+      const attributes = [
+        ...root.querySelectorAll('[aria-label], [href], [style]'),
+      ].flatMap((element) => [
+        element.getAttribute('aria-label') ?? '',
+        element.getAttribute('href') ?? '',
+        ...(element.getAttribute('style') ?? '')
+          .split(';')
+          .filter((declaration) => declaration.trim().startsWith('--'))
+          .map((declaration) => declaration.replace(/\s/g, '')),
+      ])
+      return { text, attributes }
+    }
+  })
+  const spoken: string[] = []
+  const named: string[] = []
+  const listen = async () => {
+    const { text, attributes } = await page.evaluate(() =>
+      window.sayings(document.body),
+    )
+    spoken.push(text.join(''))
+    named.push(...attributes)
+  }
+
+  // The page, and a tape going in.
+  await page.goto('/')
+  await ready(page)
+  await listen()
+  await page.locator('#projects a[href="/project/superset-d1"]').click()
+  await expect(
+    page.getByRole('button', { name: 'Skip animation' }),
+  ).toBeVisible()
+  await listen()
+  // The tape on the tube, and its picture at full screen.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await onTheTube(page, '/project/superset-d1')
+  await listen()
+  await page.keyboard.press('f')
+  await expect(page.getByTestId('native-reader')).toHaveAttribute(
+    'data-full-screen',
+    'on',
+  )
+  await listen()
+
+  const site = plain([...spoken, ...named].join('\n'))
+  const lines = squash(spoken.join('\n'))
+  const samples = await page.evaluate(
+    (list) =>
+      list.map(({ name, html }) => {
+        const template = document.createElement('template')
+        template.innerHTML = html
+        const { text, attributes } = window.sayings(template.content)
+        // A line: an element holding only text and inline marks.
+        const whole = [...template.content.querySelectorAll('*')]
+          .filter(
+            (element) =>
+              !element.querySelector(':not(span, small, kbd, svg, svg *)'),
+          )
+          .map((element) => element.textContent ?? '')
+        return { name, phrases: [...text, ...attributes], lines: whole }
+      }),
+    components,
+  )
+  const unsaid = samples.flatMap(({ name, phrases, lines: whole }) => [
+    ...new Set(
+      [
+        ...phrases.filter((phrase) => !site.includes(plain(phrase))),
+        ...whole.filter((line) => !lines.includes(squash(line))),
+      ]
+        .map(plain)
+        .filter(Boolean)
+        .map((words) => `${name}: ${words}`),
+    ),
+  ])
+  expect(unsaid).toEqual([])
+})

@@ -27,6 +27,14 @@ starting work and keep it updated as stages complete or decisions change.
   `tokens.css` carries the same values under the same names, the stylesheets
   read them, and `e2e/design.spec.ts` fails when any of the three disagree.
   Change a value in DESIGN.md first; never only in CSS.
+- `.impeccable/design.json` (the sidecar) is derived: update it in the same
+  change as what it copies, by hand or with Impeccable's `document`. Its
+  narrative and token names copy DESIGN.md word for word. Its component
+  samples, motion, and breakpoints copy the site's CSS and `src/content`, so a
+  site change can leave it stale while DESIGN.md is current.
+  `e2e/design.spec.ts` checks the narrative and the samples' words, names, and
+  links. Impeccable's stale warning only compares file times, and
+  `npm run format` trips it.
 
 ## Git rules
 

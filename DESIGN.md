@@ -294,6 +294,19 @@ a light is multiplied by the matte surface it lands on.
 
 **The Artifact Color Rule.** Saturated color belongs to cassette labels and screen output. Cassette accents come from project data; small VFD-cyan focus and status marks support interaction without coloring the page chrome.
 
+**The Forced Colours Rule.** In forced colours (Windows high contrast) the
+visitor's palette replaces this one, and the site lets it: only what the mode
+would break is drawn for it. The mode drops gradient backgrounds, and with
+them the strips the article scrolls under at the top and foot of the picture
+(behind the OSD bar, and the continuation fade, which holds the size readout
+on the tube), so the article's lines would run through their words. There
+they are solid `Canvas`, on the tube and in the full-height reader. The size
+bar's ten steps are painted boxes the mode would turn into the screen's own
+ground, so they alone opt out (`forced-color-adjust: none`) and take their
+colours from the system palette: each step outlined in `CanvasText`, filled
+when lit, and `GrayText` while pointing previews the turn (The Picture Size
+Rule). Normal colours are unchanged.
+
 ## Typography
 
 **Display Font:** Archivo Variable, Archivo, Arial, system-ui, sans-serif.
