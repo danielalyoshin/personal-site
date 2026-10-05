@@ -1,0 +1,129 @@
+/* The studio's box without a studio: the studio's still, laid out by
+   FlatStudio.tsx as the live fit would frame it, and the rack's pointer
+   targets over it. A still wider than the box (the phones' table runs on
+   past the screen's edges) is cut at the box. */
+.studio {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.plate {
+  position: absolute;
+}
+/* The still fades up as it arrives. It is transparent where the scene
+   draws nothing, as the canvas is, so the page's own graphite is its ground
+   and no edge of it can show. */
+.picture {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  opacity: 0;
+  transition: opacity var(--t-med) var(--ease-out);
+}
+.shown {
+  opacity: 1;
+}
+.picture img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+/* A tape previewed, here or from the list: its own still, lifted, with the
+   tube naming it, dissolves in as the studio at rest dissolves out, and
+   back. The stills add (plus-lighter) inside the picture's own group, so
+   the dissolve is exact where they are transparent or shadowed: no shadow
+   doubles and nothing dims halfway. FlatStudio.tsx runs the dissolve, over
+   --t-med on the front-loaded --ease-out, as the modeled lift is; a still
+   starts here, the studio at rest on show and every other still away. */
+.picture .still {
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+}
+.picture .rest {
+  opacity: 1;
+}
+/* With sound off, the deck's sound mark carries its red slash: a patch of
+   the status window drawn muted, laid exactly over it. */
+.picture .muted {
+  right: auto;
+  bottom: auto;
+  visibility: hidden;
+}
+.picture .slashed {
+  visibility: visible;
+}
+.targets {
+  position: absolute;
+  inset: 0;
+}
+/* Each slot's target is the scene's own: the resting envelope's outline,
+   which never moves with the lifted tape, so a resting pointer never
+   flickers the preview. A blank slot's target swallows the press. */
+.slot,
+.blank {
+  position: absolute;
+}
+.slot {
+  cursor: pointer;
+}
+
+/* The note on what the visitor is missing: the page's own voice, a step
+   quieter than the guide it follows. */
+.noteTitle {
+  font-size: var(--type-functional);
+  font-weight: 600;
+  line-height: var(--leading-title);
+  color: var(--silkscreen);
+}
+.noteDetail {
+  margin-top: 4px;
+  font-size: var(--type-caption);
+  line-height: var(--leading-caption);
+  color: var(--silkscreen-dim);
+  text-wrap: balance;
+  /* A reading measure, where the column beside a wide studio is wider. */
+  max-width: 64ch;
+}
+/* Reload, where a reload can bring the studio back: a navigation link's
+   print and its drawn mark, 12px under the reason, on the column's edge.
+   The 44px floor is a hit area, not a layout change: the target overhangs
+   the print's line above and below, as the footer's links do. */
+.reload {
+  position: relative;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 44px;
+  margin-block: calc(12px - (44px - 1.5em) / 2) calc((1.5em - 44px) / 2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--silkscreen);
+  font-size: var(--type-functional);
+  line-height: 1.5;
+}
+.reload svg {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+}
+.reload:hover {
+  color: var(--silkscreen-hi);
+}
+/* The focus ring goes round the print, not the hit area: drawn on the
+   44px target, it would cross the reason's last line above. Same 2px cyan
+   ring, 2px clear of the print's line box (4px across), as everywhere. */
+.reload:focus-visible {
+  outline: none;
+}
+.reload:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: calc((44px - 1.5em) / 2 - 4px) -4px;
+  border: 2px solid var(--vfd-cyan);
+  border-radius: var(--r-hairline);
+  pointer-events: none;
+}

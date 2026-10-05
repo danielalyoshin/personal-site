@@ -2,7 +2,7 @@
 version: 1
 slug: "src-app-tsx"
 primary_target: "src/App.tsx"
-related_targets: ["src/components/Stage.tsx", "src/components/studio/StudioScene.tsx"]
+related_targets: ["src/components/Stage.tsx","src/components/studio/StudioScene.tsx","src/components/FlatStudio.tsx"]
 ---
 
 # Surface: Midnight Studio in three dimensions
@@ -158,7 +158,12 @@ the tape is in. While it owns playback it covers the studio, so the canvas
 goes back to the size of its box instead of keeping the viewport, and the
 tape returns to its slot there on eject.
 Missing WebGL and lost graphics
-contexts retain the entire archive and reader. Deep links, About, both 404
+contexts retain the entire archive and reader, and the studio's box shows
+the studio's still: the live scene drawn ahead of time (`npm run
+render:flat`), its rack still the picker, a previewed tape dissolving to its
+own lifted still, and a plain note under the guide saying the visitor is
+seeing a still, why, and what brings the live studio back, with a Reload
+where one can (The Still Studio Rule in `DESIGN.md`). Deep links, About, both 404
 states, Escape/eject, and focus return remain supported. Every screen state
 has a rule of its own: NO SIGNAL is a lit tube, under playback's bloom and
 cast in the HTML readers and playback's phosphor light on the modeled deck.

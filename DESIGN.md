@@ -152,7 +152,6 @@ rounded:
   archive: '3px'
   screen: '14px'
   expanded-reader: '18px'
-  fallback-monitor: '24px'
 spacing:
   xs: '4px'
   sm: '8px'
@@ -262,7 +261,7 @@ Cool graphite and printed silkscreen neutrals frame a vivid CRT and colored tape
 
 ### Secondary
 
-- **CRT Blue** (`crt-blue`): the idle tube in both renderers: the modeled CRT's idle, loading, and returning texture, and the HTML fallback's idle screen and bloom. One value; the fallback once carried a second, slightly different blue.
+- **CRT Blue** (`crt-blue`): the idle tube: the modeled CRT's idle, loading, and returning texture, which the studio's still carries as drawn (The Still Studio Rule).
 - **Tube inks** (`tube-ink`, `tube-ink-soft`, `tube-ink-dim`, `tube-line`): the idle tube's headline, sub-lines, corners, and drawn cassette outline, on CRT blue.
 - **Phosphor** (`phosphor`): a lit tube's light: the CSS play and rest blooms, and the modeled point light during playback.
 - **REC Red** (`rec-red`): the recorded indicator inside project playback.
@@ -272,7 +271,7 @@ Cool graphite and printed silkscreen neutrals frame a vivid CRT and colored tape
 
 - **Graphite ground** (`ink-0`): the page and playback backdrop.
 - **Graphite veil** (`ink-veil`): the graphite ground at 80%, the quiet keys' ground. It cannot be seen on the bare page or over the studio's backdrop, and holds their print legible where the page or the equipment passes beneath.
-- **Graphite layers** (`ink-2`, `ink-3`): `ink-2` is the raised surface (the native reader's frame, the fallback monitor, a previewed archive entry); `ink-3` is the deck keys.
+- **Graphite layers** (`ink-2`, `ink-3`): `ink-2` is the raised surface (the native reader's frame, a previewed archive entry); `ink-3` is the deck keys.
 - **Machined seams** (`seam`, `seam-lit`): thin dividers, borders, and emphasized edges.
 - **Silkscreen** (`silkscreen-hi`, `silkscreen`, `silkscreen-dim`): primary identity and controls, general chrome, and secondary labels respectively.
 - **Screen neutrals** (`screen-black`, `screen-text`, `screen-dim`, `screen-soft`, `osd-white`): reading ground, prose, metadata, secondary screen text, and OSD actions.
@@ -333,7 +332,7 @@ Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 
 - **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Focus lands on the title by script and draws no ring; for a tape chosen from the keyboard it adds a 3px OSD-white underline offset by 0.28em. A shared link's first load, and a key pressed while reading a tape chosen by pointer, leave it unmarked, though Chrome counts both as keyboard focus.
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
-- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL and the idle message use 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. Every other OSD line keeps VT323's own spacing, inside the reader too: the prose's tracking is set on the tagline and paragraphs, not on the reader, so it never reaches the OSD lines among them. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
+- **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL uses 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. Every other OSD line keeps VT323's own spacing, inside the reader too: the prose's tracking is set on the tagline and paragraphs, not on the reader, so it never reaches the OSD lines among them. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
 **The Drawn Mark Rule.** Archivo has no arrows, so no arrow, play mark, or dot is ever typed; a typed one would come from whichever fallback font has it and mismatch its label's weight. Every interface mark is an inline SVG from `src/components/Icons.tsx`: play (the About link, each tape entry, the PLAY OSD), the outward arrow (contact and project links that leave the site), sound, skip, eject, collapse (Exit full screen), and expand (a closer look, the collapse mark's corners turned out). The arrows are 1.5-unit strokes on a 16-unit box, sized 1em beside text, 0.7em inside the OSD, and 12px on tape entries; the four deck marks are filled shapes on a 20-unit box at 18px, the speaker's waves and slash their only strokes, and the eject mark is also printed ahead of its word at the capitals' height, half an em before it, on the modeled EJECT cap and on the tube while a tape returns. Every mark takes `currentColor` and is `aria-hidden`, so the label alone carries the accessible name. The one exception in colour is the muted speaker's slash, printed in rec red on the keys and in the deck's status window alike. The quiet keys set their marks at 16px, to sit with the label's type. The REC dot, the idle cursor, and the steps of the picture-size bar are CSS boxes.
 
@@ -443,8 +442,7 @@ beneath. Beside the studio, the guide closes the column of words, directly
 above the rack it points at, and wraps within the column's width rather
 than widening it, so a long caption never moves the headline. In the mobile
 look the canvas follows it directly, and it reads "Pick one from the
-projects below.", as it does wherever there is no studio to pick from (no
-WebGL, lost graphics): the fitted rack is about 110 to 150px across there
+projects below.": the fitted rack is about 110 to 150px across there
 and the list's entries are the targets in reach; the studio still answers
 taps (The Touch Rule, under Cassettes and insertion). The stylesheet, not a
 script, picks the line, so a page drawn ahead of time is right on the
@@ -542,8 +540,9 @@ and a later resize follows that rule. If graphics fail, the reader stays for
 the visit with focus and scroll untouched. After ejecting, a selection from the
 ready studio uses the modeled CRT at desktop sizes.
 
-Without WebGL, browse mode uses a framed HTML monitor with a maximum width of
-560px; selecting a tape opens the full-height reader. A context failure during
+Without the 3D studio, browse mode shows the studio's still in the box, and
+it still picks tapes (The Still Studio Rule, under Components); selecting a
+tape opens the full-height reader. A context failure during
 modeled playback opens the same full-height HTML reader with its own deck controls. Offstage regions,
 including the canvas behind a native reader, become inert and aria-hidden.
 
@@ -557,14 +556,13 @@ fill reveal the objects without making them emit.
 
 ### Shadow Vocabulary
 
-- **Monitor support** (`--shadow-unit`): the active HTML fallback frame uses the existing ambient drop shadow.
-- **Screen bloom** (`--bloom-rest`, `--bloom-play`, `--bloom-idle`): the HTML tube's states. The HTML tube has three states, idle, playback, and NO SIGNAL, each with a rule of its own: idle takes the blue idle bloom; playback and NO SIGNAL, both a lit tube of OSD on the black ground, take the play bloom; the rest value is the screen's base beneath them. It has no returning state: a tape returns only in the modeled studio, whose tube reads it out (The One Readout Rule). The modeled CRT supplies its own local point light to the same rule, the colour of what the tube shows: blue while the tube is blue, at rest, through a tape's flight in, and through its return, and phosphor from the moment the reader or NO SIGNAL is on it, the light turning in the same commit as the tube.
+- **Screen bloom** (`--bloom-rest`, `--bloom-play`): the HTML tube's states. The HTML tube has two, playback and NO SIGNAL, both a lit tube of OSD on the black ground, and both take the play bloom; the rest value is the screen's base beneath them. It has no idle state: the tube at rest is the modeled one's, or the studio's still. It has no returning state: a tape returns only in the modeled studio, whose tube reads it out (The One Readout Rule). The modeled CRT supplies its own local point light to the same rule, the colour of what the tube shows: blue while the tube is blue, at rest, through a tape's flight in, and through its return, and phosphor from the moment the reader or NO SIGNAL is on it, the light turning in the same commit as the tube.
 - **Native reader surround**: an opaque 20px spread in page-ground color masks the expanded reader's surroundings; it is not a glow.
 
 The HTML CRT is the screen alone, with no frame, chin label, or cast of its
-own: the models supply those, and the fallback monitor's frame is its own
-(`--shadow-unit`). Every screen, on the tube or in the fallback, shares the
-14px screen radius. The sidecar lists these shadows.
+own: the models supply those, and in the full-height reader its frame is the
+reader's. Every screen, on the tube or in the native reader, shares the 14px
+screen radius. The sidecar lists these shadows.
 
 **The One Light Rule.** The CRT is the only emitting object. Neutral studio fill and shadow-casting directional illumination reveal the forms; a small screen-colored light falls onto the deck, and changes only when the screen does. Equipment labels, controls, and page chrome never glow.
 
@@ -625,8 +623,7 @@ from ornament of its own.
 Every radius on the page is a token (`--r-*` in `tokens.css`, named as
 above). HTML control corners use the small radii: hairline focus and OSD links,
 slightly rounded playback buttons, and subtly rounded archive entries. The
-screen, the native reader's frame, and the fallback monitor's frame each
-take their larger named radius. Borders are generally 1px;
+screen and the native reader's frame each take their larger named radius. Borders are generally 1px;
 keyboard focus uses a crisp 2px cyan outline with a 2px offset. The scrollable
 article uses an inset 2px OSD-white outline, offset by -4px, when focused.
 
@@ -1097,14 +1094,13 @@ Its main message uses 128px texture type; the two-line selection instruction
 uses 88px so it remains legible at the opening camera scale. Its corners
 carry the transport state (STANDBY, LOADING while a tape goes in, or EJECT
 while one returns) at the top left, CH 01 at the top right, PROJECTS at the bottom left, and
-the model mark AV–01 at the bottom right, as on the fallback's idle screen,
-which prints the state and the mark alone. These are texture
+the model mark AV–01 at the bottom right. These are texture
 coordinates, and scale with the physical screen rather than HTML font tokens.
 HTML screen effects comprise faint stepped grain (0.8s; its tile is painted
 once on a layer one tile larger than the tube, and the layer steps by
 transform, so the reader beneath is never repainted), scanlines, a vignette,
-one tracking entrance (400ms), and the REC blink (1.2s). The fallback idle cursor
-blinks at 1.1s. Every effect stays clipped inside the tube. The global
+one tracking entrance (400ms), and the REC blink (1.2s). Every effect stays
+clipped inside the tube. The global
 reduced-motion gate collapses CSS animation and transitions; sidecar snippets
 carry their own equivalent gate because shadow DOM does not inherit it. The
 tracking entrance does not play at all under reduced motion: a collapsed
@@ -1120,6 +1116,45 @@ provide separate touch targets. Hover inverts to white with dark text; focus
 stays white. Playback links preserve native modified-click behavior.
 Tags are bracketed uppercase text in screen-soft, wrapping with the existing
 small/medium gaps. They are informational labels, not filled chips or filters.
+
+### Without 3D graphics
+
+**The Still Studio Rule.** A visitor without the 3D studio still sees it,
+still picks from it, and is told what is missing. Where the browser gives
+the page no WebGL, the renderer fails to start, or its context is lost
+during the visit, the studio's box shows the studio's still: the live scene
+drawn ahead of time by `npm run render:flat`, with its models, lighting,
+browse camera, and fit (the desktop framing, and the phones' closer one at
+600px and below), transparent where nothing is drawn, so the page's
+graphite is its ground. It is laid out as the live fit would frame it, and
+each rack slot's pointer target is the scene's own, its resting envelope
+projected onto the picture, nearest first, so the rack answers the pointer
+as the canvas does (The Touch Rule and The Blank Slot Rule hold; the
+targets are the pointer's alone, and the projects list carries keyboard and
+assistive access). A tape previewed there or from the list dissolves in its
+own still over 240ms, lifted, with the tube naming it (The One Readout
+Rule). It joins once decoded, not merely loaded, and every still restarts
+each dissolve together from where it stands, so the stills always add up
+to one picture and a quick sweep never dims it. With sound off, a patch
+of the deck's status window drawn muted lies over its sound mark, so the
+readout stays true. Choosing a tape opens the
+full-height reader. A plain note, in the page's voice and never an alarm,
+says what the visitor is missing and why, in its case's own words
+(`src/content/graphics.ts`): "You’re seeing a still of the studio." in the
+functional title's type, over the reason and what brings the live studio
+back in the caption's, with a Reload, drawn mark first, where a reload can.
+No case promises more than it can: a reload "can" or "may" bring the studio
+back, and a phone or tablet, with no hardware acceleration to turn on, is
+told another browser or a computer instead. Beside the studio it closes the
+column of words under the guide, after a seam, and the box grows toward the
+fold, never past it, so the still stands clear of it at full size, smaller
+only where it must; on a phone on its side it closes the column the same
+way. On a portrait window beside the studio (a tablet held upright), and in
+the mobile look, it follows the box instead, before the projects, so the
+still stands where the studio would. The note dissolves with the page chrome when a tape
+plays. The build stops when the stills no longer match the rack
+(`scripts/prerender.mjs`), so re-render them after the models, materials,
+lighting, tube screens, or tapes change, as the share cards are.
 
 ### Pages drawn ahead of time
 
@@ -1187,6 +1222,7 @@ has none. The address itself is a Stage 10 decision.
 - Do model broad planes, single bevels, recessed openings, and deliberately faceted circular parts.
 - Do keep every retro effect inside the CRT screen area; its controlled light cast is the only outward glow.
 - Do preserve keyboard access, visible focus, readable HTML, and a complete reader when WebGL is unavailable.
+- Do show the studio's still where there is no 3D studio, working as the picker, with a plain note on what is missing and why (The Still Studio Rule).
 - Do hand a desktop deep link to the modeled studio in one dissolve once the scene is ready; the studio is never hidden behind a native reader while graphics are available.
 - Do land focus in sight after every exit, and move the page for a ring only while the chrome is dissolved (The Way Back Rule).
 - Do call a thing by its one name everywhere a visitor meets it, and make a link's words the heading it lands on (The One Name Rule).

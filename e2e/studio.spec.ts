@@ -447,27 +447,34 @@ test('the sound key ends the header row at every width', async ({ page }) => {
   }
 })
 
-test('archive works without WebGL and after a graphics context is lost', async ({
-  page,
-}) => {
-  await page.goto('/')
-  await ready(page)
-  await page.locator('canvas').evaluate((el) => {
-    const context = el.getContext('webgl2')
-    context?.getExtension('WEBGL_lose_context')?.loseContext()
+/** The caption over the studio, which names the tape previewed. */
+function caption(page: Page) {
+  return page.locator('[class*="objectCaption"]')
+}
+
+/**
+ * A point where a slot of the studio's still takes the pointer. Nearer
+ * slots overlap a farther one's target, as in the scene's raycast, so the
+ * point is where this slot's own target is on top.
+ */
+function slotPoint(page: Page, slot: string) {
+  return page.locator(`[data-slot="${slot}"]`).evaluate((el) => {
+    const box = el.getBoundingClientRect()
+    for (let x = 0.05; x < 1; x += 0.05)
+      for (let y = 0.2; y < 1; y += 0.1) {
+        const at = {
+          x: box.left + box.width * x,
+          y: box.top + box.height * y,
+        }
+        if (document.elementFromPoint(at.x, at.y) === el) return at
+      }
+    return null
   })
-  await expect(page.locator('canvas')).toHaveCount(0)
-  await page.getByRole('link', { name: 'About', exact: true }).click()
-  await expect(
-    page.getByRole('heading', {
-      name: 'About',
-      exact: true,
-      level: 2,
-    }),
-  ).toBeVisible()
-  await page.keyboard.press('Escape')
-  await expect(page).toHaveURL('/')
-  await page.addInitScript(() => {
+}
+
+/** No WebGL at all: the page shows the studio's still. */
+function withoutWebGL(page: Page) {
+  return page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext
     HTMLCanvasElement.prototype.getContext = function (
       type: string,
@@ -479,9 +486,63 @@ test('archive works without WebGL and after a graphics context is lost', async (
       >)
     } as typeof original
   })
+}
+
+test('archive works without WebGL and after a graphics context is lost', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await ready(page)
+  await page.locator('canvas').evaluate((el) => {
+    const context = el.getContext('webgl2')
+    context?.getExtension('WEBGL_lose_context')?.loseContext()
+  })
+  await expect(page.locator('canvas')).toHaveCount(0)
+  // The studio's still takes its place, and a note says what is missing,
+  // why, and that a reload can bring it back.
+  await expect(page.locator('[data-flat="lost"]')).toBeVisible()
+  const note = page.getByRole('note')
+  await expect(note).toContainText('You’re seeing a still of the studio.')
+  await expect(note).toContainText('this browser stopped drawing it')
+  await expect(note.getByRole('button', { name: 'Reload' })).toBeVisible()
+  await page.getByRole('link', { name: 'About', exact: true }).click()
+  await expect(
+    page.getByRole('heading', {
+      name: 'About',
+      exact: true,
+      level: 2,
+    }),
+  ).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  await withoutWebGL(page)
   await page.reload()
   await ready(page)
   await expect(page.locator('canvas')).toHaveCount(0)
+  // No WebGL at all: the note says why, and a reload would not help.
+  await expect(page.locator('[data-flat="unavailable"]')).toBeVisible()
+  await expect(page.getByRole('note')).toContainText('(WebGL)')
+  await expect(
+    page.getByRole('note').getByRole('button', { name: 'Reload' }),
+  ).toHaveCount(0)
+  await expect(
+    page.getByRole('img', { name: /^A picture of the 3D studio/ }),
+  ).toBeVisible()
+  // The still's rack is the picker: pointing at a tape previews it, as the
+  // studio does, and choosing it plays it.
+  const point = await slotPoint(page, 'superset-d1')
+  expect(point).not.toBeNull()
+  await page.mouse.move(point!.x, point!.y)
+  await expect(caption(page)).toContainText('SUPERSET D1')
+  await page.mouse.click(point!.x, point!.y)
+  await expect(
+    page.getByRole('heading', {
+      name: 'Cloudflare D1 in Apache Superset',
+      exact: true,
+    }),
+  ).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
   await page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ }).click()
   await expect(
     page.getByRole('heading', {
@@ -495,6 +556,85 @@ test('archive works without WebGL and after a graphics context is lost', async (
   ).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
+})
+
+test('the still lifts a tape only once decoded, and its dissolve never dims', async ({
+  page,
+}) => {
+  type Probe = {
+    release: () => void
+    frames: { sum: number; d1: number }[]
+  }
+  await withoutWebGL(page)
+  // D1's still decodes only when the test lets it. Every frame records the
+  // stills' opacities: they add, so their sum must stay one, and how far
+  // D1's still has come up.
+  await page.addInitScript(() => {
+    const probe = window as unknown as Probe
+    const decode = HTMLImageElement.prototype.decode
+    const held: (() => void)[] = []
+    HTMLImageElement.prototype.decode = function () {
+      if (!this.currentSrc.includes('-superset-d1-')) return decode.call(this)
+      return new Promise<void>((resolve, reject) => {
+        held.push(() => void decode.call(this).then(resolve, reject))
+      })
+    }
+    probe.release = () => held.splice(0).forEach((go) => go())
+    probe.frames = []
+    const frame = () => {
+      const stills = [
+        ...document.querySelectorAll<HTMLImageElement>('img[data-still]'),
+      ]
+      const opacity = (img?: HTMLImageElement) =>
+        img ? Number(getComputedStyle(img).opacity) : 0
+      if (stills.length)
+        probe.frames.push({
+          sum: stills.reduce((sum, img) => sum + opacity(img), 0),
+          d1: opacity(
+            stills.find((img) => img.dataset.still === 'superset-d1'),
+          ),
+        })
+      requestAnimationFrame(frame)
+    }
+    requestAnimationFrame(frame)
+  })
+  await page.goto('/')
+  await ready(page)
+  await expect(page.locator('[data-flat="unavailable"]')).toBeVisible()
+  const d1 = await slotPoint(page, 'superset-d1')
+  const blank = await slotPoint(page, 'coming-2')
+  const about = await slotPoint(page, 'about')
+  expect(d1 && blank && about).toBeTruthy()
+
+  // Loaded is not decoded: until it is, the studio at rest stays on show,
+  // however long the pointer waits.
+  await page.mouse.move(d1!.x, d1!.y)
+  await expect(caption(page)).toContainText('SUPERSET D1')
+  const still = page.locator('img[data-still="superset-d1"]')
+  await expect
+    .poll(() => still.evaluate((img: HTMLImageElement) => img.complete))
+    .toBe(true)
+  await page.waitForTimeout(400)
+  const held = await page.evaluate(() => (window as unknown as Probe).frames)
+  expect(Math.max(...held.map((frame) => frame.d1))).toBe(0)
+  await page.evaluate(() => (window as unknown as Probe).release())
+  await expect
+    .poll(() => still.evaluate((img) => getComputedStyle(img).opacity))
+    .toBe('1')
+
+  // The pointer runs along the rack and back without waiting, so every
+  // dissolve is overtaken by the next: the picture never dims.
+  await page.evaluate(() => ((window as unknown as Probe).frames.length = 0))
+  for (const point of [blank, about, d1, blank, about, d1, blank])
+    await page.mouse.move(point!.x, point!.y, { steps: 2 })
+  await page.mouse.move(10, 500)
+  await page.waitForTimeout(400)
+  const sums = await page.evaluate(() =>
+    (window as unknown as Probe).frames.map((frame) => frame.sum),
+  )
+  expect(sums.length).toBeGreaterThan(10)
+  expect(Math.min(...sums)).toBeGreaterThan(0.99)
+  expect(Math.max(...sums)).toBeLessThan(1.01)
 })
 
 test('a pointer can select a modeled cassette and dragging does not navigate', async ({

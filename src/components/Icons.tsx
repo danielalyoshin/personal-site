@@ -48,6 +48,18 @@ export function ExternalIcon(props: IconProps) {
 }
 
 /**
+ * Reloading the page, where a reload can bring the 3D studio back: a turn
+ * of the outward arrow's stroke, closing on its own head.
+ */
+export function ReloadIcon(props: IconProps) {
+  return (
+    <Icon strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M13.09 9.8a5.4 5.4 0 1 1-1.27-5.62L14.6 6.8M14.6 3.2v3.6H11" />
+    </Icon>
+  )
+}
+
+/**
  * The deck's sound key: a filled speaker, like the eject and skip marks, with
  * stroked waves when enabled or a red slash across it when muted. The same
  * mark is printed in the modeled deck's status window.

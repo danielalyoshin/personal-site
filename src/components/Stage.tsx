@@ -16,6 +16,7 @@ import { findTape, playableTapes, shelfTapes } from '../content/projects'
 import { aboutTape } from '../content/about'
 import { pageTitle } from '../content/site'
 import { isComing, shelfKey } from '../content/types'
+import type { GraphicsFailure } from '../content/graphics'
 import type { Project } from '../content/types'
 import { changeSound, playSound, useSoundEnabled } from '../lib/sound'
 import { turnUp as turnPictureUp } from '../lib/pictureSize'
@@ -25,6 +26,7 @@ import { useMediaQuery } from '../lib/useMediaQuery'
 import { useSupportsWebGL } from '../lib/supportsWebGL'
 import CRT from './CRT'
 import DeckControls from './DeckControls'
+import FlatStudio, { FlatNote } from './FlatStudio'
 import { ExternalIcon, PlayIcon, SkipIcon, SoundIcon } from './Icons'
 import styles from './Stage.module.css'
 
@@ -161,10 +163,11 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const [skips, setSkips] = useState(0)
   const [ready, setReady] = useState(false)
   // No studio: the browser has no WebGL, or the renderer failed or lost its
-  // context during the visit.
+  // context during the visit. The first reason holds for the visit.
   const webgl = useSupportsWebGL()
-  const [lost, setLost] = useState(false)
-  const flat = !webgl || lost
+  const [failure, setFailure] = useState<GraphicsFailure | null>(null)
+  const flatReason: GraphicsFailure | null = webgl ? failure : 'unavailable'
+  const flat = !!flatReason
   // The studio's module is the page's heaviest download and its boot the
   // longest task, so it waits for the page to paint and the main thread to
   // fall idle: the words and the archive are in use first.
@@ -279,6 +282,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const deckPortal = useRef<HTMLDivElement>(null)
   const nativeScreen = useRef<HTMLDivElement>(null)
   const nativeFrame = useRef<HTMLDivElement>(null)
+  // The note on what a visit without the 3D studio is missing; the studio's
+  // still keeps clear of it.
+  const flatNote = useRef<HTMLDivElement>(null)
   // Where the tube's article stood when its picture was turned up, and
   // whether the turn was a closer look, which opens on the tape's media.
   const readingPlace = useRef<{
@@ -291,7 +297,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   // settles flat in its slot rather than lifting again.
   const restoringFocus = useRef(false)
   const previewSlug = useRef<string | null>(null)
-  const mode = invalid ? 'nosignal' : tape ? 'playing' : 'idle'
+  const mode = invalid ? 'nosignal' : 'playing'
 
   const onTitleEl = useCallback((el: HTMLHeadingElement | null) => {
     titleEl.current = el
@@ -365,12 +371,14 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const onCreated = useCallback((state: RootState) => {
     studio.current = state
   }, [])
-  const onUnavailable = useCallback(() => {
-    setLost(true)
+  const goFlat = useCallback((reason: GraphicsFailure) => {
+    setFailure((current) => current ?? reason)
     setInsertingSlug(null)
     setEjecting(null)
     setReturning(false)
   }, [])
+  const onSceneFailed = useCallback(() => goFlat('failed'), [goFlat])
+  const onContextLost = useCallback(() => goFlat('lost'), [goFlat])
   const onInserted = useCallback(() => {
     setInsertingSlug(null)
     playSound('insert')
@@ -738,11 +746,18 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       <span>Setting the scene…</span>
     </div>
   )
-  const fallback = (
-    <div className={styles.fallback}>
-      <div className={styles.fallbackMonitor}>{readerFor(false)}</div>
-    </div>
-  )
+  // Without a studio, its still: the studio drawn ahead of time, whose rack
+  // still answers the pointer. A plain note beside it says what the visitor
+  // is missing and why.
+  const fallback = flatReason ? (
+    <FlatStudio
+      preview={preview}
+      touchOnly={touchOnly}
+      onPreview={previewTape}
+      onSelect={select}
+      note={flatNote}
+    />
+  ) : null
 
   return (
     <div
@@ -843,7 +858,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
         <SoundIcon enabled={soundOn} />
       </button>
 
-      <main className={styles.main}>
+      <main className={`${styles.main} ${flat ? styles.flat : ''}`}>
         <section
           className={styles.intro}
           inert={open || undefined}
@@ -865,7 +880,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
 
         <section
           className={styles.exhibit}
-          aria-label={open ? 'Tape playback' : 'Interactive 3D studio'}
+          aria-label={
+            open ? 'Tape playback' : flat ? 'Studio' : 'Interactive 3D studio'
+          }
         >
           <div
             className={styles.sceneCaption}
@@ -882,8 +899,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                 <small>
                   {preview ? (
                     `${tapeCaption(preview)} · ${touchOnly ? 'Tap again to play' : 'Select to play'}`
-                  ) : flat ? (
-                    'Pick one from the projects below.'
                   ) : (
                     <>
                       <span className={styles.guideStudio}>
@@ -902,6 +917,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
             className={`${styles.scene} ${detached ? styles.detached : ''} ${returning ? styles.returning : ''}`}
             data-testid="studio-scene"
             data-ready={ready || flat}
+            data-flat={flatReason ?? undefined}
             data-detached={detached || undefined}
             ref={sceneBox}
             inert={(open && useNativeReader) || undefined}
@@ -912,14 +928,15 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                 focus that follows by script (Skip, then the title) as a
                 keyboard's and ring it for a mouse. */}
             <div className={styles.viewport} ref={viewportEl} tabIndex={-1}>
+              {/* The studio's still stays in its box under the native
+                  reader, as the canvas does, so the way back finds it in
+                  place. */}
               {flat ? (
-                open && useNativeReader ? null : (
-                  fallback
-                )
+                fallback
               ) : (
                 <SceneBoundary
-                  fallback={open && useNativeReader ? null : fallback}
-                  onUnavailable={onUnavailable}
+                  fallback={fallback}
+                  onUnavailable={onSceneFailed}
                 >
                   <Suspense fallback={settingTheScene}>
                     {boot ? (
@@ -945,7 +962,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
                         onReturned={onReturned}
                         onReady={onReady}
                         onCreated={onCreated}
-                        onUnavailable={onUnavailable}
+                        onUnavailable={onContextLost}
                         onFullScreen={offersFullScreen ? turnUp : undefined}
                       >
                         {useNativeReader ? null : readerFor(false)}
@@ -961,6 +978,15 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               <div ref={deckPortal} className={styles.deckOverlay} />
             </div>
           </div>
+          {flatReason && (
+            <FlatNote
+              reason={flatReason}
+              touchOnly={touchOnly}
+              className={styles.flatNote}
+              ref={flatNote}
+              inert={open}
+            />
+          )}
         </section>
 
         <section
@@ -1136,7 +1162,9 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
           ? invalid
             ? 'No signal. Eject or press Escape to return to the projects.'
             : `${loading ? 'Loading' : 'Playing'} ${tape?.title}`
-          : 'Studio ready. Choose a tape from the projects below.'}
+          : flat
+            ? 'The 3D studio is not available. Choose a tape from the projects below.'
+            : 'Studio ready. Choose a tape from the projects below.'}
       </p>
     </div>
   )

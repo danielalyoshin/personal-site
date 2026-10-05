@@ -50,9 +50,23 @@ await build({
 })
 
 try {
-  const { pages, render, homeTitle } = await import(
+  const { pages, render, homeTitle, studioStillFiles } = await import(
     pathToFileURL(resolve(server, 'entry-server.js')).href
   )
+  // The studio's still stands in for the studio without 3D graphics; one
+  // drawn before the rack changed would show the wrong tapes and answer for
+  // none of the new ones.
+  const stills = studioStillFiles()
+  for (const file of stills.files)
+    try {
+      await access(resolve(dist, file.slice(1)))
+    } catch {
+      stills.stale.push(`${file} is not in public/`)
+    }
+  if (stills.stale.length)
+    throw new Error(
+      `prerender: the studio's stills are out of date (${stills.stale.join('; ')}). Run npm run render:flat.`,
+    )
   const template = await readFile(resolve(dist, 'index.html'), 'utf8')
   const served = template.match(/<title>([^<]*)<\/title>/)?.[1]
   if (served !== escape(homeTitle))

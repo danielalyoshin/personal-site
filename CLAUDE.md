@@ -64,10 +64,14 @@ starting work and keep it updated as stages complete or decisions change.
 - `npm run render:card` re-renders the share cards (`public/social-card.png`,
   `public/social-cards/<slug>.png`) after models, materials, lighting, tube
   screens, or tapes change; the build stops if a tape has no card.
+  `npm run render:flat` re-renders the studio's stills (`public/flat-studio/`,
+  `src/content/studioStills.ts`), the picture a browser without WebGL sees,
+  after the same changes; the build stops if they no longer match the rack.
   `npm run render:icons` rasterizes `public/apple-touch-icon.png` from
   `public/favicon.svg`. `npm run render:diagrams` renders each diagram page in
-  `src/content/projects/media/` to WebP and needs `cwebp` (`brew install
-webp`). All three drive installed Chrome, as the e2e suite does.
+  `src/content/projects/media/` to WebP. `render:flat` and `render:diagrams`
+  need `cwebp` (`brew install webp`). All four drive installed Chrome, as the
+  e2e suite does.
 - Playwright has two projects: `dev` runs the interaction specs on the dev
   server; `built` runs `e2e/built.spec.ts` on a fresh `npm run build` served by
   `vite preview`. Move their ports with `E2E_PORT` (5173) and `E2E_BUILT_PORT`

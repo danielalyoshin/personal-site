@@ -1648,6 +1648,60 @@ Found in a recorded run through the site the same day:
   in the light and dark high-contrast palettes; normal colours are
   unchanged. Tested in `fullscreen.spec`.
 
+#### The studio without WebGL (2026-10-04)
+
+Daniel: the no-WebGL fallback "is not inline with our current design
+direction and generally looks rushed and not visually cohesive"; try a few
+ideas, settle on the best, polish it, and tell the visitor on screen that
+they are not seeing the full experience and why.
+
+- ✅ The studio's box now shows the studio's still (The Still Studio Rule):
+  the live scene drawn ahead of time by `npm run render:flat`
+  (`scripts/render-flat-studio.mjs`, about 80s) at the desktop and phone
+  framings, transparent where nothing is drawn, with one still per playable
+  tape lifted in preview and the tube naming it, and a muted patch of the
+  deck's status window. `src/content/studioStills.ts` holds each slot's
+  projected target, so the still's rack is the picker: hover previews
+  (a 240ms dissolve to that tape's still), click plays, touch previews
+  first, blank slots swallow. About 45KB per still at 1x, 111KB at 2x; the
+  preview stills load on intent or idle. The build stops when the stills no
+  longer match the rack.
+- ✅ A note says what is missing and why, for each case
+  (`src/content/graphics.ts`): no WebGL ("this browser isn't giving it 3D
+  graphics (WebGL)", with hardware acceleration or another browser as the
+  fix, and another browser or a computer on a phone or tablet), a renderer
+  that failed to start, or a context lost mid-visit (both with a Reload,
+  whose focus ring is drawn round its print so it never crosses the line
+  above). A reload "can" or "may" help, never "will". Stage tells the three
+  apart; the first holds for the visit. Beside the studio the note closes
+  the column of words; on a portrait window and in the mobile look it
+  follows the still, so the still stands where the studio would.
+- ✅ Removed with the old framed card: its radius and shadow tokens, and the
+  HTML tube's idle screen and idle bloom, which only the card drew.
+- ✅ Fixed (2026-10-04) the still blinking dark under the pointer, which
+  Daniel reported ("the screen blinks black when you hover tapes in no
+  webgl sometimes"). Measured with screencast filmstrips, it had two causes.
+  First, a preview still was shown once loaded, not once decoded: its first
+  decode takes about 30ms, and Chrome painted it empty for those 3–4 frames
+  while the still at rest faded out, so the tube fell to about half its
+  light. Second, each still ran its own CSS transition: a reversed transition
+  is shortened, so on quick hand-overs the stills' opacities summed to as
+  little as 0.46 and the picture dimmed. Now a still joins only after
+  `decode()`, and FlatStudio.tsx restarts every still's opacity together
+  (WAAPI, one duration and ease), so the sum stays one. Across 13,000
+  frames of sweeps (cold and warm, 1x and 2x), none fell below 90% of the
+  tube's light. Before the fix, a warm 2x sweep had 147 such frames.
+  `e2e/studio.spec.ts` holds a decode back and checks that the tape waits
+  for it and that the sum never moves.
+- Rejected, each prototyped in its own worktree and captured at six sizes:
+  the studio projected as flat SVG planes from a hand-built TypeScript model
+  (crisp and content-driven, a close second, but a second model of the scene
+  to keep in step with every model change); the deck, monitor, and rack
+  rebuilt front-on in HTML and CSS (cohesive, but reads as an illustration,
+  the blank tapes as dark slabs); and the tube as an on-screen menu of the
+  tapes (clear, but loses the studio). The prototype diffs are kept outside
+  the repository.
+
 ---
 
 ## Open decisions (flagged, not blocking)

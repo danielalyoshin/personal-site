@@ -13,7 +13,7 @@ import {
   usePointing,
 } from '../lib/pictureSize'
 
-export type ScreenMode = 'idle' | 'playing' | 'nosignal'
+export type ScreenMode = 'playing' | 'nosignal'
 
 /**
  * Marks the article while more of it lies below the fold, so the fade at
@@ -394,23 +394,7 @@ export default function CRT({
                 </p>
               </div>
             </>
-          ) : (
-            <div className={styles.centerScreen}>
-              <span className={styles.cornerTL} aria-hidden="true">
-                STANDBY
-              </span>
-              <p className={styles.bigOsd} aria-hidden="true">
-                INSERT TAPE
-                <span className={styles.cursor} />
-              </p>
-              <p className="srOnly">
-                No tape playing. Choose a tape from the projects below.
-              </p>
-              <span className={styles.cornerBR} aria-hidden="true">
-                AV–01
-              </span>
-            </div>
-          )}
+          ) : null}
           <div className={styles.grain} aria-hidden="true" />
           <div className={styles.scanlines} aria-hidden="true" />
           <div className={styles.vignette} aria-hidden="true" />

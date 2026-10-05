@@ -48,8 +48,6 @@
      palette change is made once, above. */
   --bloom-rest: 0 0 40px 0 color-mix(in srgb, var(--phosphor) 10%, transparent);
   --bloom-play: 0 0 40px 0 color-mix(in srgb, var(--phosphor) 16%, transparent);
-  --bloom-idle: 0 0 56px 2px
-    color-mix(in srgb, var(--crt-blue) 45%, transparent);
 
   /* Type. The shell has six sizes (11px floor) and three Archivo weights:
      400 for reading and quiet actions, 600 for titles, labels, and controls,
@@ -93,16 +91,12 @@
   --r-control: 4px;
   --r-screen: 14px;
   --r-expanded-reader: 18px;
-  --r-fallback-monitor: 24px;
 
   /* Space (4px base) */
   --sp-xs: 4px;
   --sp-sm: 8px;
   --sp-md: 16px;
   --sp-lg: 24px;
-
-  /* Depth: machined, not floaty (One Light Rule: no glow shadows on chassis) */
-  --shadow-unit: 0 12px 32px rgba(0, 0, 0, 0.4);
 
   /* Motion */
   --t-fast: 120ms;

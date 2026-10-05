@@ -21,11 +21,6 @@
   box-shadow: var(--bloom-rest);
 }
 
-.idle {
-  background: var(--crt-blue);
-  box-shadow: var(--bloom-idle);
-}
-
 /* NO SIGNAL is a lit tube, OSD on the black ground: it takes playback's
    bloom. */
 .playing,
@@ -455,7 +450,7 @@
   animation: blink 1.2s steps(2, start) infinite;
 }
 
-/* Idle / NO SIGNAL center stage. */
+/* NO SIGNAL's center stage. */
 .centerScreen {
   position: absolute;
   inset: 0;
@@ -508,37 +503,10 @@
   }
 }
 
-.cursor {
-  display: inline-block;
-  width: 0.5em;
-  height: 0.8em;
-  margin-left: 0.3em;
-  background: currentColor;
-  vertical-align: -0.05em;
-  animation: blink 1.1s steps(2, start) infinite;
-}
-
 @keyframes blink {
   50% {
     opacity: 0;
   }
-}
-
-.cornerTL,
-.cornerBR {
-  position: absolute;
-  font-size: var(--type-osd-meta);
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
-}
-
-.cornerTL {
-  top: 14px;
-  left: 20px;
-}
-
-.cornerBR {
-  bottom: 14px;
-  right: 20px;
 }
 
 /* A narrow window's reader keeps a little more of the tube's width. */

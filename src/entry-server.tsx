@@ -2,8 +2,10 @@ import { StrictMode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom'
 import { AppRoutes } from './App'
-import { playableTapes } from './content/projects'
+import { playableTapes, shelfTapes } from './content/projects'
 import { pageTitle, site } from './content/site'
+import { studioStills } from './content/studioStills'
+import { shelfKey } from './content/types'
 
 /**
  * The build's view of the site (scripts/prerender.mjs): every route that
@@ -40,6 +42,32 @@ export const pages: Page[] = [
   })),
   { path: '/404', title: pageTitle('nosignal'), notFound: true },
 ]
+
+/**
+ * The studio's stills, which a browser without 3D graphics shows in the
+ * studio's place (`npm run render:flat`): every file the page can ask for,
+ * and what the stills no longer match. A tape added since they were drawn
+ * would sit in the rack with no still and no target, so the build stops.
+ */
+export function studioStillFiles() {
+  const stale: string[] = []
+  const files: string[] = []
+  const rack = shelfTapes.map(shelfKey).join(', ')
+  for (const [framing, still] of Object.entries(studioStills)) {
+    const drawn = still.slots.map((slot) => slot.id).join(', ')
+    if (drawn !== rack)
+      stale.push(
+        `the ${framing} still's rack holds ${drawn}, the site's ${rack}`,
+      )
+    for (const tape of playableTapes)
+      if (!still.previews.includes(tape.slug))
+        stale.push(`${tape.slug} has no ${framing} still of its own`)
+    for (const name of ['rest', 'muted', ...still.previews])
+      for (const width of still.widths)
+        files.push(`/flat-studio/${framing}-${name}-${width}.webp`)
+  }
+  return { stale, files }
+}
 
 export function render(path: string) {
   return renderToString(

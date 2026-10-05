@@ -180,6 +180,12 @@
 .guideArchive {
   display: none;
 }
+/* Without the 3D studio, a note under its still says what is missing and
+   why: in the mobile look it follows the still, before the projects, as
+   close under the table as the guide stands over the monitor. */
+.flatNote {
+  margin: 8px 0 24px;
+}
 .objectCaption small {
   display: block;
   margin-top: 4px;
@@ -436,27 +442,12 @@
   );
   z-index: 50;
 }
-.fallback {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 20px;
-}
-.fallbackMonitor {
-  background: var(--ink-2);
-  padding: 20px;
-  border: 1px solid var(--seam-lit);
-  border-radius: var(--r-fallback-monitor);
-  width: min(560px, 95%);
-  box-shadow: var(--shadow-unit);
-}
 /* Playback dissolves the page around the studio as the view zooms in, and
    brings it back as the view zooms out; the graphite ground stays. */
 .header,
 .intro,
 .sceneCaption,
+.flatNote,
 .archive,
 .footer {
   transition: opacity var(--t-dolly) var(--ease-out);
@@ -464,12 +455,10 @@
 .playing .header,
 .playing .intro,
 .playing .sceneCaption,
+.playing .flatNote,
 .playing .archive,
 .playing .footer {
   opacity: 0;
-}
-.playing .fallbackMonitor {
-  width: min(700px, 95vw);
 }
 /* The Studio First look, on every window at least 768px wide and 540px tall:
    the studio takes the first screen under the header, and the introduction
@@ -555,13 +544,57 @@
   .archive {
     grid-area: 4 / 1 / auto / -1;
   }
-  /* Without a studio, the framed monitor stands on the left, clear of the
-     words. */
-  .fallback {
-    align-items: flex-start;
+  /* Without the 3D studio, the note closes the column of words, under the
+     guide and set off from it by a seam, in the same corner. */
+  .flatNote {
+    grid-area: 3 / 2;
+    align-self: start;
+    position: relative;
+    z-index: 1;
+    margin: var(--guide-gap) 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--seam);
+    contain: inline-size;
   }
-  .fallbackMonitor {
-    width: min(560px, 50%);
+}
+/* A portrait window beside the studio (a tablet held upright) has room
+   under the studio that the column of words does not: the note stands
+   there instead, as in the mobile look, before the projects, so the column
+   stays the live studio's and the still stands where the studio would. */
+@media (width >= 768px) and (height >= 540px) and (orientation: portrait) {
+  .flat {
+    grid-template-rows: auto auto 1fr auto auto;
+  }
+  .flat .exhibit {
+    grid-area: 1 / 1 / 5 / -1;
+  }
+  .flat .scene {
+    grid-area: 1 / 1 / 4 / -1;
+  }
+  .flat .flatNote {
+    grid-area: 4 / 1 / auto / -1;
+    margin: 8px 0 24px;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .flat .archive {
+    grid-area: 5 / 1 / auto / -1;
+  }
+}
+/* The note takes room the words beside the studio did not need: the box
+   grows toward the fold, never past it, so the studio's still can stand
+   clear of the note at full size (FlatStudio.tsx measures how much). */
+@media (width >= 768px) and (height >= 540px) {
+  .scene[data-flat] {
+    /* Set on the box at run time; none until the still has measured. */
+    --flat-room: 0px;
+    min-height: max(
+      min(
+        calc(2 * var(--words) + 17.4px + 12.34vw),
+        calc(2.643 * var(--words) + 16.3px)
+      ),
+      var(--flat-room)
+    );
   }
 }
 /* Short windows: tighter spacing, a studio that ends at the fold, and a
@@ -642,11 +675,15 @@
     max-height: none;
     min-height: 0;
   }
-  .fallback {
-    align-items: center;
-  }
-  .fallbackMonitor {
-    width: min(560px, 100%, (100svh - 136px) * 4 / 3 + 40px);
+}
+/* Beside a studio on a phone on its side, the note keeps its first line
+   whole and closes the column above the fold: the column widens for it,
+   and the studio's still gives up the width. */
+@media (width >= 740px) and (height < 540px) {
+  .flatNote {
+    min-width: 18.75rem;
+    margin-top: 8px;
+    padding-top: 8px;
   }
 }
 @media (width >= 740px) and (height < 540px) and (hover: none) {
@@ -710,11 +747,6 @@
     height: var(--box-height);
     width: calc(100% + 12vw);
     margin-left: -6vw;
-  }
-  /* Without a studio, the framed monitor takes its size from the box: its
-     4:3 screen and 20px frame stand 12px inside the box's height. */
-  .fallbackMonitor {
-    width: min(560px, 95%, (var(--box-height) - 64px) * 4 / 3 + 40px);
   }
   .sceneCaption {
     gap: 8px;
@@ -822,17 +854,6 @@
 @media (max-width: 600px) {
   .readerDeckLabel span {
     display: none;
-  }
-}
-@media (max-width: 767px), (max-height: 699px) {
-  .playing .fallbackMonitor {
-    height: calc(100% - 24px);
-    display: flex;
-    flex-direction: column;
-  }
-  .playing .fallbackMonitor > div {
-    flex: 1;
-    min-height: 0;
   }
 }
 
