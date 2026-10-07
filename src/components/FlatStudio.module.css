@@ -70,11 +70,36 @@
 }
 
 /* The note on what the visitor is missing: the page's own voice, a step
-   quieter than the guide it follows. */
+   quieter than the guide it follows. It arrives with the still: held clear
+   while the still is on its way, then up from the same frame, on the same
+   --t-med and --ease-out, so the two read as one arrival. Only arriving
+   animates it: the page chrome's own transition (Stage.module.css) takes it
+   out and back when a tape plays and comes out. */
+@keyframes arrive {
+  from {
+    opacity: 0;
+  }
+}
+.note {
+  animation: arrive var(--t-med) var(--ease-out);
+}
+.waiting {
+  animation-play-state: paused;
+}
+/* Reduced motion: the note is simply there. The global gate only shortens
+   an animation, and a shortened one still paints its first keyframe. */
+@media (prefers-reduced-motion: reduce) {
+  .note {
+    animation: none;
+  }
+}
+/* Its title is set in the caption's size at the titles' weight: a step
+   under the guide's own title, so the column leads with what to do, and
+   the note's reason in the same size under it differs by weight and ink. */
 .noteTitle {
-  font-size: var(--type-functional);
+  font-size: var(--type-caption);
   font-weight: 600;
-  line-height: var(--leading-title);
+  line-height: var(--leading-caption);
   color: var(--silkscreen);
 }
 .noteDetail {
@@ -87,7 +112,8 @@
   max-width: 64ch;
 }
 /* Reload, where a reload can bring the studio back: a navigation link's
-   print and its drawn mark, 12px under the reason, on the column's edge.
+   print and its drawn mark, 12px under the reason (or under the title,
+   where the reason has gone under the box), on the column's edge.
    The 44px floor is a hit area, not a layout change: the target overhangs
    the print's line above and below, as the footer's links do. */
 .reload {

@@ -1721,6 +1721,43 @@ they are not seeing the full experience and why.
 - ✅ DESIGN.md describes the forced-colours treatment, at Daniel's request:
   The Forced Colours Rule (Colors), copied to the sidecar.
 
+#### The still's note, placed and weighed (2026-10-07)
+
+An Impeccable critique of the no-WebGL state (27/36,
+`.impeccable/critique/2026-10-07T21-53-40Z__src-components-flatstudio-tsx.md`)
+found the note well aligned but heavy and badly placed. Daniel chose the
+fixes: the reason under the box on short windows, shorter reasons (his
+wording), and all five issues. Done by agents in parallel worktrees, then a
+typeset and polish pass, Impeccable's finish reviewer, and its documenter.
+
+- ✅ Short windows: FlatStudio decides at run time whether the whole note
+  fits beside the studio. Where it would leave the still more than 2%
+  smaller than the live studio (`SPLIT = 0.98`), the note splits
+  (`data-split`): its title, and Reload where there is one, close the
+  column; the reason stands under the box on the column's edge, one note
+  still (subgrid, `:has()`). Without a Reload the still now stands at full
+  size at 1280×720, 1440×789 and 1536×730 (it was 86%, 91% and 84%).
+- ✅ Under the box (portrait tablets, phones, a split reason) the note
+  stands 16px under the table's lowest point and 32px over the projects'
+  seam. Each still records that point (`foot` in `studioStills.ts`, measured
+  by `npm run render:flat`; the two values were measured on the committed
+  stills, not re-rendered). It was about 80px under the table and 24px over
+  the projects on a tablet. Where the fold would cut a line of the split
+  reason, the reason steps down past it.
+- ✅ Shorter reasons that no longer restate the title, approved by Daniel
+  word for word, with no-break spaces in "3D graphics (WebGL)" and "live
+  studio"; the title moved from the functional title's type to the
+  caption's size at 600, so the guide leads the column.
+- ✅ Sideways phones: 12px from the guide to the seam (was 8px).
+- ✅ The note fades up with the still, from the frame it decodes, over
+  `--t-med`; at once under reduced motion. It used to pop in when graphics
+  were lost mid-visit.
+- Open, for Daniel: Reload in the column still costs the still 7–10% on
+  short laptop windows in the failed and lost cases (set it on the title's
+  line?); and with the 2% threshold the reason always lands just under the
+  fold on those windows (raise the tolerance so near-fit windows keep the
+  whole note beside the studio?).
+
 ---
 
 ## Open decisions (flagged, not blocking)

@@ -28,6 +28,8 @@ export interface StudioStill {
   }[]
   /** What stands under the words beside the studio, a tape lifted included. */
   obstacles: { left: number; top: number; right: number }[]
+  /** Where the drawn studio ends: its lowest point, the table's front corner. */
+  foot: number
   /** The deck's status window, drawn again with sound off. */
   muted: { left: number; top: number; width: number; height: number }
 }
@@ -123,6 +125,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
       { left: 0.5228, top: 0.3905, right: 0.7681 },
       { left: 0.7713, top: 0.381, right: 0.8722 },
     ],
+    foot: 0.969,
     muted: { left: 0.4597, top: 0.6169, width: 0.009, height: 0.0202 },
   },
   phone: {
@@ -215,6 +218,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
       { left: 0.5239, top: 0.4016, right: 0.7812 },
       { left: 0.7739, top: 0.3794, right: 0.8885 },
     ],
+    foot: 0.9039,
     muted: { left: 0.4545, top: 0.6085, width: 0.0159, height: 0.0285 },
   },
 }

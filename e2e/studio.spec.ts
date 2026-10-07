@@ -503,7 +503,9 @@ test('archive works without WebGL and after a graphics context is lost', async (
   await expect(page.locator('[data-flat="lost"]')).toBeVisible()
   const note = page.getByRole('note')
   await expect(note).toContainText('You’re seeing a still of the studio.')
-  await expect(note).toContainText('this browser stopped drawing it')
+  await expect(note).toContainText(
+    'This browser stopped drawing the live studio.',
+  )
   await expect(note.getByRole('button', { name: 'Reload' })).toBeVisible()
   await page.getByRole('link', { name: 'About', exact: true }).click()
   await expect(
@@ -635,6 +637,64 @@ test('the still lifts a tape only once decoded, and its dissolve never dims', as
   expect(sums.length).toBeGreaterThan(10)
   expect(Math.min(...sums)).toBeGreaterThan(0.99)
   expect(Math.max(...sums)).toBeLessThan(1.01)
+})
+
+test('the note on what is missing fades up with the still', async ({
+  page,
+}) => {
+  type Probe = { arrival: { note: number; still: number }[] }
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await withoutWebGL(page)
+  // Every frame from the note's first records its opacity and the still's.
+  await page.addInitScript(() => {
+    const probe = window as unknown as Probe
+    probe.arrival = []
+    const frame = () => {
+      const note = document.querySelector('[data-testid="flat-note"]')
+      const picture = document.querySelector(
+        'img[data-still="rest"]',
+      )?.parentElement
+      if (note)
+        probe.arrival.push({
+          note: Number(getComputedStyle(note).opacity),
+          still: picture ? Number(getComputedStyle(picture).opacity) : 0,
+        })
+      requestAnimationFrame(frame)
+    }
+    requestAnimationFrame(frame)
+  })
+  await page.goto('/')
+  await ready(page)
+  const note = page.getByTestId('flat-note')
+  const opacity = () => note.evaluate((el) => getComputedStyle(el).opacity)
+  await expect.poll(opacity).toBe('1')
+  // It waits for the still and rises with it, frame for frame.
+  const frames = await page.evaluate(() => (window as unknown as Probe).arrival)
+  expect(frames.some(({ note }) => note > 0 && note < 1)).toBe(true)
+  for (const { note, still } of frames)
+    expect(Math.abs(note - still)).toBeLessThan(0.05)
+
+  // A tape played and ejected brings it back with the page chrome.
+  await page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ }).click()
+  await expect(
+    page.getByRole('heading', {
+      name: 'Cloudflare D1 in Apache Superset',
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect.poll(opacity).toBe('0')
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL('/')
+  await expect.poll(opacity).toBe('1')
+
+  // Under reduced motion it is simply there, from its first frame.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.reload()
+  await ready(page)
+  const recorded = () =>
+    page.evaluate(() => (window as unknown as Probe).arrival)
+  await expect.poll(async () => (await recorded()).length).toBeGreaterThan(2)
+  expect((await recorded()).every(({ note }) => note === 1)).toBe(true)
 })
 
 test('a pointer can select a modeled cassette and dragging does not navigate', async ({

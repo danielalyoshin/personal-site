@@ -20,17 +20,19 @@
  * camera fitted to the mobile look's box (72vw tall), drawn wider than that
  * box at the same zoom, so the table runs on past its sides as it does past
  * a phone's edges. Each is drawn at several times its size and averaged
- * down by cwebp (`brew install webp`) to the widths the page offers.
+ * down by cwebp (`brew install webp`, which brings dwebp too) to the widths
+ * the page offers.
  *
  * It also writes src/content/studioStills.ts: every still's size, and each
  * rack slot's pointer target (its resting envelope, as the scene's own
  * invisible slot box) projected onto the picture, with what stands under the
- * words beside the studio. Run `npm run render:flat` after the models,
- * materials, lighting, tube screens, or tapes change. It starts its own dev
- * server and drives the installed Chrome, as the e2e suite does.
+ * words beside the studio and where the drawn studio ends. Run `npm run
+ * render:flat` after the models, materials, lighting, tube screens, or tapes
+ * change. It starts its own dev server and drives the installed Chrome, as
+ * the e2e suite does.
  */
 import { execFile } from 'node:child_process'
-import { mkdir, mkdtemp, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -92,8 +94,13 @@ const FRAME_CSS = `
   }
 `
 
-await run('cwebp', ['-version']).catch(() => {
-  throw new Error('cwebp encodes the stills: brew install webp')
+await Promise.all([
+  run('cwebp', ['-version']),
+  run('dwebp', ['-version']),
+]).catch(() => {
+  throw new Error(
+    'cwebp and dwebp encode and read the stills: brew install webp',
+  )
 })
 const scratch = await mkdtemp(join(tmpdir(), 'flat-studio-'))
 const server = await createServer({
@@ -371,6 +378,27 @@ async function encode(capture, file, width, crop) {
   return (await stat(file)).size
 }
 
+/**
+ * Where the drawn studio ends: the share of the still's height above its
+ * lowest drawn pixel (alpha over 12 of 255, the table's front corner),
+ * across the part of it the live fit framed. The note under the studio
+ * stands a set distance below it (Stage.module.css, --still-slack).
+ */
+async function foot(file, fitted) {
+  const pam = join(scratch, 'foot.pam')
+  await run('dwebp', ['-quiet', '-pam', file, '-o', pam])
+  const data = await readFile(pam)
+  const header = data.subarray(0, 128).toString('latin1')
+  const width = Number(header.match(/WIDTH (\d+)/)[1])
+  const height = Number(header.match(/HEIGHT (\d+)/)[1])
+  const pixels = data.subarray(header.indexOf('ENDHDR\n') + 7)
+  const from = Math.floor((width * (1 - fitted)) / 2)
+  for (let y = height - 1; y >= 0; y--)
+    for (let x = from; x < width - from; x++)
+      if (pixels[(y * width + x) * 4 + 3] > 12) return round((y + 1) / height)
+  return 1
+}
+
 try {
   await rm(OUT, { recursive: true, force: true })
   await mkdir(OUT, { recursive: true })
@@ -432,12 +460,13 @@ try {
       rest.seen.headphones,
     ].map((r) => ({ left: nx(r.left), top: ny(r.top), right: nx(r.right) }))
 
+    // The share of the still's width the live fit framed; the rest is
+    // table running on past the box's sides.
+    const fitted = round(framing.box.width / frame.width)
     stills[framing.name] = {
       width: frame.width,
       height: frame.height,
-      // The share of the still's width the live fit framed; the rest is
-      // table running on past the box's sides.
-      fitted: round(framing.box.width / frame.width),
+      fitted,
       widths: framing.widths,
       previews: playable,
       slots: slots.map(({ id, points, depth }) => {
@@ -456,6 +485,12 @@ try {
         }
       }),
       obstacles,
+      // Measured on the studio at rest at its largest width; a lifted tape
+      // only rises.
+      foot: await foot(
+        join(OUT, `${framing.name}-rest-${Math.max(...framing.widths)}.webp`),
+        fitted,
+      ),
       muted: {
         left: nx(left / scale),
         top: ny(top / scale),
@@ -495,6 +530,8 @@ export interface StudioStill {
   }[]
   /** What stands under the words beside the studio, a tape lifted included. */
   obstacles: { left: number; top: number; right: number }[]
+  /** Where the drawn studio ends: its lowest point, the table's front corner. */
+  foot: number
   /** The deck's status window, drawn again with sound off. */
   muted: { left: number; top: number; width: number; height: number }
 }

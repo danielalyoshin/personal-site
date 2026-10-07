@@ -181,10 +181,16 @@
   display: none;
 }
 /* Without the 3D studio, a note under its still says what is missing and
-   why: in the mobile look it follows the still, before the projects, as
-   close under the table as the guide stands over the monitor. */
+   why: in the mobile look it follows the still, before the projects, and
+   belongs to the still rather than to the list: 16px under the table's
+   lowest point and twice that over the projects' seam. The box runs on
+   under the drawn studio by --still-slack, which FlatStudio.tsx measures.
+   Reload's hit area overhangs inside the note, not into the space under
+   it. */
 .flatNote {
-  margin: 8px 0 24px;
+  --still-slack: 0px;
+  display: flow-root;
+  margin: calc(16px - var(--still-slack)) 0 32px;
 }
 .objectCaption small {
   display: block;
@@ -573,12 +579,55 @@
   }
   .flat .flatNote {
     grid-area: 4 / 1 / auto / -1;
-    margin: 8px 0 24px;
+    margin: calc(16px - var(--still-slack)) 0 32px;
     padding-top: 0;
     border-top: 0;
   }
   .flat .archive {
     grid-area: 5 / 1 / auto / -1;
+  }
+}
+/* Where the whole note in the column would stand the studio's still more
+   than a sliver smaller than its full size (short windows, and wide ones a
+   little taller: FlatStudio.tsx judges it and sets data-split), the note
+   splits. Its title, and Reload where there is one, close the column under
+   the seam; the reason stands under the studio's box, on the column's edge
+   under the title's, 16px under the table and 32px over the projects, as
+   the whole note does in the mobile look. It is still one note, read
+   title, reason, Reload: it spans the rows from the seam to under the box,
+   sets its parts on the rows it shares with the page, and lets the pointer
+   through to the rack between them. */
+@media (width >= 768px) and (height >= 540px) and (orientation: landscape) {
+  .main:has(.flatNote[data-split]) {
+    grid-template-rows: auto auto auto 1fr auto auto;
+  }
+  .main:has(.flatNote[data-split]) .exhibit {
+    grid-area: 1 / 1 / 6 / -1;
+  }
+  .main:has(.flatNote[data-split]) .scene {
+    grid-area: 1 / 1 / 5 / -1;
+  }
+  .main:has(.flatNote[data-split]) .archive {
+    grid-area: 6 / 1 / auto / -1;
+  }
+  /* Width 0, then the column's whole width: containment alone does not
+     keep a subgrid's reason from widening the column (Chrome). */
+  .flatNote[data-split] {
+    grid-area: 3 / 2 / 6;
+    align-self: stretch;
+    width: 0;
+    min-width: 100%;
+    display: grid;
+    grid-template-rows: subgrid;
+    align-items: start;
+    pointer-events: none;
+  }
+  .flatNote[data-split] > * {
+    pointer-events: auto;
+  }
+  .flatNote[data-split] .flatReason {
+    grid-row: 3;
+    margin: calc(16px - var(--still-slack)) 0 32px;
   }
 }
 /* The note takes room the words beside the studio did not need: the box
@@ -682,7 +731,7 @@
 @media (width >= 740px) and (height < 540px) {
   .flatNote {
     min-width: 18.75rem;
-    margin-top: 8px;
+    margin-top: 12px;
     padding-top: 8px;
   }
 }

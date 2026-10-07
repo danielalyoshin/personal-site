@@ -161,9 +161,13 @@ Missing WebGL and lost graphics
 contexts retain the entire archive and reader, and the studio's box shows
 the studio's still: the live scene drawn ahead of time (`npm run
 render:flat`), its rack still the picker, a previewed tape dissolving to its
-own lifted still, and a plain note under the guide saying the visitor is
-seeing a still, why, and what brings the live studio back, with a Reload
-where one can (The Still Studio Rule in `DESIGN.md`). Deep links, About, both 404
+own lifted still, and a plain note saying the visitor is seeing a still,
+why, and what brings the live studio back, with a Reload where one can. The
+note closes the column under the guide; where all of it there would cost
+the still more than 2% of its size, its reason stands under the box on the
+column's edge instead, one note still. On a tablet held upright and on
+phones it follows the box, 16px under the table and 32px over the projects
+(The Still Studio Rule in `DESIGN.md`). Deep links, About, both 404
 states, Escape/eject, and focus return remain supported. Every screen state
 has a rule of its own: NO SIGNAL is a lit tube, under playback's bloom and
 cast in the HTML readers and playback's phosphor light on the modeled deck.

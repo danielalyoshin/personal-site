@@ -336,7 +336,7 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 - **Mark** (`mark`): 2.625rem at weight 600 with -0.02em tracking, used only for the AV–01 identifier while the studio loads.
 - **Body** (`body`): 1rem at weight 400. The page baseline and skip link inherit 1rem at 1.5 leading.
 - **Functional** (`functional-title`, `functional`): 0.875rem. The nameplate, selection guide, archive heading, and tape names are weight 600 with 1.35 leading; navigation links are weight 400 with 1.5 leading and rely on colour (silkscreen, high on hover) for their state.
-- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, contact links, the loading note, and the Escape hint are weight 400 with 1.5 leading. The native deck keys are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
+- **Caption** (`caption`, `control`): 0.75rem. The role line, guide instruction, archive note, tape captions, contact links, the loading note, the Escape hint, and the reason in the note on a still studio are weight 400 with 1.5 leading; that note's title is the one caption at weight 600 (The Still Studio Rule). The native deck keys are the control variant: uppercase, weight 600, 0.1em tracking, 1.2 leading.
 - **Label** (`label`): 0.6875rem, weight 600, 0.12em tracking, uppercase, 1.2 leading, in dim silkscreen: the introductory kicker, the archive entries' numbers, the footer's name and copyright, the quiet keys (Skip animation), and the native reader's AV–01 model mark. Nothing on the shell is set below this step.
 
 ### Tube ramp
@@ -1138,36 +1138,51 @@ the page no WebGL, the renderer fails to start, or its context is lost
 during the visit, the studio's box shows the studio's still: the live scene
 drawn ahead of time by `npm run render:flat`, with its models, lighting,
 browse camera, and fit (the desktop framing, and the phones' closer one at
-600px and below), transparent where nothing is drawn, so the page's
-graphite is its ground. It is laid out as the live fit would frame it, and
-each rack slot's pointer target is the scene's own, its resting envelope
-projected onto the picture, nearest first, so the rack answers the pointer
-as the canvas does (The Touch Rule and The Blank Slot Rule hold; the
-targets are the pointer's alone, and the projects list carries keyboard and
-assistive access). A tape previewed there or from the list dissolves in its
-own still over 240ms, lifted, with the tube naming it (The One Readout
-Rule). It joins once decoded, not merely loaded, and every still restarts
-each dissolve together from where it stands, so the stills always add up
-to one picture and a quick sweep never dims it. With sound off, a patch
-of the deck's status window drawn muted lies over its sound mark, so the
-readout stays true. Choosing a tape opens the
-full-height reader. A plain note, in the page's voice and never an alarm,
-says what the visitor is missing and why, in its case's own words
-(`src/content/graphics.ts`): "You’re seeing a still of the studio." in the
-functional title's type, over the reason and what brings the live studio
-back in the caption's, with a Reload, drawn mark first, where a reload can.
-No case promises more than it can: a reload "can" or "may" bring the studio
-back, and a phone or tablet, with no hardware acceleration to turn on, is
-told another browser or a computer instead. Beside the studio it closes the
+600px and below), transparent where nothing is drawn, so the page's graphite
+is its ground. It is laid out as the live fit would frame it, and each rack
+slot's pointer target is the scene's own, its resting envelope projected
+onto the picture, nearest first, so the rack answers the pointer as the
+canvas does (The Touch Rule and The Blank Slot Rule hold; the targets are
+the pointer's alone, and the projects list carries keyboard and assistive
+access). A tape previewed there or from the list dissolves in its own still
+over 240ms, lifted, with the tube naming it (The One Readout Rule). It joins
+once decoded, not merely loaded, and every still restarts each dissolve
+together from where it stands, so the stills always add up to one picture
+and a quick sweep never dims it. With sound off, a patch of the deck's
+status window drawn muted lies over its sound mark, so the readout stays
+true. Choosing a tape opens the full-height reader. A plain note, in the
+page's voice and never an alarm, says what the visitor is missing and why,
+in its case's own words (`src/content/graphics.ts`): "You’re seeing a still
+of the studio." in the caption's size at weight 600, a step under the guide
+it follows, over the reason and what brings the live studio back in the
+caption's type, with a Reload, drawn mark first, where a reload can. No case
+promises more than it can: a reload "can" or "may" bring the studio back,
+and a phone or tablet, with no hardware acceleration to turn on, is told
+another browser or a computer instead. Beside the studio it closes the
 column of words under the guide, after a seam, and the box grows toward the
-fold, never past it, so the still stands clear of it at full size, smaller
-only where it must; on a phone on its side it closes the column the same
-way. On a portrait window beside the studio (a tablet held upright), and in
-the mobile look, it follows the box instead, before the projects, so the
-still stands where the studio would. The note dissolves with the page chrome when a tape
-plays. The build stops when the stills no longer match the rack
-(`scripts/prerender.mjs`), so re-render them after the models, materials,
-lighting, tube screens, or tapes change, as the share cards are.
+fold, never past it, so the still stands clear of it at full size. Where the
+whole note there would leave the still more than 2% smaller than the live
+studio (short windows, and wide ones up to about 920px tall), the note
+splits: its title, and Reload where there is one, close the column under the
+seam, and the reason stands under the box, on the column's edge. Without a
+Reload the still then stands at or near its full size; a Reload, where there
+is one, still gives up a little of it, a tenth at most on short laptop
+windows. It stays one note, read title, reason, Reload. On a phone on its
+side it closes the column whole, 12px under the guide. On a portrait window
+beside the studio (a tablet held upright), and in the mobile look, it
+follows the box instead, before the projects, so the still stands where the
+studio would. Under the box, the note (or its reason) belongs to the still,
+not to the list: it stands 16px under the table's lowest point, which the
+still's geometry records (`foot`, measured by `npm run render:flat`), and
+32px over the projects' seam. Where the fold of the first screen would cut
+through a line of the split reason, it steps down so the fold falls above it
+or between its lines, and stays nearer the table than the projects, so no
+half-line of it shows. The note fades up with the still, from the same frame
+and over the same 240ms (at once under reduced motion), and dissolves with
+the page chrome when a tape plays. The build stops when the stills no longer
+match the rack (`scripts/prerender.mjs`), so re-render them after the
+models, materials, lighting, tube screens, or tapes change, as the share
+cards are.
 
 ### Pages drawn ahead of time
 

@@ -283,8 +283,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
   const nativeScreen = useRef<HTMLDivElement>(null)
   const nativeFrame = useRef<HTMLDivElement>(null)
   // The note on what a visit without the 3D studio is missing; the studio's
-  // still keeps clear of it.
+  // still keeps clear of it, and it comes up with the still.
   const flatNote = useRef<HTMLDivElement>(null)
+  const [stillShown, setStillShown] = useState(false)
+  const onStillShown = useCallback(() => setStillShown(true), [])
   // Where the tube's article stood when its picture was turned up, and
   // whether the turn was a closer look, which opens on the tape's media.
   const readingPlace = useRef<{
@@ -756,6 +758,7 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
       onPreview={previewTape}
       onSelect={select}
       note={flatNote}
+      onShown={onStillShown}
     />
   ) : null
 
@@ -983,8 +986,10 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               reason={flatReason}
               touchOnly={touchOnly}
               className={styles.flatNote}
+              reasonClassName={styles.flatReason}
               ref={flatNote}
               inert={open}
+              waiting={!stillShown}
             />
           )}
         </section>

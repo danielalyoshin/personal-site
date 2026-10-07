@@ -21,6 +21,18 @@ const CLEARANCE = 14
 const TOUCH_TARGET = 44
 /** A press that travels this far is a drag, not a choice. */
 const DRAG = 5
+/**
+ * The note splits where the whole of it in the column would stand the still
+ * smaller than this share of its full size: past a sliver, the visitor sees
+ * the studio cut down for a paragraph about it.
+ */
+const SPLIT = 0.98
+/** The reason's place under the title in the column (FlatStudio.module.css). */
+const REASON_GAP = 4
+/** A note under the box stands this far under the table (Stage.module.css), */
+const UNDER_TABLE = 16
+/** and this far over the projects' seam. */
+const OVER_SEAM = 32
 
 const ALT =
   'A picture of the 3D studio: the monitor reads Insert tape over the tape deck, beside the rack of tapes.'
@@ -54,8 +66,9 @@ interface Plate {
  * centred and as large as the box allows for the part of it the camera
  * framed. Beside the studio (The Studio First Rule), the words stand over
  * the box's upper right, and the note on what the visitor is missing closes
- * that column: the still keeps the lifted tape and the headphones clear of
- * it, lower in a box grown to the fold for it, or else a little smaller.
+ * that column (all of it, or its title and Reload where its reason has gone
+ * under the box): the still keeps the lifted tape and the headphones clear
+ * of it, lower in a box grown to the fold for it, or else a little smaller.
  * `room` is the box height that would hold the still at full size.
  */
 function place(
@@ -143,6 +156,8 @@ interface FlatStudioProps {
   onSelect: (tape: Project, fromKeyboard?: boolean) => void
   /** The note on what is missing, which the still keeps clear of. */
   note: RefObject<HTMLElement | null>
+  /** The still fades up, or never will: the note may come up now. */
+  onShown?: () => void
 }
 
 /**
@@ -161,6 +176,7 @@ export default function FlatStudio({
   onPreview,
   onSelect,
   note,
+  onShown,
 }: FlatStudioProps) {
   const root = useRef<HTMLDivElement>(null)
   const picture = useRef<HTMLDivElement>(null)
@@ -187,40 +203,108 @@ export default function FlatStudio({
     if (!el) return
     const box = el.closest<HTMLElement>('[data-flat]')
     let live = true
-    const measure = () => {
+    // `pass` counts the layouts one measurement has asked for: a split, and
+    // a box grown for the note, are each laid out and measured again at
+    // once, so the first paint and the observer find them settled.
+    const measure = (pass = 0) => {
       if (!live) return
+      const words = note.current
       const bounds = el.getBoundingClientRect()
       if (!bounds.width || !bounds.height) return
       const framing = window.matchMedia(PHONE).matches ? 'phone' : 'desk'
-      const words = note.current?.getBoundingClientRect()
-      // The note stands over the box beside the studio; in the other looks
-      // it is under the box or beside it, and asks nothing of the still.
+      const still = studioStills[framing]
+      // The fold caps the box beside the studio; elsewhere it has none.
+      const fold = box ? parseFloat(getComputedStyle(box).maxHeight) : NaN
+      // Beside the studio the note stands over the box's right half, in the
+      // column of words; in the other looks it is under the box or beside
+      // it, and asks nothing of the still.
+      const area = words?.getBoundingClientRect()
       const over =
         !!words &&
-        words.width > 0 &&
-        words.left < bounds.right &&
-        words.top < bounds.bottom
-      const { room, ...at } = place(
-        studioStills[framing],
-        bounds.width,
-        bounds.height,
-        over
-          ? {
-              left: words.left - bounds.left,
-              bottom: words.bottom - bounds.top,
-            }
-          : null,
-      )
+        !!area &&
+        area.width > 0 &&
+        area.left > bounds.left + bounds.width / 2 &&
+        area.left < bounds.right &&
+        area.top < bounds.bottom
+      // What of it stands in the column: all of it, or its title and Reload
+      // where its reason has gone under the box. A hit area that overhangs
+      // its print (Reload's) ends where the print does.
+      const split = !!words?.hasAttribute('data-split')
+      let column: { left: number; bottom: number } | null = null
+      let reason = 0
+      if (over) {
+        let bottom = area.top
+        for (const part of words.children) {
+          const rect = part.getBoundingClientRect()
+          if (part.classList.contains(styles.noteDetail)) {
+            reason = rect.height
+            if (split) continue
+          }
+          const overhang = parseFloat(getComputedStyle(part).marginBottom)
+          bottom = Math.max(bottom, rect.bottom + Math.min(0, overhang))
+        }
+        column = { left: area.left - bounds.left, bottom: bottom - bounds.top }
+      }
+      // Where the whole note in the column would stand the still smaller
+      // than its full size by more than a sliver, the reason goes under the
+      // box (Stage.module.css). Judged on the whole note either way, so the
+      // split never undoes itself.
+      if (!pass && words) {
+        let costly = false
+        if (column && Number.isFinite(fold)) {
+          const whole = split
+            ? column.bottom + REASON_GAP + reason
+            : column.bottom
+          const framed = (still.width / still.height) * still.fitted
+          const full = Math.min(fold, bounds.width / framed)
+          costly =
+            place(still, bounds.width, fold, { ...column, bottom: whole })
+              .height <
+            full * SPLIT
+        }
+        if (costly !== split) {
+          words.toggleAttribute('data-split', costly)
+          measure(pass + 1)
+          return
+        }
+      }
+      const { room, ...at } = place(still, bounds.width, bounds.height, column)
       // Grow the box toward the fold first (Stage.module.css caps it there).
       if (box) {
-        const fold = parseFloat(getComputedStyle(box).maxHeight)
-        if (over && room)
+        if (column && room)
           box.style.setProperty(
             '--flat-room',
             `${Math.ceil(Number.isFinite(fold) ? Math.min(room, fold) : room)}px`,
           )
         else box.style.removeProperty('--flat-room')
+        if (pass < 2 && el.getBoundingClientRect().height !== bounds.height) {
+          measure(pass + 1)
+          return
+        }
       }
+      // How far the box runs on under the drawn studio, so a note under the
+      // box can stand a set distance under the table instead.
+      let slack = Math.max(
+        0,
+        Math.floor(bounds.height - at.top - still.foot * at.height),
+      )
+      // The split reason stands under the box, where the first screen's
+      // fold often falls: where the fold would cut through one of its
+      // lines, it steps down to put the fold between them, while it stays
+      // nearer the table than the projects.
+      const lead = split
+        ? words?.querySelector<HTMLElement>(`.${styles.noteDetail}`)
+        : null
+      if (lead) {
+        const line = parseFloat(getComputedStyle(lead).lineHeight)
+        const shown =
+          window.innerHeight -
+          (bounds.bottom + window.scrollY + UNDER_TABLE - slack)
+        const cut = shown % line
+        if (shown > 0 && shown < reason && cut < OVER_SEAM - UNDER_TABLE)
+          slack -= Math.ceil(cut)
+      }
+      words?.style.setProperty('--still-slack', `${slack}px`)
       setPlate((current) =>
         current &&
         current.framing === framing &&
@@ -231,15 +315,28 @@ export default function FlatStudio({
           : { framing, ...at },
       )
     }
-    const observer = new ResizeObserver(measure)
+    const observer = new ResizeObserver(() => measure())
     observer.observe(el)
-    if (note.current) observer.observe(note.current)
+    // The note follows the studio's box on the page, so its ref is set only
+    // once this commit is done: the first measurement waits for it, and it
+    // is watched from then. Laid out here, before the first paint, the box,
+    // the note, and the still are already where they stay when the
+    // observer first reports, so nothing changes size under it.
+    let watched: HTMLElement | null = null
+    queueMicrotask(() => {
+      if (!live) return
+      watched = note.current
+      if (watched) observer.observe(watched)
+      measure()
+    })
     // Archivo arriving rewraps the words above the note.
-    void document.fonts.ready.then(measure)
+    void document.fonts.ready.then(() => measure())
     return () => {
       live = false
       observer.disconnect()
       box?.style.removeProperty('--flat-room')
+      watched?.style.removeProperty('--still-slack')
+      watched?.removeAttribute('data-split')
     }
   }, [note])
 
@@ -356,13 +453,20 @@ export default function FlatStudio({
               fetchPriority="high"
               onLoad={(event) => {
                 // It fades up once decoded, or regardless if it cannot be:
-                // the picker matters more than a frame.
-                const show = () => setShown(true)
+                // the picker matters more than a frame. The note comes up
+                // with it, in the same commit.
+                const show = () => {
+                  setShown(true)
+                  onShown?.()
+                }
                 event.currentTarget.decode().then(show, show)
                 if ('requestIdleCallback' in window)
                   window.requestIdleCallback(warmUp, { timeout: 3000 })
                 else setTimeout(warmUp, 1000)
               }}
+              // A still that cannot load never shows; its note comes up
+              // without it.
+              onError={() => onShown?.()}
             />
             {(warm || preview) &&
               still.previews.map((slug) => (
@@ -462,26 +566,35 @@ export default function FlatStudio({
 
 /**
  * The plain note on what the visitor is missing and why, in the page's own
- * voice, with a Reload where one can bring the studio back.
+ * voice, with a Reload where one can bring the studio back. One note, read
+ * in that order, wherever the page sets its parts (FlatStudio may split it:
+ * `data-split`). It fades up as it arrives, with the still when it waits
+ * for it.
  */
 export function FlatNote({
   reason,
   touchOnly,
   className,
+  reasonClassName,
   ref,
   inert,
+  waiting,
 }: {
   reason: GraphicsFailure
   /** A phone or tablet, where some advice does not apply. */
   touchOnly: boolean
   className?: string
+  /** The reason's own place, for a page that sets it apart from the title. */
+  reasonClassName?: string
   ref?: Ref<HTMLDivElement>
   inert?: boolean
+  /** Held clear until the studio's still fades up, to arrive with it. */
+  waiting?: boolean
 }) {
   const notice = flatNotice[reason]
   return (
     <div
-      className={className}
+      className={`${styles.note} ${waiting ? styles.waiting : ''} ${className ?? ''}`}
       role="note"
       ref={ref}
       inert={inert || undefined}
@@ -489,7 +602,7 @@ export function FlatNote({
       data-testid="flat-note"
     >
       <p className={styles.noteTitle}>{notice.title}</p>
-      <p className={styles.noteDetail}>
+      <p className={`${styles.noteDetail} ${reasonClassName ?? ''}`}>
         {(touchOnly && notice.detailTouch) || notice.detail}
       </p>
       {notice.reload && (
