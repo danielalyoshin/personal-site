@@ -42,9 +42,9 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await page.goto('/')
   await ready(page)
   await expect(page.locator('canvas')).toBeVisible()
-  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(2)
+  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(3)
   const d1 = page.getByRole('link', {
-    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+    name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     exact: true,
   })
   await d1.focus()
@@ -53,7 +53,12 @@ test('3D archive, keyboard navigation, playback and focus restoration', async ({
   await expect(
     page.getByRole('link', { name: /^Play tape: 06 ABOUT/ }),
   ).toBeFocused()
+  // Home goes to the first tape, knobs, and the next one along is D1.
   await page.keyboard.press('Home')
+  await expect(
+    page.getByRole('link', { name: /^Play tape: 01 KNOBS/ }),
+  ).toBeFocused()
+  await page.keyboard.press('ArrowRight')
   await expect(d1).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL('/project/superset-d1')
@@ -247,7 +252,7 @@ test('the first viewport exposes the studio and a clear way to choose a tape', a
   await expect(inStudio).toBeHidden()
   await expect(
     page.getByRole('link', {
-      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+      name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
       exact: true,
     }),
   ).toBeInViewport({ ratio: 1 })
@@ -545,7 +550,7 @@ test('archive works without WebGL and after a graphics context is lost', async (
   ).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  await page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ }).click()
+  await page.getByRole('link', { name: /^Play tape: 02 SUPERSET D1/ }).click()
   await expect(
     page.getByRole('heading', {
       name: 'Cloudflare D1 in Apache Superset',
@@ -675,7 +680,7 @@ test('the note on what is missing fades up with the still', async ({
     expect(Math.abs(note - still)).toBeLessThan(0.05)
 
   // A tape played and ejected brings it back with the page chrome.
-  await page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ }).click()
+  await page.getByRole('link', { name: /^Play tape: 02 SUPERSET D1/ }).click()
   await expect(
     page.getByRole('heading', {
       name: 'Cloudflare D1 in Apache Superset',
@@ -884,7 +889,7 @@ test('the pointer preview hands over slot to slot without flicker while cassette
     // Sweep along the middle of the rack, through slot 03's centre.
     const centre = toScreen(
       state.scene
-        .getObjectByName('tape-coming-2')!
+        .getObjectByName('tape-coming-1')!
         .getWorldPosition(new Vector3()),
     )
     return {
@@ -925,11 +930,12 @@ test('the pointer preview hands over slot to slot without flicker while cassette
   const forward = await sweep(geometry.left, geometry.right)
   const back = await sweep(geometry.right, geometry.left)
   // One handover at each shared edge, and never back to a tape already left.
-  // The four blank slots between SUPERSET D1 and About answer no pointer, so
-  // the guide reads idle across them; a lifting tape that flickered at its
-  // edge would name itself again.
-  expect(forward).toEqual(['SUPERSET D1', idle, 'ABOUT', idle])
-  expect(back).toEqual(['ABOUT', idle, 'SUPERSET D1', idle])
+  // KNOBS hands straight over to SUPERSET D1 beside it; the three blank
+  // slots between SUPERSET D1 and About answer no pointer, so the guide
+  // reads idle across them; a lifting tape that flickered at its edge would
+  // name itself again.
+  expect(forward).toEqual(['KNOBS', 'SUPERSET D1', idle, 'ABOUT', idle])
+  expect(back).toEqual(['ABOUT', idle, 'SUPERSET D1', 'KNOBS', idle])
 })
 
 test('in the mobile look the blank slots share one cell, met once', async ({
@@ -943,8 +949,9 @@ test('in the mobile look the blank slots share one cell, met once', async ({
   const onePerSlot = `
     - list:
       - listitem:
-        - link /^Play tape. 01 SUPERSET D1/
-      - listitem: 02 Coming soon… Blank tape
+        - link /^Play tape. 01 KNOBS/
+      - listitem:
+        - link /^Play tape. 02 SUPERSET D1/
       - listitem: 03 Coming soon… Blank tape
       - listitem: 04 Coming soon… Blank tape
       - listitem: 05 Coming soon… Blank tape
@@ -952,11 +959,12 @@ test('in the mobile look the blank slots share one cell, met once', async ({
         - link /^Play tape. 06 ABOUT/
   `
   await expect(list).toMatchAriaSnapshot(onePerSlot)
-  const d1 = page.getByRole('link', { name: /^Play tape: 01 SUPERSET D1/ })
+  const knobs = page.getByRole('link', { name: /^Play tape: 01 KNOBS/ })
+  const d1 = page.getByRole('link', { name: /^Play tape: 02 SUPERSET D1/ })
   const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
   // Phones, narrow windows, and small phones on their side: the stylesheet
   // folds the run into its first cell, so a screen reader meets it once, as
-  // "02 to 05", and nothing of the other three is left in the list.
+  // "03 to 05", and nothing of the other two is left in the list.
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 320, height: 740 },
@@ -967,15 +975,17 @@ test('in the mobile look the blank slots share one cell, met once', async ({
     await expect(list).toMatchAriaSnapshot(`
       - list:
         - listitem:
-          - link /^Play tape. 01 SUPERSET D1/
-        - listitem: 02 to 05 Coming soon… Blank tapes
+          - link /^Play tape. 01 KNOBS/
+        - listitem:
+          - link /^Play tape. 02 SUPERSET D1/
+        - listitem: 03 to 05 Coming soon… Blank tapes
         - listitem:
           - link /^Play tape. 06 ABOUT/
     `)
     const cells = list.locator('> li').filter({ visible: true })
-    await expect(cells).toHaveCount(3)
-    const run = cells.nth(1)
-    // On the page it reads as the spine numbers do: 02–05.
+    await expect(cells).toHaveCount(4)
+    const run = cells.nth(2)
+    // On the page it reads as the spine numbers do: 03–05.
     expect(
       await run
         .locator('span')
@@ -985,26 +995,30 @@ test('in the mobile look the blank slots share one cell, met once', async ({
           shown.querySelectorAll('.srOnly').forEach((node) => node.remove())
           return shown.textContent
         }),
-    ).toBe('02–05')
+    ).toBe('03–05')
     await expect(run.locator('a, button, [tabindex]')).toHaveCount(0)
-    // From the right-hand column the run spans both rows, beside SUPERSET D1
-    // and About, so the grid closes without a hole. The cells are measured
-    // together, in one layout: in the first frame after a resize the
-    // headline above still sets its first line at the old size, then moves
-    // the list, and boxes taken one call at a time could straddle it.
-    const [first, blank, last] = await cells.evaluateAll((items) =>
+    // From the left-hand column the run takes one cell, beside About, so the
+    // two rows close without a hole and nothing spans. The cells are
+    // measured together, in one layout: in the first frame after a resize
+    // the headline above still sets its first line at the old size, then
+    // moves the list, and boxes taken one call at a time could straddle it.
+    const [first, second, blank, last] = await cells.evaluateAll((items) =>
       items
         .map((item) => item.getBoundingClientRect())
         .map(({ x, y, width, height }) => ({ x, y, width, height })),
     )
-    expect(blank.x).toBeGreaterThan(first.x + first.width)
-    expect(last.x).toBeCloseTo(first.x, 0)
-    expect(last.y).toBeGreaterThan(first.y + first.height)
-    expect(blank.y).toBeCloseTo(first.y, 0)
+    expect(second.x).toBeGreaterThan(first.x + first.width)
+    expect(second.y).toBeCloseTo(first.y, 0)
+    expect(blank.x).toBeCloseTo(first.x, 0)
+    expect(blank.y).toBeGreaterThan(first.y + first.height)
+    expect(last.x).toBeCloseTo(second.x, 0)
+    expect(last.y).toBeCloseTo(blank.y, 0)
     expect(blank.y + blank.height).toBeCloseTo(last.y + last.height, 0)
     await noOverflow(page)
     // The arrows and Home/End still move between the tapes that play.
-    await d1.focus()
+    await knobs.focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(d1).toBeFocused()
     await page.keyboard.press('ArrowRight')
     await expect(about).toBeFocused()
     await page.keyboard.press('ArrowLeft')
@@ -1012,7 +1026,7 @@ test('in the mobile look the blank slots share one cell, met once', async ({
     await page.keyboard.press('ArrowDown')
     await expect(about).toBeFocused()
     await page.keyboard.press('Home')
-    await expect(d1).toBeFocused()
+    await expect(knobs).toBeFocused()
     await page.keyboard.press('End')
     await expect(about).toBeFocused()
     await about.blur()
@@ -1035,16 +1049,17 @@ test('slots without a project hold blank tapes that are coming soon', async ({
   await ready(page)
   const entries = page.locator('#projects li')
   await expect(entries).toHaveCount(6)
-  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(2)
-  // Slots 02 to 05 are read, not played: no link, and outside the tab order.
-  for (const slot of [1, 2, 3, 4]) {
+  await expect(page.getByRole('link', { name: /^Play tape:/ })).toHaveCount(3)
+  // Slots 03 to 05 are read, not played: no link, and outside the tab order.
+  for (const slot of [2, 3, 4]) {
     const entry = entries.nth(slot)
     await expect(entry).toContainText(`0${slot + 1}`)
     await expect(entry).toContainText('Coming soon…')
     await expect(entry.locator('a, button, [tabindex]')).toHaveCount(0)
   }
+  const knobs = page.getByRole('link', { name: /^Play tape: 01 KNOBS/ })
   const d1 = page.getByRole('link', {
-    name: /^Play tape: 01 SUPERSET D1/,
+    name: /^Play tape: 02 SUPERSET D1/,
   })
   const about = page.getByRole('link', { name: /^Play tape: 06 ABOUT/ })
   await d1.focus()
@@ -1055,7 +1070,7 @@ test('slots without a project hold blank tapes that are coming soon', async ({
   await page.keyboard.press('Tab')
   await expect(about).toBeFocused()
   await page.keyboard.press('Home')
-  await expect(d1).toBeFocused()
+  await expect(knobs).toBeFocused()
   await page.keyboard.press('End')
   await expect(about).toBeFocused()
   // In the studio a blank slot holds the same shell with nothing printed,
@@ -1110,11 +1125,11 @@ test('slots without a project hold blank tapes that are coming soon', async ({
     'pointer-target-coming-1',
     'pointer-target-coming-2',
     'pointer-target-coming-3',
-    'pointer-target-coming-4',
+    'pointer-target-knobs',
     'pointer-target-superset-d1',
   ])
-  // The three-quarter camera looks along the rack: a ray through slot 02's
-  // blank tape runs on into SUPERSET D1's envelope behind it in slot 01,
+  // The three-quarter camera looks along the rack: a ray through slot 03's
+  // blank tape runs on into SUPERSET D1's envelope behind it in slot 02,
   // meeting only blank slots on the way, its own among them. They swallow
   // it, so the guide stays idle and a click plays nothing.
   const reachesD1 = studio.throughBlank.indexOf('pointer-target-superset-d1')

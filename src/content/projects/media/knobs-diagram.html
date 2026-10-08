@@ -1,0 +1,302 @@
+<!doctype html>
+<!--
+  Source of knobs-diagram.webp, the knobs tape's diagram: how knobs runs a
+  mic through OBS's own audio code without OBS, drawn across for the reader
+  that shows it at full size (full screen, and any reader 640px wide or
+  more); knobs-diagram-narrow.html draws the same system down, for phones.
+  It is the architecture chart in the knobs repository's docs/design.md,
+  distilled: the tray app and the always-on core are the boundary's note,
+  and the parts a visitor needs (the runtime loader, which keeps a private
+  copy of OBS and loads libobs from it, the importer, and the mic's path to
+  the other apps) are the boxes. It names no versions,
+  so it only needs redrawing when the way knobs works changes.
+  `npm run render:diagrams` draws it with the site's own fonts and palette;
+  while `npm run dev` runs it can be previewed at
+  /src/content/projects/media/knobs-diagram.html.
+
+  It is drawn at 640px, the full-height reader's widest column (639px), so
+  its 14px text is shown at its own size there. Rendered at 3.25×, as the
+  narrow one is. The grid, as the D1 diagrams' is:
+  - boxes span x 16–604 (knobs's parts 28–592, the libobs chain 40–578);
+    a box's name sits 27px under its top edge and its note 21px under that,
+    or at its right edge in a one-line box;
+  - code and settings (dashed) come down x 120 and x 400, each labelled
+    12px to its right; audio (solid) comes up into the chain at x 100,
+    along it, and out of it at x 430 to the cable, then on to the apps.
+  The knob red, the tape's label accent, marks the parts I wrote, as the
+  key under the drawing says; everything the mic's audio passes through is
+  OBS's own code.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>knobs · diagram source</title>
+    <script type="module">
+      import '@fontsource-variable/archivo/wdth.css'
+      import '/src/styles/tokens.css'
+    </script>
+    <style>
+      :root {
+        /* The tape's label accent (vhs.accent): the parts I wrote. */
+        --accent: #e5484d;
+        --node: color-mix(in srgb, var(--screen-text) 4%, var(--screen-black));
+        --line: var(--screen-scroll);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      body {
+        background: var(--ink-0);
+        padding: 24px;
+      }
+
+      .diagram {
+        width: 640px;
+        padding-bottom: 18px;
+        background: var(--screen-black);
+        color: var(--screen-soft);
+        font-family: var(--font-chassis);
+        font-size: 14px;
+        line-height: 1.4;
+        letter-spacing: var(--tracking-body);
+      }
+
+      svg {
+        display: block;
+        font-family: var(--font-chassis);
+        letter-spacing: var(--tracking-body);
+      }
+
+      /* Boxes: a part is filled, a boundary only drawn. */
+      .part {
+        fill: var(--node);
+        stroke: var(--seam-lit);
+      }
+
+      .part.changed {
+        stroke: var(--accent);
+      }
+
+      .boundary {
+        fill: none;
+        stroke: var(--seam-lit);
+      }
+
+      .hair {
+        stroke: var(--seam);
+      }
+
+      text {
+        font-size: 14px;
+        fill: var(--screen-soft);
+      }
+
+      .name {
+        font-size: 17px;
+        font-weight: 600;
+        fill: var(--screen-text);
+      }
+
+      .term {
+        font-weight: 600;
+        fill: var(--screen-text);
+      }
+
+      .quiet,
+      .label {
+        fill: var(--screen-dim);
+      }
+
+      .end {
+        text-anchor: end;
+      }
+
+      /* Wires: what passes between two parts, and when. */
+      .wire,
+      .head {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 1.5;
+      }
+
+      .wire.setup {
+        stroke-dasharray: 4 3;
+      }
+
+      .key {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        margin: 18px 16px 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--seam);
+        color: var(--screen-dim);
+      }
+
+      .key span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .key svg {
+        flex: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="diagram" id="diagram">
+      <svg
+        width="640"
+        height="464"
+        viewBox="0 0 640 464"
+        role="img"
+        aria-label="How knobs runs your mic through OBS’s own audio code"
+      >
+        <!-- Where knobs gets OBS's code and your settings -->
+        <rect class="part" x="16.5" y="16.5" width="284" height="43" rx="4" />
+        <text class="name" x="30" y="43">OBS Studio</text>
+        <text class="quiet end" x="287" y="43">Your install</text>
+
+        <rect class="part" x="319.5" y="16.5" width="284" height="43" rx="4" />
+        <text class="name" x="333" y="43">OBS’s settings</text>
+        <text class="quiet end" x="590" y="43">Your profile</text>
+
+        <path class="wire setup" d="M120 61v76" />
+        <path class="head" d="M115.75 132.75 120 137l4.25-4.25" />
+        <text class="label" x="132" y="88">copied once per OBS version</text>
+
+        <path class="wire setup" d="M400 61v76" />
+        <path class="head" d="M395.75 132.75 400 137l4.25-4.25" />
+        <text class="label" x="412" y="88">read, never written</text>
+
+        <!-- knobs, the tray app -->
+        <rect
+          class="boundary"
+          x="16.5"
+          y="100.5"
+          width="587"
+          height="284"
+          rx="4"
+        />
+        <text class="name" x="30" y="127">knobs</text>
+        <text class="quiet end" x="590" y="127">Pauses while OBS runs</text>
+
+        <rect
+          class="part changed"
+          x="28.5"
+          y="140.5"
+          width="275"
+          height="64"
+          rx="4"
+        />
+        <text class="name" x="42" y="167">Loader</text>
+        <text x="42" y="188">Runs OBS from a private copy</text>
+
+        <rect
+          class="part changed"
+          x="316.5"
+          y="140.5"
+          width="275"
+          height="64"
+          rx="4"
+        />
+        <text class="name" x="330" y="167">Importer</text>
+        <text x="330" y="188">Reads your mic and filters</text>
+
+        <path class="wire setup" d="M120 206v47" />
+        <path class="head" d="M115.75 248.75 120 253l4.25-4.25" />
+        <text class="label" x="132" y="235">loads</text>
+
+        <path class="wire setup" d="M400 206v47" />
+        <path class="head" d="M395.75 248.75 400 253l4.25-4.25" />
+        <text class="label" x="412" y="226">rebuilds your mic</text>
+        <text class="label" x="412" y="245">with OBS’s own code</text>
+
+        <!-- libobs, OBS's audio engine, running inside knobs: the mic's
+             path through it, left to right -->
+        <rect
+          class="boundary"
+          x="28.5"
+          y="256.5"
+          width="563"
+          height="116"
+          rx="4"
+        />
+        <text class="name" x="42" y="283">libobs</text>
+        <text class="quiet end" x="578" y="283">
+          OBS’s audio engine, no video
+        </text>
+
+        <rect class="part" x="40.5" y="296.5" width="163" height="64" rx="4" />
+        <text class="name" x="54" y="323">Mic input</text>
+        <text x="54" y="344">As set in OBS</text>
+
+        <path class="wire" d="M205 328.5h19" />
+        <path class="head" d="M219.75 324.25 224 328.5l-4.25 4.25" />
+
+        <rect class="part" x="227.5" y="296.5" width="163" height="64" rx="4" />
+        <text class="name" x="241" y="323">Filters</text>
+        <text x="241" y="344">Yours, in order</text>
+
+        <path class="wire" d="M392 328.5h19" />
+        <path class="head" d="M406.75 324.25 411 328.5l-4.25 4.25" />
+
+        <rect class="part" x="414.5" y="296.5" width="163" height="64" rx="4" />
+        <text class="name" x="428" y="323">Output</text>
+        <text x="428" y="344">Audio monitoring</text>
+
+        <!-- In from the mic, out to the cable and the other apps -->
+        <path class="wire" d="M100 417v-53" />
+        <path class="head" d="M95.75 368.25 100 364l4.25 4.25" />
+
+        <path class="wire" d="M430 362v53" />
+        <path class="head" d="M425.75 410.75 430 415l4.25-4.25" />
+        <text class="label" x="442" y="405">processed mic</text>
+
+        <rect class="part" x="16.5" y="418.5" width="160" height="43" rx="4" />
+        <text class="name" x="30" y="445">Your mic</text>
+
+        <rect class="part" x="296.5" y="418.5" width="150" height="43" rx="4" />
+        <text class="name" x="310" y="445">Virtual cable</text>
+
+        <path class="wire" d="M448 440h25" />
+        <path class="head" d="M468.75 435.75 473 440l-4.25 4.25" />
+
+        <rect class="part" x="476.5" y="418.5" width="127" height="43" rx="4" />
+        <text class="name" x="490" y="445">Other apps</text>
+      </svg>
+
+      <p class="key">
+        <span>
+          <svg width="24" height="14" viewBox="0 0 24 14" aria-hidden="true">
+            <path class="wire" d="M0 7h24" />
+          </svg>
+          Audio
+        </span>
+        <span>
+          <svg width="24" height="14" viewBox="0 0 24 14" aria-hidden="true">
+            <path class="wire setup" d="M0 7h24" />
+          </svg>
+          Code and settings
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <rect
+              class="part changed"
+              x="0.5"
+              y="0.5"
+              width="13"
+              height="13"
+              rx="2"
+            />
+          </svg>
+          My code
+        </span>
+      </p>
+    </div>
+  </body>
+</html>

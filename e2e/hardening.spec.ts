@@ -123,7 +123,7 @@ for (const fail of [false, true]) {
         await expect(page.locator('canvas')).toHaveCount(0)
         await expect(
           page.getByRole('link', { name: /^Play tape:/ }),
-        ).toHaveCount(2)
+        ).toHaveCount(3)
       }
     } finally {
       held.release()
@@ -227,7 +227,7 @@ test('a desktop deep link dissolves onto the modeled screen once the scene is re
     await expect(page).toHaveURL('/')
     await expect(
       page.getByRole('link', {
-        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+        name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
         exact: true,
       }),
     ).toBeFocused()
@@ -245,7 +245,7 @@ test('the HTML archive opens a reader before the graphics module is available', 
     await held.requested
     await page
       .getByRole('link', {
-        name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+        name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
       })
       .click()
     const reader = page.getByRole('article', {
@@ -681,7 +681,7 @@ test('the studio loads without a console warning or error', async ({
   await ready(page)
   await page
     .getByRole('link', {
-      name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+      name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     })
     .click()
   await expect(page.getByTestId('project-reader')).toBeVisible()
@@ -743,7 +743,7 @@ test('a phone plays the insertion in the studio, then the native reader takes ov
   }
   const atRest = await sizes()
   expect(atRest.canvas).toEqual(atRest.box)
-  const tape = page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ })
+  const tape = page.getByRole('link', { name: /Play tape: 02 SUPERSET D1/ })
   await tape.click()
   // The insertion plays in the studio, over the whole viewport, as on every
   // window: no reader covers the flight that Skip offers to cut short.

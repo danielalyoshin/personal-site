@@ -1432,6 +1432,52 @@ rest, by finding:
   own fill and edge), and a divider with the cue at its centre (quiet, but
   reads as a section break more than a control). The prototype diff is
   kept outside the repository. Two tests in `fullscreen.spec.ts`.
+- Second real project DONE (2026-10-08, from the knobs and knobs-site
+  repositories and getknobs.app, at Daniel's request): knobs (`knobs`,
+  spine KNOBS, rental label in the knob red `#e5484d` (the studio label
+  is About's alone, Daniel's ask), REC OCT 2026,
+  2026 · CREATOR) takes slot 01, newest first by Daniel's choice, and the
+  D1 tape moves to 02; slots 03 to 05 stay blank. The write-up is written
+  for a visitor who has never used OBS (Daniel's ask): it says what OBS
+  Studio is and what a filter chain does before what knobs does, keeps the
+  bit-for-bit claim in plain words, names no version, release or
+  measurement, and closes on knobs's independence from the OBS Project, as
+  knobs's own brand commitments ask. Its caption is the knobs README's own
+  line, "Your OBS mic chain, in every app" (Daniel kept "mic chain"). Links: getknobs.app and Source. Its diagram is the
+  architecture chart in knobs's `docs/design.md`, distilled at Daniel's
+  suggestion: where the code and the settings come from, the loader (which
+  runs OBS from a private copy) and the importer (outlined as my code),
+  libobs's mic, filters and output, and the cable and the other apps; drawn
+  across at 640px (2080 × 1742) and down at 360px (1170 × 2730). The logo is the knobs lockup with light text,
+  copied unchanged, as knobs's TRADEMARKS.md allows, and opens the tape as
+  its title card on the tube (The Title Card Rule, DESIGN.md), in the
+  tube's light and under its effects, as Daniel asked ("has the crt filter
+  applied to it like everything else"). Three treatments were prototyped
+  and captured at 1440 × 900 and on a 390px phone: the title card (chosen:
+  the tape's title shown as its owner draws it, and read at once), a
+  cold open (the stacked lockup over the whole tube for two seconds before
+  the article: the most VHS of the three, but it holds back every reading
+  of the tape), and a station bug (the knob in the tube's lower right for
+  the length of the tape: it lies over the words as they scroll). The
+  prototype diff is kept outside the repository. The archive no longer
+  carries `text-transform: capitalize` on `.tapeLabel`, which did nothing
+  to names already in capitals; it prints spine names as written, as The
+  One Name Rule always said. Spine names stay capitals (Daniel: capitals
+  override a name's own case), so knobs, lowercase in its own writing, is
+  KNOBS on its spine, in the projects list, the guide and the tubes, and
+  "knobs" in running text and the document's name. Share cards
+  and the studio's stills re-rendered for the new rack; the D1 diagrams
+  re-rendered byte for byte. Tests follow the rack (D1 at 02, the phone's
+  run 03–05 in a list of four, beside About rather than spanning), and one
+  new test holds the title card (`reader.spec.ts`). The finish review's
+  fixes: the diagram first outlined the private copy of OBS as my code
+  (it is OBS's; the loader that keeps it is mine), the first paragraph
+  named an EQ, a noise gate and a compressor (now "filters that cut
+  background noise and keep their voice at an even level", from the knobs
+  README's own filter table), and forced colours lost the card's keyboard
+  line and, on a light theme, its light letters: the line is drawn in
+  `CanvasText`, the glow goes, and a light theme gets the owner's lockup
+  for light grounds (`logo.onLight`, also copied unchanged).
 
 ### Stage 9 — Hardening: performance, accessibility, SEO
 

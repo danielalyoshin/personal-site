@@ -1,13 +1,14 @@
 import type { ComingTape, Project, ShelfTape } from '../types'
 import { isComing } from '../types'
 import { aboutTape } from '../about'
+import { knobs } from './knobs'
 import { supersetD1 } from './superset-d1'
 
 /** The rack holds this many tapes: the project slots, then About at the right. */
 export const SHELF_SLOTS = 6
 
 /** Project tapes only, shelf order (leftmost first); at most SHELF_SLOTS - 1. */
-export const projects: Project[] = [supersetD1]
+export const projects: Project[] = [knobs, supersetD1]
 
 if (projects.length > SHELF_SLOTS - 1)
   throw new Error(

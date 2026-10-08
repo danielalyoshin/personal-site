@@ -292,7 +292,7 @@ test('the tube names the tape going in and never invites another while it loads'
       expect.arrayContaining(['INSERT TAPE', 'CHOOSE A TAPE', 'TO PLAY']),
     )
   const d1 = page.getByRole('link', {
-    name: /Play tape: 01 SUPERSET D1/,
+    name: /Play tape: 02 SUPERSET D1/,
   })
   await d1.focus()
   await expect
@@ -445,7 +445,7 @@ test('the modeled tube casts the colour it shows: blue at rest and through the f
       })
       return { colour, loading: prints.includes('LOADING TAPE') }
     }, loop)
-  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
+  await page.getByRole('link', { name: /Play tape: 02 SUPERSET D1/ }).click()
   await expect.poll(async () => (await flight('never')).loading).toBe(true)
   expect(await flight('never')).toEqual({ colour: '4145ff', loading: true })
   // The reader arrives and the light turns with it.
@@ -464,7 +464,7 @@ test('physical playback keys follow the player, remain clickable after resize, a
     'true',
   )
   const d1 = page.getByRole('link', {
-    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+    name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     exact: true,
   })
   await d1.click()

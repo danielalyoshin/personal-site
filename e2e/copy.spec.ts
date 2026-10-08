@@ -100,7 +100,7 @@ test('the counter is the reading time of the copy on the tube, and a screen read
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  for (const slug of ['superset-d1', 'about']) {
+  for (const slug of ['knobs', 'superset-d1', 'about']) {
     await page.goto(`/project/${slug}`)
     await ready(page)
     const tube = page.getByTestId('project-reader')

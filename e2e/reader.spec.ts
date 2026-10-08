@@ -88,7 +88,7 @@ test('the modeled reader keeps a real 16px prose floor on common laptops and sho
   // write-up, chosen again, still runs past the native reader's fold below.
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL('/')
-  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
+  await page.getByRole('link', { name: /Play tape: 02 SUPERSET D1/ }).click()
   await expect(page).toHaveURL('/project/superset-d1')
   await expect(page.getByTestId('project-reader')).toBeVisible()
   await expect.poll(async () => (await measure(page)).scale).toBeCloseTo(1, 1)
@@ -104,4 +104,86 @@ test('the modeled reader keeps a real 16px prose floor on common laptops and sho
     el.scrollTop = el.scrollHeight
   })
   await expect(native).not.toHaveAttribute('data-more', '')
+})
+
+test('a tape with a logo of its own opens on it as its title card, under the tube’s effects', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await expect(page.getByTestId('studio-scene')).toHaveAttribute(
+    'data-ready',
+    'true',
+  )
+  // The archive prints the tape's spine name as written: in capitals, which
+  // override knobs's own lowercase (its title stays "knobs").
+  const entry = page.getByRole('link', { name: /^Play tape: 01 KNOBS / })
+  expect(
+    await entry.evaluate(
+      (link) =>
+        (
+          link.querySelector('small')!.parentElement as HTMLElement
+        ).innerText.split('\n')[0],
+    ),
+  ).toBe('KNOBS')
+  await entry.focus()
+  await page.keyboard.press('Enter')
+  const tube = page.getByTestId('project-reader')
+  // The heading is the logo, named by the tape's title as written; the
+  // document is named the same way.
+  const title = tube.getByRole('heading', { name: 'knobs', exact: true })
+  await expect(title).toBeFocused()
+  await expect(page).toHaveTitle('knobs · Daniel Alyoshin')
+  const card = await title.evaluate(async (h2) => {
+    const [logo, bloom] = Array.from(h2.querySelectorAll('img'))
+    await logo.decode()
+    const box = logo.getBoundingClientRect()
+    const screen = h2.closest('section[aria-label="CRT display"] > div')!
+    // The tube's grain, scanlines and vignette are its last three layers.
+    const layers = Array.from(screen.children).slice(-3)
+    const covered = layers.every((layer) => {
+      const r = layer.getBoundingClientRect()
+      return (
+        r.left <= box.left &&
+        r.top <= box.top &&
+        r.right >= box.right &&
+        r.bottom >= box.bottom &&
+        layer.getAttribute('aria-hidden') === 'true'
+      )
+    })
+    const mark = getComputedStyle(h2.querySelector('span')!, '::after')
+    return {
+      ratio: box.width / box.height,
+      natural: logo.naturalWidth / logo.naturalHeight,
+      bloomHidden: bloom.alt === '' && bloom.src === logo.src,
+      bloomBlend: getComputedStyle(bloom).mixBlendMode,
+      covered,
+      underline: { height: mark.height, colour: mark.backgroundColor },
+    }
+  })
+  // Drawn as supplied: never stretched (the knobs logo's own rule).
+  expect(card.ratio).toBeCloseTo(card.natural, 2)
+  expect(card.bloomHidden).toBe(true)
+  expect(card.bloomBlend).toBe('screen')
+  expect(card.covered).toBe(true)
+  // Chosen from the keyboard, the card marks the focus on it, as a title's
+  // type does: a 3px line in OSD white.
+  expect(card.underline).toEqual({
+    height: '3px',
+    colour: 'rgb(255, 255, 255)',
+  })
+  // On the smallest phone the knob still stands above its 32px floor.
+  await page.setViewportSize({ width: 320, height: 640 })
+  await page.goto('/project/knobs')
+  const phone = page
+    .getByTestId('native-reader')
+    .getByRole('heading', { name: 'knobs', exact: true })
+  await expect(phone).toBeVisible()
+  expect(
+    await phone
+      .locator('img')
+      .first()
+      .evaluate((img) => img.clientHeight),
+  ).toBeGreaterThanOrEqual(32)
 })

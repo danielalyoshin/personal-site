@@ -305,7 +305,9 @@ bar's ten steps are painted boxes the mode would turn into the screen's own
 ground, so they alone opt out (`forced-color-adjust: none`) and take their
 colours from the system palette: each step outlined in `CanvasText`, filled
 when lit, and `GrayText` while pointing previews the turn (The Picture Size
-Rule). Normal colours are unchanged.
+Rule). A title card's keyboard line opts out the same way, in `CanvasText`;
+its glow goes, and on a light theme the card shows its owner's version for
+light grounds (The Title Card Rule). Normal colours are unchanged.
 
 ## Typography
 
@@ -343,7 +345,7 @@ The shell renders six sizes and nothing between them; 11px is the floor.
 
 Screen-interior type scales with the tube (The Tube-Scale Rule) in three roles:
 
-- **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Focus lands on the title by script and draws no ring; for a tape chosen from the keyboard it adds a 3px OSD-white underline offset by 0.28em. A shared link's first load, and a key pressed while reading a tape chosen by pointer, leave it unmarked, though Chrome counts both as keyboard focus.
+- **Screen title** (`screen-title`, `full-height-title`): uppercase Archivo at weight 800, 110% stretch, 1.12 leading, and -0.015em tracking with balanced wrapping. Both modes floor at 1.5rem and cap at 2rem (5.6cqi on the modeled screen, 7.5cqi in the full-height reader). Focus lands on the title by script and draws no ring; for a tape chosen from the keyboard it adds a 3px OSD-white underline offset by 0.28em. A shared link's first load, and a key pressed while reading a tape chosen by pointer, leave it unmarked, though Chrome counts both as keyboard focus. A tape with a logo of its own shows the logo in the title's place, at 1.75 times its size (The Title Card Rule).
 - **Screen body / tagline** (`screen-body`, `screen-tagline`, `full-height-body`, `full-height-tagline`): one centered column capped at 62ch aligns titles, prose, media, tags, and links in both reader modes; available tube width shortens that measure on phones. Prose is weight 400 with 1.65 leading, 0.005em tracking, and one-em paragraph spacing; the tagline is weight 600 with 1.5 leading. The modeled screen uses 1–1.0625rem (3.1cqi); full-height reading uses 1–1.125rem (2.4cqi). Long text wraps without horizontal scrolling.
 - **OSD** (`osd`, `osd-meta`, `osd-display`): VT323 at weight 400. PLAY, the station ident, and the reading time use 1.125–1.375rem (4.5cqi) with 1.2 leading, the ident in screen-soft and without the OSD's glow so the transport state leads; metadata, captions, tags, links, and the REC line share 1.0625–1.25rem (4cqi) with 1.35 leading; NO SIGNAL uses 1.5–2.5rem (9cqi) with 0.06em tracking, and NO SIGNAL's exit hint is set in the metadata size in OSD white. Every other OSD line keeps VT323's own spacing, inside the reader too: the prose's tracking is set on the tagline and paragraphs, not on the reader, so it never reaches the OSD lines among them. VT323 is monospaced and no Archivo numerals align in columns, so no tabular-numeral feature is set anywhere.
 
@@ -784,15 +786,20 @@ guide ("Pick one from the projects below."), the status messages, and the
 idle tube's PROJECTS. It is never "the archive", "the tape index" or "the shelf" in
 anything a visitor reads or hears; the modeled rack and holder are object
 names for this document only. A tape has one short name, its spine name
-(`vhs.spineLabel`: SUPERSET D1, ABOUT), printed on the spine and repeated as
-written by the archive entry, the guide, the idle tube, and the loading
-tube; and one title, which heads the reader and names the document. The About
+(`vhs.spineLabel`: KNOBS, SUPERSET D1, ABOUT), printed on the spine and
+repeated as written by the archive entry, the guide, the idle tube, and the
+loading tube; and one title, which heads the reader and names the document.
+Spine names are capitals, and capitals override a name's own case: knobs,
+which its owner writes all lowercase, is KNOBS on its spine, in the
+projects list, the guide, and the tubes, and "knobs" in running text and
+the document's name (Daniel, 2026-10-08). The About
 tape follows the same rule as every tape: it is "About" in the header, ABOUT
 on its spine, and "About" on the tube, where the owner's name is already
 printed once, in the ident. A tape's caption is the same words in the
-archive entry and in the guide: its `caption`, else its title ("Cloudflare D1
-in Apache Superset" for a project, "Daniel Alyoshin" for the About tape; a
-blank slot's "Blank tape"). The visitor's noun is "tape"; "cassette" names the modeled object in
+archive entry and in the guide: its `caption`, else its title ("Your OBS
+mic chain, in every app" for knobs, "Cloudflare D1 in Apache Superset" for
+the D1 tape, "Daniel Alyoshin" for the About tape; a blank slot's "Blank
+tape"). The visitor's noun is "tape"; "cassette" names the modeled object in
 this document.
 
 ### The archive
@@ -805,34 +812,35 @@ strengthens the border. The number sits above the name in the 11px label tier, a
 spine, so each entry has one text edge; the 12px play mark is centred on the
 entry in its own column. Minimum height is 80px at every width, with a 12px
 inset on every side and the accent strip inset to match. Names wrap as
-needed; 12px secondary copy carries the tape's caption (a project's title,
-or the About tape's "Daniel Alyoshin"), and the guide repeats the same caption while that tape is previewed. The playable links are normal Tab stops, with
+needed; 12px secondary copy carries the tape's caption (a project's caption
+or title, or the About tape's "Daniel Alyoshin"), and the guide repeats the same caption while that tape is previewed. The playable links are normal Tab stops, with
 arrows and Home/End for direct movement between them. The archive's heading carries no count; nothing on the
 shell does.
 
 **The Spoken Name Rule.** A link is named by the words it shows, so a name
 read off the page is a name that can be said to it (WCAG 2.5.3). An archive
 entry's name is its visible text between what it does and its year, "Play
-tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)", the first and
+tape: 01 KNOBS Your OBS mic chain, in every app (2026)", the first and
 last parts set aside for assistive technology; the nameplate is "Daniel
 Alyoshin Forward deployed engineer home". No link carries an `aria-label` that replaces its words.
 
 **The Blank Slot Rule.** The rack has six slots: five for projects and the
-About tape at the right. One project fills slot 01 today, so slots 02 to 05
-are blank. A project slot with nothing behind it yet keeps its
+About tape at the right. Two projects fill slots 01 and 02 today, knobs and
+then the D1 tape, newest first, so slots 03 to 05 are blank. A project slot with nothing behind it yet keeps its
 place and its number but is drawn as an outline, not a tape: the same 80px
 cell and 12px inset, a 1px dashed seam-lit border, no accent strip, no play
 mark, and dim silkscreen throughout, reading "Coming soon…" over the caption
 "Blank tape". It is plain text, not a link: it answers no pointer, takes no
 focus, and the arrow keys pass over it. The larger look keeps one cell per
 slot, as the rack does. In the mobile look the run of blank slots shares
-one cell, numbered for the run as the spines are ("02–05") and captioned
+one cell, numbered for the run as the spines are ("03–05") and captioned
 "Blank tapes": the run's first cell prints the run's last number after its
 own and its caption's plural, and the others leave the page and the list
-alike, so assistive technology meets the run once, as "02 to 05 Coming
-soon… Blank tapes", in a list of three. From the right-hand
-column of the two, that cell spans both rows, so the tape after the run
-takes the left and the grid closes without a hole. The stylesheet makes the
+alike, so assistive technology meets the run once, as "03 to 05 Coming
+soon… Blank tapes", in a list of four. A run that starts in the
+right-hand column of the two spans both rows, so the tape after the run
+takes the left and the grid closes without a hole; one that starts in the
+left-hand column, as today's does, takes one cell beside the tape after it. The stylesheet makes the
 switch, so a page drawn ahead of time is right at any width. Adding a
 project to the content list turns the next blank slot into a playable tape
 and nothing else changes; the run, its number, and its span follow. A
@@ -848,7 +856,10 @@ previews, lifts, or plays, and the printed tapes behind it in the
 three-quarter view do not answer through it: the camera looks along the
 rack, and a ray through an empty slot would run on into the next envelope
 (The Blank Slot Rule, under The archive). Modeled spine labels retain
-classic, rental, and studio variants. High-resolution
+classic, rental, and studio variants, and the About tape alone wears the
+studio label, a dark spine printed in its accent, so it reads apart from
+every project (Daniel, 2026-10-08): KNOBS is a rental label, its whole
+spine in the knob red, and SUPERSET D1 a classic one. High-resolution
 local canvas textures carry the print; hovering a tape or focusing its link
 lifts and previews the same cassette without changing its size or orientation.
 The lift follows an arc that rises before it comes forward, and retreats
@@ -1099,6 +1110,32 @@ Exit full screen and F hand it back as from any full screen. Where the tube
 cannot turn up yet (an insertion, a handoff) the slate stands but does not
 answer, as the bar does not.
 
+**The Title Card Rule.** A tape whose project has a logo of its own opens on
+it, as a tape opens on its title card. The logo stands in the title's
+place, at 1.75 times the title's size, which holds the knobs knob above the
+32px floor its owner sets on the smallest tube, and the title stays the
+heading's name, said by the image's alternative text, so the tape is
+announced, and its document named, as every tape is. The logo is the
+owner's file as supplied (`Project.logo`, its pixel size required, as
+media's is): never redrawn, recoloured, rotated, stretched, or set in the
+site's type. The tube lights it as it lights everything it shows: it plays
+the tracking entrance, scrolls under the OSD's fades, and lies under the
+grain, scanlines, and vignette; and it carries the OSD's glow, 6px at half
+strength, in its own colours (a blurred copy screened over it), so what is
+lit on it blooms and its dark parts stay dark. A picture cannot take the
+keyboard's underline, so for a tape chosen from the keyboard the card draws
+the same 3px OSD-white line under itself, 0.4rem below. In forced colours
+the line is drawn in the visitor's ink (`CanvasText`), the glow goes, and a
+light theme, whose ground would swallow the logo's light letters, gets the
+owner's own version for light grounds (`logo.onLight`). The logo lives on
+the tube alone: the spine, the archive,
+the guide, and the idle and loading tubes name the tape in type, as they
+name every tape. knobs, in slot 01, is the one tape with a logo today. The
+cold open (the stacked lockup over the tube for two seconds before the
+article) and a station bug (the knob in the tube's lower corner) were tried
+on 2026-10-08 and set aside: one held every reading back, the other lay over
+the words.
+
 The modeled idle image is a local 1024 × 768 canvas texture with static scanlines.
 Its lit area has the reader's corners, 26 texture pixels for the 14px screen
 radius on the reader's 560px plane, over the black tube, so the screen keeps
@@ -1265,6 +1302,7 @@ has none. The address itself is a Stage 10 decision.
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
 - Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).
+- Do open a tape on its project's own logo, as supplied, where it has one, in the tube's light and under its effects like everything the tube shows (The Title Card Rule).
 - Do give every tape a share card of its own, the studio caught as that tape goes into the deck (The Card Rule).
 - Do start with sound on unless the visitor muted it before, silent until the first gesture, holding no cue for it (The First Gesture Rule), with one sound key live at a time (The One Key Rule).
 - Do change a design value in this file's frontmatter first, then `tokens.css`, and let `e2e/design.spec.ts` prove the site renders it (The Source of Truth Rule).

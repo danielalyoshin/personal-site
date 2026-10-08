@@ -40,9 +40,30 @@ export interface VhsPresentation {
   recorded: string
 }
 
+/**
+ * A project's own logo, drawn by its owner: the file as supplied, never
+ * redrawn or recoloured. Its pixel size is required, as media's is.
+ */
+export interface ProjectLogo {
+  src: string
+  width: number
+  height: number
+  /**
+   * The owner's own version of the logo for light grounds, the same size,
+   * shown where the visitor's forced colours (a light high-contrast theme)
+   * turn the tube's black ground light.
+   */
+  onLight?: string
+}
+
 export interface Project {
   slug: string
   title: string
+  /**
+   * The project's logo, which heads the reader in place of the title's type
+   * (its title stays the heading's name). Only for a project that has one.
+   */
+  logo?: ProjectLogo
   /**
    * The line under the tape's name, the same words in the archive entry and
    * the guide. A project tape's title when left out.

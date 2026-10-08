@@ -80,9 +80,17 @@ accessibility standards.
 
 ## Evidence on Hand
 
-- One real project: Cloudflare D1 in Apache Superset. The four project slots
-  without one hold blank tapes marked "Coming soon…" until Daniel adds a
-  project.
+- Two real projects, newest first: knobs (Daniel's Windows tray app that
+  runs an OBS mic filter chain without OBS; https://getknobs.app) and
+  Cloudflare D1 in Apache Superset. The three project slots without one hold
+  blank tapes marked "Coming soon…" until Daniel adds a project.
+- The knobs logo, Daniel's own, from the knobs repository's `assets/`: shown
+  unmodified, on the knobs tape's reader only (The Title Card Rule in
+  `DESIGN.md`), as its TRADEMARKS.md allows. knobs is written all lowercase
+  in running text and in capitals where the site sets every tape's name in
+  capitals (KNOBS on the spine and in the projects list; Daniel,
+  2026-10-08), and is presented as independent of the OBS Project, as its
+  own brand commitments ask.
 - Future work must not fabricate real-seeming projects, metrics, testimonials,
   or press. An unfilled slot must read as unfilled: a blank tape, never a
   stand-in project.

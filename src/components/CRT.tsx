@@ -250,10 +250,44 @@ export default function CRT({
                   <h2
                     tabIndex={-1}
                     ref={onTitleEl}
-                    className={styles.title}
+                    className={`${styles.title} ${tape.logo ? styles.titleCard : ''}`}
                     data-keyboard={keyboardChoice || undefined}
                   >
-                    {tape.title}
+                    {tape.logo ? (
+                      // A tape with a logo of its own opens on it, as a
+                      // title card: the file as its owner drew it, in the
+                      // tube's light (The Title Card Rule).
+                      <span className={styles.logo}>
+                        <picture>
+                          {/* A light high-contrast theme turns the tube's
+                              ground light: the owner's own version for a
+                              light ground keeps every letter on it. */}
+                          {tape.logo.onLight && (
+                            <source
+                              media="(forced-colors: active) and (prefers-color-scheme: light)"
+                              srcSet={tape.logo.onLight}
+                              width={tape.logo.width}
+                              height={tape.logo.height}
+                            />
+                          )}
+                          <img
+                            src={tape.logo.src}
+                            width={tape.logo.width}
+                            height={tape.logo.height}
+                            alt={tape.title}
+                          />
+                        </picture>
+                        <img
+                          className={styles.logoBloom}
+                          src={tape.logo.src}
+                          width={tape.logo.width}
+                          height={tape.logo.height}
+                          alt=""
+                        />
+                      </span>
+                    ) : (
+                      tape.title
+                    )}
                   </h2>
                   <p className={styles.meta}>
                     {tape.year}

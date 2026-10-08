@@ -5,6 +5,8 @@ import type { Page } from '@playwright/test'
 // (scripts/prerender.mjs), then taken over by the app.
 
 const tapes = [
+  // knobs opens on its logo, which carries its title (The Title Card Rule).
+  { path: '/project/knobs', title: 'knobs', logo: true },
   { path: '/project/superset-d1', title: 'Cloudflare D1 in Apache Superset' },
   { path: '/project/about', title: 'About' },
 ]
@@ -31,7 +33,7 @@ test('every route is readable, and named, before any script runs', async ({
     new Set(tapes.map(({ path }) => path)),
   )
 
-  for (const { path, title } of tapes) {
+  for (const { path, title, logo } of tapes) {
     const response = await request.get(path)
     expect(response.status(), path).toBe(200)
     const html = await response.text()
@@ -39,7 +41,13 @@ test('every route is readable, and named, before any script runs', async ({
     expect(html).toContain(`<title>${title} · Daniel Alyoshin</title>`)
     // The tape itself is in the page, and the page unfurls under its name.
     expect(html).toMatch(/<article[^>]*aria-label="[^"]* details"/)
-    expect(html).toContain(`>${title}</h2>`)
+    if (logo)
+      expect(html).toMatch(
+        new RegExp(
+          `<h2[^>]*><span[^>]*><picture>(<source [^>]*>)?<img [^>]*alt="${title}"`,
+        ),
+      )
+    else expect(html).toContain(`>${title}</h2>`)
     for (const tag of ['og:title', 'twitter:title'])
       expect(html).toMatch(
         new RegExp(`"${tag}"\\s+content="${title} · Daniel Alyoshin"`),
@@ -183,10 +191,10 @@ test('the page is drawn for the width it is served at, before the app arrives', 
   ).toBeVisible()
   await expect(page.getByText('Pick one in the studio.')).toBeHidden()
   // The blank slots share one cell on a phone, by the stylesheet alone.
-  await expect(page.locator('#projects').getByRole('listitem')).toHaveCount(3)
+  await expect(page.locator('#projects').getByRole('listitem')).toHaveCount(4)
   await expect(page.getByText('Setting the scene…')).toBeVisible()
   // The archive works as plain links: the tape's page is a real page.
-  await page.getByRole('link', { name: /Play tape: 01 SUPERSET D1/ }).click()
+  await page.getByRole('link', { name: /Play tape: 02 SUPERSET D1/ }).click()
   await expect(page).toHaveURL('/project/superset-d1')
   await expect(
     page.getByRole('heading', {

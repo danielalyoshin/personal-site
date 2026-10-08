@@ -48,10 +48,10 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
     height: 791,
     fitted: 1,
     widths: [1440, 2880],
-    previews: ['superset-d1', 'about'],
+    previews: ['knobs', 'superset-d1', 'about'],
     slots: [
       {
-        id: 'superset-d1',
+        id: 'knobs',
         outline: [
           [0.5333, 0.4495],
           [0.5735, 0.4075],
@@ -64,7 +64,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 13.2419,
       },
       {
-        id: 'coming-1',
+        id: 'superset-d1',
         outline: [
           [0.5661, 0.4575],
           [0.6064, 0.4155],
@@ -77,7 +77,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 13.0621,
       },
       {
-        id: 'coming-2',
+        id: 'coming-1',
         outline: [
           [0.599, 0.4655],
           [0.6392, 0.4235],
@@ -90,7 +90,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 12.8823,
       },
       {
-        id: 'coming-3',
+        id: 'coming-2',
         outline: [
           [0.6318, 0.4736],
           [0.672, 0.4315],
@@ -103,7 +103,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 12.7025,
       },
       {
-        id: 'coming-4',
+        id: 'coming-3',
         outline: [
           [0.6646, 0.4816],
           [0.7048, 0.4395],
@@ -142,7 +142,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
       0.0543, 0.0493, 0.0505, 0.0524, 0.0549, 0.0575, 0.06, 0.0625, 0.0651,
       0.0676, 0.0701, 0.072, 0.0745, 0.0771, 0.0796, 0.0821, 0.0847, 0.0865,
       0.0891, 0.0916, 0.0941, 0.0967, 0.0992, 0.1017, 0.1042, 0.1061, 0.3957,
-      0.3906, 0.3919, 0.3944, 0.4115, 0.414, 0.4165, 0.4184, 0.4209, 0.4247,
+      0.3906, 0.3919, 0.3944, 0.3988, 0.3994, 0.402, 0.4045, 0.4209, 0.4247,
       0.426, 0.4285, 0.4329, 0.4336, 0.4361, 0.4405, 0.4399, 0.4304, 0.431,
       0.4336, 0.4361, 0.4525, 0.4576, 0.4197, 0.4064, 0.4001, 0.3969, 0.3969,
       0.4001, 0.4102, 0.4285, 0.4614, 0.6864, 0.6883, 0.7326, 0.7351, 0.737,
@@ -155,10 +155,10 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
     height: 281,
     fitted: 0.8864,
     widths: [440, 880, 1320],
-    previews: ['superset-d1', 'about'],
+    previews: ['knobs', 'superset-d1', 'about'],
     slots: [
       {
-        id: 'superset-d1',
+        id: 'knobs',
         outline: [
           [0.5298, 0.4546],
           [0.558, 0.4193],
@@ -171,7 +171,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 12.4654,
       },
       {
-        id: 'coming-1',
+        id: 'superset-d1',
         outline: [
           [0.5675, 0.4588],
           [0.5957, 0.4234],
@@ -184,7 +184,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 12.3468,
       },
       {
-        id: 'coming-2',
+        id: 'coming-1',
         outline: [
           [0.6051, 0.4629],
           [0.6333, 0.4275],
@@ -197,7 +197,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 12.2283,
       },
       {
-        id: 'coming-3',
+        id: 'coming-2',
         outline: [
           [0.6427, 0.467],
           [0.6709, 0.4317],
@@ -210,7 +210,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
         depth: 12.1098,
       },
       {
-        id: 'coming-4',
+        id: 'coming-3',
         outline: [
           [0.6803, 0.4712],
           [0.7085, 0.4358],
@@ -249,7 +249,7 @@ export const studioStills: Record<'desk' | 'phone', StudioStill> = {
       0.1174, 0.1186, 0.1198, 0.1209, 0.1221, 0.1233, 0.1245, 0.1257, 0.1269,
       0.1281, 0.1293, 0.1293, 0.1304, 0.1316, 0.1328, 0.134, 0.1352, 0.1364,
       0.1376, 0.1387, 0.1399, 0.1411, 0.1423, 0.1435, 0.1435, 0.4317, 0.4187,
-      0.4068, 0.4009, 0.4021, 0.4033, 0.4045, 0.4223, 0.4234, 0.4246, 0.4258,
+      0.4068, 0.4009, 0.4021, 0.4033, 0.4045, 0.4056, 0.4068, 0.408, 0.4128,
       0.4282, 0.4282, 0.4294, 0.4306, 0.4317, 0.4317, 0.4329, 0.4341, 0.4365,
       0.4365, 0.4246, 0.4223, 0.4223, 0.4234, 0.4294, 0.4223, 0.4056, 0.3973,
       0.3914, 0.389, 0.389, 0.3914, 0.3985, 0.4092, 0.4282, 0.4638, 0.6595,

@@ -114,6 +114,14 @@ Tube-Scale Rule in `DESIGN.md`). A bottom fade marks the article's
 continuation until its end is in view, and the scrollbar thumb reads 3.5:1
 on the tube, in both readers. At widths up to 767px or heights up to 699px, use
 a full-height native CRT reader with a 16px prose floor, scaling to 18px.
+A tape whose project has a logo of its own (knobs, slot 01) opens on it as
+its title card: the owner's file as supplied, in the title's place at 1.75
+times its size, named by the title, under the tube's grain, scanlines and
+vignette and the tracking entrance, with the OSD's 6px glow in its own
+colours; for a tape chosen from the keyboard it draws the title's 3px
+underline under itself (The Title Card Rule in `DESIGN.md`). Spine names
+are capitals wherever they are printed, whatever the project's own case
+(KNOBS on the spine, in the projects list, the guide and the tubes).
 Direct project links and tape selections before graphics are ready use this
 reader immediately at every viewport size. It stays pinned only until the
 scene is ready: on a desktop viewport the modeled studio then takes over in

@@ -194,7 +194,7 @@ test('a keyboard eject that brings the tape link into view still lands the studi
   const moved = await page.evaluate(() => window.scrollY)
   expect(moved).toBeGreaterThan(0)
   const link = page.getByRole('link', {
-    name: 'Play tape: 01 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
+    name: 'Play tape: 02 SUPERSET D1 Cloudflare D1 in Apache Superset (2025)',
     exact: true,
   })
   await expect(link).toBeFocused()

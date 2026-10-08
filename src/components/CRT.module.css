@@ -223,6 +223,50 @@
   text-underline-offset: 0.28em;
 }
 
+/* A tape with a logo of its own opens on it (The Title Card Rule): the
+   owner's file as drawn, never recoloured, standing where the title's type
+   would, at 1.75 times its size, which holds a knob above its 32px floor on
+   the smallest tube. The tube lights it as it lights its text: under its
+   grain, scanlines and vignette, and with the OSD's 6px glow at half
+   strength, here in the logo's own colours (a blurred copy screened over
+   it), so its lit parts bloom and its dark parts do not. */
+.titleCard {
+  line-height: 0;
+}
+.logo {
+  position: relative;
+  display: inline-block;
+  height: calc(var(--type-screen-title) * 1.75);
+}
+.fullHeight .logo {
+  height: calc(var(--type-full-height-title) * 1.75);
+}
+.logo picture,
+.logo img {
+  display: block;
+  width: auto;
+  height: 100%;
+}
+.logo .logoBloom {
+  position: absolute;
+  inset: 0;
+  filter: blur(6px);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+/* Type takes the keyboard's underline; a picture cannot, so the card draws
+   the same 3px OSD-white line under itself. */
+.titleCard[data-keyboard]:focus-visible .logo::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.4rem;
+  height: 3px;
+  background: var(--osd-white);
+}
+
 .meta {
   font-family: var(--font-osd);
   font-size: var(--type-osd-meta);
@@ -639,5 +683,15 @@
   .sizeReadout[data-pointing] .sizeBar span:not([data-lit]) {
     background: GrayText;
     opacity: 1;
+  }
+  /* The title card keeps its keyboard line in the visitor's own ink, and
+     drops its glow: the mode's ground may be light, where it would only
+     haze the letters (The Title Card Rule). */
+  .titleCard[data-keyboard]:focus-visible .logo::after {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+  .logo .logoBloom {
+    display: none;
   }
 }

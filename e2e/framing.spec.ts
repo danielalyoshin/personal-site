@@ -277,9 +277,10 @@ test('beside the studio, the words never stand over the equipment', async ({
     expect(idle.inFirstScreen, `${viewport.width}×${viewport.height}`).toBe(
       true,
     )
-    // A preview lifts a tape toward the words and gives the guide its
-    // longest line: SUPERSET D1 rises nearest the words, About beside them.
-    for (const slot of ['01', '06']) {
+    // A preview lifts a tape toward the words and gives the guide a longer
+    // line: every playable tape, About beside them, SUPERSET D1 with the
+    // longest caption.
+    for (const slot of ['01', '02', '06']) {
       await page
         .getByRole('link', { name: new RegExp(`^Play tape: ${slot} `) })
         .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }))

@@ -278,7 +278,6 @@
   font-size: var(--type-functional);
   line-height: var(--leading-title);
   color: var(--silkscreen-hi);
-  text-transform: capitalize;
   font-weight: 600;
 }
 .tapeLabel small {
@@ -288,7 +287,6 @@
   color: var(--silkscreen-dim);
   margin-top: 4px;
   font-weight: 400;
-  text-transform: none;
 }
 .playArrow {
   grid-column: 2;
@@ -315,7 +313,6 @@
 }
 .tapeComing .tapeLabel {
   color: var(--silkscreen-dim);
-  text-transform: none;
 }
 /* The end of the blank run, printed only where the run shares one cell (the
    mobile look). */
