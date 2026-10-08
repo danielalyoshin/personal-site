@@ -163,11 +163,16 @@ the studio's still: the live scene drawn ahead of time (`npm run
 render:flat`), its rack still the picker, a previewed tape dissolving to its
 own lifted still, and a plain note saying the visitor is seeing a still,
 why, and what brings the live studio back, with a Reload where one can. The
-note closes the column under the guide; where all of it there would cost
-the still more than 2% of its size, its reason stands under the box on the
-column's edge instead, one note still. On a tablet held upright and on
-phones it follows the box, 16px under the table and 32px over the projects
-(The Still Studio Rule in `DESIGN.md`). Deep links, About, both 404
+note always closes the column under the guide whole, above the fold, never
+split; where the fold leaves no room for it beside a full-size still, the
+still gives up only the size it must. On squat windows, where the still
+stands larger beside the words than under them (1280 × 540, 1366 × 657,
+1536 × 730), it moves over toward the column's left edge and grows,
+32px clear beside the words, as far as the size it gains earns, so it
+never jumps between window sizes; elsewhere it keeps the live framing. On
+a tablet held upright and on phones the note follows the box, 16px under
+the table and 32px over the projects (The Still Studio Rule in
+`DESIGN.md`). Deep links, About, both 404
 states, Escape/eject, and focus return remain supported. Every screen state
 has a rule of its own: NO SIGNAL is a lit tube, under playback's bloom and
 cast in the HTML readers and playback's phosphor light on the modeled deck.

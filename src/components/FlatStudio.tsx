@@ -15,24 +15,21 @@ import styles from './FlatStudio.module.css'
 
 /** Where the camera takes the phones' closer view (studio/framing.ts). */
 const PHONE = '(max-width: 600px)'
-/** The words beside the studio clear what stands under them by this much. */
+/** The words beside the studio clear what stands under them by this much, */
 const CLEARANCE = 14
+/** and what rises beside them by this much. */
+const BESIDE = 32
+/**
+ * A still that would be larger beside the words moves over in step with
+ * what it gains there: all the way once that is this share of its full
+ * size, and no further than the gain pays for, so it leaves the live
+ * framing by degrees as a window narrows or flattens, never in a jump.
+ */
+const EARN = 0.15
 /** A fingertip's catch around a slot too narrow for one (The Touch Rule). */
 const TOUCH_TARGET = 44
 /** A press that travels this far is a drag, not a choice. */
 const DRAG = 5
-/**
- * The note splits where the whole of it in the column would stand the still
- * smaller than this share of its full size: past a sliver, the visitor sees
- * the studio cut down for a paragraph about it.
- */
-const SPLIT = 0.98
-/** The reason's place under the title in the column (FlatStudio.module.css). */
-const REASON_GAP = 4
-/** A note under the box stands this far under the table (Stage.module.css), */
-const UNDER_TABLE = 16
-/** and this far over the projects' seam. */
-const OVER_SEAM = 32
 
 const ALT =
   'A picture of the 3D studio: the monitor reads Insert tape over the tape deck, beside the rack of tapes.'
@@ -65,11 +62,15 @@ interface Plate {
  * Where the still stands in the studio's box. Like the live fit, it is
  * centred and as large as the box allows for the part of it the camera
  * framed. Beside the studio (The Studio First Rule), the words stand over
- * the box's upper right, and the note on what the visitor is missing closes
- * that column (all of it, or its title and Reload where its reason has gone
- * under the box): the still keeps the lifted tape and the headphones clear
- * of it, lower in a box grown to the fold for it, or else a little smaller.
- * `room` is the box height that would hold the still at full size.
+ * the box's upper right, and the whole note on what the visitor is missing
+ * closes that column: the still keeps the lifted tape and the headphones
+ * clear of it, lower in a box grown to the fold for it, or else smaller.
+ * Where it would be smaller under the words than beside them, it moves
+ * over, toward the drawn studio's left corner on the column's edge, as far
+ * as the size it gains there earns (EARN), and takes the largest size that
+ * clears the note where it stands. Every step of that is continuous, so no
+ * step in the window's size makes the still jump. `room` is the box height
+ * that would hold the still at full size.
  */
 function place(
   still: StudioStill,
@@ -79,33 +80,75 @@ function place(
 ) {
   const aspect = still.width / still.height
   const framed = aspect * still.fitted
-  let h = Math.min(height, width / framed)
-  let top = (height - h) / 2
-  let room = 0
-  if (words) {
-    // The highest point under the column for a still this tall.
-    const under = (h: number) => {
-      const w = h * aspect
-      const left = (width - w) / 2
-      let reach = 1
-      for (const o of still.obstacles)
-        if (left + o.right * w > words.left) reach = Math.min(reach, o.top)
-      return reach
+  const full = Math.min(height, width / framed)
+  const centred = (h: number) => (width - h * aspect) / 2
+  if (!words)
+    return {
+      left: centred(full),
+      top: (height - full) / 2,
+      width: full * aspect,
+      height: full,
+      room: 0,
     }
-    const clear = words.bottom + CLEARANCE
-    const full = width / framed
-    room = clear + (1 - under(full)) * full
-    top = Math.max(top, clear - under(h) * h)
-    if (top + h > height) {
-      // Shrinking moves the rack inboard of the column, so settle twice.
-      for (let pass = 0; pass < 2; pass++)
-        h = Math.max(h * 0.5, (height - clear) / (1 - under(h)))
-      h = Math.min(h, Math.min(height, width / framed))
-      top = height - h
-    }
+  const clear = words.bottom + CLEARANCE
+  const bands = still.skyline.length
+  // How high a still h tall, its left edge at x, rises where the note must
+  // clear it, as a share of its height down from its top: its standing
+  // equipment (the rack, a tape lifted, the headphones) within BESIDE of the
+  // column's edge, and anything drawn (the table, the monitor) within
+  // CLEARANCE of it.
+  const reach = (h: number, x: number) => {
+    const w = h * aspect
+    let top = 1
+    for (const o of still.obstacles)
+      if (x + o.right * w > words.left - BESIDE) top = Math.min(top, o.top)
+    still.skyline.forEach((band, i) => {
+      if (x + ((i + 1) / bands) * w > words.left - CLEARANCE)
+        top = Math.min(top, band)
+    })
+    return top
   }
-  const w = h * aspect
-  return { left: (width - w) / 2, top, width: w, height: h, room }
+  // Standing on the box's floor, it clears the note.
+  const fits = (h: number, x: number) => clear + (1 - reach(h, x)) * h <= height
+  // The largest still that clears the note with its left edge where `at`
+  // puts it. A smaller one only ever fits better, so the search halves the
+  // gap.
+  const largest = (at: (h: number) => number) => {
+    if (fits(full, at(full))) return full
+    let low = 0
+    let high = full
+    for (let step = 0; step < 20; step++) {
+      const mid = (low + high) / 2
+      if (fits(mid, at(mid))) low = mid
+      else high = mid
+    }
+    return low
+  }
+  // Moved all the way over, the drawn studio's left corner stands on the
+  // column's edge, as the nameplate does; the transparent margin left of it
+  // is cut at the box, and nothing drawn is.
+  const over = (h: number) => -still.left * h * aspect
+  const gain = (largest(over) - largest(centred)) / full
+  const moved = Math.min(1, gain / EARN)
+  const at = (h: number) => centred(h) + (over(h) - centred(h)) * moved
+  const h = largest(at)
+  // At full size it stands where the live fit would: centred, or as low as
+  // the note needs. Giving up size, it comes down by as much, to the box's
+  // floor, so it never jumps up or down either.
+  const settled = Math.max(
+    (height - full) / 2,
+    clear - reach(full, at(full)) * full,
+  )
+  const lift = Math.max(0, height - full - settled - (full - h))
+  return {
+    left: at(h),
+    top: height - h - lift,
+    width: h * aspect,
+    height: h,
+    room:
+      clear +
+      (1 - reach(width / framed, centred(width / framed))) * (width / framed),
+  }
 }
 
 function sources(framing: string, name: string, widths: number[]) {
@@ -203,9 +246,9 @@ export default function FlatStudio({
     if (!el) return
     const box = el.closest<HTMLElement>('[data-flat]')
     let live = true
-    // `pass` counts the layouts one measurement has asked for: a split, and
-    // a box grown for the note, are each laid out and measured again at
-    // once, so the first paint and the observer find them settled.
+    // `pass` counts the layouts one measurement has asked for: a box grown
+    // for the note is laid out and measured again at once, so the first
+    // paint and the observer find it settled.
     const measure = (pass = 0) => {
       if (!live) return
       const words = note.current
@@ -213,64 +256,24 @@ export default function FlatStudio({
       if (!bounds.width || !bounds.height) return
       const framing = window.matchMedia(PHONE).matches ? 'phone' : 'desk'
       const still = studioStills[framing]
-      // The fold caps the box beside the studio; elsewhere it has none.
-      const fold = box ? parseFloat(getComputedStyle(box).maxHeight) : NaN
-      // Beside the studio the note stands over the box's right half, in the
-      // column of words; in the other looks it is under the box or beside
-      // it, and asks nothing of the still.
+      // Beside the studio the whole note closes the column of words, over
+      // the box's right half; in the other looks it is under the box or
+      // beside it, and asks nothing of the still. Its box ends where its
+      // last print does: Reload's hit area overhangs it by less than the
+      // clearance the still keeps.
       const area = words?.getBoundingClientRect()
-      const over =
-        !!words &&
-        !!area &&
+      const column =
+        area &&
         area.width > 0 &&
         area.left > bounds.left + bounds.width / 2 &&
         area.left < bounds.right &&
         area.top < bounds.bottom
-      // What of it stands in the column: all of it, or its title and Reload
-      // where its reason has gone under the box. A hit area that overhangs
-      // its print (Reload's) ends where the print does.
-      const split = !!words?.hasAttribute('data-split')
-      let column: { left: number; bottom: number } | null = null
-      let reason = 0
-      if (over) {
-        let bottom = area.top
-        for (const part of words.children) {
-          const rect = part.getBoundingClientRect()
-          if (part.classList.contains(styles.noteDetail)) {
-            reason = rect.height
-            if (split) continue
-          }
-          const overhang = parseFloat(getComputedStyle(part).marginBottom)
-          bottom = Math.max(bottom, rect.bottom + Math.min(0, overhang))
-        }
-        column = { left: area.left - bounds.left, bottom: bottom - bounds.top }
-      }
-      // Where the whole note in the column would stand the still smaller
-      // than its full size by more than a sliver, the reason goes under the
-      // box (Stage.module.css). Judged on the whole note either way, so the
-      // split never undoes itself.
-      if (!pass && words) {
-        let costly = false
-        if (column && Number.isFinite(fold)) {
-          const whole = split
-            ? column.bottom + REASON_GAP + reason
-            : column.bottom
-          const framed = (still.width / still.height) * still.fitted
-          const full = Math.min(fold, bounds.width / framed)
-          costly =
-            place(still, bounds.width, fold, { ...column, bottom: whole })
-              .height <
-            full * SPLIT
-        }
-        if (costly !== split) {
-          words.toggleAttribute('data-split', costly)
-          measure(pass + 1)
-          return
-        }
-      }
+          ? { left: area.left - bounds.left, bottom: area.bottom - bounds.top }
+          : null
       const { room, ...at } = place(still, bounds.width, bounds.height, column)
       // Grow the box toward the fold first (Stage.module.css caps it there).
       if (box) {
+        const fold = parseFloat(getComputedStyle(box).maxHeight)
         if (column && room)
           box.style.setProperty(
             '--flat-room',
@@ -284,26 +287,10 @@ export default function FlatStudio({
       }
       // How far the box runs on under the drawn studio, so a note under the
       // box can stand a set distance under the table instead.
-      let slack = Math.max(
+      const slack = Math.max(
         0,
         Math.floor(bounds.height - at.top - still.foot * at.height),
       )
-      // The split reason stands under the box, where the first screen's
-      // fold often falls: where the fold would cut through one of its
-      // lines, it steps down to put the fold between them, while it stays
-      // nearer the table than the projects.
-      const lead = split
-        ? words?.querySelector<HTMLElement>(`.${styles.noteDetail}`)
-        : null
-      if (lead) {
-        const line = parseFloat(getComputedStyle(lead).lineHeight)
-        const shown =
-          window.innerHeight -
-          (bounds.bottom + window.scrollY + UNDER_TABLE - slack)
-        const cut = shown % line
-        if (shown > 0 && shown < reason && cut < OVER_SEAM - UNDER_TABLE)
-          slack -= Math.ceil(cut)
-      }
       words?.style.setProperty('--still-slack', `${slack}px`)
       setPlate((current) =>
         current &&
@@ -336,7 +323,6 @@ export default function FlatStudio({
       observer.disconnect()
       box?.style.removeProperty('--flat-room')
       watched?.style.removeProperty('--still-slack')
-      watched?.removeAttribute('data-split')
     }
   }, [note])
 
@@ -566,16 +552,14 @@ export default function FlatStudio({
 
 /**
  * The plain note on what the visitor is missing and why, in the page's own
- * voice, with a Reload where one can bring the studio back. One note, read
- * in that order, wherever the page sets its parts (FlatStudio may split it:
- * `data-split`). It fades up as it arrives, with the still when it waits
- * for it.
+ * voice, with a Reload where one can bring the studio back. It stands
+ * whole wherever the page sets it, read title, reason, Reload, and fades up
+ * as it arrives, with the still when it waits for it.
  */
 export function FlatNote({
   reason,
   touchOnly,
   className,
-  reasonClassName,
   ref,
   inert,
   waiting,
@@ -584,8 +568,6 @@ export function FlatNote({
   /** A phone or tablet, where some advice does not apply. */
   touchOnly: boolean
   className?: string
-  /** The reason's own place, for a page that sets it apart from the title. */
-  reasonClassName?: string
   ref?: Ref<HTMLDivElement>
   inert?: boolean
   /** Held clear until the studio's still fades up, to arrive with it. */
@@ -602,7 +584,7 @@ export function FlatNote({
       data-testid="flat-note"
     >
       <p className={styles.noteTitle}>{notice.title}</p>
-      <p className={`${styles.noteDetail} ${reasonClassName ?? ''}`}>
+      <p className={styles.noteDetail}>
         {(touchOnly && notice.detailTouch) || notice.detail}
       </p>
       {notice.reload && (

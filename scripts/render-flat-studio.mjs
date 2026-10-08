@@ -26,10 +26,10 @@
  * It also writes src/content/studioStills.ts: every still's size, and each
  * rack slot's pointer target (its resting envelope, as the scene's own
  * invisible slot box) projected onto the picture, with what stands under the
- * words beside the studio and where the drawn studio ends. Run `npm run
- * render:flat` after the models, materials, lighting, tube screens, or tapes
- * change. It starts its own dev server and drives the installed Chrome, as
- * the e2e suite does.
+ * words beside the studio, the drawn studio's outline, and where it begins
+ * and ends. Run `npm run render:flat` after the models, materials,
+ * lighting, tube screens, or tapes change. It starts its own dev server and
+ * drives the installed Chrome, as the e2e suite does.
  */
 import { execFile } from 'node:child_process'
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
@@ -378,6 +378,22 @@ async function encode(capture, file, width, crop) {
   return (await stat(file)).size
 }
 
+/** A still's pixels, read back from its WebP: drawn is alpha over 12. */
+async function decode(file) {
+  const pam = join(scratch, 'decoded.pam')
+  await run('dwebp', ['-quiet', '-pam', file, '-o', pam])
+  const data = await readFile(pam)
+  const header = data.subarray(0, 128).toString('latin1')
+  const width = Number(header.match(/WIDTH (\d+)/)[1])
+  const height = Number(header.match(/HEIGHT (\d+)/)[1])
+  const pixels = data.subarray(header.indexOf('ENDHDR\n') + 7)
+  return {
+    width,
+    height,
+    drawn: (x, y) => pixels[(y * width + x) * 4 + 3] > 12,
+  }
+}
+
 /**
  * Where the drawn studio ends: the share of the still's height above its
  * lowest drawn pixel (alpha over 12 of 255, the table's front corner),
@@ -385,18 +401,50 @@ async function encode(capture, file, width, crop) {
  * stands a set distance below it (Stage.module.css, --still-slack).
  */
 async function foot(file, fitted) {
-  const pam = join(scratch, 'foot.pam')
-  await run('dwebp', ['-quiet', '-pam', file, '-o', pam])
-  const data = await readFile(pam)
-  const header = data.subarray(0, 128).toString('latin1')
-  const width = Number(header.match(/WIDTH (\d+)/)[1])
-  const height = Number(header.match(/HEIGHT (\d+)/)[1])
-  const pixels = data.subarray(header.indexOf('ENDHDR\n') + 7)
+  const { width, height, drawn } = await decode(file)
   const from = Math.floor((width * (1 - fitted)) / 2)
   for (let y = height - 1; y >= 0; y--)
     for (let x = from; x < width - from; x++)
-      if (pixels[(y * width + x) * 4 + 3] > 12) return round((y + 1) / height)
+      if (drawn(x, y)) return round((y + 1) / height)
   return 1
+}
+
+/** The bands the drawn studio's outline is measured in, across the still. */
+const BANDS = 100
+
+/**
+ * The drawn studio's outline, over the studio at rest and every tape lifted
+ * in preview: where its leftmost drawn pixel stands (the table's left
+ * corner), as a share of the still's width, and the share of its height
+ * above the highest drawn pixel in each of BANDS equal bands across it (1
+ * where nothing is drawn). The words beside the studio keep clear of it
+ * (FlatStudio.tsx), so both err toward the drawing.
+ */
+async function outline(files) {
+  let tops = null
+  let width = 0
+  let height = 0
+  for (const file of files) {
+    const still = await decode(file)
+    ;({ width, height } = still)
+    tops ??= new Array(width).fill(height)
+    for (let x = 0; x < width; x++)
+      for (let y = 0; y < tops[x]; y++)
+        if (still.drawn(x, y)) {
+          tops[x] = y
+          break
+        }
+  }
+  const down = (value) => Math.floor(value * 10000) / 10000
+  const first = tops.findIndex((top) => top < height)
+  return {
+    left: down(first / width),
+    skyline: Array.from({ length: BANDS }, (_, band) => {
+      const from = Math.floor((band * width) / BANDS)
+      const to = Math.ceil(((band + 1) * width) / BANDS)
+      return down(Math.min(...tops.slice(from, to)) / height)
+    }),
+  }
 }
 
 try {
@@ -491,6 +539,15 @@ try {
         join(OUT, `${framing.name}-rest-${Math.max(...framing.widths)}.webp`),
         fitted,
       ),
+      // Measured on every still at its largest width.
+      ...(await outline(
+        variants.map(([name]) =>
+          join(
+            OUT,
+            `${framing.name}-${name}-${Math.max(...framing.widths)}.webp`,
+          ),
+        ),
+      )),
       muted: {
         left: nx(left / scale),
         top: ny(top / scale),
@@ -532,6 +589,14 @@ export interface StudioStill {
   obstacles: { left: number; top: number; right: number }[]
   /** Where the drawn studio ends: its lowest point, the table's front corner. */
   foot: number
+  /** Where the drawn studio begins: its leftmost point, the table's left corner. */
+  left: number
+  /**
+   * The top of what is drawn, a tape lifted included, in equal bands from
+   * the still's left edge to its right: the outline the words beside the
+   * studio keep clear of.
+   */
+  skyline: number[]
   /** The deck's status window, drawn again with sound off. */
   muted: { left: number; top: number; width: number; height: number }
 }

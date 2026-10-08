@@ -1,7 +1,9 @@
 /* The studio's box without a studio: the studio's still, laid out by
-   FlatStudio.tsx as the live fit would frame it, and the rack's pointer
-   targets over it. A still wider than the box (the phones' table runs on
-   past the screen's edges) is cut at the box. */
+   FlatStudio.tsx as the live fit would frame it, or moved over beside the
+   words where it stands larger there, and the rack's pointer targets over
+   it. A still wider than the box (the phones' table runs on past the
+   screen's edges) is cut at the box, as is the clear margin left of a
+   still moved over. */
 .studio {
   position: absolute;
   inset: 0;
@@ -112,8 +114,7 @@
   max-width: 64ch;
 }
 /* Reload, where a reload can bring the studio back: a navigation link's
-   print and its drawn mark, 12px under the reason (or under the title,
-   where the reason has gone under the box), on the column's edge.
+   print and its drawn mark, 12px under the reason, on the column's edge.
    The 44px floor is a hit area, not a layout change: the target overhangs
    the print's line above and below, as the footer's links do. */
 .reload {

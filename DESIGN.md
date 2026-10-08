@@ -1139,10 +1139,10 @@ during the visit, the studio's box shows the studio's still: the live scene
 drawn ahead of time by `npm run render:flat`, with its models, lighting,
 browse camera, and fit (the desktop framing, and the phones' closer one at
 600px and below), transparent where nothing is drawn, so the page's graphite
-is its ground. It is laid out as the live fit would frame it, and each rack
-slot's pointer target is the scene's own, its resting envelope projected
-onto the picture, nearest first, so the rack answers the pointer as the
-canvas does (The Touch Rule and The Blank Slot Rule hold; the targets are
+is its ground. It is laid out as the live fit would frame it, except where
+it stands larger beside the words (below), and each rack slot's pointer
+target is the scene's own, its resting envelope projected onto the
+picture, nearest first, so the rack answers the pointer as the canvas does (The Touch Rule and The Blank Slot Rule hold; the targets are
 the pointer's alone, and the projects list carries keyboard and assistive
 access). A tape previewed there or from the list dissolves in its own still
 over 240ms, lifted, with the tube naming it (The One Readout Rule). It joins
@@ -1158,26 +1158,31 @@ it follows, over the reason and what brings the live studio back in the
 caption's type, with a Reload, drawn mark first, where a reload can. No case
 promises more than it can: a reload "can" or "may" bring the studio back,
 and a phone or tablet, with no hardware acceleration to turn on, is told
-another browser or a computer instead. Beside the studio it closes the
-column of words under the guide, after a seam, and the box grows toward the
-fold, never past it, so the still stands clear of it at full size. Where the
-whole note there would leave the still more than 2% smaller than the live
-studio (short windows, and wide ones up to about 920px tall), the note
-splits: its title, and Reload where there is one, close the column under the
-seam, and the reason stands under the box, on the column's edge. Without a
-Reload the still then stands at or near its full size; a Reload, where there
-is one, still gives up a little of it, a tenth at most on short laptop
-windows. It stays one note, read title, reason, Reload. On a phone on its
-side it closes the column whole, 12px under the guide. On a portrait window
+another browser or a computer instead. Beside the studio it always closes
+the column of words whole, under the guide, after a seam: one note, read
+title, reason, Reload, never split, and all of it above the fold. The box
+grows toward the fold, never past it, so the still stands clear of it at
+full size; where the fold comes first, the still gives up size for it, only
+as much as it must, and keeps the lifted tape and the headphones under it.
+Where the still would stand larger beside the words than under them (squat
+windows: 1280 × 540, 1366 × 657, 1536 × 730), it leaves the live framing.
+It moves over until the drawn table's left corner stands on the column's
+edge, with the nameplate, and grows as large as clears the note: the rack
+and the headphones stand 32px clear beside the words, and the table runs
+on under them, 14px under the note. It moves only as far as the size it
+gains there earns, all the way once that is 15% of its full size, and
+settles to the box's floor as it shrinks, so no step in the window's size
+makes it jump; where moving gains nothing, it keeps the live framing. Its
+pointer targets, lifted stills, and muted patch move and scale with it,
+and the words keep clear of its drawn outline, which `npm run render:flat`
+measures with its foot (`left`, `skyline`). On a phone on its side the
+note closes the column too, 12px under the guide. On a portrait window
 beside the studio (a tablet held upright), and in the mobile look, it
-follows the box instead, before the projects, so the still stands where the
-studio would. Under the box, the note (or its reason) belongs to the still,
-not to the list: it stands 16px under the table's lowest point, which the
-still's geometry records (`foot`, measured by `npm run render:flat`), and
-32px over the projects' seam. Where the fold of the first screen would cut
-through a line of the split reason, it steps down so the fold falls above it
-or between its lines, and stays nearer the table than the projects, so no
-half-line of it shows. The note fades up with the still, from the same frame
+follows the box instead, before the projects, so the still stands where
+the studio would. Under the box, the note belongs to the still, not to
+the list: it stands 16px under the table's lowest point, which the still's
+geometry records (`foot`, measured by `npm run render:flat`), and 32px over
+the projects' seam. The note fades up with the still, from the same frame
 and over the same 240ms (at once under reduced motion), and dissolves with
 the page chrome when a tape plays. The build stops when the stills no longer
 match the rack (`scripts/prerender.mjs`), so re-render them after the

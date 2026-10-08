@@ -986,7 +986,6 @@ export default function Stage({ notFound = false }: { notFound?: boolean }) {
               reason={flatReason}
               touchOnly={touchOnly}
               className={styles.flatNote}
-              reasonClassName={styles.flatReason}
               ref={flatNote}
               inert={open}
               waiting={!stillShown}

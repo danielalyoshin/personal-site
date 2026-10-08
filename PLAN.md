@@ -1752,11 +1752,49 @@ typeset and polish pass, Impeccable's finish reviewer, and its documenter.
 - ✅ The note fades up with the still, from the frame it decodes, over
   `--t-med`; at once under reduced motion. It used to pop in when graphics
   were lost mid-visit.
-- Open, for Daniel: Reload in the column still costs the still 7–10% on
-  short laptop windows in the failed and lost cases (set it on the title's
-  line?); and with the 2% threshold the reason always lands just under the
-  fold on those windows (raise the tolerance so near-fit windows keep the
-  whole note beside the studio?).
+- ✅ Revised by Daniel (2026-10-07): never split the note. On short laptop
+  windows the split left the reason under the fold, so the first screen
+  showed only the title. The split is gone (`data-split`, `SPLIT`, the
+  subgrid and `:has()` rules, `.flatReason`, the fold step-down): beside the
+  studio the whole note always closes the column, above the fold, and the
+  still gives up size for it where the fold leaves no room, only as much as
+  it must. The still's width against the live studio's, without a Reload
+  and with one: 1280×720 87% and 83%, 1366×657 76% and 71%, 1366×768 92%
+  and 88%, 1440×789 92% and 88%, 1536×730 84% and 80%, 1536×864 89% and
+  86%, 1600×900 93% and 90%, 1920×900 95% and 92%, 900×600 79% and 74%,
+  800×560 74% and 75%, 768×540 70% and 71%, 1280×540 62% and 56%. It stays
+  full size at 1024×768, 1280×800, 1440×900 and 1920×1080.
+- ✅ The still's shrink no longer snaps back. Where a smaller still brought
+  the headphones inboard of the column, `place()` returned it to full size
+  under the note: at 1280×540 the note stood over the headphones and the
+  rack. It now finds the largest still that clears the note, and keeps the
+  headphones under the note's line once they are inboard of the column.
+- ✅ Settled by Daniel (2026-10-07), was open: the split question (the note
+  never splits), and Reload's cost in the column, which is now part of the
+  still giving up size by design rather than an open cost.
+- ✅ Revised by Daniel (2026-10-07): the still may move and grow. Where it
+  would stand larger beside the words than under them, it leaves the live
+  framing: it moves over until the drawn table's left corner stands on the
+  column's edge, with the nameplate, and grows as large as clears the note,
+  the rack and the headphones 32px clear beside the words (`BESIDE`) and
+  the table running on under them, 14px under the note. It moves only as
+  far as the size it gains there earns, all the way at 15% of its full size
+  (`EARN`), and settles to the box's floor as it shrinks, so no step in the
+  window's size makes it jump: a resize sweep moves it at most 19px per 4px
+  of window height, and the larger steps are the page's own (the kicker's
+  break at 940px wide, the short look at 820px tall, a reason rewrapping),
+  which the live studio takes too. Without a Reload and with one: 1280×540
+  100% and 100% (was 62% and 56%), 1366×657 95% and 95% (was 76% and 71%),
+  1536×730 98% and 98% (was 84% and 80%). Every other size keeps the live
+  framing and its size, since moving gains nothing there: the headphones
+  cannot clear the column unless the still shrinks further than the note
+  already asks. Rejected: moving all the way wherever moving gains anything
+  (it jumps at the switch), a half move (85% to 95% where the full move
+  reaches 95% to 100%), and starting the move before it gains (it moved
+  1280×720, 1366×768, 1440×789 and 900×600 by 80 to 134px for no size).
+  `npm run render:flat` now also measures the drawn outline the words keep
+  clear of (`left`, `skyline` in `studioStills.ts`); the stills re-rendered
+  byte for byte.
 
 ---
 

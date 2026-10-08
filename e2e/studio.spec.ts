@@ -697,6 +697,91 @@ test('the note on what is missing fades up with the still', async ({
   expect((await recorded()).every(({ note }) => note === 1)).toBe(true)
 })
 
+test('on a squat window the still moves over beside the words, at the live size and clear of the note', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 540 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  // Graphics lost mid-visit: the still, its note with a Reload.
+  await page.goto('/')
+  await ready(page)
+  await page.locator('canvas').evaluate((el) => {
+    const context = el.getContext('webgl2')
+    context?.getExtension('WEBGL_lose_context')?.loseContext()
+  })
+  await expect(page.locator('[data-flat="lost"]')).toBeVisible()
+  const note = page.getByTestId('flat-note')
+  await expect(note.getByRole('button', { name: 'Reload' })).toBeVisible()
+  await expect
+    .poll(() =>
+      page
+        .locator('img[data-still="rest"]')
+        .evaluate((img) => getComputedStyle(img.parentElement!).opacity),
+    )
+    .toBe('1')
+  const seen = await page.evaluate(async () => {
+    const box = document.querySelector('[data-flat]')!.getBoundingClientRect()
+    const rest = document.querySelector<HTMLImageElement>(
+      'img[data-still="rest"]',
+    )!
+    const plate = rest.getBoundingClientRect()
+    const words = document
+      .querySelector('[data-testid="flat-note"]')!
+      .getBoundingClientRect()
+    // Every drawn pixel (alpha over 12) of the still at rest and of each
+    // tape's lifted still, where the page shows it.
+    let near = 0
+    let left = Infinity
+    for (const name of ['rest', 'superset-d1', 'about']) {
+      const image = new Image()
+      image.src = rest.currentSrc.replace('-rest-', `-${name}-`)
+      await image.decode()
+      const canvas = document.createElement('canvas')
+      canvas.width = image.naturalWidth
+      canvas.height = image.naturalHeight
+      const context = canvas.getContext('2d')!
+      context.drawImage(image, 0, 0)
+      const { data } = context.getImageData(0, 0, canvas.width, canvas.height)
+      const scale = plate.width / canvas.width
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] <= 12) continue
+        const pixel = (i - 3) / 4
+        const x = plate.left + (pixel % canvas.width) * scale
+        const y = plate.top + Math.floor(pixel / canvas.width) * scale
+        left = Math.min(left, x)
+        if (
+          x > words.left - 12 &&
+          x < words.right + 12 &&
+          y > words.top - 12 &&
+          y < words.bottom + 12
+        )
+          near++
+      }
+    }
+    const aspect = plate.width / plate.height
+    return {
+      live: Math.min(box.height, box.width / aspect) * aspect,
+      width: plate.width,
+      corner: left - box.left,
+      near,
+    }
+  })
+  // As large as the live studio: the fold, not the note, sets its size.
+  expect(seen.width).toBeGreaterThan(0.98 * seen.live)
+  // The table's left corner stands on the column's edge, and nothing
+  // drawn is cut at the box.
+  expect(seen.corner).toBeGreaterThan(-1)
+  expect(seen.corner).toBeLessThan(2)
+  // Nothing drawn, a tape lifted or not, comes within 12px of the note.
+  expect(seen.near).toBe(0)
+  // The rack's targets moved with the picture: pointing at a tape still
+  // previews it.
+  const point = await slotPoint(page, 'superset-d1')
+  expect(point).not.toBeNull()
+  await page.mouse.move(point!.x, point!.y)
+  await expect(caption(page)).toContainText('SUPERSET D1')
+})
+
 test('a pointer can select a modeled cassette and dragging does not navigate', async ({
   page,
 }) => {
