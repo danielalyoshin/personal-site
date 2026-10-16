@@ -1842,6 +1842,43 @@ typeset and polish pass, Impeccable's finish reviewer, and its documenter.
   clear of (`left`, `skyline` in `studioStills.ts`); the stills re-rendered
   byte for byte.
 
+#### The knobs rebrand (2026-10-16)
+
+Daniel rebranded knobs and shipped several releases since the tape went in
+on 2026-10-08 ("knobs has been rebranded and heavily updated since update
+our site to match"). The new brand lives in the knobs-brand repository
+(`BRAND.md`, tokens, logo files); knobs and getknobs.app draw on it.
+
+- ✅ Logo: the new flat lockup (the knob turned to its top position and
+  "knobs" with "obs" in cap red), light and dark versions copied unchanged
+  from knobs-brand's `logo/svg/`. The files carry only a viewBox, so
+  `Project.logo` gives four times it (1823 × 416). They are under Vite's
+  inline limit and are imported with `?no-inline`, so they are served as
+  the files, as the old ones were.
+- ✅ No glow on the title card: the brand's Don't list forbids glows,
+  shadows and outlines on its logo, so the blurred bloom copy is gone (The
+  Title Card Rule). It keeps the tube's grain, scanlines, vignette and
+  tracking entrance, which lie over everything the tube shows. The card
+  keeps the brand's clear space (a quarter of the mark's height) above the
+  meta line, and the keyboard line sits outside it; the brand's lockup
+  floor is 24px, which the 1.75× card clears on the smallest tube (42px).
+- ✅ Colour: the tape's rental label and the diagram's "My code" outline
+  take cap red `#df695e` (the brand's red; the old knob red `#e5484d` is
+  now the app's "needs you" state mark, which the brand keeps out of brand
+  material).
+- ✅ Copy: knobs now runs while OBS is open (it pauses only where OBS's
+  monitoring also plays the mic into the cable), runs VST plugins and
+  NVIDIA's noise removal, and has the brand's one-sentence independence
+  line. The write-up says so in plain words, with the footprint as "a
+  fraction of the memory and CPU that OBS does" and no versions or
+  figures. The diagram's knobs note reads "Runs while OBS is open too"
+  (was "Pauses while OBS runs"), in both drawings and the alt text.
+- ✅ Re-rendered: both knobs diagrams (the D1 ones byte for byte), every
+  share card, and the studio's stills (`studioStills.ts` unchanged).
+- Kept: KNOBS in capitals on the spine and in the projects list (Daniel,
+  2026-10-08), though the brand now says knobs is lowercase everywhere;
+  the caption, which is still the brand's tagline.
+
 ---
 
 ## Open decisions (flagged, not blocking)

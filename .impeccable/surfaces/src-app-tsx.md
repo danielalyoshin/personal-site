@@ -117,8 +117,8 @@ a full-height native CRT reader with a 16px prose floor, scaling to 18px.
 A tape whose project has a logo of its own (knobs, slot 01) opens on it as
 its title card: the owner's file as supplied, in the title's place at 1.75
 times its size, named by the title, under the tube's grain, scanlines and
-vignette and the tracking entrance, with the OSD's 6px glow in its own
-colours; for a tape chosen from the keyboard it draws the title's 3px
+vignette and the tracking entrance, with no glow (the knobs brand allows
+none); for a tape chosen from the keyboard it draws the title's 3px
 underline under itself (The Title Card Rule in `DESIGN.md`). Spine names
 are capitals wherever they are printed, whatever the project's own case
 (KNOBS on the spine, in the projects list, the guide and the tubes).

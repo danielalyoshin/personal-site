@@ -136,8 +136,16 @@ test('a tape with a logo of its own opens on it as its title card, under the tub
   await expect(title).toBeFocused()
   await expect(page).toHaveTitle('knobs · Daniel Alyoshin')
   const card = await title.evaluate(async (h2) => {
-    const [logo, bloom] = Array.from(h2.querySelectorAll('img'))
+    const images = Array.from(h2.querySelectorAll('img'))
+    const logo = images[0]
     await logo.decode()
+    // The file's own proportions, from its viewBox: an SVG with no width or
+    // height reports a rounded natural size.
+    const svg = await (await fetch(logo.currentSrc)).text()
+    const [, , vw, vh] = svg
+      .match(/viewBox=["']([^"']+)["']/)![1]
+      .split(/\s+/)
+      .map(Number)
     const box = logo.getBoundingClientRect()
     const screen = h2.closest('section[aria-label="CRT display"] > div')!
     // The tube's grain, scanlines and vignette are its last three layers.
@@ -153,27 +161,35 @@ test('a tape with a logo of its own opens on it as its title card, under the tub
       )
     })
     const mark = getComputedStyle(h2.querySelector('span')!, '::after')
+    // The meta line keeps clear of the card by a quarter of the mark's
+    // height, as the knobs brand asks: its mark is drawn on a 100-unit
+    // square in the lockup's box.
+    const below =
+      h2.nextElementSibling!.getBoundingClientRect().top - box.bottom
     return {
+      clear: below >= (box.height * (100 / vh)) / 4,
       ratio: box.width / box.height,
-      natural: logo.naturalWidth / logo.naturalHeight,
-      bloomHidden: bloom.alt === '' && bloom.src === logo.src,
-      bloomBlend: getComputedStyle(bloom).mixBlendMode,
+      natural: vw / vh,
+      images: images.length,
+      filter: getComputedStyle(logo).filter,
       covered,
       underline: { height: mark.height, colour: mark.backgroundColor },
     }
   })
-  // Drawn as supplied: never stretched (the knobs logo's own rule).
+  // Drawn as supplied: never stretched, and with no glow or copy laid over
+  // it (the knobs brand's own rules).
   expect(card.ratio).toBeCloseTo(card.natural, 2)
-  expect(card.bloomHidden).toBe(true)
-  expect(card.bloomBlend).toBe('screen')
+  expect(card.images).toBe(1)
+  expect(card.filter).toBe('none')
   expect(card.covered).toBe(true)
+  expect(card.clear).toBe(true)
   // Chosen from the keyboard, the card marks the focus on it, as a title's
   // type does: a 3px line in OSD white.
   expect(card.underline).toEqual({
     height: '3px',
     colour: 'rgb(255, 255, 255)',
   })
-  // On the smallest phone the knob still stands above its 32px floor.
+  // On the smallest phone the lockup still stands above its 24px floor.
   await page.setViewportSize({ width: 320, height: 640 })
   await page.goto('/project/knobs')
   const phone = page
@@ -185,5 +201,5 @@ test('a tape with a logo of its own opens on it as its title card, under the tub
       .locator('img')
       .first()
       .evaluate((img) => img.clientHeight),
-  ).toBeGreaterThanOrEqual(32)
+  ).toBeGreaterThanOrEqual(24)
 })

@@ -225,11 +225,10 @@
 
 /* A tape with a logo of its own opens on it (The Title Card Rule): the
    owner's file as drawn, never recoloured, standing where the title's type
-   would, at 1.75 times its size, which holds a knob above its 32px floor on
-   the smallest tube. The tube lights it as it lights its text: under its
-   grain, scanlines and vignette, and with the OSD's 6px glow at half
-   strength, here in the logo's own colours (a blurred copy screened over
-   it), so its lit parts bloom and its dark parts do not. */
+   would, at 1.75 times its size, which holds the knobs lockup well above its
+   24px floor on the smallest tube. It lies under the tube's grain,
+   scanlines and vignette, as everything the tube shows does, but takes no
+   glow: the knobs brand allows none. */
 .titleCard {
   line-height: 0;
 }
@@ -246,14 +245,6 @@
   display: block;
   width: auto;
   height: 100%;
-}
-.logo .logoBloom {
-  position: absolute;
-  inset: 0;
-  filter: blur(6px);
-  opacity: 0.5;
-  mix-blend-mode: screen;
-  pointer-events: none;
 }
 /* Type takes the keyboard's underline; a picture cannot, so the card draws
    the same 3px OSD-white line under itself. */
@@ -684,14 +675,10 @@
     background: GrayText;
     opacity: 1;
   }
-  /* The title card keeps its keyboard line in the visitor's own ink, and
-     drops its glow: the mode's ground may be light, where it would only
-     haze the letters (The Title Card Rule). */
+  /* The title card keeps its keyboard line in the visitor's own ink (The
+     Title Card Rule). */
   .titleCard[data-keyboard]:focus-visible .logo::after {
     forced-color-adjust: none;
     background: CanvasText;
-  }
-  .logo .logoBloom {
-    display: none;
   }
 }

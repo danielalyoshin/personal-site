@@ -305,9 +305,9 @@ bar's ten steps are painted boxes the mode would turn into the screen's own
 ground, so they alone opt out (`forced-color-adjust: none`) and take their
 colours from the system palette: each step outlined in `CanvasText`, filled
 when lit, and `GrayText` while pointing previews the turn (The Picture Size
-Rule). A title card's keyboard line opts out the same way, in `CanvasText`;
-its glow goes, and on a light theme the card shows its owner's version for
-light grounds (The Title Card Rule). Normal colours are unchanged.
+Rule). A title card's keyboard line opts out the same way, in `CanvasText`,
+and on a light theme the card shows its owner's version for light grounds
+(The Title Card Rule). Normal colours are unchanged.
 
 ## Typography
 
@@ -859,7 +859,7 @@ rack, and a ray through an empty slot would run on into the next envelope
 classic, rental, and studio variants, and the About tape alone wears the
 studio label, a dark spine printed in its accent, so it reads apart from
 every project (Daniel, 2026-10-08): KNOBS is a rental label, its whole
-spine in the knob red, and SUPERSET D1 a classic one. High-resolution
+spine in cap red, the knobs brand's red, and SUPERSET D1 a classic one. High-resolution
 local canvas textures carry the print; hovering a tape or focusing its link
 lifts and previews the same cassette without changing its size or orientation.
 The lift follows an arc that rises before it comes forward, and retreats
@@ -1112,22 +1112,25 @@ answer, as the bar does not.
 
 **The Title Card Rule.** A tape whose project has a logo of its own opens on
 it, as a tape opens on its title card. The logo stands in the title's
-place, at 1.75 times the title's size, which holds the knobs knob above the
-32px floor its owner sets on the smallest tube, and the title stays the
-heading's name, said by the image's alternative text, so the tape is
-announced, and its document named, as every tape is. The logo is the
-owner's file as supplied (`Project.logo`, its pixel size required, as
-media's is): never redrawn, recoloured, rotated, stretched, or set in the
-site's type. The tube lights it as it lights everything it shows: it plays
-the tracking entrance, scrolls under the OSD's fades, and lies under the
-grain, scanlines, and vignette; and it carries the OSD's glow, 6px at half
-strength, in its own colours (a blurred copy screened over it), so what is
-lit on it blooms and its dark parts stay dark. A picture cannot take the
-keyboard's underline, so for a tape chosen from the keyboard the card draws
-the same 3px OSD-white line under itself, 0.4rem below. In forced colours
-the line is drawn in the visitor's ink (`CanvasText`), the glow goes, and a
-light theme, whose ground would swallow the logo's light letters, gets the
-owner's own version for light grounds (`logo.onLight`). The logo lives on
+place, at 1.75 times the title's size, which holds the knobs lockup well
+above the 24px floor its owner sets, on the smallest tube, and keeps the
+quarter of its mark's height that its owner asks be left clear round it,
+and the title stays the heading's name, said by the image's alternative
+text, so the tape is announced, and its document named, as every tape is.
+The logo is the owner's file as supplied (`Project.logo`, its pixel size
+required, as media's is), served as the file and not inlined: never
+redrawn, recoloured, rotated, stretched, or set in the site's type. The
+tube shows it as it shows everything else: it plays the tracking entrance,
+scrolls under the OSD's fades, and lies under the grain, scanlines, and
+vignette. It takes no glow of its own, where the OSD's type takes one: the
+knobs brand allows no glow, shadow or outline on its logo (Daniel's knobs
+rebrand, 2026-10-16, which also gave the logo its new flat lockup). A
+picture cannot take the keyboard's underline, so for a tape chosen from the
+keyboard the card draws the same 3px OSD-white line under itself, 0.4rem
+below, outside the logo's clear space. In forced colours the line is drawn
+in the visitor's ink (`CanvasText`), and a light theme, whose ground would
+swallow the logo's light letters, gets the owner's own version for light
+grounds (`logo.onLight`). The logo lives on
 the tube alone: the spine, the archive,
 the guide, and the idle and loading tubes name the tape in type, as they
 name every tape. knobs, in slot 01, is the one tape with a logo today. The
@@ -1302,7 +1305,7 @@ has none. The address itself is a Stage 10 decision.
 - Do respect prefers-reduced-motion in CSS, camera movement, tape movement, and design-panel examples.
 - Do offer the tube's picture at full size in the set's own language, the OSD's size bar and the monitor's dial, never a page control in a corner (The Picture Size Rule).
 - Do show a tape's media only where it can be read at full size; on the tube, offer it as a closer look in its place (The Closer Look Rule).
-- Do open a tape on its project's own logo, as supplied, where it has one, in the tube's light and under its effects like everything the tube shows (The Title Card Rule).
+- Do open a tape on its project's own logo, as supplied, where it has one, under the tube's effects like everything the tube shows, with nothing its owner's brand forbids, such as a glow (The Title Card Rule).
 - Do give every tape a share card of its own, the studio caught as that tape goes into the deck (The Card Rule).
 - Do start with sound on unless the visitor muted it before, silent until the first gesture, holding no cue for it (The First Gesture Rule), with one sound key live at a time (The One Key Rule).
 - Do change a design value in this file's frontmatter first, then `tokens.css`, and let `e2e/design.spec.ts` prove the site renders it (The Source of Truth Rule).

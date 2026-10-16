@@ -277,13 +277,6 @@ export default function CRT({
                             alt={tape.title}
                           />
                         </picture>
-                        <img
-                          className={styles.logoBloom}
-                          src={tape.logo.src}
-                          width={tape.logo.width}
-                          height={tape.logo.height}
-                          alt=""
-                        />
                       </span>
                     ) : (
                       tape.title

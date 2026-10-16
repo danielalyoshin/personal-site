@@ -23,9 +23,9 @@
   - code and settings (dashed) come down x 120 and x 400, each labelled
     12px to its right; audio (solid) comes up into the chain at x 100,
     along it, and out of it at x 430 to the cable, then on to the apps.
-  The knob red, the tape's label accent, marks the parts I wrote, as the
-  key under the drawing says; everything the mic's audio passes through is
-  OBS's own code.
+  Cap red, the knobs brand's red and the tape's label accent, marks the
+  parts I wrote, as the key under the drawing says; everything the mic's
+  audio passes through is OBS's own code.
 -->
 <html lang="en">
   <head>
@@ -38,7 +38,7 @@
     <style>
       :root {
         /* The tape's label accent (vhs.accent): the parts I wrote. */
-        --accent: #e5484d;
+        --accent: #df695e;
         --node: color-mix(in srgb, var(--screen-text) 4%, var(--screen-black));
         --line: var(--screen-scroll);
       }
@@ -183,7 +183,9 @@
           rx="4"
         />
         <text class="name" x="30" y="127">knobs</text>
-        <text class="quiet end" x="590" y="127">Pauses while OBS runs</text>
+        <text class="quiet end" x="590" y="127">
+          Runs while OBS is open too
+        </text>
 
         <rect
           class="part changed"
